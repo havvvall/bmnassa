@@ -46,6 +46,20 @@ function buildQrSrc(biz, size = 200) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&bgcolor=0f0f0f&color=ffffff&margin=10&data=${qrData}`;
 }
 
+const LANGUAGES = [
+  { code: "ku", name: "کوردی", sub: "Kurdish · Soranî" },
+  { code: "en", name: "English", sub: "English" },
+  { code: "ar", name: "عربي", sub: "Arabic · al-'Arabiyyah" },
+];
+
+const CITIES = [
+  { id: "erbil", name: "Erbil", sub: "62 businesses", live: true },
+  { id: "sulaymaniyah", name: "Sulaymaniyah", sub: "250 businesses", live: true },
+  { id: "kirkuk", name: "Kirkuk", sub: "Coming soon", live: false },
+  { id: "duhok", name: "Duhok", sub: "Coming soon", live: false },
+  { id: "halabja", name: "Halabja", sub: "Coming soon", live: false },
+];
+
 const BUSINESSES = [
   {
     "id": 1,
@@ -3356,6 +3370,30 @@ const Icon = ({ name, size = 18 }) => {
 /* ---------------- APP ---------------- */
 
 export default function App() {
+  const [onboardingStep, setOnboardingStep] = useState(() => {
+    try {
+      if (!localStorage.getItem("bm_language")) return "language";
+      if (!localStorage.getItem("bm_city")) return "city";
+    } catch (e) {}
+    return null;
+  });
+  const [language, setLanguage] = useState(() => {
+    try { return localStorage.getItem("bm_language") || "ku"; } catch (e) { return "ku"; }
+  });
+  const [city, setCity] = useState(() => {
+    try { return localStorage.getItem("bm_city") || "sulaymaniyah"; } catch (e) { return "sulaymaniyah"; }
+  });
+
+  const continueFromLanguage = () => {
+    try { localStorage.setItem("bm_language", language); } catch (e) {}
+    setOnboardingStep("city");
+  };
+  const finishOnboarding = () => {
+    try { localStorage.setItem("bm_city", city); } catch (e) {}
+    setOnboardingStep(null);
+  };
+  const backToLanguage = () => setOnboardingStep("language");
+
   const [activeTab, setActiveTab] = useState("search"); // search | favorites | account
   const [view, setView] = useState(null); // null | category | profile | admin
   const [query, setQuery] = useState("");
@@ -3432,6 +3470,24 @@ export default function App() {
   };
 
   const showTabBar = view === null;
+
+  if (onboardingStep === "language") {
+    return (
+      <div style={styles.app}>
+        <style>{globalCss}</style>
+        <OnboardingLanguage language={language} onSelect={setLanguage} onContinue={continueFromLanguage} />
+      </div>
+    );
+  }
+
+  if (onboardingStep === "city") {
+    return (
+      <div style={styles.app}>
+        <style>{globalCss}</style>
+        <OnboardingCity city={city} onSelect={setCity} onContinue={finishOnboarding} onBack={backToLanguage} />
+      </div>
+    );
+  }
 
   return (
     <div style={styles.app}>
@@ -3542,6 +3598,110 @@ function BottomNav({ activeTab, setActiveTab, favoriteCount }) {
           </button>
         );
       })}
+    </div>
+  );
+}
+
+/* ---------------- ONBOARDING: LANGUAGE ---------------- */
+
+function OnboardingLanguage({ language, onSelect, onContinue }) {
+  return (
+    <div style={styles.onboardWrap}>
+      <div style={styles.onboardSteps}>
+        <span style={{ ...styles.onboardStepDot, ...styles.onboardStepDotActive }} />
+        <span style={styles.onboardStepDot} />
+      </div>
+
+      <div style={styles.onboardLogoRow}>
+        <img src={APP_LOGO} alt="Bmnassa" style={styles.onboardLogo} />
+      </div>
+
+      <div style={styles.onboardBody}>
+        <p style={styles.onboardTagline}>
+          <b style={styles.onboardTaglineStrong}>هەڵبژاردنی زمان</b> · Choose your language ·{" "}
+          <b style={styles.onboardTaglineStrong} dir="rtl">اختر لغتك</b>
+        </p>
+
+        <div style={styles.onboardLangList}>
+          {LANGUAGES.map((lang) => {
+            const active = language === lang.code;
+            return (
+              <div
+                key={lang.code}
+                onClick={() => onSelect(lang.code)}
+                style={active ? { ...styles.onboardLangCard, ...styles.onboardLangCardActive } : styles.onboardLangCard}
+              >
+                <div>
+                  <div style={styles.onboardLangName}>{lang.name}</div>
+                  <div style={styles.onboardLangSub}>{lang.sub}</div>
+                </div>
+                <div style={active ? { ...styles.onboardCheck, ...styles.onboardCheckActive } : styles.onboardCheck}>
+                  {active && (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <button style={styles.onboardContinueBtn} onClick={onContinue}>Continue</button>
+    </div>
+  );
+}
+
+/* ---------------- ONBOARDING: CITY ---------------- */
+
+function OnboardingCity({ city, onSelect, onContinue, onBack }) {
+  return (
+    <div style={styles.onboardWrap}>
+      <div style={styles.onboardSteps}>
+        <span style={styles.onboardStepDot} />
+        <span style={{ ...styles.onboardStepDot, ...styles.onboardStepDotActive }} />
+      </div>
+
+      <div style={styles.onboardBackRow}>
+        <button style={styles.onboardBackBtn} onClick={onBack} aria-label="Back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <img src={APP_LOGO} alt="Bmnassa" style={styles.onboardLogo} />
+      </div>
+
+      <div style={styles.onboardCityHead}>
+        <h1 style={styles.onboardCityTitle}>Choose your city</h1>
+        <p style={styles.onboardCitySub}>We'll show businesses near you first</p>
+      </div>
+
+      <div style={styles.onboardCityGrid}>
+        {CITIES.map((c) => {
+          const active = city === c.id;
+          return (
+            <div
+              key={c.id}
+              onClick={() => onSelect(c.id)}
+              style={active ? { ...styles.onboardCityCard, ...styles.onboardCityCardActive } : styles.onboardCityCard}
+            >
+              <div style={styles.onboardCityIcon}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 11l9-8 9 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M5 10v10h14V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <div>
+                <div style={styles.onboardCityName}>{c.name}</div>
+                <div style={styles.onboardCitySubLabel}>{c.sub}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <button style={styles.onboardContinueBtn} onClick={onContinue}>Continue</button>
     </div>
   );
 }
@@ -4162,6 +4322,63 @@ const styles = {
     fontFamily: "'Helvetica Neue', Arial, sans-serif", paddingBottom: 0,
   },
   tabContent: { paddingBottom: 90 },
+
+  onboardWrap: {
+    minHeight: "100vh", display: "flex", flexDirection: "column",
+    padding: "36px 22px 28px", boxSizing: "border-box",
+  },
+  onboardSteps: { display: "flex", justifyContent: "center", gap: 6, marginBottom: 30 },
+  onboardStepDot: { width: 24, height: 4, borderRadius: 2, background: "#232323" },
+  onboardStepDotActive: { background: "linear-gradient(90deg, #2dd4bf, #ff6b4a)" },
+  onboardLogoRow: { display: "flex", justifyContent: "center", marginBottom: 20 },
+  onboardLogo: { height: 26, width: "auto", objectFit: "contain", opacity: 0.95 },
+  onboardBackRow: { display: "flex", alignItems: "center", gap: 14, marginBottom: 24 },
+  onboardBackBtn: {
+    width: 34, height: 34, borderRadius: "50%", background: "#131313", border: "1px solid #232323",
+    color: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+  },
+  onboardBody: { flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" },
+  onboardTagline: { textAlign: "center", fontSize: 13, color: "#8f8f8f", lineHeight: 1.7, margin: "0 0 26px" },
+  onboardTaglineStrong: { color: "#f5f5f5", fontWeight: 600 },
+  onboardLangList: { display: "flex", flexDirection: "column", gap: 12 },
+  onboardLangCard: {
+    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+    background: "#131313", borderWidth: 1, borderStyle: "solid", borderColor: "#232323",
+    borderRadius: 16, padding: "18px 18px", cursor: "pointer",
+  },
+  onboardLangCardActive: {
+    borderColor: "#2dd4bf", background: "linear-gradient(135deg, rgba(45,212,191,0.12), rgba(255,107,74,0.08))",
+  },
+  onboardLangName: { fontSize: 17, fontWeight: 700, color: "#f5f5f5" },
+  onboardLangSub: { fontSize: 12.5, color: "#8f8f8f", marginTop: 3 },
+  onboardCheck: {
+    width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
+    borderWidth: 1.5, borderStyle: "solid", borderColor: "#333",
+    display: "flex", alignItems: "center", justifyContent: "center", color: "#0a0a0a",
+  },
+  onboardCheckActive: { background: "#2dd4bf", borderColor: "#2dd4bf", color: "#0a0a0a" },
+  onboardContinueBtn: {
+    marginTop: 24, width: "100%", padding: "16px", borderRadius: 14, border: "none",
+    fontSize: 15, fontWeight: 700, cursor: "pointer",
+    background: "linear-gradient(90deg, #2dd4bf, #22c3ae)", color: "#062824",
+  },
+  onboardCityHead: { marginBottom: 20 },
+  onboardCityTitle: { fontSize: 21, fontWeight: 700, margin: 0, color: "#f5f5f5" },
+  onboardCitySub: { fontSize: 12.5, color: "#8f8f8f", marginTop: 5 },
+  onboardCityGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, flex: 1, alignContent: "start" },
+  onboardCityCard: {
+    background: "#131313", borderWidth: 1, borderStyle: "solid", borderColor: "#232323",
+    borderRadius: 16, padding: "16px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 10,
+  },
+  onboardCityCardActive: {
+    borderColor: "#ff6b4a", background: "linear-gradient(135deg, rgba(255,107,74,0.14), rgba(45,212,191,0.06))",
+  },
+  onboardCityIcon: {
+    width: 38, height: 38, borderRadius: 10, background: "linear-gradient(135deg, #2dd4bf, #ff6b4a)",
+    display: "flex", alignItems: "center", justifyContent: "center", color: "#fff",
+  },
+  onboardCityName: { fontSize: 15, fontWeight: 700, color: "#f5f5f5" },
+  onboardCitySubLabel: { fontSize: 11.5, color: "#8f8f8f", marginTop: 2 },
   bottomNav: {
     position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 10,
     display: "flex", background: "rgba(15,15,15,0.92)", backdropFilter: "blur(14px)",
