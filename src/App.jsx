@@ -3524,6 +3524,7 @@ export default function App() {
             categoryCount={categories.length}
             favoriteCount={favorites.size}
             goAdmin={() => setView("admin")}
+            goRegister={() => setView("register")}
           />
         )}
       </div>
@@ -3547,6 +3548,13 @@ export default function App() {
           isFavorite={favorites.has(selectedBiz.id)}
           onToggleFavorite={() => toggleFavorite(selectedBiz.id)}
           onBack={() => setView(selectedCategory ? "category" : null)}
+        />
+      )}
+
+      {view === "register" && (
+        <RegisterBusiness
+          categories={categories}
+          onBack={() => setView(null)}
         />
       )}
 
@@ -3909,7 +3917,7 @@ function Favorites({ businesses, categories, favorites, onToggleFavorite, openPr
 
 /* ---------------- ACCOUNT ---------------- */
 
-function Account({ businessCount, categoryCount, favoriteCount, goAdmin }) {
+function Account({ businessCount, categoryCount, favoriteCount, goAdmin, goRegister }) {
   return (
     <div style={styles.tabPageWrap}>
       <div style={styles.accountHero} className="bm-bizcard">
@@ -3934,6 +3942,14 @@ function Account({ businessCount, categoryCount, favoriteCount, goAdmin }) {
       </div>
 
       <div style={styles.accountList}>
+        <button style={styles.accountRow} className="bm-account-row" onClick={goRegister}>
+          <div style={styles.accountRowIcon}><Icon name="plus" size={17} /></div>
+          <div style={{ flex: 1, minWidth: 0, textAlign: "left" }}>
+            <div style={styles.accountRowTitle}>List Your Business</div>
+            <div style={styles.accountRowSub}>Get your business on Bmnassa</div>
+          </div>
+          <Icon name="chevron" size={16} />
+        </button>
         <button style={styles.accountRow} className="bm-account-row" onClick={goAdmin}>
           <div style={styles.accountRowIcon}><Icon name="grid" size={17} /></div>
           <div style={{ flex: 1, minWidth: 0, textAlign: "left" }}>
@@ -3943,6 +3959,153 @@ function Account({ businessCount, categoryCount, favoriteCount, goAdmin }) {
           <Icon name="chevron" size={16} />
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ---------------- REGISTER BUSINESS ---------------- */
+
+const emptyRegisterForm = {
+  name: "", category: "", owner: "", phone: "", whatsapp: "", city: "", address: "", description: "",
+};
+
+const BMNASSA_WHATSAPP_NUMBER = "9647508177096";
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxfqdwDmqolp0rBeDW8mxwGy43rjaI0eNPZ1UGbIOIqtZ_b75_-gEY7xZ4gA6ChVn_f/exec";
+
+function RegisterBusiness({ categories, onBack }) {
+  const [form, setForm] = useState(emptyRegisterForm);
+  const [sent, setSent] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const canSubmit = form.name.trim() && form.category && form.phone.trim() && form.city;
+
+  const catName = categories.find((c) => c.id === form.category)?.name || form.category;
+  const cityName = CITIES.find((c) => c.id === form.city)?.name || form.city;
+
+  const openWhatsAppFallback = () => {
+    const lines = [
+      "New business registration for Bmnassa:",
+      "",
+      `Business name: ${form.name.trim()}`,
+      `Category: ${catName}`,
+      form.owner.trim() && `Owner: ${form.owner.trim()}`,
+      `Phone: ${form.phone.trim()}`,
+      form.whatsapp.trim() && `WhatsApp: ${form.whatsapp.trim()}`,
+      `City: ${cityName}`,
+      form.address.trim() && `Address / neighborhood: ${form.address.trim()}`,
+      form.description.trim() && `Description: ${form.description.trim()}`,
+    ].filter(Boolean);
+    const text = encodeURIComponent(lines.join("\n"));
+    window.open(`https://wa.me/${BMNASSA_WHATSAPP_NUMBER}?text=${text}`, "_blank");
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
+
+    const params = new URLSearchParams({
+      name: form.name.trim(),
+      category: catName,
+      owner: form.owner.trim(),
+      phone: form.phone.trim(),
+      whatsapp: form.whatsapp.trim(),
+      city: cityName,
+      address: form.address.trim(),
+      description: form.description.trim(),
+    });
+
+    try {
+      // Apps Script web apps don't return CORS headers, so we send this
+      // "no-cors": the row still gets appended, we just can't read the response.
+      await fetch(SHEET_WEBAPP_URL, { method: "POST", mode: "no-cors", body: params });
+      setUsedFallback(false);
+      setSent(true);
+    } catch (err) {
+      // Real network failure (offline, blocked, etc.) — fall back to WhatsApp so the
+      // submission isn't lost.
+      openWhatsAppFallback();
+      setUsedFallback(true);
+      setSent(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div style={styles.registerWrap}>
+        <button style={styles.backBtn} onClick={onBack}>
+          <Icon name="back" size={18} /> Back to app
+        </button>
+        <div style={styles.registerSentWrap}>
+          <div style={styles.registerSentIcon}>
+            <Icon name="check" size={28} />
+          </div>
+          <div style={styles.registerSentTitle}>
+            {usedFallback ? "Almost done!" : "Submitted!"}
+          </div>
+          <div style={styles.registerSentSub}>
+            {usedFallback
+              ? "We couldn't reach our system, so we opened WhatsApp with your details filled in instead — just hit send and our team will take it from there."
+              : "Your business details have been saved. Our team will review them and add your listing to Bmnassa shortly."}
+          </div>
+          <button style={styles.saveBtn} onClick={() => { setSent(false); setForm(emptyRegisterForm); }}>
+            Register another business
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={styles.registerWrap}>
+      <button style={styles.backBtn} onClick={onBack}>
+        <Icon name="back" size={18} /> Back to app
+      </button>
+      <h1 style={styles.adminTitle}>List Your Business</h1>
+      <div style={styles.adminSub}>
+        Fill in your details below — your submission is saved automatically and our team will review it shortly.
+      </div>
+
+      <form style={styles.form} onSubmit={submit}>
+        <input style={styles.input} placeholder="Business name *" value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })} />
+
+        <select style={styles.input} value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}>
+          <option value="">Category *</option>
+          {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+
+        <input style={styles.input} placeholder="Owner name" value={form.owner}
+          onChange={(e) => setForm({ ...form, owner: e.target.value })} />
+
+        <input style={styles.input} placeholder="Phone *" value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+
+        <input style={styles.input} placeholder="WhatsApp (if different from phone)" value={form.whatsapp}
+          onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
+
+        <select style={styles.input} value={form.city}
+          onChange={(e) => setForm({ ...form, city: e.target.value })}>
+          <option value="">City *</option>
+          {CITIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+
+        <input style={styles.input} placeholder="Address / neighborhood" value={form.address}
+          onChange={(e) => setForm({ ...form, address: e.target.value })} />
+
+        <textarea style={{ ...styles.input, minHeight: 70 }} placeholder="Short description of your business"
+          value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+
+        <div style={styles.formBtnRow}>
+          <button type="submit" style={{ ...styles.saveBtn, opacity: canSubmit && !submitting ? 1 : 0.5 }} disabled={!canSubmit || submitting}>
+            {submitting ? "Submitting…" : "Submit"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
@@ -4615,6 +4778,15 @@ const styles = {
   },
 
   adminWrap: { padding: 20 },
+  registerWrap: { padding: 20 },
+  registerSentWrap: { textAlign: "center", padding: "60px 16px 20px" },
+  registerSentIcon: {
+    width: 64, height: 64, borderRadius: "50%", margin: "0 auto 18px",
+    background: "linear-gradient(135deg, #2dd4bf, #22c3ae)", color: "#062824",
+    display: "flex", alignItems: "center", justifyContent: "center",
+  },
+  registerSentTitle: { fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 8 },
+  registerSentSub: { fontSize: 13.5, color: "#999", lineHeight: 1.6, maxWidth: 300, margin: "0 auto 24px" },
   adminTitle: { fontSize: 20, margin: "4px 0 2px" },
   adminSub: { color: "#888", fontSize: 13, marginBottom: 16 },
   adminSectionHeader: {
