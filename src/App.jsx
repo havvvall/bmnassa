@@ -4608,6 +4608,7 @@ const globalCss = `
   /* ---- Glass redesign ---- */
   .bm-glass-root, .bm-glass-root * { box-sizing: border-box; }
   .bm-glass-root { font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
+  .bm-glass-root button, .bm-glass-root a { color: inherit; font-family: inherit; -webkit-tap-highlight-color: transparent; }
 
   .bm-blob { position: absolute; filter: blur(38px); opacity: 0.85; pointer-events: none; will-change: transform, border-radius; z-index: 0; }
   .bm-blob.teal { width: 130%; height: 46%; left: -35%; top: -12%; background: radial-gradient(closest-side, #0f6f78, rgba(15,111,120,0.55) 60%, transparent); animation: bmDriftA 14s ease-in-out infinite alternate, bmMorph 11s ease-in-out infinite; }
