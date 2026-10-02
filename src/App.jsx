@@ -143,9 +143,9 @@ const ICON_OPTIONS = [
   "flame", "spark", "grid",
 ];
 
-function buildQrSrc(biz, size = 200) {
+function buildQrSrc(biz, size = 200, lang = "en") {
   const cleanPhone = biz.phone.replace(/\s+/g, "");
-  const qrData = encodeURIComponent(`BEGIN:VCARD\nVERSION:3.0\nFN:${biz.name}\nTEL:${cleanPhone}\nADR:${biz.address}\nEND:VCARD`);
+  const qrData = encodeURIComponent(`BEGIN:VCARD\nVERSION:3.0\nFN:${bizNameOf(biz, lang)}\nTEL:${cleanPhone}\nADR:${bizAddressOf(biz, lang)}\nEND:VCARD`);
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&bgcolor=0f0f0f&color=ffffff&margin=10&data=${qrData}`;
 }
 
@@ -183,6 +183,9 @@ function trField(obj, key, lang) {
 }
 const catNameOf = (cat, lang) => trField(cat, "name", lang);
 const cityNameOf = (c, lang) => trField(c, "name", lang);
+const bizNameOf = (b, lang) => trField(b, "name", lang);
+const bizAddressOf = (b, lang) => trField(b, "address", lang);
+const bizAddressShortOf = (b, lang) => bizAddressOf(b, lang).split(/[,،]\s*/)[0];
 
 const UI = {
   introTag: { en: "SMART BUSINESS DIRECTORY", ku: "ڕێنمای بازرگانی زیرەک", ar: "دليل الأعمال الذكي" },
@@ -244,6 +247,11 @@ const UI = {
   customerReviewsOn: { en: "{n} customer reviews on Bmnassa", ku: "{n} هەڵسەنگاندنی کڕیار لە Bmnassa", ar: "{n} تقييمًا من العملاء على Bmnassa" },
   categoryColon: { en: "Category: {cat}", ku: "پۆل: {cat}", ar: "الفئة: {cat}" },
   call: { en: "Call", ku: "پەیوەندی", ar: "اتصال" },
+  bizDescTemplate: {
+    en: "{name} offers reliable {cat} in {address}.",
+    ku: "{name} خزمەتگوزاری {cat} بە متمانەوە پێشکەش دەکات لە {address}.",
+    ar: "تقدّم {name} خدمات {cat} موثوقة في {address}.",
+  },
 };
 
 function t(key, lang, vars) {
@@ -258,3253 +266,5003 @@ function t(key, lang, vars) {
 const BUSINESSES = [
   {
     "id": 1,
-    "name": "Halgurd Plumbing Services",
+    "name": {
+      "en": "Halgurd Plumbing Services",
+      "ku": "هەڵگورد خزمەتگوزاری کارسازی بۆری",
+      "ar": "هەڵگورد خدمات السباكة"
+    },
     "category": "plumbing",
     "owner": "Kawa Jaza",
     "phone": "0771 242 2679",
     "whatsapp": "0771 242 2679",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 143,
-    "verified": true,
-    "description": "Halgurd Plumbing Services offers reliable plumbers in Andazyari, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 2,
-    "name": "Zana Plumbing Services",
+    "name": {
+      "en": "Zana Plumbing Services",
+      "ku": "زانا خزمەتگوزاری کارسازی بۆری",
+      "ar": "زانا خدمات السباكة"
+    },
     "category": "plumbing",
     "owner": "Kawa Karim",
     "phone": "0771 617 1434",
     "whatsapp": "0771 617 1434",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 170,
-    "verified": false,
-    "description": "Zana Plumbing Services offers reliable plumbers in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 3,
-    "name": "Sardar Plumbing Est.",
+    "name": {
+      "en": "Sardar Plumbing Est.",
+      "ku": "سەردار دامەزراوەی کارسازی بۆری",
+      "ar": "سەردار مؤسسة أعمال السباكة"
+    },
     "category": "plumbing",
     "owner": "Hawre Ahmad",
     "phone": "0780 448 5552",
     "whatsapp": "0780 448 5552",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 90,
-    "verified": true,
-    "description": "Sardar Plumbing Est. offers reliable plumbers in Salim Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 4,
-    "name": "Ranj Plumbing Services",
+    "name": {
+      "en": "Ranj Plumbing Services",
+      "ku": "ڕەنج خزمەتگوزاری کارسازی بۆری",
+      "ar": "ڕەنج خدمات السباكة"
+    },
     "category": "plumbing",
     "owner": "Bakhtiar Rashid",
     "phone": "0773 926 1711",
     "whatsapp": "0773 926 1711",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 141,
-    "verified": true,
-    "description": "Ranj Plumbing Services offers reliable plumbers in Sarshaqam, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 5,
-    "name": "Payam Water & Pipe Works",
+    "name": {
+      "en": "Payam Water & Pipe Works",
+      "ku": "پەیام کاری ئاو و بۆری",
+      "ar": "پەیام أعمال المياه والأنابيب"
+    },
     "category": "plumbing",
     "owner": "Hemin Barzinji",
     "phone": "0775 691 4150",
     "whatsapp": "0775 691 4150",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 15,
-    "verified": false,
-    "description": "Payam Water & Pipe Works offers reliable plumbers in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 6,
-    "name": "Shene Water & Pipe Works",
+    "name": {
+      "en": "Shene Water & Pipe Works",
+      "ku": "شێنە کاری ئاو و بۆری",
+      "ar": "شێنە أعمال المياه والأنابيب"
+    },
     "category": "plumbing",
     "owner": "Hemin Salih",
     "phone": "0780 384 8428",
     "whatsapp": "0780 384 8428",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 97,
-    "verified": true,
-    "description": "Shene Water & Pipe Works offers reliable plumbers in Goizha, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 7,
-    "name": "Bakhtiar Plumbing Services",
+    "name": {
+      "en": "Bakhtiar Plumbing Services",
+      "ku": "بەختیار خزمەتگوزاری کارسازی بۆری",
+      "ar": "بەختیار خدمات السباكة"
+    },
     "category": "plumbing",
     "owner": "Nazdar Jaza",
     "phone": "0770 646 5010",
     "whatsapp": "0770 646 5010",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 101,
-    "verified": true,
-    "description": "Bakhtiar Plumbing Services offers reliable plumbers in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 8,
-    "name": "Payam Plumbing Est.",
+    "name": {
+      "en": "Payam Plumbing Est.",
+      "ku": "پەیام دامەزراوەی کارسازی بۆری",
+      "ar": "پەیام مؤسسة أعمال السباكة"
+    },
     "category": "plumbing",
     "owner": "Snur Barzinji",
     "phone": "0775 963 1916",
     "whatsapp": "0775 963 1916",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 12,
-    "verified": false,
-    "description": "Payam Plumbing Est. offers reliable plumbers in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 9,
-    "name": "Ranj Water & Pipe Works",
+    "name": {
+      "en": "Ranj Water & Pipe Works",
+      "ku": "ڕەنج کاری ئاو و بۆری",
+      "ar": "ڕەنج أعمال المياه والأنابيب"
+    },
     "category": "plumbing",
     "owner": "Hemin Qadir",
     "phone": "0775 317 9179",
     "whatsapp": "0775 317 9179",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 168,
-    "verified": false,
-    "description": "Ranj Water & Pipe Works offers reliable plumbers in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 10,
-    "name": "Hawre Plumbing Services",
+    "name": {
+      "en": "Hawre Plumbing Services",
+      "ku": "هاوڕێ خزمەتگوزاری کارسازی بۆری",
+      "ar": "هاوڕێ خدمات السباكة"
+    },
     "category": "plumbing",
     "owner": "Bnar Barzinji",
     "phone": "0773 864 8019",
     "whatsapp": "0773 864 8019",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 106,
-    "verified": false,
-    "description": "Hawre Plumbing Services offers reliable plumbers in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 11,
-    "name": "Shvan Power Solutions",
+    "name": {
+      "en": "Shvan Power Solutions",
+      "ku": "شوان چارەسەری وزە",
+      "ar": "شوان حلول الطاقة"
+    },
     "category": "electrical",
     "owner": "Rekan Karim",
     "phone": "0751 256 3621",
     "whatsapp": "0751 256 3621",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 112,
-    "verified": false,
-    "description": "Shvan Power Solutions offers reliable electricians in Bakhtiary, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 12,
-    "name": "Ranj Electrical Services",
+    "name": {
+      "en": "Ranj Electrical Services",
+      "ku": "ڕەنج خزمەتگوزاری کارەبایی",
+      "ar": "ڕەنج خدمات كهربائية"
+    },
     "category": "electrical",
     "owner": "Shorsh Mahmud",
     "phone": "0773 666 1188",
     "whatsapp": "0773 666 1188",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 33,
-    "verified": false,
-    "description": "Ranj Electrical Services offers reliable electricians in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 13,
-    "name": "Dilshad Electrical Services",
+    "name": {
+      "en": "Dilshad Electrical Services",
+      "ku": "دڵشاد خزمەتگوزاری کارەبایی",
+      "ar": "دڵشاد خدمات كهربائية"
+    },
     "category": "electrical",
     "owner": "Shene Sofi",
     "phone": "0773 545 3591",
     "whatsapp": "0773 545 3591",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 71,
-    "verified": false,
-    "description": "Dilshad Electrical Services offers reliable electricians in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 14,
-    "name": "Shene Electric Works",
+    "name": {
+      "en": "Shene Electric Works",
+      "ku": "شێنە کاری کارەبایی",
+      "ar": "شێنە أعمال كهربائية"
+    },
     "category": "electrical",
     "owner": "Twana Rasul",
     "phone": "0771 256 7126",
     "whatsapp": "0771 256 7126",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 142,
-    "verified": false,
-    "description": "Shene Electric Works offers reliable electricians in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 15,
-    "name": "Payam Power Solutions",
+    "name": {
+      "en": "Payam Power Solutions",
+      "ku": "پەیام چارەسەری وزە",
+      "ar": "پەیام حلول الطاقة"
+    },
     "category": "electrical",
     "owner": "Payam Ahmad",
     "phone": "0775 600 1319",
     "whatsapp": "0775 600 1319",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 96,
-    "verified": false,
-    "description": "Payam Power Solutions offers reliable electricians in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 16,
-    "name": "Newroz Electrical Services",
+    "name": {
+      "en": "Newroz Electrical Services",
+      "ku": "نەورۆز خزمەتگوزاری کارەبایی",
+      "ar": "نەورۆز خدمات كهربائية"
+    },
     "category": "electrical",
     "owner": "Bnar Hussein",
     "phone": "0751 187 8962",
     "whatsapp": "0751 187 8962",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 140,
-    "verified": false,
-    "description": "Newroz Electrical Services offers reliable electricians in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 17,
-    "name": "Rekan Power Solutions",
+    "name": {
+      "en": "Rekan Power Solutions",
+      "ku": "ڕێکان چارەسەری وزە",
+      "ar": "ڕێکان حلول الطاقة"
+    },
     "category": "electrical",
     "owner": "Diyar Jaza",
     "phone": "0780 316 9835",
     "whatsapp": "0780 316 9835",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 180,
-    "verified": true,
-    "description": "Rekan Power Solutions offers reliable electricians in Shorsh Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 18,
-    "name": "Peshraw Electrical Services",
+    "name": {
+      "en": "Peshraw Electrical Services",
+      "ku": "پێشڕەو خزمەتگوزاری کارەبایی",
+      "ar": "پێشڕەو خدمات كهربائية"
+    },
     "category": "electrical",
     "owner": "Nazdar Rashid",
     "phone": "0781 223 5061",
     "whatsapp": "0781 223 5061",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 90,
-    "verified": true,
-    "description": "Peshraw Electrical Services offers reliable electricians in Dwezakh, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 19,
-    "name": "Dilshad Electric Works",
+    "name": {
+      "en": "Dilshad Electric Works",
+      "ku": "دڵشاد کاری کارەبایی",
+      "ar": "دڵشاد أعمال كهربائية"
+    },
     "category": "electrical",
     "owner": "Awat Salih",
     "phone": "0751 824 1964",
     "whatsapp": "0751 824 1964",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 12,
-    "verified": false,
-    "description": "Dilshad Electric Works offers reliable electricians in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 20,
-    "name": "Hemin Power Solutions",
+    "name": {
+      "en": "Hemin Power Solutions",
+      "ku": "هێمن چارەسەری وزە",
+      "ar": "هێمن حلول الطاقة"
+    },
     "category": "electrical",
     "owner": "Bnar Jaza",
     "phone": "0771 652 3167",
     "whatsapp": "0771 652 3167",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 150,
-    "verified": false,
-    "description": "Hemin Power Solutions offers reliable electricians in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 21,
-    "name": "Bnar Wood Works",
+    "name": {
+      "en": "Bnar Wood Works",
+      "ku": "بنار کاری دار",
+      "ar": "بنار أعمال خشبية"
+    },
     "category": "carpentry",
     "owner": "Beston Aziz",
     "phone": "0751 199 8062",
     "whatsapp": "0751 199 8062",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 109,
-    "verified": false,
-    "description": "Bnar Wood Works offers reliable carpenters in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 22,
-    "name": "Chnur Carpentry Workshop",
+    "name": {
+      "en": "Chnur Carpentry Workshop",
+      "ku": "چنوور کارگەی داری",
+      "ar": "چنوور ورشة نجارة"
+    },
     "category": "carpentry",
     "owner": "Nazdar Rasul",
     "phone": "0780 845 6559",
     "whatsapp": "0780 845 6559",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 31,
-    "verified": true,
-    "description": "Chnur Carpentry Workshop offers reliable carpenters in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 23,
-    "name": "Karwan Furniture & Carpentry",
+    "name": {
+      "en": "Karwan Furniture & Carpentry",
+      "ku": "کاروان کەلوپەل و داری",
+      "ar": "کاروان أثاث ونجارة"
+    },
     "category": "carpentry",
     "owner": "Sardar Faraj",
     "phone": "0770 385 8579",
     "whatsapp": "0770 385 8579",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 23,
-    "verified": false,
-    "description": "Karwan Furniture & Carpentry offers reliable carpenters in Iskan, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 24,
-    "name": "Goran Furniture & Carpentry",
+    "name": {
+      "en": "Goran Furniture & Carpentry",
+      "ku": "گۆران کەلوپەل و داری",
+      "ar": "گۆران أثاث ونجارة"
+    },
     "category": "carpentry",
     "owner": "Aram Hussein",
     "phone": "0750 195 4872",
     "whatsapp": "0750 195 4872",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 128,
-    "verified": false,
-    "description": "Goran Furniture & Carpentry offers reliable carpenters in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 25,
-    "name": "Goran Wood Works",
+    "name": {
+      "en": "Goran Wood Works",
+      "ku": "گۆران کاری دار",
+      "ar": "گۆران أعمال خشبية"
+    },
     "category": "carpentry",
     "owner": "Handren Hussein",
     "phone": "0780 102 7396",
     "whatsapp": "0780 102 7396",
-    "address": "Salim Street, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
+    "rating": 4,
     "reviews": 120,
-    "verified": true,
-    "description": "Goran Wood Works offers reliable carpenters in Salim Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 26,
-    "name": "Snur Furniture & Carpentry",
+    "name": {
+      "en": "Snur Furniture & Carpentry",
+      "ku": "سنوور کەلوپەل و داری",
+      "ar": "سنوور أثاث ونجارة"
+    },
     "category": "carpentry",
     "owner": "Beston Barzinji",
     "phone": "0770 294 5861",
     "whatsapp": "0770 294 5861",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 18,
-    "verified": false,
-    "description": "Snur Furniture & Carpentry offers reliable carpenters in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 27,
-    "name": "Dilshad Carpentry Workshop",
+    "name": {
+      "en": "Dilshad Carpentry Workshop",
+      "ku": "دڵشاد کارگەی داری",
+      "ar": "دڵشاد ورشة نجارة"
+    },
     "category": "carpentry",
     "owner": "Chnur Sofi",
     "phone": "0750 698 8811",
     "whatsapp": "0750 698 8811",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 139,
-    "verified": true,
-    "description": "Dilshad Carpentry Workshop offers reliable carpenters in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 28,
-    "name": "Twana Carpentry Workshop",
+    "name": {
+      "en": "Twana Carpentry Workshop",
+      "ku": "توانا کارگەی داری",
+      "ar": "توانا ورشة نجارة"
+    },
     "category": "carpentry",
     "owner": "Goran Amin",
     "phone": "0751 791 4853",
     "whatsapp": "0751 791 4853",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 149,
-    "verified": true,
-    "description": "Twana Carpentry Workshop offers reliable carpenters in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 29,
-    "name": "Shorsh Carpentry Workshop",
+    "name": {
+      "en": "Shorsh Carpentry Workshop",
+      "ku": "شۆڕش کارگەی داری",
+      "ar": "شۆڕش ورشة نجارة"
+    },
     "category": "carpentry",
     "owner": "Shorsh Karim",
     "phone": "0775 367 4346",
     "whatsapp": "0775 367 4346",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 84,
-    "verified": true,
-    "description": "Shorsh Carpentry Workshop offers reliable carpenters in Iskan, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 30,
-    "name": "Ranj Carpentry Workshop",
+    "name": {
+      "en": "Ranj Carpentry Workshop",
+      "ku": "ڕەنج کارگەی داری",
+      "ar": "ڕەنج ورشة نجارة"
+    },
     "category": "carpentry",
     "owner": "Nazdar Baban",
     "phone": "0775 869 2188",
     "whatsapp": "0775 869 2188",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 163,
-    "verified": false,
-    "description": "Ranj Carpentry Workshop offers reliable carpenters in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 31,
-    "name": "Aram Engineering Consultancy",
+    "name": {
+      "en": "Aram Engineering Consultancy",
+      "ku": "ئارام ڕاوێژکاری ئەندازیاری",
+      "ar": "ئارام استشارات هندسية"
+    },
     "category": "civil-eng",
     "owner": "Dilshad Qadir",
     "phone": "0773 235 6718",
     "whatsapp": "0773 235 6718",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 66,
-    "verified": false,
-    "description": "Aram Engineering Consultancy offers reliable civil engineers in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 32,
-    "name": "Diyar Civil Engineering Office",
+    "name": {
+      "en": "Diyar Civil Engineering Office",
+      "ku": "دیار ئۆفیسی ئەندازیاری شارستانی",
+      "ar": "دیار مكتب هندسة مدنية"
+    },
     "category": "civil-eng",
     "owner": "Newroz Barzinji",
     "phone": "0750 783 5905",
     "whatsapp": "0750 783 5905",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 30,
-    "verified": false,
-    "description": "Diyar Civil Engineering Office offers reliable civil engineers in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 33,
-    "name": "Shvan Civil Engineering Office",
+    "name": {
+      "en": "Shvan Civil Engineering Office",
+      "ku": "شوان ئۆفیسی ئەندازیاری شارستانی",
+      "ar": "شوان مكتب هندسة مدنية"
+    },
     "category": "civil-eng",
     "owner": "Aram Rasul",
     "phone": "0770 378 5616",
     "whatsapp": "0770 378 5616",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 91,
-    "verified": true,
-    "description": "Shvan Civil Engineering Office offers reliable civil engineers in Empire Area, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 34,
-    "name": "Halgurd Civil Engineering Office",
+    "name": {
+      "en": "Halgurd Civil Engineering Office",
+      "ku": "هەڵگورد ئۆفیسی ئەندازیاری شارستانی",
+      "ar": "هەڵگورد مكتب هندسة مدنية"
+    },
     "category": "civil-eng",
     "owner": "Twana Sultan",
     "phone": "0750 194 7939",
     "whatsapp": "0750 194 7939",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 15,
-    "verified": true,
-    "description": "Halgurd Civil Engineering Office offers reliable civil engineers in Bakhtiary Town, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 35,
-    "name": "Shene Engineering Consultancy",
+    "name": {
+      "en": "Shene Engineering Consultancy",
+      "ku": "شێنە ڕاوێژکاری ئەندازیاری",
+      "ar": "شێنە استشارات هندسية"
+    },
     "category": "civil-eng",
     "owner": "Halgurd Jaza",
     "phone": "0781 664 8007",
     "whatsapp": "0781 664 8007",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 32,
-    "verified": true,
-    "description": "Shene Engineering Consultancy offers reliable civil engineers in Salim Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 36,
-    "name": "Handren Structural Consultants",
+    "name": {
+      "en": "Handren Structural Consultants",
+      "ku": "هەندرین ڕاوێژکاری ستراکچەر",
+      "ar": "هەندرین استشاريو إنشائي"
+    },
     "category": "civil-eng",
     "owner": "Handren Faraj",
     "phone": "0750 954 7049",
     "whatsapp": "0750 954 7049",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 41,
-    "verified": false,
-    "description": "Handren Structural Consultants offers reliable civil engineers in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 37,
-    "name": "Rebaz Civil Engineering Office",
+    "name": {
+      "en": "Rebaz Civil Engineering Office",
+      "ku": "ڕێباز ئۆفیسی ئەندازیاری شارستانی",
+      "ar": "ڕێباز مكتب هندسة مدنية"
+    },
     "category": "civil-eng",
     "owner": "Bakhtiar Hussein",
     "phone": "0771 798 5088",
     "whatsapp": "0771 798 5088",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 94,
-    "verified": false,
-    "description": "Rebaz Civil Engineering Office offers reliable civil engineers in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 38,
-    "name": "Handren Civil Engineering Office",
+    "name": {
+      "en": "Handren Civil Engineering Office",
+      "ku": "هەندرین ئۆفیسی ئەندازیاری شارستانی",
+      "ar": "هەندرین مكتب هندسة مدنية"
+    },
     "category": "civil-eng",
     "owner": "Shorsh Faraj",
     "phone": "0770 919 3900",
     "whatsapp": "0770 919 3900",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 10,
-    "verified": true,
-    "description": "Handren Civil Engineering Office offers reliable civil engineers in Andazyari, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 39,
-    "name": "Payam Civil Engineering Office",
+    "name": {
+      "en": "Payam Civil Engineering Office",
+      "ku": "پەیام ئۆفیسی ئەندازیاری شارستانی",
+      "ar": "پەیام مكتب هندسة مدنية"
+    },
     "category": "civil-eng",
     "owner": "Beston Aziz",
     "phone": "0773 263 2771",
     "whatsapp": "0773 263 2771",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 13,
-    "verified": false,
-    "description": "Payam Civil Engineering Office offers reliable civil engineers in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 40,
-    "name": "Bnar Engineering Consultancy",
+    "name": {
+      "en": "Bnar Engineering Consultancy",
+      "ku": "بنار ڕاوێژکاری ئەندازیاری",
+      "ar": "بنار استشارات هندسية"
+    },
     "category": "civil-eng",
     "owner": "Newroz Mahmud",
     "phone": "0773 940 4728",
     "whatsapp": "0773 940 4728",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 172,
-    "verified": true,
-    "description": "Bnar Engineering Consultancy offers reliable civil engineers in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 41,
-    "name": "Sherko Design & Architecture Office",
+    "name": {
+      "en": "Sherko Design & Architecture Office",
+      "ku": "شێرکۆ ئۆفیسی دیزاین و تەلارسازی",
+      "ar": "شێرکۆ مكتب تصميم وهندسة معمارية"
+    },
     "category": "architecture",
     "owner": "Goran Karim",
     "phone": "0775 756 9346",
     "whatsapp": "0775 756 9346",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 141,
-    "verified": true,
-    "description": "Sherko Design & Architecture Office offers reliable architects in Bakhtiary Town, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 42,
-    "name": "Kawa Architecture Studio",
+    "name": {
+      "en": "Kawa Architecture Studio",
+      "ku": "کاوا ستۆدیۆی تەلارسازی",
+      "ar": "کاوا استوديو هندسة معمارية"
+    },
     "category": "architecture",
     "owner": "Handren Jaza",
     "phone": "0773 139 2776",
     "whatsapp": "0773 139 2776",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 92,
-    "verified": false,
-    "description": "Kawa Architecture Studio offers reliable architects in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 43,
-    "name": "Shorsh Architects",
+    "name": {
+      "en": "Shorsh Architects",
+      "ku": "شۆڕش تەلارسازان",
+      "ar": "شۆڕش مهندسون معماريون"
+    },
     "category": "architecture",
     "owner": "Aram Hama",
     "phone": "0771 360 1727",
     "whatsapp": "0771 360 1727",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 4,
-    "verified": false,
-    "description": "Shorsh Architects offers reliable architects in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 44,
-    "name": "Beston Architects",
+    "name": {
+      "en": "Beston Architects",
+      "ku": "بیستوون تەلارسازان",
+      "ar": "بیستوون مهندسون معماريون"
+    },
     "category": "architecture",
     "owner": "Nazdar Qadir",
     "phone": "0780 171 6409",
     "whatsapp": "0780 171 6409",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 173,
-    "verified": false,
-    "description": "Beston Architects offers reliable architects in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 45,
-    "name": "Chnur Design & Architecture Office",
+    "name": {
+      "en": "Chnur Design & Architecture Office",
+      "ku": "چنوور ئۆفیسی دیزاین و تەلارسازی",
+      "ar": "چنوور مكتب تصميم وهندسة معمارية"
+    },
     "category": "architecture",
     "owner": "Twana Baban",
     "phone": "0775 512 5844",
     "whatsapp": "0775 512 5844",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 53,
-    "verified": false,
-    "description": "Chnur Design & Architecture Office offers reliable architects in Iskan, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 46,
-    "name": "Ranj Architects",
+    "name": {
+      "en": "Ranj Architects",
+      "ku": "ڕەنج تەلارسازان",
+      "ar": "ڕەنج مهندسون معماريون"
+    },
     "category": "architecture",
     "owner": "Chnur Amin",
     "phone": "0773 515 9977",
     "whatsapp": "0773 515 9977",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 81,
-    "verified": true,
-    "description": "Ranj Architects offers reliable architects in Sarshaqam, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 47,
-    "name": "Zana Architects",
+    "name": {
+      "en": "Zana Architects",
+      "ku": "زانا تەلارسازان",
+      "ar": "زانا مهندسون معماريون"
+    },
     "category": "architecture",
     "owner": "Shorsh Sofi",
     "phone": "0781 552 4501",
     "whatsapp": "0781 552 4501",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 47,
-    "verified": false,
-    "description": "Zana Architects offers reliable architects in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 48,
-    "name": "Peshraw Architects",
+    "name": {
+      "en": "Peshraw Architects",
+      "ku": "پێشڕەو تەلارسازان",
+      "ar": "پێشڕەو مهندسون معماريون"
+    },
     "category": "architecture",
     "owner": "Nazdar Kakei",
     "phone": "0751 938 4848",
     "whatsapp": "0751 938 4848",
-    "address": "Qirga, Sulaymaniyah",
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 61,
-    "verified": false,
-    "description": "Peshraw Architects offers reliable architects in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 49,
-    "name": "Shvan Architecture Studio",
+    "name": {
+      "en": "Shvan Architecture Studio",
+      "ku": "شوان ستۆدیۆی تەلارسازی",
+      "ar": "شوان استوديو هندسة معمارية"
+    },
     "category": "architecture",
     "owner": "Rebaz Salih",
     "phone": "0751 566 7790",
     "whatsapp": "0751 566 7790",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 151,
-    "verified": true,
-    "description": "Shvan Architecture Studio offers reliable architects in Chwarbakh, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 50,
-    "name": "Snur Design & Architecture Office",
+    "name": {
+      "en": "Snur Design & Architecture Office",
+      "ku": "سنوور ئۆفیسی دیزاین و تەلارسازی",
+      "ar": "سنوور مكتب تصميم وهندسة معمارية"
+    },
     "category": "architecture",
     "owner": "Rekan Hama",
     "phone": "0770 771 1090",
     "whatsapp": "0770 771 1090",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 31,
-    "verified": false,
-    "description": "Snur Design & Architecture Office offers reliable architects in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 51,
-    "name": "Bnar Interior Design Studio",
+    "name": {
+      "en": "Bnar Interior Design Studio",
+      "ku": "بنار ستۆدیۆی ڕازاندنەوەی ناوماڵ",
+      "ar": "بنار استوديو تصميم داخلي"
+    },
     "category": "interior",
     "owner": "Beston Sheikhani",
     "phone": "0750 670 5082",
     "whatsapp": "0750 670 5082",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 35,
-    "verified": false,
-    "description": "Bnar Interior Design Studio offers reliable interior designers in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 52,
-    "name": "Beston Home Interiors",
+    "name": {
+      "en": "Beston Home Interiors",
+      "ku": "بیستوون ناوماڵی خانوو",
+      "ar": "بیستوون ديكورات داخلية للمنازل"
+    },
     "category": "interior",
     "owner": "Nazdar Sheikhani",
     "phone": "0775 873 8251",
     "whatsapp": "0775 873 8251",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 133,
-    "verified": false,
-    "description": "Beston Home Interiors offers reliable interior designers in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 53,
-    "name": "Payam Design House",
+    "name": {
+      "en": "Payam Design House",
+      "ku": "پەیام ماڵی دیزاین",
+      "ar": "پەیام دار التصميم"
+    },
     "category": "interior",
     "owner": "Sardar Amin",
     "phone": "0781 365 5050",
     "whatsapp": "0781 365 5050",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 74,
-    "verified": false,
-    "description": "Payam Design House offers reliable interior designers in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 54,
-    "name": "Twana Home Interiors",
+    "name": {
+      "en": "Twana Home Interiors",
+      "ku": "توانا ناوماڵی خانوو",
+      "ar": "توانا ديكورات داخلية للمنازل"
+    },
     "category": "interior",
     "owner": "Halgurd Salih",
     "phone": "0781 179 5681",
     "whatsapp": "0781 179 5681",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 89,
-    "verified": true,
-    "description": "Twana Home Interiors offers reliable interior designers in Bakhtiary Town, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 55,
-    "name": "Dilshad Interior Design Studio",
+    "name": {
+      "en": "Dilshad Interior Design Studio",
+      "ku": "دڵشاد ستۆدیۆی ڕازاندنەوەی ناوماڵ",
+      "ar": "دڵشاد استوديو تصميم داخلي"
+    },
     "category": "interior",
     "owner": "Shvan Faraj",
     "phone": "0780 810 3503",
     "whatsapp": "0780 810 3503",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 20,
-    "verified": false,
-    "description": "Dilshad Interior Design Studio offers reliable interior designers in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 56,
-    "name": "Sherko Design House",
+    "name": {
+      "en": "Sherko Design House",
+      "ku": "شێرکۆ ماڵی دیزاین",
+      "ar": "شێرکۆ دار التصميم"
+    },
     "category": "interior",
     "owner": "Sardar Aziz",
     "phone": "0771 952 7883",
     "whatsapp": "0771 952 7883",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 153,
-    "verified": false,
-    "description": "Sherko Design House offers reliable interior designers in Bakhtiary, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 57,
-    "name": "Kawa Design House",
+    "name": {
+      "en": "Kawa Design House",
+      "ku": "کاوا ماڵی دیزاین",
+      "ar": "کاوا دار التصميم"
+    },
     "category": "interior",
     "owner": "Ranj Sultan",
     "phone": "0775 405 7389",
     "whatsapp": "0775 405 7389",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 111,
-    "verified": false,
-    "description": "Kawa Design House offers reliable interior designers in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 58,
-    "name": "Chnur Design House",
+    "name": {
+      "en": "Chnur Design House",
+      "ku": "چنوور ماڵی دیزاین",
+      "ar": "چنوور دار التصميم"
+    },
     "category": "interior",
     "owner": "Beston Kakei",
     "phone": "0781 324 5471",
     "whatsapp": "0781 324 5471",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 11,
-    "verified": false,
-    "description": "Chnur Design House offers reliable interior designers in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 59,
-    "name": "Nazdar Design House",
+    "name": {
+      "en": "Nazdar Design House",
+      "ku": "نازدار ماڵی دیزاین",
+      "ar": "نازدار دار التصميم"
+    },
     "category": "interior",
     "owner": "Beston Hama",
     "phone": "0781 230 9751",
     "whatsapp": "0781 230 9751",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 104,
-    "verified": false,
-    "description": "Nazdar Design House offers reliable interior designers in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 60,
-    "name": "Nazdar Interior Design Studio",
+    "name": {
+      "en": "Nazdar Interior Design Studio",
+      "ku": "نازدار ستۆدیۆی ڕازاندنەوەی ناوماڵ",
+      "ar": "نازدار استوديو تصميم داخلي"
+    },
     "category": "interior",
     "owner": "Hemin Aziz",
     "phone": "0781 286 1823",
     "whatsapp": "0781 286 1823",
-    "address": "Rapareen, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
+    "rating": 4,
     "reviews": 87,
-    "verified": true,
-    "description": "Nazdar Interior Design Studio offers reliable interior designers in Rapareen, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 61,
-    "name": "Sherko Decor & Paint",
+    "name": {
+      "en": "Sherko Decor & Paint",
+      "ku": "شێرکۆ ڕازاندنەوە و ڕەنگکاری",
+      "ar": "شێرکۆ ديكور ودهان"
+    },
     "category": "painting",
     "owner": "Shene Hama",
     "phone": "0780 358 2341",
     "whatsapp": "0780 358 2341",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 142,
-    "verified": true,
-    "description": "Sherko Decor & Paint offers reliable painters in Bakhtiary Town, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 62,
-    "name": "Bakhtiar Painting Services",
+    "name": {
+      "en": "Bakhtiar Painting Services",
+      "ku": "بەختیار خزمەتگوزاری ڕەنگکاری",
+      "ar": "بەختیار خدمات الدهان"
+    },
     "category": "painting",
     "owner": "Halgurd Karim",
     "phone": "0750 353 4266",
     "whatsapp": "0750 353 4266",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 163,
-    "verified": true,
-    "description": "Bakhtiar Painting Services offers reliable painters in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 63,
-    "name": "Shvan Decor & Paint",
+    "name": {
+      "en": "Shvan Decor & Paint",
+      "ku": "شوان ڕازاندنەوە و ڕەنگکاری",
+      "ar": "شوان ديكور ودهان"
+    },
     "category": "painting",
     "owner": "Nazdar Rasul",
     "phone": "0771 576 5198",
     "whatsapp": "0771 576 5198",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 46,
-    "verified": false,
-    "description": "Shvan Decor & Paint offers reliable painters in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 64,
-    "name": "Chnur Painting Contractors",
+    "name": {
+      "en": "Chnur Painting Contractors",
+      "ku": "چنوور پەیمانکاری ڕەنگکاری",
+      "ar": "چنوور مقاولو دهان"
+    },
     "category": "painting",
     "owner": "Aram Amin",
     "phone": "0751 692 1420",
     "whatsapp": "0751 692 1420",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 151,
-    "verified": false,
-    "description": "Chnur Painting Contractors offers reliable painters in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 65,
-    "name": "Ranj Decor & Paint",
+    "name": {
+      "en": "Ranj Decor & Paint",
+      "ku": "ڕەنج ڕازاندنەوە و ڕەنگکاری",
+      "ar": "ڕەنج ديكور ودهان"
+    },
     "category": "painting",
     "owner": "Snur Qadir",
     "phone": "0771 204 5941",
     "whatsapp": "0771 204 5941",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 157,
-    "verified": false,
-    "description": "Ranj Decor & Paint offers reliable painters in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 66,
-    "name": "Beston Painting Contractors",
+    "name": {
+      "en": "Beston Painting Contractors",
+      "ku": "بیستوون پەیمانکاری ڕەنگکاری",
+      "ar": "بیستوون مقاولو دهان"
+    },
     "category": "painting",
     "owner": "Beston Hussein",
     "phone": "0780 777 7071",
     "whatsapp": "0780 777 7071",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 169,
-    "verified": true,
-    "description": "Beston Painting Contractors offers reliable painters in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 67,
-    "name": "Goran Decor & Paint",
+    "name": {
+      "en": "Goran Decor & Paint",
+      "ku": "گۆران ڕازاندنەوە و ڕەنگکاری",
+      "ar": "گۆران ديكور ودهان"
+    },
     "category": "painting",
     "owner": "Newroz Sultan",
     "phone": "0780 470 8532",
     "whatsapp": "0780 470 8532",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 115,
-    "verified": true,
-    "description": "Goran Decor & Paint offers reliable painters in Goizha, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 68,
-    "name": "Twana Painting Contractors",
+    "name": {
+      "en": "Twana Painting Contractors",
+      "ku": "توانا پەیمانکاری ڕەنگکاری",
+      "ar": "توانا مقاولو دهان"
+    },
     "category": "painting",
     "owner": "Hawre Kakei",
     "phone": "0781 576 8136",
     "whatsapp": "0781 576 8136",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 155,
-    "verified": true,
-    "description": "Twana Painting Contractors offers reliable painters in Empire Area, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 69,
-    "name": "Goran Painting Services",
+    "name": {
+      "en": "Goran Painting Services",
+      "ku": "گۆران خزمەتگوزاری ڕەنگکاری",
+      "ar": "گۆران خدمات الدهان"
+    },
     "category": "painting",
     "owner": "Newroz Karim",
     "phone": "0781 349 8613",
     "whatsapp": "0781 349 8613",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 175,
-    "verified": false,
-    "description": "Goran Painting Services offers reliable painters in Bakhtiary Town, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 70,
-    "name": "Kawa Decor & Paint",
+    "name": {
+      "en": "Kawa Decor & Paint",
+      "ku": "کاوا ڕازاندنەوە و ڕەنگکاری",
+      "ar": "کاوا ديكور ودهان"
+    },
     "category": "painting",
     "owner": "Goran Sofi",
     "phone": "0781 317 6813",
     "whatsapp": "0781 317 6813",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 91,
-    "verified": true,
-    "description": "Kawa Decor & Paint offers reliable painters in Salim Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 71,
-    "name": "Shorsh Climate Systems",
+    "name": {
+      "en": "Shorsh Climate Systems",
+      "ku": "شۆڕش سیستەمی کەش و هەوا",
+      "ar": "شۆڕش أنظمة التكييف"
+    },
     "category": "hvac",
     "owner": "Handren Jaza",
     "phone": "0750 629 4130",
     "whatsapp": "0750 629 4130",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 108,
-    "verified": false,
-    "description": "Shorsh Climate Systems offers reliable ac & refrigeration in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 72,
-    "name": "Shene AC & Cooling Services",
+    "name": {
+      "en": "Shene AC & Cooling Services",
+      "ku": "شێنە خزمەتگوزاری ساردکەرەوە",
+      "ar": "شێنە خدمات التكييف والتبريد"
+    },
     "category": "hvac",
     "owner": "Snur Sultan",
     "phone": "0781 911 1282",
     "whatsapp": "0781 911 1282",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 60,
-    "verified": false,
-    "description": "Shene AC & Cooling Services offers reliable ac & refrigeration in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 73,
-    "name": "Bnar Refrigeration Technicians",
+    "name": {
+      "en": "Bnar Refrigeration Technicians",
+      "ku": "بنار تەکنیشیانی ساردکردنەوە",
+      "ar": "بنار فنيو تبريد"
+    },
     "category": "hvac",
     "owner": "Nazdar Zangana",
     "phone": "0781 666 9698",
     "whatsapp": "0781 666 9698",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 144,
-    "verified": true,
-    "description": "Bnar Refrigeration Technicians offers reliable ac & refrigeration in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 74,
-    "name": "Snur Refrigeration Technicians",
+    "name": {
+      "en": "Snur Refrigeration Technicians",
+      "ku": "سنوور تەکنیشیانی ساردکردنەوە",
+      "ar": "سنوور فنيو تبريد"
+    },
     "category": "hvac",
     "owner": "Hawre Baban",
     "phone": "0771 223 4155",
     "whatsapp": "0771 223 4155",
-    "address": "Bakhtiary Town, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
+    "rating": 4,
     "reviews": 141,
-    "verified": false,
-    "description": "Snur Refrigeration Technicians offers reliable ac & refrigeration in Bakhtiary Town, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 75,
-    "name": "Snur AC & Cooling Services",
+    "name": {
+      "en": "Snur AC & Cooling Services",
+      "ku": "سنوور خزمەتگوزاری ساردکەرەوە",
+      "ar": "سنوور خدمات التكييف والتبريد"
+    },
     "category": "hvac",
     "owner": "Karwan Qadir",
     "phone": "0773 841 9595",
     "whatsapp": "0773 841 9595",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 29,
-    "verified": false,
-    "description": "Snur AC & Cooling Services offers reliable ac & refrigeration in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 76,
-    "name": "Peshraw AC & Cooling Services",
+    "name": {
+      "en": "Peshraw AC & Cooling Services",
+      "ku": "پێشڕەو خزمەتگوزاری ساردکەرەوە",
+      "ar": "پێشڕەو خدمات التكييف والتبريد"
+    },
     "category": "hvac",
     "owner": "Bakhtiar Amin",
     "phone": "0750 825 9751",
     "whatsapp": "0750 825 9751",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 15,
-    "verified": false,
-    "description": "Peshraw AC & Cooling Services offers reliable ac & refrigeration in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 77,
-    "name": "Dilshad Refrigeration Technicians",
+    "name": {
+      "en": "Dilshad Refrigeration Technicians",
+      "ku": "دڵشاد تەکنیشیانی ساردکردنەوە",
+      "ar": "دڵشاد فنيو تبريد"
+    },
     "category": "hvac",
     "owner": "Snur Faraj",
     "phone": "0751 993 1200",
     "whatsapp": "0751 993 1200",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 124,
-    "verified": false,
-    "description": "Dilshad Refrigeration Technicians offers reliable ac & refrigeration in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 78,
-    "name": "Sherko AC & Cooling Services",
+    "name": {
+      "en": "Sherko AC & Cooling Services",
+      "ku": "شێرکۆ خزمەتگوزاری ساردکەرەوە",
+      "ar": "شێرکۆ خدمات التكييف والتبريد"
+    },
     "category": "hvac",
     "owner": "Rebaz Jaza",
     "phone": "0751 941 2070",
     "whatsapp": "0751 941 2070",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 22,
-    "verified": false,
-    "description": "Sherko AC & Cooling Services offers reliable ac & refrigeration in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 79,
-    "name": "Nazdar AC & Cooling Services",
+    "name": {
+      "en": "Nazdar AC & Cooling Services",
+      "ku": "نازدار خزمەتگوزاری ساردکەرەوە",
+      "ar": "نازدار خدمات التكييف والتبريد"
+    },
     "category": "hvac",
     "owner": "Shvan Faraj",
     "phone": "0773 187 5066",
     "whatsapp": "0773 187 5066",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 110,
-    "verified": false,
-    "description": "Nazdar AC & Cooling Services offers reliable ac & refrigeration in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 80,
-    "name": "Beston Climate Systems",
+    "name": {
+      "en": "Beston Climate Systems",
+      "ku": "بیستوون سیستەمی کەش و هەوا",
+      "ar": "بیستوون أنظمة التكييف"
+    },
     "category": "hvac",
     "owner": "Bnar Sheikhani",
     "phone": "0781 553 5871",
     "whatsapp": "0781 553 5871",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 113,
-    "verified": true,
-    "description": "Beston Climate Systems offers reliable ac & refrigeration in Kurdistan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 81,
-    "name": "Shorsh Cleaning Services",
+    "name": {
+      "en": "Shorsh Cleaning Services",
+      "ku": "شۆڕش خزمەتگوزاری پاکژکردنەوە",
+      "ar": "شۆڕش خدمات التنظيف"
+    },
     "category": "cleaning",
     "owner": "Shorsh Rasul",
     "phone": "0771 370 2330",
     "whatsapp": "0771 370 2330",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 48,
-    "verified": false,
-    "description": "Shorsh Cleaning Services offers reliable home cleaning in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 82,
-    "name": "Diyar Cleaning Services",
+    "name": {
+      "en": "Diyar Cleaning Services",
+      "ku": "دیار خزمەتگوزاری پاکژکردنەوە",
+      "ar": "دیار خدمات التنظيف"
+    },
     "category": "cleaning",
     "owner": "Zana Mahmud",
     "phone": "0781 398 1534",
     "whatsapp": "0781 398 1534",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 76,
-    "verified": false,
-    "description": "Diyar Cleaning Services offers reliable home cleaning in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 83,
-    "name": "Sardar Cleaning Services",
+    "name": {
+      "en": "Sardar Cleaning Services",
+      "ku": "سەردار خزمەتگوزاری پاکژکردنەوە",
+      "ar": "سەردار خدمات التنظيف"
+    },
     "category": "cleaning",
     "owner": "Nazdar Salih",
     "phone": "0771 535 2880",
     "whatsapp": "0771 535 2880",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 169,
-    "verified": true,
-    "description": "Sardar Cleaning Services offers reliable home cleaning in Bakhtiary Town, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 84,
-    "name": "Hawre Cleaning Services",
+    "name": {
+      "en": "Hawre Cleaning Services",
+      "ku": "هاوڕێ خزمەتگوزاری پاکژکردنەوە",
+      "ar": "هاوڕێ خدمات التنظيف"
+    },
     "category": "cleaning",
     "owner": "Hemin Hussein",
     "phone": "0773 709 5728",
     "whatsapp": "0773 709 5728",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 123,
-    "verified": false,
-    "description": "Hawre Cleaning Services offers reliable home cleaning in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 85,
-    "name": "Snur Home Cleaning Co.",
+    "name": {
+      "en": "Snur Home Cleaning Co.",
+      "ku": "سنوور کۆمپانیای پاکژکردنەوەی ماڵ",
+      "ar": "سنوور شركة تنظيف منازل"
+    },
     "category": "cleaning",
     "owner": "Hawre Sheikhani",
     "phone": "0781 548 2317",
     "whatsapp": "0781 548 2317",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 114,
-    "verified": false,
-    "description": "Snur Home Cleaning Co. offers reliable home cleaning in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 86,
-    "name": "Shorsh Home Cleaning Co.",
+    "name": {
+      "en": "Shorsh Home Cleaning Co.",
+      "ku": "شۆڕش کۆمپانیای پاکژکردنەوەی ماڵ",
+      "ar": "شۆڕش شركة تنظيف منازل"
+    },
     "category": "cleaning",
     "owner": "Kawa Karim",
     "phone": "0750 883 5415",
     "whatsapp": "0750 883 5415",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 48,
-    "verified": false,
-    "description": "Shorsh Home Cleaning Co. offers reliable home cleaning in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 87,
-    "name": "Halgurd Home Cleaning Co.",
+    "name": {
+      "en": "Halgurd Home Cleaning Co.",
+      "ku": "هەڵگورد کۆمپانیای پاکژکردنەوەی ماڵ",
+      "ar": "هەڵگورد شركة تنظيف منازل"
+    },
     "category": "cleaning",
     "owner": "Payam Jaza",
     "phone": "0780 750 9056",
     "whatsapp": "0780 750 9056",
-    "address": "Salim Street, Sulaymaniyah",
-    "rating": 5.0,
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
+    "rating": 5,
     "reviews": 124,
-    "verified": true,
-    "description": "Halgurd Home Cleaning Co. offers reliable home cleaning in Salim Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 88,
-    "name": "Sherko Home Cleaning Co.",
+    "name": {
+      "en": "Sherko Home Cleaning Co.",
+      "ku": "شێرکۆ کۆمپانیای پاکژکردنەوەی ماڵ",
+      "ar": "شێرکۆ شركة تنظيف منازل"
+    },
     "category": "cleaning",
     "owner": "Nazdar Rasul",
     "phone": "0775 521 9117",
     "whatsapp": "0775 521 9117",
-    "address": "Salim Street, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
+    "rating": 4,
     "reviews": 106,
-    "verified": false,
-    "description": "Sherko Home Cleaning Co. offers reliable home cleaning in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 89,
-    "name": "Dilshad Cleaning Services",
+    "name": {
+      "en": "Dilshad Cleaning Services",
+      "ku": "دڵشاد خزمەتگوزاری پاکژکردنەوە",
+      "ar": "دڵشاد خدمات التنظيف"
+    },
     "category": "cleaning",
     "owner": "Sardar Karim",
     "phone": "0773 431 2899",
     "whatsapp": "0773 431 2899",
-    "address": "Qirga, Sulaymaniyah",
-    "rating": 5.0,
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
+    "rating": 5,
     "reviews": 107,
-    "verified": false,
-    "description": "Dilshad Cleaning Services offers reliable home cleaning in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 90,
-    "name": "Newroz Cleaning Services",
+    "name": {
+      "en": "Newroz Cleaning Services",
+      "ku": "نەورۆز خزمەتگوزاری پاکژکردنەوە",
+      "ar": "نەورۆز خدمات التنظيف"
+    },
     "category": "cleaning",
     "owner": "Nazdar Barzinji",
     "phone": "0780 155 4073",
     "whatsapp": "0780 155 4073",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 163,
-    "verified": false,
-    "description": "Newroz Cleaning Services offers reliable home cleaning in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 91,
-    "name": "Halgurd Moving Services",
+    "name": {
+      "en": "Halgurd Moving Services",
+      "ku": "هەڵگورد خزمەتگوزاری گواستنەوە",
+      "ar": "هەڵگورد خدمات النقل"
+    },
     "category": "moving",
     "owner": "Shene Hussein",
     "phone": "0773 662 3146",
     "whatsapp": "0773 662 3146",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 116,
-    "verified": false,
-    "description": "Halgurd Moving Services offers reliable movers & packers in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 92,
-    "name": "Rekan Movers & Packers",
+    "name": {
+      "en": "Rekan Movers & Packers",
+      "ku": "ڕێکان گواستنەوە و بەستنەوە",
+      "ar": "ڕێکان نقل وتغليف"
+    },
     "category": "moving",
     "owner": "Kawa Kakei",
     "phone": "0770 418 1224",
     "whatsapp": "0770 418 1224",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 27,
-    "verified": true,
-    "description": "Rekan Movers & Packers offers reliable movers & packers in Andazyari, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 93,
-    "name": "Newroz Movers & Packers",
+    "name": {
+      "en": "Newroz Movers & Packers",
+      "ku": "نەورۆز گواستنەوە و بەستنەوە",
+      "ar": "نەورۆز نقل وتغليف"
+    },
     "category": "moving",
     "owner": "Sardar Rasul",
     "phone": "0781 833 5781",
     "whatsapp": "0781 833 5781",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 73,
-    "verified": false,
-    "description": "Newroz Movers & Packers offers reliable movers & packers in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 94,
-    "name": "Rekan Moving Services",
+    "name": {
+      "en": "Rekan Moving Services",
+      "ku": "ڕێکان خزمەتگوزاری گواستنەوە",
+      "ar": "ڕێکان خدمات النقل"
+    },
     "category": "moving",
     "owner": "Bnar Mahmud",
     "phone": "0770 492 4122",
     "whatsapp": "0770 492 4122",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 134,
-    "verified": false,
-    "description": "Rekan Moving Services offers reliable movers & packers in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 95,
-    "name": "Shvan Movers & Packers",
+    "name": {
+      "en": "Shvan Movers & Packers",
+      "ku": "شوان گواستنەوە و بەستنەوە",
+      "ar": "شوان نقل وتغليف"
+    },
     "category": "moving",
     "owner": "Hawre Aziz",
     "phone": "0773 940 1042",
     "whatsapp": "0773 940 1042",
-    "address": "Qirga, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
+    "rating": 4,
     "reviews": 80,
-    "verified": false,
-    "description": "Shvan Movers & Packers offers reliable movers & packers in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 96,
-    "name": "Awat Cargo & Relocation",
+    "name": {
+      "en": "Awat Cargo & Relocation",
+      "ku": "ئاوات گواستنەوە و بارهەڵگرتن",
+      "ar": "ئاوات شحن ونقل"
+    },
     "category": "moving",
     "owner": "Rekan Faraj",
     "phone": "0781 453 6446",
     "whatsapp": "0781 453 6446",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 143,
-    "verified": false,
-    "description": "Awat Cargo & Relocation offers reliable movers & packers in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 97,
-    "name": "Payam Moving Services",
+    "name": {
+      "en": "Payam Moving Services",
+      "ku": "پەیام خزمەتگوزاری گواستنەوە",
+      "ar": "پەیام خدمات النقل"
+    },
     "category": "moving",
     "owner": "Goran Qadir",
     "phone": "0780 339 7730",
     "whatsapp": "0780 339 7730",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 125,
-    "verified": false,
-    "description": "Payam Moving Services offers reliable movers & packers in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 98,
-    "name": "Beston Moving Services",
+    "name": {
+      "en": "Beston Moving Services",
+      "ku": "بیستوون خزمەتگوزاری گواستنەوە",
+      "ar": "بیستوون خدمات النقل"
+    },
     "category": "moving",
     "owner": "Ranj Faraj",
     "phone": "0750 229 9229",
     "whatsapp": "0750 229 9229",
-    "address": "Chwarbakh, Sulaymaniyah",
-    "rating": 5.0,
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
+    "rating": 5,
     "reviews": 88,
-    "verified": false,
-    "description": "Beston Moving Services offers reliable movers & packers in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 99,
-    "name": "Goran Moving Services",
+    "name": {
+      "en": "Goran Moving Services",
+      "ku": "گۆران خزمەتگوزاری گواستنەوە",
+      "ar": "گۆران خدمات النقل"
+    },
     "category": "moving",
     "owner": "Aram Sheikhani",
     "phone": "0750 839 3361",
     "whatsapp": "0750 839 3361",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 171,
-    "verified": false,
-    "description": "Goran Moving Services offers reliable movers & packers in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 100,
-    "name": "Hemin Moving Services",
+    "name": {
+      "en": "Hemin Moving Services",
+      "ku": "هێمن خزمەتگوزاری گواستنەوە",
+      "ar": "هێمن خدمات النقل"
+    },
     "category": "moving",
     "owner": "Beston Jaza",
     "phone": "0780 765 2315",
     "whatsapp": "0780 765 2315",
-    "address": "Qirga, Sulaymaniyah",
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 176,
-    "verified": false,
-    "description": "Hemin Moving Services offers reliable movers & packers in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 101,
-    "name": "Ranj Car Service Center",
+    "name": {
+      "en": "Ranj Car Service Center",
+      "ku": "ڕەنج ناوەندی خزمەتگوزاری ئۆتۆمبێل",
+      "ar": "ڕەنج مركز خدمة السيارات"
+    },
     "category": "mechanics",
     "owner": "Halgurd Sultan",
     "phone": "0750 732 2121",
     "whatsapp": "0750 732 2121",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 179,
-    "verified": false,
-    "description": "Ranj Car Service Center offers reliable car mechanics in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 102,
-    "name": "Bnar Mechanics Workshop",
+    "name": {
+      "en": "Bnar Mechanics Workshop",
+      "ku": "بنار کارگەی میکانیکی",
+      "ar": "بنار ورشة ميكانيكا"
+    },
     "category": "mechanics",
     "owner": "Hemin Aziz",
     "phone": "0751 554 3725",
     "whatsapp": "0751 554 3725",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 11,
-    "verified": true,
-    "description": "Bnar Mechanics Workshop offers reliable car mechanics in Goizha, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 103,
-    "name": "Beston Auto Repair Garage",
+    "name": {
+      "en": "Beston Auto Repair Garage",
+      "ku": "بیستوون گەراجی چاککردنەوەی ئۆتۆمبێل",
+      "ar": "بیستوون كراج تصليح السيارات"
+    },
     "category": "mechanics",
     "owner": "Peshraw Rashid",
     "phone": "0780 249 5000",
     "whatsapp": "0780 249 5000",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 148,
-    "verified": false,
-    "description": "Beston Auto Repair Garage offers reliable car mechanics in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 104,
-    "name": "Diyar Auto Repair Garage",
+    "name": {
+      "en": "Diyar Auto Repair Garage",
+      "ku": "دیار گەراجی چاککردنەوەی ئۆتۆمبێل",
+      "ar": "دیار كراج تصليح السيارات"
+    },
     "category": "mechanics",
     "owner": "Diyar Karim",
     "phone": "0780 734 4945",
     "whatsapp": "0780 734 4945",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 153,
-    "verified": true,
-    "description": "Diyar Auto Repair Garage offers reliable car mechanics in Sarshaqam, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 105,
-    "name": "Sardar Mechanics Workshop",
+    "name": {
+      "en": "Sardar Mechanics Workshop",
+      "ku": "سەردار کارگەی میکانیکی",
+      "ar": "سەردار ورشة ميكانيكا"
+    },
     "category": "mechanics",
     "owner": "Hawre Mahmud",
     "phone": "0750 923 8622",
     "whatsapp": "0750 923 8622",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 177,
-    "verified": false,
-    "description": "Sardar Mechanics Workshop offers reliable car mechanics in Bakhtiary Town, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 106,
-    "name": "Hemin Car Service Center",
+    "name": {
+      "en": "Hemin Car Service Center",
+      "ku": "هێمن ناوەندی خزمەتگوزاری ئۆتۆمبێل",
+      "ar": "هێمن مركز خدمة السيارات"
+    },
     "category": "mechanics",
     "owner": "Bakhtiar Zangana",
     "phone": "0780 806 5097",
     "whatsapp": "0780 806 5097",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 81,
-    "verified": true,
-    "description": "Hemin Car Service Center offers reliable car mechanics in Ashty, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 107,
-    "name": "Aram Auto Repair Garage",
+    "name": {
+      "en": "Aram Auto Repair Garage",
+      "ku": "ئارام گەراجی چاککردنەوەی ئۆتۆمبێل",
+      "ar": "ئارام كراج تصليح السيارات"
+    },
     "category": "mechanics",
     "owner": "Ranj Zangana",
     "phone": "0773 816 5837",
     "whatsapp": "0773 816 5837",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 172,
-    "verified": false,
-    "description": "Aram Auto Repair Garage offers reliable car mechanics in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 108,
-    "name": "Kawa Mechanics Workshop",
+    "name": {
+      "en": "Kawa Mechanics Workshop",
+      "ku": "کاوا کارگەی میکانیکی",
+      "ar": "کاوا ورشة ميكانيكا"
+    },
     "category": "mechanics",
     "owner": "Goran Hussein",
     "phone": "0781 952 5689",
     "whatsapp": "0781 952 5689",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 62,
-    "verified": false,
-    "description": "Kawa Mechanics Workshop offers reliable car mechanics in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 109,
-    "name": "Bakhtiar Auto Repair Garage",
+    "name": {
+      "en": "Bakhtiar Auto Repair Garage",
+      "ku": "بەختیار گەراجی چاککردنەوەی ئۆتۆمبێل",
+      "ar": "بەختیار كراج تصليح السيارات"
+    },
     "category": "mechanics",
     "owner": "Halgurd Qadir",
     "phone": "0773 794 3240",
     "whatsapp": "0773 794 3240",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 164,
-    "verified": false,
-    "description": "Bakhtiar Auto Repair Garage offers reliable car mechanics in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 110,
-    "name": "Peshraw Car Service Center",
+    "name": {
+      "en": "Peshraw Car Service Center",
+      "ku": "پێشڕەو ناوەندی خزمەتگوزاری ئۆتۆمبێل",
+      "ar": "پێشڕەو مركز خدمة السيارات"
+    },
     "category": "mechanics",
     "owner": "Rebaz Zangana",
     "phone": "0770 192 5835",
     "whatsapp": "0770 192 5835",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 110,
-    "verified": true,
-    "description": "Peshraw Car Service Center offers reliable car mechanics in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 111,
-    "name": "Shvan Shine Car Care",
+    "name": {
+      "en": "Shvan Shine Car Care",
+      "ku": "شوان چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "شوان العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Handren Rashid",
     "phone": "0773 950 3695",
     "whatsapp": "0773 950 3695",
-    "address": "Shorsh Street, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
+    "rating": 4,
     "reviews": 127,
-    "verified": false,
-    "description": "Shvan Shine Car Care offers reliable car wash & detailing in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 112,
-    "name": "Peshraw Shine Car Care",
+    "name": {
+      "en": "Peshraw Shine Car Care",
+      "ku": "پێشڕەو چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "پێشڕەو العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Goran Sofi",
     "phone": "0781 177 3306",
     "whatsapp": "0781 177 3306",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 61,
-    "verified": false,
-    "description": "Peshraw Shine Car Care offers reliable car wash & detailing in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 113,
-    "name": "Chnur Shine Car Care",
+    "name": {
+      "en": "Chnur Shine Car Care",
+      "ku": "چنوور چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "چنوور العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Ranj Barzinji",
     "phone": "0751 909 7464",
     "whatsapp": "0751 909 7464",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 141,
-    "verified": true,
-    "description": "Chnur Shine Car Care offers reliable car wash & detailing in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 114,
-    "name": "Bakhtiar Shine Car Care",
+    "name": {
+      "en": "Bakhtiar Shine Car Care",
+      "ku": "بەختیار چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "بەختیار العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Chnur Jaza",
     "phone": "0780 942 7086",
     "whatsapp": "0780 942 7086",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 63,
-    "verified": false,
-    "description": "Bakhtiar Shine Car Care offers reliable car wash & detailing in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 115,
-    "name": "Shorsh Shine Car Care",
+    "name": {
+      "en": "Shorsh Shine Car Care",
+      "ku": "شۆڕش چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "شۆڕش العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Sherko Kakei",
     "phone": "0751 750 8606",
     "whatsapp": "0751 750 8606",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 81,
-    "verified": false,
-    "description": "Shorsh Shine Car Care offers reliable car wash & detailing in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 116,
-    "name": "Aram Car Wash & Detailing",
+    "name": {
+      "en": "Aram Car Wash & Detailing",
+      "ku": "ئارام شوشتن و پاککردنەوەی ئۆتۆمبێل",
+      "ar": "ئارام غسيل وتلميع السيارات"
+    },
     "category": "carwash",
     "owner": "Rebaz Hussein",
     "phone": "0781 218 2592",
     "whatsapp": "0781 218 2592",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 141,
-    "verified": true,
-    "description": "Aram Car Wash & Detailing offers reliable car wash & detailing in Ashty, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 117,
-    "name": "Sardar Auto Spa",
+    "name": {
+      "en": "Sardar Auto Spa",
+      "ku": "سەردار سپای ئۆتۆمبێل",
+      "ar": "سەردار سبا السيارات"
+    },
     "category": "carwash",
     "owner": "Nazdar Barzinji",
     "phone": "0770 524 2622",
     "whatsapp": "0770 524 2622",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 161,
-    "verified": false,
-    "description": "Sardar Auto Spa offers reliable car wash & detailing in Iskan, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 118,
-    "name": "Hawre Car Wash & Detailing",
+    "name": {
+      "en": "Hawre Car Wash & Detailing",
+      "ku": "هاوڕێ شوشتن و پاککردنەوەی ئۆتۆمبێل",
+      "ar": "هاوڕێ غسيل وتلميع السيارات"
+    },
     "category": "carwash",
     "owner": "Snur Rashid",
     "phone": "0781 555 4868",
     "whatsapp": "0781 555 4868",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 29,
-    "verified": false,
-    "description": "Hawre Car Wash & Detailing offers reliable car wash & detailing in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 119,
-    "name": "Handren Shine Car Care",
+    "name": {
+      "en": "Handren Shine Car Care",
+      "ku": "هەندرین چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "هەندرین العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Bakhtiar Hussein",
     "phone": "0773 294 3001",
     "whatsapp": "0773 294 3001",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 120,
-    "verified": true,
-    "description": "Handren Shine Car Care offers reliable car wash & detailing in Kurdistan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 120,
-    "name": "Karwan Shine Car Care",
+    "name": {
+      "en": "Karwan Shine Car Care",
+      "ku": "کاروان چاودێری درەوشانەوەی ئۆتۆمبێل",
+      "ar": "کاروان العناية بلمعان السيارات"
+    },
     "category": "carwash",
     "owner": "Halgurd Kakei",
     "phone": "0750 905 6464",
     "whatsapp": "0750 905 6464",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 36,
-    "verified": false,
-    "description": "Karwan Shine Car Care offers reliable car wash & detailing in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 121,
-    "name": "Karwan Photography Studio",
+    "name": {
+      "en": "Karwan Photography Studio",
+      "ku": "کاروان ستۆدیۆی وێنەگری",
+      "ar": "کاروان استوديو تصوير"
+    },
     "category": "photography",
     "owner": "Newroz Barzinji",
     "phone": "0771 932 4817",
     "whatsapp": "0771 932 4817",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 41,
-    "verified": false,
-    "description": "Karwan Photography Studio offers reliable photographers in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 122,
-    "name": "Shorsh Photography Studio",
+    "name": {
+      "en": "Shorsh Photography Studio",
+      "ku": "شۆڕش ستۆدیۆی وێنەگری",
+      "ar": "شۆڕش استوديو تصوير"
+    },
     "category": "photography",
     "owner": "Hawre Faraj",
     "phone": "0773 917 3858",
     "whatsapp": "0773 917 3858",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 10,
-    "verified": true,
-    "description": "Shorsh Photography Studio offers reliable photographers in Rapareen, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 123,
-    "name": "Bakhtiar Photography Studio",
+    "name": {
+      "en": "Bakhtiar Photography Studio",
+      "ku": "بەختیار ستۆدیۆی وێنەگری",
+      "ar": "بەختیار استوديو تصوير"
+    },
     "category": "photography",
     "owner": "Awat Sofi",
     "phone": "0770 371 1858",
     "whatsapp": "0770 371 1858",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 111,
-    "verified": false,
-    "description": "Bakhtiar Photography Studio offers reliable photographers in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 124,
-    "name": "Chnur Photography Studio",
+    "name": {
+      "en": "Chnur Photography Studio",
+      "ku": "چنوور ستۆدیۆی وێنەگری",
+      "ar": "چنوور استوديو تصوير"
+    },
     "category": "photography",
     "owner": "Rekan Mahmud",
     "phone": "0751 562 9254",
     "whatsapp": "0751 562 9254",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 161,
-    "verified": true,
-    "description": "Chnur Photography Studio offers reliable photographers in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 125,
-    "name": "Beston Studio",
+    "name": {
+      "en": "Beston Studio",
+      "ku": "بیستوون ستۆدیۆ",
+      "ar": "بیستوون استوديو"
+    },
     "category": "photography",
     "owner": "Twana Baban",
     "phone": "0750 162 8847",
     "whatsapp": "0750 162 8847",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 113,
-    "verified": false,
-    "description": "Beston Studio offers reliable photographers in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 126,
-    "name": "Rekan Studio",
+    "name": {
+      "en": "Rekan Studio",
+      "ku": "ڕێکان ستۆدیۆ",
+      "ar": "ڕێکان استوديو"
+    },
     "category": "photography",
     "owner": "Payam Mahmud",
     "phone": "0751 429 3430",
     "whatsapp": "0751 429 3430",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 74,
-    "verified": false,
-    "description": "Rekan Studio offers reliable photographers in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 127,
-    "name": "Awat Studio",
+    "name": {
+      "en": "Awat Studio",
+      "ku": "ئاوات ستۆدیۆ",
+      "ar": "ئاوات استوديو"
+    },
     "category": "photography",
     "owner": "Snur Sofi",
     "phone": "0773 564 9282",
     "whatsapp": "0773 564 9282",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 29,
-    "verified": false,
-    "description": "Awat Studio offers reliable photographers in Kurdistan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 128,
-    "name": "Aram Studio",
+    "name": {
+      "en": "Aram Studio",
+      "ku": "ئارام ستۆدیۆ",
+      "ar": "ئارام استوديو"
+    },
     "category": "photography",
     "owner": "Halgurd Barzinji",
     "phone": "0780 562 4743",
     "whatsapp": "0780 562 4743",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 120,
-    "verified": false,
-    "description": "Aram Studio offers reliable photographers in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 129,
-    "name": "Sherko Photo & Video",
+    "name": {
+      "en": "Sherko Photo & Video",
+      "ku": "شێرکۆ وێنە و ڤیدیۆ",
+      "ar": "شێرکۆ تصوير فوتوغرافي وفيديو"
+    },
     "category": "photography",
     "owner": "Sherko Jaza",
     "phone": "0770 803 8770",
     "whatsapp": "0770 803 8770",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 25,
-    "verified": true,
-    "description": "Sherko Photo & Video offers reliable photographers in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 130,
-    "name": "Chnur Photo & Video",
+    "name": {
+      "en": "Chnur Photo & Video",
+      "ku": "چنوور وێنە و ڤیدیۆ",
+      "ar": "چنوور تصوير فوتوغرافي وفيديو"
+    },
     "category": "photography",
     "owner": "Beston Faraj",
     "phone": "0750 700 6400",
     "whatsapp": "0750 700 6400",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 109,
-    "verified": false,
-    "description": "Chnur Photo & Video offers reliable photographers in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 131,
-    "name": "Nazdar Fashion Atelier",
+    "name": {
+      "en": "Nazdar Fashion Atelier",
+      "ku": "نازدار ئاتۆلیەی فاشن",
+      "ar": "نازدار أتيليه أزياء"
+    },
     "category": "tailoring",
     "owner": "Goran Hussein",
     "phone": "0773 460 2697",
     "whatsapp": "0773 460 2697",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 58,
-    "verified": true,
-    "description": "Nazdar Fashion Atelier offers reliable tailors & fashion in Ashty, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 132,
-    "name": "Rekan Tailoring House",
+    "name": {
+      "en": "Rekan Tailoring House",
+      "ku": "ڕێکان ماڵی دەرزیکاری",
+      "ar": "ڕێکان دار الخياطة"
+    },
     "category": "tailoring",
     "owner": "Goran Rasul",
     "phone": "0775 217 5564",
     "whatsapp": "0775 217 5564",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 113,
-    "verified": false,
-    "description": "Rekan Tailoring House offers reliable tailors & fashion in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 133,
-    "name": "Shene Custom Tailors",
+    "name": {
+      "en": "Shene Custom Tailors",
+      "ku": "شێنە دەرزیکاری تایبەت",
+      "ar": "شێنە خياطة حسب الطلب"
+    },
     "category": "tailoring",
     "owner": "Shorsh Barzinji",
     "phone": "0773 129 3955",
     "whatsapp": "0773 129 3955",
-    "address": "Sarchinar, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
+    "rating": 4,
     "reviews": 83,
-    "verified": false,
-    "description": "Shene Custom Tailors offers reliable tailors & fashion in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 134,
-    "name": "Bakhtiar Tailoring House",
+    "name": {
+      "en": "Bakhtiar Tailoring House",
+      "ku": "بەختیار ماڵی دەرزیکاری",
+      "ar": "بەختیار دار الخياطة"
+    },
     "category": "tailoring",
     "owner": "Diyar Faraj",
     "phone": "0780 171 3324",
     "whatsapp": "0780 171 3324",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 11,
-    "verified": true,
-    "description": "Bakhtiar Tailoring House offers reliable tailors & fashion in Raparin, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 135,
-    "name": "Twana Tailoring House",
+    "name": {
+      "en": "Twana Tailoring House",
+      "ku": "توانا ماڵی دەرزیکاری",
+      "ar": "توانا دار الخياطة"
+    },
     "category": "tailoring",
     "owner": "Ranj Aziz",
     "phone": "0775 261 7062",
     "whatsapp": "0775 261 7062",
-    "address": "Dwezakh, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
+    "rating": 4,
     "reviews": 87,
-    "verified": false,
-    "description": "Twana Tailoring House offers reliable tailors & fashion in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 136,
-    "name": "Awat Custom Tailors",
+    "name": {
+      "en": "Awat Custom Tailors",
+      "ku": "ئاوات دەرزیکاری تایبەت",
+      "ar": "ئاوات خياطة حسب الطلب"
+    },
     "category": "tailoring",
     "owner": "Hemin Hussein",
     "phone": "0770 872 1815",
     "whatsapp": "0770 872 1815",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 73,
-    "verified": false,
-    "description": "Awat Custom Tailors offers reliable tailors & fashion in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 137,
-    "name": "Zana Fashion Atelier",
+    "name": {
+      "en": "Zana Fashion Atelier",
+      "ku": "زانا ئاتۆلیەی فاشن",
+      "ar": "زانا أتيليه أزياء"
+    },
     "category": "tailoring",
     "owner": "Shorsh Mahmud",
     "phone": "0773 320 9394",
     "whatsapp": "0773 320 9394",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 114,
-    "verified": true,
-    "description": "Zana Fashion Atelier offers reliable tailors & fashion in Iskan, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 138,
-    "name": "Nazdar Custom Tailors",
+    "name": {
+      "en": "Nazdar Custom Tailors",
+      "ku": "نازدار دەرزیکاری تایبەت",
+      "ar": "نازدار خياطة حسب الطلب"
+    },
     "category": "tailoring",
     "owner": "Awat Sultan",
     "phone": "0773 146 4612",
     "whatsapp": "0773 146 4612",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 157,
-    "verified": true,
-    "description": "Nazdar Custom Tailors offers reliable tailors & fashion in Shorsh Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 139,
-    "name": "Karwan Fashion Atelier",
+    "name": {
+      "en": "Karwan Fashion Atelier",
+      "ku": "کاروان ئاتۆلیەی فاشن",
+      "ar": "کاروان أتيليه أزياء"
+    },
     "category": "tailoring",
     "owner": "Karwan Faraj",
     "phone": "0773 435 2965",
     "whatsapp": "0773 435 2965",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 114,
-    "verified": true,
-    "description": "Karwan Fashion Atelier offers reliable tailors & fashion in Bakhtiary Town, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 140,
-    "name": "Ranj Custom Tailors",
+    "name": {
+      "en": "Ranj Custom Tailors",
+      "ku": "ڕەنج دەرزیکاری تایبەت",
+      "ar": "ڕەنج خياطة حسب الطلب"
+    },
     "category": "tailoring",
     "owner": "Snur Salih",
     "phone": "0775 173 7505",
     "whatsapp": "0775 173 7505",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 14,
-    "verified": false,
-    "description": "Ranj Custom Tailors offers reliable tailors & fashion in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 141,
-    "name": "Sardar Bakery & Pastry",
+    "name": {
+      "en": "Sardar Bakery & Pastry",
+      "ku": "سەردار نانەوایی و شیرینی",
+      "ar": "سەردار مخبز وحلويات"
+    },
     "category": "bakery",
     "owner": "Goran Sofi",
     "phone": "0780 687 7626",
     "whatsapp": "0780 687 7626",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 110,
-    "verified": true,
-    "description": "Sardar Bakery & Pastry offers reliable bakeries & pastry in Raparin, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 142,
-    "name": "Ranj Bakery & Pastry",
+    "name": {
+      "en": "Ranj Bakery & Pastry",
+      "ku": "ڕەنج نانەوایی و شیرینی",
+      "ar": "ڕەنج مخبز وحلويات"
+    },
     "category": "bakery",
     "owner": "Sherko Amin",
     "phone": "0781 951 6928",
     "whatsapp": "0781 951 6928",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 31,
-    "verified": true,
-    "description": "Ranj Bakery & Pastry offers reliable bakeries & pastry in Sarshaqam, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 143,
-    "name": "Awat Sweets & Bakery",
+    "name": {
+      "en": "Awat Sweets & Bakery",
+      "ku": "ئاوات شیرینی و نانەوایی",
+      "ar": "ئاوات حلويات ومخبوزات"
+    },
     "category": "bakery",
     "owner": "Twana Karim",
     "phone": "0773 863 6562",
     "whatsapp": "0773 863 6562",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 47,
-    "verified": true,
-    "description": "Awat Sweets & Bakery offers reliable bakeries & pastry in Kurdistan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 144,
-    "name": "Halgurd Bakery & Pastry",
+    "name": {
+      "en": "Halgurd Bakery & Pastry",
+      "ku": "هەڵگورد نانەوایی و شیرینی",
+      "ar": "هەڵگورد مخبز وحلويات"
+    },
     "category": "bakery",
     "owner": "Twana Sheikhani",
     "phone": "0775 459 3419",
     "whatsapp": "0775 459 3419",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 41,
-    "verified": true,
-    "description": "Halgurd Bakery & Pastry offers reliable bakeries & pastry in Zargata, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 145,
-    "name": "Diyar Pastry Shop",
+    "name": {
+      "en": "Diyar Pastry Shop",
+      "ku": "دیار شیرینیخانە",
+      "ar": "دیار محل حلويات"
+    },
     "category": "bakery",
     "owner": "Shvan Karim",
     "phone": "0781 575 8354",
     "whatsapp": "0781 575 8354",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 148,
-    "verified": false,
-    "description": "Diyar Pastry Shop offers reliable bakeries & pastry in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 146,
-    "name": "Shorsh Sweets & Bakery",
+    "name": {
+      "en": "Shorsh Sweets & Bakery",
+      "ku": "شۆڕش شیرینی و نانەوایی",
+      "ar": "شۆڕش حلويات ومخبوزات"
+    },
     "category": "bakery",
     "owner": "Goran Sofi",
     "phone": "0781 169 8682",
     "whatsapp": "0781 169 8682",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 81,
-    "verified": false,
-    "description": "Shorsh Sweets & Bakery offers reliable bakeries & pastry in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 147,
-    "name": "Awat Bakery & Pastry",
+    "name": {
+      "en": "Awat Bakery & Pastry",
+      "ku": "ئاوات نانەوایی و شیرینی",
+      "ar": "ئاوات مخبز وحلويات"
+    },
     "category": "bakery",
     "owner": "Bakhtiar Sheikhani",
     "phone": "0773 572 8404",
     "whatsapp": "0773 572 8404",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 98,
-    "verified": false,
-    "description": "Awat Bakery & Pastry offers reliable bakeries & pastry in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 148,
-    "name": "Hemin Pastry Shop",
+    "name": {
+      "en": "Hemin Pastry Shop",
+      "ku": "هێمن شیرینیخانە",
+      "ar": "هێمن محل حلويات"
+    },
     "category": "bakery",
     "owner": "Goran Karim",
     "phone": "0780 573 1672",
     "whatsapp": "0780 573 1672",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 150,
-    "verified": false,
-    "description": "Hemin Pastry Shop offers reliable bakeries & pastry in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 149,
-    "name": "Sherko Pastry Shop",
+    "name": {
+      "en": "Sherko Pastry Shop",
+      "ku": "شێرکۆ شیرینیخانە",
+      "ar": "شێرکۆ محل حلويات"
+    },
     "category": "bakery",
     "owner": "Rekan Sheikhani",
     "phone": "0750 561 2695",
     "whatsapp": "0750 561 2695",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 91,
-    "verified": false,
-    "description": "Sherko Pastry Shop offers reliable bakeries & pastry in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 150,
-    "name": "Rebaz Bakery & Pastry",
+    "name": {
+      "en": "Rebaz Bakery & Pastry",
+      "ku": "ڕێباز نانەوایی و شیرینی",
+      "ar": "ڕێباز مخبز وحلويات"
+    },
     "category": "bakery",
     "owner": "Snur Mahmud",
     "phone": "0770 472 7108",
     "whatsapp": "0770 472 7108",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 103,
-    "verified": false,
-    "description": "Rebaz Bakery & Pastry offers reliable bakeries & pastry in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 151,
-    "name": "Sherko Kitchen & Events",
+    "name": {
+      "en": "Sherko Kitchen & Events",
+      "ku": "شێرکۆ چێشتخانە و بۆنەکان",
+      "ar": "شێرکۆ مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Shorsh Hussein",
     "phone": "0751 437 2548",
     "whatsapp": "0751 437 2548",
-    "address": "Qirga, Sulaymaniyah",
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 102,
-    "verified": true,
-    "description": "Sherko Kitchen & Events offers reliable restaurants & catering in Qirga, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 152,
-    "name": "Chnur Kitchen & Events",
+    "name": {
+      "en": "Chnur Kitchen & Events",
+      "ku": "چنوور چێشتخانە و بۆنەکان",
+      "ar": "چنوور مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Payam Kakei",
     "phone": "0775 183 3317",
     "whatsapp": "0775 183 3317",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 83,
-    "verified": false,
-    "description": "Chnur Kitchen & Events offers reliable restaurants & catering in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 153,
-    "name": "Snur Kitchen & Events",
+    "name": {
+      "en": "Snur Kitchen & Events",
+      "ku": "سنوور چێشتخانە و بۆنەکان",
+      "ar": "سنوور مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Ranj Faraj",
     "phone": "0751 417 7171",
     "whatsapp": "0751 417 7171",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 88,
-    "verified": false,
-    "description": "Snur Kitchen & Events offers reliable restaurants & catering in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 154,
-    "name": "Nazdar Kitchen & Events",
+    "name": {
+      "en": "Nazdar Kitchen & Events",
+      "ku": "نازدار چێشتخانە و بۆنەکان",
+      "ar": "نازدار مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Newroz Sheikhani",
     "phone": "0780 620 6928",
     "whatsapp": "0780 620 6928",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 83,
-    "verified": true,
-    "description": "Nazdar Kitchen & Events offers reliable restaurants & catering in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 155,
-    "name": "Karwan Catering Services",
+    "name": {
+      "en": "Karwan Catering Services",
+      "ku": "کاروان خزمەتگوزاری کەیتەرینگ",
+      "ar": "کاروان خدمات التموين"
+    },
     "category": "catering",
     "owner": "Shene Sultan",
     "phone": "0771 240 3538",
     "whatsapp": "0771 240 3538",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 29,
-    "verified": false,
-    "description": "Karwan Catering Services offers reliable restaurants & catering in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 156,
-    "name": "Dilshad Kitchen & Events",
+    "name": {
+      "en": "Dilshad Kitchen & Events",
+      "ku": "دڵشاد چێشتخانە و بۆنەکان",
+      "ar": "دڵشاد مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Handren Sheikhani",
     "phone": "0775 997 3147",
     "whatsapp": "0775 997 3147",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 43,
-    "verified": true,
-    "description": "Dilshad Kitchen & Events offers reliable restaurants & catering in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 157,
-    "name": "Newroz Kitchen & Events",
+    "name": {
+      "en": "Newroz Kitchen & Events",
+      "ku": "نەورۆز چێشتخانە و بۆنەکان",
+      "ar": "نەورۆز مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Shene Kakei",
     "phone": "0781 144 7731",
     "whatsapp": "0781 144 7731",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 64,
-    "verified": false,
-    "description": "Newroz Kitchen & Events offers reliable restaurants & catering in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 158,
-    "name": "Shorsh Catering Services",
+    "name": {
+      "en": "Shorsh Catering Services",
+      "ku": "شۆڕش خزمەتگوزاری کەیتەرینگ",
+      "ar": "شۆڕش خدمات التموين"
+    },
     "category": "catering",
     "owner": "Shene Mahmud",
     "phone": "0771 416 8684",
     "whatsapp": "0771 416 8684",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 53,
-    "verified": false,
-    "description": "Shorsh Catering Services offers reliable restaurants & catering in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 159,
-    "name": "Awat Catering Services",
+    "name": {
+      "en": "Awat Catering Services",
+      "ku": "ئاوات خزمەتگوزاری کەیتەرینگ",
+      "ar": "ئاوات خدمات التموين"
+    },
     "category": "catering",
     "owner": "Sardar Baban",
     "phone": "0780 265 4271",
     "whatsapp": "0780 265 4271",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 39,
-    "verified": false,
-    "description": "Awat Catering Services offers reliable restaurants & catering in Kurdistan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 160,
-    "name": "Rebaz Kitchen & Events",
+    "name": {
+      "en": "Rebaz Kitchen & Events",
+      "ku": "ڕێباز چێشتخانە و بۆنەکان",
+      "ar": "ڕێباز مطبخ ومناسبات"
+    },
     "category": "catering",
     "owner": "Rekan Rashid",
     "phone": "0751 828 9452",
     "whatsapp": "0751 828 9452",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 76,
-    "verified": true,
-    "description": "Rebaz Kitchen & Events offers reliable restaurants & catering in Empire Area, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 161,
-    "name": "Diyar Beauty Center",
+    "name": {
+      "en": "Diyar Beauty Center",
+      "ku": "دیار ناوەندی جوانی",
+      "ar": "دیار مركز تجميل"
+    },
     "category": "beauty",
     "owner": "Sardar Sheikhani",
     "phone": "0780 193 4637",
     "whatsapp": "0780 193 4637",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 93,
-    "verified": false,
-    "description": "Diyar Beauty Center offers reliable beauty salons in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 162,
-    "name": "Zana Beauty Salon",
+    "name": {
+      "en": "Zana Beauty Salon",
+      "ku": "زانا ژوانگای جوانی",
+      "ar": "زانا صالون تجميل"
+    },
     "category": "beauty",
     "owner": "Ranj Sheikhani",
     "phone": "0771 495 2337",
     "whatsapp": "0771 495 2337",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 11,
-    "verified": true,
-    "description": "Zana Beauty Salon offers reliable beauty salons in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 163,
-    "name": "Aram Ladies Salon",
+    "name": {
+      "en": "Aram Ladies Salon",
+      "ku": "ئارام ژوانگای ئافرەتان",
+      "ar": "ئارام صالون نسائي"
+    },
     "category": "beauty",
     "owner": "Halgurd Sofi",
     "phone": "0770 139 5700",
     "whatsapp": "0770 139 5700",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 124,
-    "verified": false,
-    "description": "Aram Ladies Salon offers reliable beauty salons in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 164,
-    "name": "Shvan Ladies Salon",
+    "name": {
+      "en": "Shvan Ladies Salon",
+      "ku": "شوان ژوانگای ئافرەتان",
+      "ar": "شوان صالون نسائي"
+    },
     "category": "beauty",
     "owner": "Rekan Mahmud",
     "phone": "0750 181 1311",
     "whatsapp": "0750 181 1311",
-    "address": "Sarshaqam, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
+    "rating": 4,
     "reviews": 42,
-    "verified": false,
-    "description": "Shvan Ladies Salon offers reliable beauty salons in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 165,
-    "name": "Chnur Ladies Salon",
+    "name": {
+      "en": "Chnur Ladies Salon",
+      "ku": "چنوور ژوانگای ئافرەتان",
+      "ar": "چنوور صالون نسائي"
+    },
     "category": "beauty",
     "owner": "Twana Aziz",
     "phone": "0773 343 5934",
     "whatsapp": "0773 343 5934",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 65,
-    "verified": false,
-    "description": "Chnur Ladies Salon offers reliable beauty salons in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 166,
-    "name": "Beston Ladies Salon",
+    "name": {
+      "en": "Beston Ladies Salon",
+      "ku": "بیستوون ژوانگای ئافرەتان",
+      "ar": "بیستوون صالون نسائي"
+    },
     "category": "beauty",
     "owner": "Sardar Karim",
     "phone": "0781 711 9782",
     "whatsapp": "0781 711 9782",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 135,
-    "verified": false,
-    "description": "Beston Ladies Salon offers reliable beauty salons in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 167,
-    "name": "Snur Beauty Salon",
+    "name": {
+      "en": "Snur Beauty Salon",
+      "ku": "سنوور ژوانگای جوانی",
+      "ar": "سنوور صالون تجميل"
+    },
     "category": "beauty",
     "owner": "Peshraw Aziz",
     "phone": "0775 346 7825",
     "whatsapp": "0775 346 7825",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 175,
-    "verified": true,
-    "description": "Snur Beauty Salon offers reliable beauty salons in Sarchinar, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 168,
-    "name": "Bakhtiar Beauty Salon",
+    "name": {
+      "en": "Bakhtiar Beauty Salon",
+      "ku": "بەختیار ژوانگای جوانی",
+      "ar": "بەختیار صالون تجميل"
+    },
     "category": "beauty",
     "owner": "Twana Barzinji",
     "phone": "0750 499 8702",
     "whatsapp": "0750 499 8702",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 103,
-    "verified": false,
-    "description": "Bakhtiar Beauty Salon offers reliable beauty salons in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 169,
-    "name": "Hawre Ladies Salon",
+    "name": {
+      "en": "Hawre Ladies Salon",
+      "ku": "هاوڕێ ژوانگای ئافرەتان",
+      "ar": "هاوڕێ صالون نسائي"
+    },
     "category": "beauty",
     "owner": "Kawa Rashid",
     "phone": "0775 346 2698",
     "whatsapp": "0775 346 2698",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 89,
-    "verified": true,
-    "description": "Hawre Ladies Salon offers reliable beauty salons in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 170,
-    "name": "Bakhtiar Ladies Salon",
+    "name": {
+      "en": "Bakhtiar Ladies Salon",
+      "ku": "بەختیار ژوانگای ئافرەتان",
+      "ar": "بەختیار صالون نسائي"
+    },
     "category": "beauty",
     "owner": "Sherko Amin",
     "phone": "0781 746 3986",
     "whatsapp": "0781 746 3986",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 20,
-    "verified": false,
-    "description": "Bakhtiar Ladies Salon offers reliable beauty salons in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 171,
-    "name": "Sardar Barbershop",
+    "name": {
+      "en": "Sardar Barbershop",
+      "ku": "سەردار سەلمانی",
+      "ar": "سەردار صالون حلاقة"
+    },
     "category": "barber",
     "owner": "Peshraw Qadir",
     "phone": "0771 142 6170",
     "whatsapp": "0771 142 6170",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 135,
-    "verified": false,
-    "description": "Sardar Barbershop offers reliable barbershops in Bakhtiary, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 172,
-    "name": "Newroz Gents Barber",
+    "name": {
+      "en": "Newroz Gents Barber",
+      "ku": "نەورۆز سەلمانی پیاوان",
+      "ar": "نەورۆز حلاقة رجالي"
+    },
     "category": "barber",
     "owner": "Rekan Jaza",
     "phone": "0771 392 6848",
     "whatsapp": "0771 392 6848",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 16,
-    "verified": false,
-    "description": "Newroz Gents Barber offers reliable barbershops in Bakhtiary, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 173,
-    "name": "Sherko Men's Salon",
+    "name": {
+      "en": "Sherko Men's Salon",
+      "ku": "شێرکۆ ژوانگای پیاوان",
+      "ar": "شێرکۆ صالون رجالي"
+    },
     "category": "barber",
     "owner": "Aram Rashid",
     "phone": "0780 861 8204",
     "whatsapp": "0780 861 8204",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 102,
-    "verified": true,
-    "description": "Sherko Men's Salon offers reliable barbershops in Iskan, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 174,
-    "name": "Diyar Men's Salon",
+    "name": {
+      "en": "Diyar Men's Salon",
+      "ku": "دیار ژوانگای پیاوان",
+      "ar": "دیار صالون رجالي"
+    },
     "category": "barber",
     "owner": "Snur Sultan",
     "phone": "0773 920 2353",
     "whatsapp": "0773 920 2353",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 24,
-    "verified": false,
-    "description": "Diyar Men's Salon offers reliable barbershops in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 175,
-    "name": "Newroz Barbershop",
+    "name": {
+      "en": "Newroz Barbershop",
+      "ku": "نەورۆز سەلمانی",
+      "ar": "نەورۆز صالون حلاقة"
+    },
     "category": "barber",
     "owner": "Dilshad Baban",
     "phone": "0751 181 6372",
     "whatsapp": "0751 181 6372",
-    "address": "Qirga, Sulaymaniyah",
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 82,
-    "verified": false,
-    "description": "Newroz Barbershop offers reliable barbershops in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 176,
-    "name": "Snur Men's Salon",
+    "name": {
+      "en": "Snur Men's Salon",
+      "ku": "سنوور ژوانگای پیاوان",
+      "ar": "سنوور صالون رجالي"
+    },
     "category": "barber",
     "owner": "Diyar Mahmud",
     "phone": "0781 143 6776",
     "whatsapp": "0781 143 6776",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 115,
-    "verified": true,
-    "description": "Snur Men's Salon offers reliable barbershops in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 177,
-    "name": "Beston Barbershop",
+    "name": {
+      "en": "Beston Barbershop",
+      "ku": "بیستوون سەلمانی",
+      "ar": "بیستوون صالون حلاقة"
+    },
     "category": "barber",
     "owner": "Hemin Hama",
     "phone": "0770 131 3339",
     "whatsapp": "0770 131 3339",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 177,
-    "verified": false,
-    "description": "Beston Barbershop offers reliable barbershops in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 178,
-    "name": "Rebaz Barbershop",
+    "name": {
+      "en": "Rebaz Barbershop",
+      "ku": "ڕێباز سەلمانی",
+      "ar": "ڕێباز صالون حلاقة"
+    },
     "category": "barber",
     "owner": "Hemin Salih",
     "phone": "0775 492 1530",
     "whatsapp": "0775 492 1530",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 177,
-    "verified": false,
-    "description": "Rebaz Barbershop offers reliable barbershops in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 179,
-    "name": "Bakhtiar Men's Salon",
+    "name": {
+      "en": "Bakhtiar Men's Salon",
+      "ku": "بەختیار ژوانگای پیاوان",
+      "ar": "بەختیار صالون رجالي"
+    },
     "category": "barber",
     "owner": "Sardar Karim",
     "phone": "0770 642 7012",
     "whatsapp": "0770 642 7012",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 170,
-    "verified": true,
-    "description": "Bakhtiar Men's Salon offers reliable barbershops in Raparin, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 180,
-    "name": "Aram Barbershop",
+    "name": {
+      "en": "Aram Barbershop",
+      "ku": "ئارام سەلمانی",
+      "ar": "ئارام صالون حلاقة"
+    },
     "category": "barber",
     "owner": "Chnur Amin",
     "phone": "0780 675 2929",
     "whatsapp": "0780 675 2929",
-    "address": "Chwarbakh, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
+    "rating": 4,
     "reviews": 70,
-    "verified": false,
-    "description": "Aram Barbershop offers reliable barbershops in Chwarbakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 181,
-    "name": "Karwan Advocates",
+    "name": {
+      "en": "Karwan Advocates",
+      "ku": "کاروان پارێزەران",
+      "ar": "کاروان محامون"
+    },
     "category": "legal",
     "owner": "Peshraw Sultan",
     "phone": "0751 238 2213",
     "whatsapp": "0751 238 2213",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 117,
-    "verified": false,
-    "description": "Karwan Advocates offers reliable lawyers in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 182,
-    "name": "Beston Advocates",
+    "name": {
+      "en": "Beston Advocates",
+      "ku": "بیستوون پارێزەران",
+      "ar": "بیستوون محامون"
+    },
     "category": "legal",
     "owner": "Goran Sofi",
     "phone": "0751 663 9882",
     "whatsapp": "0751 663 9882",
-    "address": "Gulan Street, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
+    "rating": 4,
     "reviews": 80,
-    "verified": false,
-    "description": "Beston Advocates offers reliable lawyers in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 183,
-    "name": "Snur Advocates",
+    "name": {
+      "en": "Snur Advocates",
+      "ku": "سنوور پارێزەران",
+      "ar": "سنوور محامون"
+    },
     "category": "legal",
     "owner": "Payam Amin",
     "phone": "0771 224 4292",
     "whatsapp": "0771 224 4292",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 64,
-    "verified": false,
-    "description": "Snur Advocates offers reliable lawyers in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 184,
-    "name": "Kawa Legal Consultancy",
+    "name": {
+      "en": "Kawa Legal Consultancy",
+      "ku": "کاوا ڕاوێژکاری یاسایی",
+      "ar": "کاوا استشارات قانونية"
+    },
     "category": "legal",
     "owner": "Dilshad Zangana",
     "phone": "0781 922 3126",
     "whatsapp": "0781 922 3126",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 26,
-    "verified": true,
-    "description": "Kawa Legal Consultancy offers reliable lawyers in Gulan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 185,
-    "name": "Ranj Advocates",
+    "name": {
+      "en": "Ranj Advocates",
+      "ku": "ڕەنج پارێزەران",
+      "ar": "ڕەنج محامون"
+    },
     "category": "legal",
     "owner": "Chnur Sultan",
     "phone": "0780 887 7708",
     "whatsapp": "0780 887 7708",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 22,
-    "verified": true,
-    "description": "Ranj Advocates offers reliable lawyers in Shorsh Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 186,
-    "name": "Sherko Advocates",
+    "name": {
+      "en": "Sherko Advocates",
+      "ku": "شێرکۆ پارێزەران",
+      "ar": "شێرکۆ محامون"
+    },
     "category": "legal",
     "owner": "Hemin Mahmud",
     "phone": "0775 231 3981",
     "whatsapp": "0775 231 3981",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 37,
-    "verified": false,
-    "description": "Sherko Advocates offers reliable lawyers in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 187,
-    "name": "Payam Law Office",
+    "name": {
+      "en": "Payam Law Office",
+      "ku": "پەیام ئۆفیسی یاسایی",
+      "ar": "پەیام مكتب محاماة"
+    },
     "category": "legal",
     "owner": "Newroz Rasul",
     "phone": "0770 411 3697",
     "whatsapp": "0770 411 3697",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 61,
-    "verified": true,
-    "description": "Payam Law Office offers reliable lawyers in Shorsh Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 188,
-    "name": "Twana Legal Consultancy",
+    "name": {
+      "en": "Twana Legal Consultancy",
+      "ku": "توانا ڕاوێژکاری یاسایی",
+      "ar": "توانا استشارات قانونية"
+    },
     "category": "legal",
     "owner": "Goran Karim",
     "phone": "0771 750 5496",
     "whatsapp": "0771 750 5496",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 81,
-    "verified": false,
-    "description": "Twana Legal Consultancy offers reliable lawyers in Bakhtiary Town, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 189,
-    "name": "Hemin Advocates",
+    "name": {
+      "en": "Hemin Advocates",
+      "ku": "هێمن پارێزەران",
+      "ar": "هێمن محامون"
+    },
     "category": "legal",
     "owner": "Halgurd Amin",
     "phone": "0770 275 6531",
     "whatsapp": "0770 275 6531",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 148,
-    "verified": true,
-    "description": "Hemin Advocates offers reliable lawyers in Raparin, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 190,
-    "name": "Goran Law Office",
+    "name": {
+      "en": "Goran Law Office",
+      "ku": "گۆران ئۆفیسی یاسایی",
+      "ar": "گۆران مكتب محاماة"
+    },
     "category": "legal",
     "owner": "Hemin Hussein",
     "phone": "0773 766 4453",
     "whatsapp": "0773 766 4453",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 110,
-    "verified": false,
-    "description": "Goran Law Office offers reliable lawyers in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 191,
-    "name": "Kawa Tax & Accounting Services",
+    "name": {
+      "en": "Kawa Tax & Accounting Services",
+      "ku": "کاوا خزمەتگوزاری باج و ژمێریاری",
+      "ar": "کاوا خدمات الضرائب والمحاسبة"
+    },
     "category": "accounting",
     "owner": "Handren Barzinji",
     "phone": "0773 594 5012",
     "whatsapp": "0773 594 5012",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 179,
-    "verified": false,
-    "description": "Kawa Tax & Accounting Services offers reliable accountants in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 192,
-    "name": "Sardar Accounting Office",
+    "name": {
+      "en": "Sardar Accounting Office",
+      "ku": "سەردار ئۆفیسی ژمێریاری",
+      "ar": "سەردار مكتب محاسبة"
+    },
     "category": "accounting",
     "owner": "Snur Hussein",
     "phone": "0781 525 8933",
     "whatsapp": "0781 525 8933",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 91,
-    "verified": false,
-    "description": "Sardar Accounting Office offers reliable accountants in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 193,
-    "name": "Sherko Audit Services",
+    "name": {
+      "en": "Sherko Audit Services",
+      "ku": "شێرکۆ خزمەتگوزاری لێکۆڵینەوەی دارایی",
+      "ar": "شێرکۆ خدمات التدقيق"
+    },
     "category": "accounting",
     "owner": "Sherko Rashid",
     "phone": "0770 878 7070",
     "whatsapp": "0770 878 7070",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 31,
-    "verified": true,
-    "description": "Sherko Audit Services offers reliable accountants in Kurdistan Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 194,
-    "name": "Hawre Tax & Accounting Services",
+    "name": {
+      "en": "Hawre Tax & Accounting Services",
+      "ku": "هاوڕێ خزمەتگوزاری باج و ژمێریاری",
+      "ar": "هاوڕێ خدمات الضرائب والمحاسبة"
+    },
     "category": "accounting",
     "owner": "Bnar Faraj",
     "phone": "0750 397 7293",
     "whatsapp": "0750 397 7293",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 111,
-    "verified": true,
-    "description": "Hawre Tax & Accounting Services offers reliable accountants in Goizha, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 195,
-    "name": "Goran Accounting Office",
+    "name": {
+      "en": "Goran Accounting Office",
+      "ku": "گۆران ئۆفیسی ژمێریاری",
+      "ar": "گۆران مكتب محاسبة"
+    },
     "category": "accounting",
     "owner": "Newroz Sofi",
     "phone": "0775 294 3610",
     "whatsapp": "0775 294 3610",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 135,
-    "verified": false,
-    "description": "Goran Accounting Office offers reliable accountants in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 196,
-    "name": "Handren Tax & Accounting Services",
+    "name": {
+      "en": "Handren Tax & Accounting Services",
+      "ku": "هەندرین خزمەتگوزاری باج و ژمێریاری",
+      "ar": "هەندرین خدمات الضرائب والمحاسبة"
+    },
     "category": "accounting",
     "owner": "Rekan Ahmad",
     "phone": "0780 617 8491",
     "whatsapp": "0780 617 8491",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
-    "rating": 5.0,
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
+    "rating": 5,
     "reviews": 59,
-    "verified": false,
-    "description": "Handren Tax & Accounting Services offers reliable accountants in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 197,
-    "name": "Rebaz Accounting Office",
+    "name": {
+      "en": "Rebaz Accounting Office",
+      "ku": "ڕێباز ئۆفیسی ژمێریاری",
+      "ar": "ڕێباز مكتب محاسبة"
+    },
     "category": "accounting",
     "owner": "Peshraw Sultan",
     "phone": "0781 392 9793",
     "whatsapp": "0781 392 9793",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 31,
-    "verified": false,
-    "description": "Rebaz Accounting Office offers reliable accountants in Sarshaqam, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 198,
-    "name": "Chnur Tax & Accounting Services",
+    "name": {
+      "en": "Chnur Tax & Accounting Services",
+      "ku": "چنوور خزمەتگوزاری باج و ژمێریاری",
+      "ar": "چنوور خدمات الضرائب والمحاسبة"
+    },
     "category": "accounting",
     "owner": "Shene Hama",
     "phone": "0750 510 1838",
     "whatsapp": "0750 510 1838",
-    "address": "Gulan Street, Sulaymaniyah",
+    "address": {
+      "en": "Gulan Street, Sulaymaniyah",
+      "ku": "شەقامی گوڵان، سلێمانی",
+      "ar": "شەقامی گوڵان، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 53,
-    "verified": false,
-    "description": "Chnur Tax & Accounting Services offers reliable accountants in Gulan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 199,
-    "name": "Peshraw Accounting Office",
+    "name": {
+      "en": "Peshraw Accounting Office",
+      "ku": "پێشڕەو ئۆفیسی ژمێریاری",
+      "ar": "پێشڕەو مكتب محاسبة"
+    },
     "category": "accounting",
     "owner": "Ranj Sheikhani",
     "phone": "0773 945 2946",
     "whatsapp": "0773 945 2946",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 28,
-    "verified": false,
-    "description": "Peshraw Accounting Office offers reliable accountants in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 200,
-    "name": "Beston Tax & Accounting Services",
+    "name": {
+      "en": "Beston Tax & Accounting Services",
+      "ku": "بیستوون خزمەتگوزاری باج و ژمێریاری",
+      "ar": "بیستوون خدمات الضرائب والمحاسبة"
+    },
     "category": "accounting",
     "owner": "Dilshad Rashid",
     "phone": "0771 716 9341",
     "whatsapp": "0771 716 9341",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 14,
-    "verified": true,
-    "description": "Beston Tax & Accounting Services offers reliable accountants in Rapareen, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 201,
-    "name": "Shvan Real Estate Group",
+    "name": {
+      "en": "Shvan Real Estate Group",
+      "ku": "شوان گروپی خانووبەرە",
+      "ar": "شوان مجموعة عقارية"
+    },
     "category": "realestate",
     "owner": "Sherko Sultan",
     "phone": "0781 252 9446",
     "whatsapp": "0781 252 9446",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 160,
-    "verified": true,
-    "description": "Shvan Real Estate Group offers reliable real estate agents in Shorsh Street, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 202,
-    "name": "Ranj Real Estate Group",
+    "name": {
+      "en": "Ranj Real Estate Group",
+      "ku": "ڕەنج گروپی خانووبەرە",
+      "ar": "ڕەنج مجموعة عقارية"
+    },
     "category": "realestate",
     "owner": "Chnur Baban",
     "phone": "0775 619 9351",
     "whatsapp": "0775 619 9351",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 148,
-    "verified": true,
-    "description": "Ranj Real Estate Group offers reliable real estate agents in Raparin, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 203,
-    "name": "Newroz Real Estate Office",
+    "name": {
+      "en": "Newroz Real Estate Office",
+      "ku": "نەورۆز ئۆفیسی خانووبەرە",
+      "ar": "نەورۆز مكتب عقاري"
+    },
     "category": "realestate",
     "owner": "Bakhtiar Sofi",
     "phone": "0780 697 6040",
     "whatsapp": "0780 697 6040",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 180,
-    "verified": false,
-    "description": "Newroz Real Estate Office offers reliable real estate agents in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 204,
-    "name": "Shorsh Property Agency",
+    "name": {
+      "en": "Shorsh Property Agency",
+      "ku": "شۆڕش ئاژانسی خانووبەرە",
+      "ar": "شۆڕش وكالة عقارية"
+    },
     "category": "realestate",
     "owner": "Hawre Zangana",
     "phone": "0771 838 1841",
     "whatsapp": "0771 838 1841",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 47,
-    "verified": false,
-    "description": "Shorsh Property Agency offers reliable real estate agents in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 205,
-    "name": "Chnur Real Estate Group",
+    "name": {
+      "en": "Chnur Real Estate Group",
+      "ku": "چنوور گروپی خانووبەرە",
+      "ar": "چنوور مجموعة عقارية"
+    },
     "category": "realestate",
     "owner": "Shene Hama",
     "phone": "0771 132 2800",
     "whatsapp": "0771 132 2800",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 116,
-    "verified": true,
-    "description": "Chnur Real Estate Group offers reliable real estate agents in Rapareen, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 206,
-    "name": "Shvan Property Agency",
+    "name": {
+      "en": "Shvan Property Agency",
+      "ku": "شوان ئاژانسی خانووبەرە",
+      "ar": "شوان وكالة عقارية"
+    },
     "category": "realestate",
     "owner": "Snur Qadir",
     "phone": "0781 993 2020",
     "whatsapp": "0781 993 2020",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 136,
-    "verified": true,
-    "description": "Shvan Property Agency offers reliable real estate agents in Iskan, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 207,
-    "name": "Sherko Real Estate Group",
+    "name": {
+      "en": "Sherko Real Estate Group",
+      "ku": "شێرکۆ گروپی خانووبەرە",
+      "ar": "شێرکۆ مجموعة عقارية"
+    },
     "category": "realestate",
     "owner": "Rekan Sheikhani",
     "phone": "0775 277 8531",
     "whatsapp": "0775 277 8531",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 91,
-    "verified": false,
-    "description": "Sherko Real Estate Group offers reliable real estate agents in Kurdistan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 208,
-    "name": "Nazdar Real Estate Group",
+    "name": {
+      "en": "Nazdar Real Estate Group",
+      "ku": "نازدار گروپی خانووبەرە",
+      "ar": "نازدار مجموعة عقارية"
+    },
     "category": "realestate",
     "owner": "Nazdar Jaza",
     "phone": "0781 296 5038",
     "whatsapp": "0781 296 5038",
-    "address": "Sarshaqam, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
+    "rating": 4,
     "reviews": 80,
-    "verified": true,
-    "description": "Nazdar Real Estate Group offers reliable real estate agents in Sarshaqam, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 209,
-    "name": "Peshraw Property Agency",
+    "name": {
+      "en": "Peshraw Property Agency",
+      "ku": "پێشڕەو ئاژانسی خانووبەرە",
+      "ar": "پێشڕەو وكالة عقارية"
+    },
     "category": "realestate",
     "owner": "Snur Qadir",
     "phone": "0775 591 6714",
     "whatsapp": "0775 591 6714",
-    "address": "Chwarbakh, Sulaymaniyah",
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 74,
-    "verified": true,
-    "description": "Peshraw Property Agency offers reliable real estate agents in Chwarbakh, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 210,
-    "name": "Awat Real Estate Group",
+    "name": {
+      "en": "Awat Real Estate Group",
+      "ku": "ئاوات گروپی خانووبەرە",
+      "ar": "ئاوات مجموعة عقارية"
+    },
     "category": "realestate",
     "owner": "Dilshad Hama",
     "phone": "0775 891 3399",
     "whatsapp": "0775 891 3399",
-    "address": "Kurdistan Street, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
+    "rating": 4,
     "reviews": 77,
-    "verified": false,
-    "description": "Awat Real Estate Group offers reliable real estate agents in Kurdistan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 211,
-    "name": "Hemin IT Solutions",
+    "name": {
+      "en": "Hemin IT Solutions",
+      "ku": "هێمن چارەسەری تەکنەلۆجیای زانیاری",
+      "ar": "هێمن حلول تقنية المعلومات"
+    },
     "category": "it-repair",
     "owner": "Payam Mahmud",
     "phone": "0781 319 4310",
     "whatsapp": "0781 319 4310",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 73,
-    "verified": false,
-    "description": "Hemin IT Solutions offers reliable it & computer repair in Bakhtiary Town, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 212,
-    "name": "Snur IT Solutions",
+    "name": {
+      "en": "Snur IT Solutions",
+      "ku": "سنوور چارەسەری تەکنەلۆجیای زانیاری",
+      "ar": "سنوور حلول تقنية المعلومات"
+    },
     "category": "it-repair",
     "owner": "Shvan Rasul",
     "phone": "0771 348 1831",
     "whatsapp": "0771 348 1831",
-    "address": "Sarshaqam, Sulaymaniyah",
+    "address": {
+      "en": "Sarshaqam, Sulaymaniyah",
+      "ku": "سەرشەقام، سلێمانی",
+      "ar": "سەرشەقام، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 139,
-    "verified": true,
-    "description": "Snur IT Solutions offers reliable it & computer repair in Sarshaqam, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 213,
-    "name": "Bnar Computer Repair Center",
+    "name": {
+      "en": "Bnar Computer Repair Center",
+      "ku": "بنار ناوەندی چاککردنەوەی کۆمپیوتەر",
+      "ar": "بنار مركز صيانة الحاسوب"
+    },
     "category": "it-repair",
     "owner": "Aram Aziz",
     "phone": "0781 202 3252",
     "whatsapp": "0781 202 3252",
-    "address": "Qirga, Sulaymaniyah",
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 144,
-    "verified": false,
-    "description": "Bnar Computer Repair Center offers reliable it & computer repair in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 214,
-    "name": "Diyar IT Solutions",
+    "name": {
+      "en": "Diyar IT Solutions",
+      "ku": "دیار چارەسەری تەکنەلۆجیای زانیاری",
+      "ar": "دیار حلول تقنية المعلومات"
+    },
     "category": "it-repair",
     "owner": "Halgurd Sultan",
     "phone": "0771 874 5706",
     "whatsapp": "0771 874 5706",
-    "address": "Chwarbakh, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Chwarbakh, Sulaymaniyah",
+      "ku": "چوارباخ، سلێمانی",
+      "ar": "چوارباخ، السليمانية"
+    },
+    "rating": 4,
     "reviews": 169,
-    "verified": true,
-    "description": "Diyar IT Solutions offers reliable it & computer repair in Chwarbakh, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 215,
-    "name": "Shene Computer Repair Center",
+    "name": {
+      "en": "Shene Computer Repair Center",
+      "ku": "شێنە ناوەندی چاککردنەوەی کۆمپیوتەر",
+      "ar": "شێنە مركز صيانة الحاسوب"
+    },
     "category": "it-repair",
     "owner": "Halgurd Zangana",
     "phone": "0750 279 7846",
     "whatsapp": "0750 279 7846",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 49,
-    "verified": false,
-    "description": "Shene Computer Repair Center offers reliable it & computer repair in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 216,
-    "name": "Rebaz IT Solutions",
+    "name": {
+      "en": "Rebaz IT Solutions",
+      "ku": "ڕێباز چارەسەری تەکنەلۆجیای زانیاری",
+      "ar": "ڕێباز حلول تقنية المعلومات"
+    },
     "category": "it-repair",
     "owner": "Beston Sultan",
     "phone": "0773 997 1613",
     "whatsapp": "0773 997 1613",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 149,
-    "verified": false,
-    "description": "Rebaz IT Solutions offers reliable it & computer repair in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 217,
-    "name": "Payam IT Solutions",
+    "name": {
+      "en": "Payam IT Solutions",
+      "ku": "پەیام چارەسەری تەکنەلۆجیای زانیاری",
+      "ar": "پەیام حلول تقنية المعلومات"
+    },
     "category": "it-repair",
     "owner": "Peshraw Mahmud",
     "phone": "0781 237 9261",
     "whatsapp": "0781 237 9261",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 53,
-    "verified": false,
-    "description": "Payam IT Solutions offers reliable it & computer repair in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 218,
-    "name": "Sherko Computer Repair Center",
+    "name": {
+      "en": "Sherko Computer Repair Center",
+      "ku": "شێرکۆ ناوەندی چاککردنەوەی کۆمپیوتەر",
+      "ar": "شێرکۆ مركز صيانة الحاسوب"
+    },
     "category": "it-repair",
     "owner": "Chnur Mahmud",
     "phone": "0770 114 6523",
     "whatsapp": "0770 114 6523",
-    "address": "Bakhtiary Town, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary Town, Sulaymaniyah",
+      "ku": "شاری بەختیاری، سلێمانی",
+      "ar": "شاری بەختیاری، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 149,
-    "verified": false,
-    "description": "Sherko Computer Repair Center offers reliable it & computer repair in Bakhtiary Town, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 219,
-    "name": "Karwan Computer Repair Center",
+    "name": {
+      "en": "Karwan Computer Repair Center",
+      "ku": "کاروان ناوەندی چاککردنەوەی کۆمپیوتەر",
+      "ar": "کاروان مركز صيانة الحاسوب"
+    },
     "category": "it-repair",
     "owner": "Shorsh Hama",
     "phone": "0775 188 7567",
     "whatsapp": "0775 188 7567",
-    "address": "Iskan, Sulaymaniyah",
+    "address": {
+      "en": "Iskan, Sulaymaniyah",
+      "ku": "ئیسکان، سلێمانی",
+      "ar": "ئیسکان، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 51,
-    "verified": false,
-    "description": "Karwan Computer Repair Center offers reliable it & computer repair in Iskan, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 220,
-    "name": "Rekan IT Solutions",
+    "name": {
+      "en": "Rekan IT Solutions",
+      "ku": "ڕێکان چارەسەری تەکنەلۆجیای زانیاری",
+      "ar": "ڕێکان حلول تقنية المعلومات"
+    },
     "category": "it-repair",
     "owner": "Payam Salih",
     "phone": "0773 492 4858",
     "whatsapp": "0773 492 4858",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 72,
-    "verified": false,
-    "description": "Rekan IT Solutions offers reliable it & computer repair in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 221,
-    "name": "Peshraw Occasions Planner",
+    "name": {
+      "en": "Peshraw Occasions Planner",
+      "ku": "پێشڕەو ڕێکخەری بۆنەکان",
+      "ar": "پێشڕەو منظم مناسبات"
+    },
     "category": "events",
     "owner": "Chnur Zangana",
     "phone": "0773 769 6890",
     "whatsapp": "0773 769 6890",
-    "address": "Sarchinar, Sulaymaniyah",
+    "address": {
+      "en": "Sarchinar, Sulaymaniyah",
+      "ku": "سەرچنار، سلێمانی",
+      "ar": "سەرچنار، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 19,
-    "verified": false,
-    "description": "Peshraw Occasions Planner offers reliable event planners in Sarchinar, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 222,
-    "name": "Sardar Weddings & Events",
+    "name": {
+      "en": "Sardar Weddings & Events",
+      "ku": "سەردار زەماوەند و بۆنەکان",
+      "ar": "سەردار أفراح ومناسبات"
+    },
     "category": "events",
     "owner": "Diyar Hama",
     "phone": "0773 806 2923",
     "whatsapp": "0773 806 2923",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 79,
-    "verified": false,
-    "description": "Sardar Weddings & Events offers reliable event planners in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 223,
-    "name": "Bnar Event Planning",
+    "name": {
+      "en": "Bnar Event Planning",
+      "ku": "بنار پلاندانانی بۆنە",
+      "ar": "بنار تنظيم الفعاليات"
+    },
     "category": "events",
     "owner": "Shvan Sultan",
     "phone": "0781 865 7121",
     "whatsapp": "0781 865 7121",
-    "address": "Rapareen, Sulaymaniyah",
+    "address": {
+      "en": "Rapareen, Sulaymaniyah",
+      "ku": "ڕاپەڕین، سلێمانی",
+      "ar": "ڕاپەڕین، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 144,
-    "verified": false,
-    "description": "Bnar Event Planning offers reliable event planners in Rapareen, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 224,
-    "name": "Shene Occasions Planner",
+    "name": {
+      "en": "Shene Occasions Planner",
+      "ku": "شێنە ڕێکخەری بۆنەکان",
+      "ar": "شێنە منظم مناسبات"
+    },
     "category": "events",
     "owner": "Beston Qadir",
     "phone": "0751 638 8319",
     "whatsapp": "0751 638 8319",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 96,
-    "verified": true,
-    "description": "Shene Occasions Planner offers reliable event planners in Andazyari, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 225,
-    "name": "Awat Event Planning",
+    "name": {
+      "en": "Awat Event Planning",
+      "ku": "ئاوات پلاندانانی بۆنە",
+      "ar": "ئاوات تنظيم الفعاليات"
+    },
     "category": "events",
     "owner": "Rebaz Barzinji",
     "phone": "0771 686 9792",
     "whatsapp": "0771 686 9792",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 3.8,
     "reviews": 87,
-    "verified": false,
-    "description": "Awat Event Planning offers reliable event planners in Shorsh Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 226,
-    "name": "Sardar Event Planning",
+    "name": {
+      "en": "Sardar Event Planning",
+      "ku": "سەردار پلاندانانی بۆنە",
+      "ar": "سەردار تنظيم الفعاليات"
+    },
     "category": "events",
     "owner": "Nazdar Qadir",
     "phone": "0781 193 9361",
     "whatsapp": "0781 193 9361",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 18,
-    "verified": false,
-    "description": "Sardar Event Planning offers reliable event planners in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 227,
-    "name": "Twana Weddings & Events",
+    "name": {
+      "en": "Twana Weddings & Events",
+      "ku": "توانا زەماوەند و بۆنەکان",
+      "ar": "توانا أفراح ومناسبات"
+    },
     "category": "events",
     "owner": "Sardar Zangana",
     "phone": "0781 788 6049",
     "whatsapp": "0781 788 6049",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 105,
-    "verified": true,
-    "description": "Twana Weddings & Events offers reliable event planners in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 228,
-    "name": "Kawa Occasions Planner",
+    "name": {
+      "en": "Kawa Occasions Planner",
+      "ku": "کاوا ڕێکخەری بۆنەکان",
+      "ar": "کاوا منظم مناسبات"
+    },
     "category": "events",
     "owner": "Karwan Zangana",
     "phone": "0750 533 6644",
     "whatsapp": "0750 533 6644",
-    "address": "Malik Mahmud Ring Road, Sulaymaniyah",
+    "address": {
+      "en": "Malik Mahmud Ring Road, Sulaymaniyah",
+      "ku": "ئاڕاستەی بازنەیی مەلیک مەحمود، سلێمانی",
+      "ar": "ئاڕاستەی بازنەیی مەلیک مەحمود، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 142,
-    "verified": false,
-    "description": "Kawa Occasions Planner offers reliable event planners in Malik Mahmud Ring Road, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 229,
-    "name": "Payam Event Planning",
+    "name": {
+      "en": "Payam Event Planning",
+      "ku": "پەیام پلاندانانی بۆنە",
+      "ar": "پەیام تنظيم الفعاليات"
+    },
     "category": "events",
     "owner": "Payam Sultan",
     "phone": "0773 518 3948",
     "whatsapp": "0773 518 3948",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.7,
     "reviews": 168,
-    "verified": false,
-    "description": "Payam Event Planning offers reliable event planners in Bakhtiary, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 230,
-    "name": "Halgurd Weddings & Events",
+    "name": {
+      "en": "Halgurd Weddings & Events",
+      "ku": "هەڵگورد زەماوەند و بۆنەکان",
+      "ar": "هەڵگورد أفراح ومناسبات"
+    },
     "category": "events",
     "owner": "Bakhtiar Hama",
     "phone": "0780 484 2314",
     "whatsapp": "0780 484 2314",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.6,
     "reviews": 173,
-    "verified": false,
-    "description": "Halgurd Weddings & Events offers reliable event planners in Dwezakh, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 231,
-    "name": "Shvan Iron & Steel Works",
+    "name": {
+      "en": "Shvan Iron & Steel Works",
+      "ku": "شوان کاری ئاسن و پۆلا",
+      "ar": "شوان أعمال الحديد والصلب"
+    },
     "category": "metalwork",
     "owner": "Goran Rashid",
     "phone": "0770 650 7439",
     "whatsapp": "0770 650 7439",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 61,
-    "verified": false,
-    "description": "Shvan Iron & Steel Works offers reliable blacksmiths & metalwork in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 232,
-    "name": "Shene Blacksmith Workshop",
+    "name": {
+      "en": "Shene Blacksmith Workshop",
+      "ku": "شێنە کارگەی ئاسنگەری",
+      "ar": "شێنە ورشة حدادة"
+    },
     "category": "metalwork",
     "owner": "Peshraw Mahmud",
     "phone": "0780 644 7214",
     "whatsapp": "0780 644 7214",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 67,
-    "verified": false,
-    "description": "Shene Blacksmith Workshop offers reliable blacksmiths & metalwork in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 233,
-    "name": "Shvan Metal Works",
+    "name": {
+      "en": "Shvan Metal Works",
+      "ku": "شوان کاری فلز",
+      "ar": "شوان أعمال معدنية"
+    },
     "category": "metalwork",
     "owner": "Karwan Rasul",
     "phone": "0780 729 1256",
     "whatsapp": "0780 729 1256",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 21,
-    "verified": true,
-    "description": "Shvan Metal Works offers reliable blacksmiths & metalwork in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 234,
-    "name": "Rebaz Metal Works",
+    "name": {
+      "en": "Rebaz Metal Works",
+      "ku": "ڕێباز کاری فلز",
+      "ar": "ڕێباز أعمال معدنية"
+    },
     "category": "metalwork",
     "owner": "Shorsh Hussein",
     "phone": "0750 511 8191",
     "whatsapp": "0750 511 8191",
-    "address": "Andazyari, Sulaymaniyah",
+    "address": {
+      "en": "Andazyari, Sulaymaniyah",
+      "ku": "ئەندازیاری، سلێمانی",
+      "ar": "ئەندازیاری، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 59,
-    "verified": false,
-    "description": "Rebaz Metal Works offers reliable blacksmiths & metalwork in Andazyari, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 235,
-    "name": "Peshraw Blacksmith Workshop",
+    "name": {
+      "en": "Peshraw Blacksmith Workshop",
+      "ku": "پێشڕەو کارگەی ئاسنگەری",
+      "ar": "پێشڕەو ورشة حدادة"
+    },
     "category": "metalwork",
     "owner": "Newroz Zangana",
     "phone": "0775 342 5944",
     "whatsapp": "0775 342 5944",
-    "address": "Qirga, Sulaymaniyah",
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 173,
-    "verified": false,
-    "description": "Peshraw Blacksmith Workshop offers reliable blacksmiths & metalwork in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 236,
-    "name": "Zana Metal Works",
+    "name": {
+      "en": "Zana Metal Works",
+      "ku": "زانا کاری فلز",
+      "ar": "زانا أعمال معدنية"
+    },
     "category": "metalwork",
     "owner": "Hawre Hussein",
     "phone": "0770 741 7999",
     "whatsapp": "0770 741 7999",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.4,
     "reviews": 16,
-    "verified": false,
-    "description": "Zana Metal Works offers reliable blacksmiths & metalwork in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 237,
-    "name": "Halgurd Iron & Steel Works",
+    "name": {
+      "en": "Halgurd Iron & Steel Works",
+      "ku": "هەڵگورد کاری ئاسن و پۆلا",
+      "ar": "هەڵگورد أعمال الحديد والصلب"
+    },
     "category": "metalwork",
     "owner": "Ranj Sheikhani",
     "phone": "0780 518 3444",
     "whatsapp": "0780 518 3444",
-    "address": "Qirga, Sulaymaniyah",
-    "rating": 4.0,
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
+    "rating": 4,
     "reviews": 51,
-    "verified": false,
-    "description": "Halgurd Iron & Steel Works offers reliable blacksmiths & metalwork in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 238,
-    "name": "Rekan Blacksmith Workshop",
+    "name": {
+      "en": "Rekan Blacksmith Workshop",
+      "ku": "ڕێکان کارگەی ئاسنگەری",
+      "ar": "ڕێکان ورشة حدادة"
+    },
     "category": "metalwork",
     "owner": "Goran Salih",
     "phone": "0770 925 8586",
     "whatsapp": "0770 925 8586",
-    "address": "Ashty, Sulaymaniyah",
+    "address": {
+      "en": "Ashty, Sulaymaniyah",
+      "ku": "ئاشتی، سلێمانی",
+      "ar": "ئاشتی، السليمانية"
+    },
     "rating": 4.9,
     "reviews": 147,
-    "verified": false,
-    "description": "Rekan Blacksmith Workshop offers reliable blacksmiths & metalwork in Ashty, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 239,
-    "name": "Zana Iron & Steel Works",
+    "name": {
+      "en": "Zana Iron & Steel Works",
+      "ku": "زانا کاری ئاسن و پۆلا",
+      "ar": "زانا أعمال الحديد والصلب"
+    },
     "category": "metalwork",
     "owner": "Twana Faraj",
     "phone": "0771 361 4331",
     "whatsapp": "0771 361 4331",
-    "address": "Kurdistan Street, Sulaymaniyah",
+    "address": {
+      "en": "Kurdistan Street, Sulaymaniyah",
+      "ku": "شەقامی کوردستان، سلێمانی",
+      "ar": "شەقامی کوردستان، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 24,
-    "verified": false,
-    "description": "Zana Iron & Steel Works offers reliable blacksmiths & metalwork in Kurdistan Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 240,
-    "name": "Goran Metal Works",
+    "name": {
+      "en": "Goran Metal Works",
+      "ku": "گۆران کاری فلز",
+      "ar": "گۆران أعمال معدنية"
+    },
     "category": "metalwork",
     "owner": "Hemin Barzinji",
     "phone": "0750 374 7179",
     "whatsapp": "0750 374 7179",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 158,
-    "verified": true,
-    "description": "Goran Metal Works offers reliable blacksmiths & metalwork in Zargata, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 241,
-    "name": "Hemin Welding Workshop",
+    "name": {
+      "en": "Hemin Welding Workshop",
+      "ku": "هێمن کارگەی پاشکۆکاری",
+      "ar": "هێمن ورشة لحام"
+    },
     "category": "welding",
     "owner": "Beston Zangana",
     "phone": "0771 590 4422",
     "whatsapp": "0771 590 4422",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 89,
-    "verified": true,
-    "description": "Hemin Welding Workshop offers reliable welders in Empire Area, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 242,
-    "name": "Payam Welding Workshop",
+    "name": {
+      "en": "Payam Welding Workshop",
+      "ku": "پەیام کارگەی پاشکۆکاری",
+      "ar": "پەیام ورشة لحام"
+    },
     "category": "welding",
     "owner": "Karwan Qadir",
     "phone": "0781 348 4350",
     "whatsapp": "0781 348 4350",
-    "address": "Goizha, Sulaymaniyah",
+    "address": {
+      "en": "Goizha, Sulaymaniyah",
+      "ku": "گۆیژە، سلێمانی",
+      "ar": "گۆیژە، السليمانية"
+    },
     "rating": 4.2,
     "reviews": 65,
-    "verified": false,
-    "description": "Payam Welding Workshop offers reliable welders in Goizha, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 243,
-    "name": "Shene Welding & Fabrication",
+    "name": {
+      "en": "Shene Welding & Fabrication",
+      "ku": "شێنە پاشکۆکاری و دروستکردن",
+      "ar": "شێنە لحام وتصنيع"
+    },
     "category": "welding",
     "owner": "Ranj Mahmud",
     "phone": "0775 415 5285",
     "whatsapp": "0775 415 5285",
-    "address": "Empire Area, Sulaymaniyah",
+    "address": {
+      "en": "Empire Area, Sulaymaniyah",
+      "ku": "گەڕەکی ئیمپایەر، سلێمانی",
+      "ar": "گەڕەکی ئیمپایەر، السليمانية"
+    },
     "rating": 4.1,
     "reviews": 131,
-    "verified": false,
-    "description": "Shene Welding & Fabrication offers reliable welders in Empire Area, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 244,
-    "name": "Beston Steel Welding Services",
+    "name": {
+      "en": "Beston Steel Welding Services",
+      "ku": "بیستوون خزمەتگوزاری پاشکۆکاری پۆلا",
+      "ar": "بیستوون خدمات لحام الصلب"
+    },
     "category": "welding",
     "owner": "Rekan Sofi",
     "phone": "0775 420 7781",
     "whatsapp": "0775 420 7781",
-    "address": "Zargata, Sulaymaniyah",
+    "address": {
+      "en": "Zargata, Sulaymaniyah",
+      "ku": "زەرگەتە، سلێمانی",
+      "ar": "زەرگەتە، السليمانية"
+    },
     "rating": 3.7,
     "reviews": 60,
-    "verified": false,
-    "description": "Beston Steel Welding Services offers reliable welders in Zargata, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 245,
-    "name": "Kawa Welding & Fabrication",
+    "name": {
+      "en": "Kawa Welding & Fabrication",
+      "ku": "کاوا پاشکۆکاری و دروستکردن",
+      "ar": "کاوا لحام وتصنيع"
+    },
     "category": "welding",
     "owner": "Dilshad Zangana",
     "phone": "0780 402 3497",
     "whatsapp": "0780 402 3497",
-    "address": "Raparin, Sulaymaniyah",
+    "address": {
+      "en": "Raparin, Sulaymaniyah",
+      "ku": "ڕاپەرین، سلێمانی",
+      "ar": "ڕاپەرین، السليمانية"
+    },
     "rating": 3.9,
     "reviews": 62,
-    "verified": false,
-    "description": "Kawa Welding & Fabrication offers reliable welders in Raparin, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 246,
-    "name": "Newroz Welding Workshop",
+    "name": {
+      "en": "Newroz Welding Workshop",
+      "ku": "نەورۆز کارگەی پاشکۆکاری",
+      "ar": "نەورۆز ورشة لحام"
+    },
     "category": "welding",
     "owner": "Rekan Barzinji",
     "phone": "0773 881 9005",
     "whatsapp": "0773 881 9005",
-    "address": "Qirga, Sulaymaniyah",
-    "rating": 5.0,
+    "address": {
+      "en": "Qirga, Sulaymaniyah",
+      "ku": "قیرغە، سلێمانی",
+      "ar": "قیرغە، السليمانية"
+    },
+    "rating": 5,
     "reviews": 168,
-    "verified": false,
-    "description": "Newroz Welding Workshop offers reliable welders in Qirga, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 247,
-    "name": "Sardar Welding Workshop",
+    "name": {
+      "en": "Sardar Welding Workshop",
+      "ku": "سەردار کارگەی پاشکۆکاری",
+      "ar": "سەردار ورشة لحام"
+    },
     "category": "welding",
     "owner": "Chnur Rashid",
     "phone": "0770 837 9954",
     "whatsapp": "0770 837 9954",
-    "address": "Salim Street, Sulaymaniyah",
+    "address": {
+      "en": "Salim Street, Sulaymaniyah",
+      "ku": "شەقامی سالم، سلێمانی",
+      "ar": "شەقامی سالم، السليمانية"
+    },
     "rating": 4.3,
     "reviews": 142,
-    "verified": false,
-    "description": "Sardar Welding Workshop offers reliable welders in Salim Street, Sulaymaniyah."
+    "verified": false
   },
   {
     "id": 248,
-    "name": "Rebaz Steel Welding Services",
+    "name": {
+      "en": "Rebaz Steel Welding Services",
+      "ku": "ڕێباز خزمەتگوزاری پاشکۆکاری پۆلا",
+      "ar": "ڕێباز خدمات لحام الصلب"
+    },
     "category": "welding",
     "owner": "Rebaz Karim",
     "phone": "0750 522 3252",
     "whatsapp": "0750 522 3252",
-    "address": "Bakhtiary, Sulaymaniyah",
+    "address": {
+      "en": "Bakhtiary, Sulaymaniyah",
+      "ku": "بەختیاری، سلێمانی",
+      "ar": "بەختیاری، السليمانية"
+    },
     "rating": 4.8,
     "reviews": 63,
-    "verified": true,
-    "description": "Rebaz Steel Welding Services offers reliable welders in Bakhtiary, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 249,
-    "name": "Shvan Welding Workshop",
+    "name": {
+      "en": "Shvan Welding Workshop",
+      "ku": "شوان کارگەی پاشکۆکاری",
+      "ar": "شوان ورشة لحام"
+    },
     "category": "welding",
     "owner": "Karwan Sheikhani",
     "phone": "0775 161 8916",
     "whatsapp": "0775 161 8916",
-    "address": "Dwezakh, Sulaymaniyah",
+    "address": {
+      "en": "Dwezakh, Sulaymaniyah",
+      "ku": "دوێزاخ، سلێمانی",
+      "ar": "دوێزاخ، السليمانية"
+    },
     "rating": 4.5,
     "reviews": 8,
-    "verified": true,
-    "description": "Shvan Welding Workshop offers reliable welders in Dwezakh, Sulaymaniyah."
+    "verified": true
   },
   {
     "id": 250,
-    "name": "Dilshad Welding & Fabrication",
+    "name": {
+      "en": "Dilshad Welding & Fabrication",
+      "ku": "دڵشاد پاشکۆکاری و دروستکردن",
+      "ar": "دڵشاد لحام وتصنيع"
+    },
     "category": "welding",
     "owner": "Kawa Ahmad",
     "phone": "0773 648 5697",
     "whatsapp": "0773 648 5697",
-    "address": "Shorsh Street, Sulaymaniyah",
+    "address": {
+      "en": "Shorsh Street, Sulaymaniyah",
+      "ku": "شەقامی شۆڕش، سلێمانی",
+      "ar": "شەقامی شۆڕش، السليمانية"
+    },
     "rating": 3.6,
     "reviews": 176,
-    "verified": false,
-    "description": "Dilshad Welding & Fabrication offers reliable welders in Shorsh Street, Sulaymaniyah."
+    "verified": false
   }
 ];
 
@@ -3614,9 +5372,11 @@ export default function App() {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return businesses.filter((b) =>
-      b.name.toLowerCase().includes(q) ||
+      bizNameOf(b, language).toLowerCase().includes(q) ||
+      bizNameOf(b, "en").toLowerCase().includes(q) ||
       catNameOf(categories.find((c) => c.id === b.category), language).toLowerCase().includes(q) ||
-      b.address.toLowerCase().includes(q)
+      bizAddressOf(b, language).toLowerCase().includes(q) ||
+      bizAddressOf(b, "en").toLowerCase().includes(q)
     );
   }, [businesses, categories, query, language]);
 
@@ -4091,14 +5851,14 @@ function Card({ biz, categories, index, isFavorite, onToggleFavorite, onClick, l
       </span>
       <span style={{ flex: 1, minWidth: 0, display: "grid", gap: 4, textAlign: "start" }}>
         <span style={styles.cardNameRow}>
-          <span style={styles.cardName}>{biz.name}</span>
+          <span style={styles.cardName}>{bizNameOf(biz, language)}</span>
           {biz.verified && (
             <span style={styles.verifiedBadge} className="bm-verified" title={t("verified", language)}>
               <Icon name="check" size={12} />
             </span>
           )}
         </span>
-        <span style={styles.cardCat}>{catNameOf(cat, language)} · {biz.address.split(",")[0]}</span>
+        <span style={styles.cardCat}>{catNameOf(cat, language)} · {bizAddressShortOf(biz, language)}</span>
         <span style={styles.rating}><Icon name="star" size={13} /> {digits(biz.rating, language)} <span style={styles.reviewCount}>({digits(biz.reviews, language)})</span></span>
       </span>
       <span
@@ -4350,33 +6110,42 @@ function RegisterBusiness({ categories, onBack }) {
 function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack, language }) {
   const cat = categories.find((c) => c.id === biz.category);
   const catDisplay = catNameOf(cat, language);
+  const bizName = bizNameOf(biz, language);
+  const bizAddress = bizAddressOf(biz, language);
   const cleanPhone = biz.phone.replace(/\s+/g, "");
   const waLink = `https://wa.me/964${cleanPhone.replace(/^0/, "")}`;
   const establishedYear = 2024 - (biz.id % 12);
   const [expanded, setExpanded] = useState(false);
 
-  const qrSrc = buildQrSrc(biz);
+  const qrSrc = buildQrSrc(biz, 200, language);
+  const bizDesc = biz.description && biz.description.trim()
+    ? biz.description
+    : t("bizDescTemplate", language, {
+        name: bizName,
+        cat: language === "en" ? catDisplay.toLowerCase() : catDisplay,
+        address: bizAddress,
+      });
 
   const handleShare = async () => {
-    const text = `${biz.name} — ${catDisplay}\n${biz.address}\n${biz.phone}`;
+    const text = `${bizName} — ${catDisplay}\n${bizAddress}\n${biz.phone}`;
     if (navigator.share) {
-      try { await navigator.share({ title: biz.name, text }); } catch (e) {}
+      try { await navigator.share({ title: bizName, text }); } catch (e) {}
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
     }
   };
 
   const handleDirections = () => {
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address + ", Sulaymaniyah")}`, "_blank");
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bizAddressOf(biz, "en"))}`, "_blank");
   };
 
   const handleSaveContact = () => {
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${biz.name}\nORG:${biz.name}\nTEL;TYPE=CELL:${cleanPhone}\nADR:;;${biz.address};;;;\nNOTE:${catDisplay}\nEND:VCARD`;
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${bizName}\nORG:${bizName}\nTEL;TYPE=CELL:${cleanPhone}\nADR:;;${bizAddress};;;;\nNOTE:${catDisplay}\nEND:VCARD`;
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${biz.name.replace(/\s+/g, "_")}.vcf`;
+    a.download = `${bizName.replace(/\s+/g, "_")}.vcf`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -4407,7 +6176,7 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack, langua
       <div style={styles.bizCard} className="bm-card-glow bm-bizcard">
         <Logo width={140} glow style={{ margin: "4px auto 8px", display: "block" }} />
         <div style={styles.profileNameRow}>
-          <h1 style={styles.profileName}>{biz.name}</h1>
+          <h1 style={styles.profileName}>{bizName}</h1>
           {biz.verified && (
             <span style={styles.verifiedBadgeLg} title={t("verified", language)}>
               <Icon name="check" size={13} />
@@ -4427,16 +6196,16 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack, langua
         ))}
       </div>
 
-      <p style={styles.profileDesc}>{biz.description}</p>
+      <p style={styles.profileDesc}>{bizDesc}</p>
 
       <div style={styles.infoBlock} className="bm-glass">
-        <div style={styles.infoRow}><Icon name="pin" size={16} /> {biz.address}</div>
+        <div style={styles.infoRow}><Icon name="pin" size={16} /> {bizAddress}</div>
         <div style={styles.infoRow}><Icon name="phone" size={16} /> <span className="bm-ltr">{biz.phone}</span></div>
         {biz.verified && <div style={styles.infoRow}><Icon name="shield" size={16} /> {t("verifiedByBmnassa", language)}</div>}
       </div>
 
       <div style={styles.qrWrap} className="bm-glass">
-        <img src={qrSrc} alt={`QR code for ${biz.name}`} style={styles.qrImg} />
+        <img src={qrSrc} alt={`QR code for ${bizName}`} style={styles.qrImg} />
         <div>
           <div style={styles.qrTitle}>{t("digitalBusinessCard", language)}</div>
           <div style={styles.qrCaption}>{t("scanToSave", language)}</div>
@@ -4486,7 +6255,11 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
   const [showCatForm, setShowCatForm] = useState(false);
 
   const startNew = () => { setForm({ ...emptyBusinessForm, category: categories[0]?.id || "" }); setEditing({}); };
-  const startEdit = (b) => { setForm(b); setEditing(b); };
+  const startEdit = (b) => {
+    const flat = { ...b, name: bizNameOf(b, "en"), address: bizAddressOf(b, "en") };
+    setForm(flat);
+    setEditing(flat);
+  };
   const cancel = () => { setEditing(null); setForm({ ...emptyBusinessForm, category: categories[0]?.id || "" }); };
 
   const submit = (e) => {
@@ -4608,7 +6381,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
           <div key={b.id} style={styles.adminRow}>
             <img src={buildQrSrc(b, 90)} alt="" style={styles.adminRowQr} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={styles.adminRowName}>{b.name} {b.verified && <Icon name="shield" size={13} />}</div>
+              <div style={styles.adminRowName}>{bizNameOf(b, "en")} {b.verified && <Icon name="shield" size={13} />}</div>
               <div style={styles.adminRowMeta}>{catNameOf(categories.find((c) => c.id === b.category), "en") || "Uncategorized"} · {b.phone}</div>
             </div>
             <button style={styles.iconBtn} onClick={() => startEdit(b)}><Icon name="edit" size={15} /></button>
