@@ -45,7 +45,7 @@ function BackgroundField() {
   );
 }
 
-function Intro({ onEnter }) {
+function Intro({ onEnter, lang = "ku" }) {
   const [ripples, setRipples] = useState([]);
   const [flash, setFlash] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -95,12 +95,12 @@ function Intro({ onEnter }) {
         <button className="bm-intro-orb" onClick={handleTap} aria-label="Open Bmnassa">
           <div className="bm-intro-brand">
             <Logo width={130} glow />
-            <span className="bm-intro-tag">SMART BUSINESS DIRECTORY</span>
+            <span className="bm-intro-tag">{t("introTag", lang)}</span>
           </div>
         </button>
         {ripples.map((id) => <span key={id} className="bm-intro-ripple" />)}
       </div>
-      <div className="bm-intro-hint">Tap the logo</div>
+      <div className="bm-intro-hint">{t("introHint", lang)}</div>
       {flash && <div className="bm-intro-flash go" />}
     </div>
   );
@@ -109,31 +109,31 @@ function Intro({ onEnter }) {
 /* ---------------- DATA ---------------- */
 
 const INITIAL_CATEGORIES = [
-  { id: "plumbing", name: "Plumbers", icon: "wrench" },
-  { id: "electrical", name: "Electricians", icon: "bolt" },
-  { id: "carpentry", name: "Carpenters", icon: "hammer" },
-  { id: "civil-eng", name: "Civil Engineers", icon: "ruler" },
-  { id: "architecture", name: "Architects", icon: "building" },
-  { id: "interior", name: "Interior Designers", icon: "sofa" },
-  { id: "painting", name: "Painters", icon: "brush" },
-  { id: "hvac", name: "AC & Refrigeration", icon: "wind" },
-  { id: "cleaning", name: "Home Cleaning", icon: "sparkles" },
-  { id: "moving", name: "Movers & Packers", icon: "truck" },
-  { id: "mechanics", name: "Car Mechanics", icon: "car" },
-  { id: "carwash", name: "Car Wash & Detailing", icon: "drop" },
-  { id: "photography", name: "Photographers", icon: "camera" },
-  { id: "tailoring", name: "Tailors & Fashion", icon: "thread" },
-  { id: "bakery", name: "Bakeries & Pastry", icon: "cake" },
-  { id: "catering", name: "Restaurants & Catering", icon: "utensils" },
-  { id: "beauty", name: "Beauty Salons", icon: "sparkle" },
-  { id: "barber", name: "Barbershops", icon: "scissors" },
-  { id: "legal", name: "Lawyers", icon: "scale" },
-  { id: "accounting", name: "Accountants", icon: "calculator" },
-  { id: "realestate", name: "Real Estate Agents", icon: "key" },
-  { id: "it-repair", name: "IT & Computer Repair", icon: "monitor" },
-  { id: "events", name: "Event Planners", icon: "confetti" },
-  { id: "metalwork", name: "Blacksmiths & Metalwork", icon: "flame" },
-  { id: "welding", name: "Welders", icon: "spark" },
+  { id: "plumbing", name: { en: "Plumbers", ku: "کارسازی بۆری", ar: "أعمال السباكة" }, icon: "wrench" },
+  { id: "electrical", name: { en: "Electricians", ku: "کارەبایی", ar: "الكهرباء" }, icon: "bolt" },
+  { id: "carpentry", name: { en: "Carpenters", ku: "دارتاشی", ar: "النجارة" }, icon: "hammer" },
+  { id: "civil-eng", name: { en: "Civil Engineers", ku: "ئەندازیاری شارستانی", ar: "الهندسة المدنية" }, icon: "ruler" },
+  { id: "architecture", name: { en: "Architects", ku: "تەلارسازی", ar: "الهندسة المعمارية" }, icon: "building" },
+  { id: "interior", name: { en: "Interior Designers", ku: "ڕازاندنەوەی ناوماڵ", ar: "التصميم الداخلي" }, icon: "sofa" },
+  { id: "painting", name: { en: "Painters", ku: "ڕەنگکاری", ar: "الدهان" }, icon: "brush" },
+  { id: "hvac", name: { en: "AC & Refrigeration", ku: "ساردکەرەوە و فریزەر", ar: "التكييف والتبريد" }, icon: "wind" },
+  { id: "cleaning", name: { en: "Home Cleaning", ku: "پاکژکردنەوەی ماڵ", ar: "تنظيف المنازل" }, icon: "sparkles" },
+  { id: "moving", name: { en: "Movers & Packers", ku: "گواستنەوە و بەستنەوە", ar: "النقل والتغليف" }, icon: "truck" },
+  { id: "mechanics", name: { en: "Car Mechanics", ku: "میکانیکی ئۆتۆمبێل", ar: "ميكانيكا السيارات" }, icon: "car" },
+  { id: "carwash", name: { en: "Car Wash & Detailing", ku: "شوشتنی ئۆتۆمبێل", ar: "غسيل وتلميع السيارات" }, icon: "drop" },
+  { id: "photography", name: { en: "Photographers", ku: "وێنەگری", ar: "التصوير الفوتوغرافي" }, icon: "camera" },
+  { id: "tailoring", name: { en: "Tailors & Fashion", ku: "دەرزیکاری و مۆدا", ar: "الخياطة والأزياء" }, icon: "thread" },
+  { id: "bakery", name: { en: "Bakeries & Pastry", ku: "نانەوایی و شیرینی", ar: "المخابز والحلويات" }, icon: "cake" },
+  { id: "catering", name: { en: "Restaurants & Catering", ku: "چێشتخانە و کەیتەرینگ", ar: "المطاعم والضيافة" }, icon: "utensils" },
+  { id: "beauty", name: { en: "Beauty Salons", ku: "ژوانگای جوانی", ar: "صالونات التجميل" }, icon: "sparkle" },
+  { id: "barber", name: { en: "Barbershops", ku: "سەلمانی", ar: "صالونات الحلاقة" }, icon: "scissors" },
+  { id: "legal", name: { en: "Lawyers", ku: "پارێزەر", ar: "المحاماة" }, icon: "scale" },
+  { id: "accounting", name: { en: "Accountants", ku: "ژمێریاری", ar: "المحاسبة" }, icon: "calculator" },
+  { id: "realestate", name: { en: "Real Estate Agents", ku: "دلالی خانووبەرە", ar: "الوساطة العقارية" }, icon: "key" },
+  { id: "it-repair", name: { en: "IT & Computer Repair", ku: "چاککردنەوەی کۆمپیوتەر", ar: "صيانة الحاسوب" }, icon: "monitor" },
+  { id: "events", name: { en: "Event Planners", ku: "ڕێکخستنی بۆنە", ar: "تنظيم الفعاليات" }, icon: "confetti" },
+  { id: "metalwork", name: { en: "Blacksmiths & Metalwork", ku: "ئاسنگەری", ar: "الحدادة" }, icon: "flame" },
+  { id: "welding", name: { en: "Welders", ku: "پاشکۆکاری", ar: "اللحام" }, icon: "spark" },
 ];
 
 const ICON_OPTIONS = [
@@ -156,12 +156,104 @@ const LANGUAGES = [
 ];
 
 const CITIES = [
-  { id: "erbil", name: "Erbil", sub: "62 businesses", live: true },
-  { id: "sulaymaniyah", name: "Sulaymaniyah", sub: "250 businesses", live: true },
-  { id: "kirkuk", name: "Kirkuk", sub: "Coming soon", live: false },
-  { id: "duhok", name: "Duhok", sub: "Coming soon", live: false },
-  { id: "halabja", name: "Halabja", sub: "Coming soon", live: false },
+  { id: "erbil", name: { en: "Erbil", ku: "هەولێر", ar: "أربيل" }, count: 62, live: true },
+  { id: "sulaymaniyah", name: { en: "Sulaymaniyah", ku: "سلێمانی", ar: "السليمانية" }, count: 250, live: true },
+  { id: "kirkuk", name: { en: "Kirkuk", ku: "کەرکووک", ar: "كركوك" }, count: 0, live: false },
+  { id: "duhok", name: { en: "Duhok", ku: "دهۆک", ar: "دهوك" }, count: 0, live: false },
+  { id: "halabja", name: { en: "Halabja", ku: "هەڵەبجە", ar: "حلبجة" }, count: 0, live: false },
 ];
+
+/* ---------------- i18n ---------------- */
+
+const DIRS = { en: "ltr", ku: "rtl", ar: "rtl" };
+function dirOf(lang) { return DIRS[lang] || "ltr"; }
+
+const EASTERN_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+function digits(n, lang) {
+  const s = String(n);
+  if (lang === "en") return s;
+  return s.replace(/[0-9]/g, (d) => EASTERN_DIGITS[d]);
+}
+
+function trField(obj, key, lang) {
+  if (!obj) return "";
+  const v = obj[key];
+  if (v && typeof v === "object") return v[lang] || v.en || "";
+  return v || "";
+}
+const catNameOf = (cat, lang) => trField(cat, "name", lang);
+const cityNameOf = (c, lang) => trField(c, "name", lang);
+
+const UI = {
+  introTag: { en: "SMART BUSINESS DIRECTORY", ku: "ڕێنمای بازرگانی زیرەک", ar: "دليل الأعمال الذكي" },
+  introHint: { en: "Tap the logo", ku: "لۆگۆکە دابگرە", ar: "اضغط على الشعار" },
+  chooseLanguage: { en: "Choose your language", ku: "زمانەکەت هەڵبژێرە", ar: "اختر لغتك" },
+  changeLaterAccount: { en: "You can change this later in Account.", ku: "دواتر لە هەژمار دەتوانیت بیگۆڕیت.", ar: "يمكنك تغييرها لاحقًا من الحساب." },
+  continueBtn: { en: "Continue", ku: "بەردەوامبوون", ar: "متابعة" },
+  whereAreYou: { en: "Where are you?", ku: "لە کوێیت؟", ar: "أين أنت؟" },
+  nearbyFirst: { en: "We'll show services near you first.", ku: "یەکەم جار خزمەتگوزارییە نزیکەکانت پیشان دەدەین.", ar: "سنعرض لك الخدمات القريبة منك أولاً." },
+  startExploring: { en: "Start exploring", ku: "دەست بکە بە گەڕان", ar: "ابدأ الاستكشاف" },
+  comingSoon: { en: "Coming soon", ku: "بەم زووانە", ar: "قريبًا" },
+  soonChip: { en: "SOON", ku: "بەم زووانە", ar: "قريبًا" },
+  businessesLabel: { en: "businesses", ku: "بازرگانی", ar: "نشاطًا تجاريًا" },
+  back: { en: "Back", ku: "گەڕانەوە", ar: "رجوع" },
+  homeHeadline: { en: "Find trusted craftsmen & services", ku: "کارامە و خزمەتگوزاری متمانەپێکراو بدۆزەرەوە", ar: "اعثر على حرفيين وخدمات موثوقة" },
+  homeSubtitle: { en: "{count}+ verified professionals across {n} categories", ku: "{count}+ پیشەوەری پشتڕاستکراو لە {n} پۆلدا", ar: "+{count} محترفًا موثّقًا في {n} فئة" },
+  searchPlaceholder: { en: "Plumber, electrician, cleaning…", ku: "کارسازی بۆری، کارەبایی، پاکژکردنەوە...", ar: "سباك، كهربائي، تنظيف..." },
+  categoriesLabel: { en: "Categories", ku: "پۆلەکان", ar: "الفئات" },
+  resultsFor: { en: '{n} results for "{q}"', ku: '{n} ئەنجام بۆ "{q}"', ar: '{n} نتيجة لـ "{q}"' },
+  noResults: { en: "No listings match that search.", ku: "هیچ ئەنجامێک نەدۆزرایەوە.", ar: "لا توجد نتائج مطابقة لهذا البحث." },
+  placesCount: { en: "{n} places", ku: "{n} شوێن", ar: "{n} مواقع" },
+  placesVerifiedCount: { en: "{n} places · {m} verified", ku: "{n} شوێن · {m} پشتڕاستکراو", ar: "{n} مواقع · {m} موثّق" },
+  removeFavorite: { en: "Remove from favorites", ku: "لابردن لە دڵخوازەکان", ar: "إزالة من المفضلة" },
+  addFavorite: { en: "Add to favorites", ku: "زیادکردن بۆ دڵخوازەکان", ar: "إضافة إلى المفضلة" },
+  verified: { en: "Verified", ku: "پشتڕاستکراوە", ar: "موثّق" },
+  favoritesTitle: { en: "Favorites", ku: "دڵخوازەکان", ar: "المفضلة" },
+  favoritesSub: { en: "Places you saved, in one place.", ku: "شوێنەکانی کە پاشەکەوتت کردوون، لە یەک شوێندا.", ar: "الأماكن التي حفظتها، في مكان واحد." },
+  noFavoritesTitle: { en: "No favorites yet", ku: "هێشتا دڵخوازت نییە", ar: "لا توجد مفضلات بعد" },
+  noFavoritesSub: { en: "Tap the heart on any place to save it here.", ku: "دڵی هەر شوێنێک دابگرە بۆ پاشەکەوتکردنی لێرە.", ar: "اضغط على أيقونة القلب في أي مكان لحفظه هنا." },
+  welcome: { en: "Welcome", ku: "بەخێربێیت", ar: "مرحبًا بك" },
+  placesStat: { en: "Places", ku: "شوێن", ar: "موقع" },
+  categoriesStat: { en: "Categories", ku: "پۆل", ar: "فئة" },
+  favoritesStat: { en: "Favorites", ku: "دڵخواز", ar: "مفضلة" },
+  listYourBusiness: { en: "List Your Business", ku: "بازرگانیەکەت تۆمار بکە", ar: "سجّل نشاطك التجاري" },
+  listYourBusinessSub: { en: "Get your business on Bmnassa", ku: "بازرگانیەکەت بخەرە سەر Bmnassa", ar: "أضف نشاطك إلى Bmnassa" },
+  adminPanel: { en: "Admin Panel", ku: "پانێلی بەڕێوەبەری", ar: "لوحة الإدارة" },
+  adminPanelSub: { en: "Manage listings & categories", ku: "بەڕێوەبردنی تۆمارەکان و پۆلەکان", ar: "إدارة القوائم والفئات" },
+  languageLabel: { en: "Language", ku: "زمان", ar: "اللغة" },
+  languageSub: { en: "Change app language", ku: "گۆڕینی زمانی ئەپ", ar: "تغيير لغة التطبيق" },
+  cityLabel: { en: "City", ku: "شار", ar: "المدينة" },
+  citySub: { en: "Change your city", ku: "گۆڕینی شارەکەت", ar: "تغيير مدينتك" },
+  replayIntroLabel: { en: "Replay Intro", ku: "دووبارە پیشاندانەوەی سەرەتا", ar: "إعادة عرض المقدمة" },
+  replayIntroSub: { en: "See the opening animation again", ku: "ئەنیمەیشنی سەرەتا دووبارە ببینەوە", ar: "شاهد الرسوم المتحركة الافتتاحية مرة أخرى" },
+  navSearch: { en: "Search", ku: "گەڕان", ar: "البحث" },
+  navFavorites: { en: "Favorites", ku: "دڵخوازەکان", ar: "المفضلة" },
+  navAccount: { en: "Account", ku: "هەژمار", ar: "الحساب" },
+  serviceProfile: { en: "Service profile", ku: "پرۆفایلی خزمەتگوزاری", ar: "الملف الشخصي للخدمة" },
+  whatsappLabel: { en: "WhatsApp", ku: "واتساپ", ar: "واتساب" },
+  shareLabel: { en: "Share", ku: "هاوبەشکردن", ar: "مشاركة" },
+  directionsLabel: { en: "Directions", ku: "ڕێنیشاندان", ar: "الاتجاهات" },
+  saveContactLabel: { en: "Save contact", ku: "پاشەکەوتکردن", ar: "حفظ البيانات" },
+  verifiedByBmnassa: { en: "Verified by Bmnassa", ku: "پشتڕاستکراوە لەلایەن Bmnassa", ar: "موثّق من Bmnassa" },
+  reviewsCount: { en: "{n} reviews", ku: "{n} هەڵسەنگاندن", ar: "{n} تقييمًا" },
+  digitalBusinessCard: { en: "Digital business card", ku: "کارتی بازرگانی دیجیتاڵ", ar: "بطاقة العمل الرقمية" },
+  scanToSave: { en: "Scan to save this contact.", ku: "هەڵیبسووڕێنە بۆ پاشەکەوتکردنی پەیوەندی.", ar: "امسح الرمز لحفظ جهة الاتصال." },
+  viewFullProfile: { en: "View Full Profile", ku: "بینینی پرۆفایلی تەواو", ar: "عرض الملف الكامل" },
+  hideDetails: { en: "Hide details", ku: "شاردنەوەی وردەکاری", ar: "إخفاء التفاصيل" },
+  verifiedSince: { en: "Verified since {year}", ku: "پشتڕاستکراوە لە ساڵی {year}", ar: "موثّق منذ {year}" },
+  customerReviewsOn: { en: "{n} customer reviews on Bmnassa", ku: "{n} هەڵسەنگاندنی کڕیار لە Bmnassa", ar: "{n} تقييمًا من العملاء على Bmnassa" },
+  categoryColon: { en: "Category: {cat}", ku: "پۆل: {cat}", ar: "الفئة: {cat}" },
+  call: { en: "Call", ku: "پەیوەندی", ar: "اتصال" },
+};
+
+function t(key, lang, vars) {
+  const entry = UI[key];
+  let s = (entry && (entry[lang] || entry.en)) || key;
+  if (vars) {
+    for (const k in vars) s = s.split(`{${k}}`).join(vars[k]);
+  }
+  return s;
+}
 
 const BUSINESSES = [
   {
@@ -3428,7 +3520,7 @@ const Icon = ({ name, size = 18 }) => {
     case "pin": return <svg {...common}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>;
     case "star": return <svg {...common} fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
     case "check": return <svg {...common}><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>;
-    case "back": return <svg {...common}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>;
+    case "back": return <svg {...common} className="bm-icon-flip"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>;
     case "plus": return <svg {...common}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
     case "trash": return <svg {...common}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>;
     case "edit": return <svg {...common}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>;
@@ -3465,7 +3557,7 @@ const Icon = ({ name, size = 18 }) => {
     case "idcard": return <svg {...common}><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M6 16c.5-1.5 1.8-2 2-2s1.5.5 2 2"/><path d="M13 10h6M13 13h6M13 16h4"/></svg>;
     case "heart": return <svg {...common}><path d="M12 20.5s-7.5-4.6-10-9.3C.4 8 2 4.5 5.5 4c2-.3 3.8.7 6.5 3 2.7-2.3 4.5-3.3 6.5-3C22 4.5 23.6 8 22 11.2c-2.5 4.7-10 9.3-10 9.3z"/></svg>;
     case "user": return <svg {...common}><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>;
-    case "chevron": return <svg {...common}><polyline points="9 6 15 12 9 18"/></svg>;
+    case "chevron": return <svg {...common} className="bm-icon-flip"><polyline points="9 6 15 12 9 18"/></svg>;
     case "store": return <svg {...common}><path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM9 20v-6h6v6"/></svg>;
     case "globe": return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>;
     case "play": return <svg {...common} fill="currentColor" stroke="none"><path d="M8 5l11 7-11 7z"/></svg>;
@@ -3503,8 +3595,10 @@ export default function App() {
   const changeLanguage = () => setOnboardingStep("language");
   const changeCity = () => setOnboardingStep("city");
 
-  const cityName = CITIES.find((c) => c.id === city)?.name || city;
+  const cityObj = CITIES.find((c) => c.id === city);
+  const cityName = cityObj ? cityNameOf(cityObj, language) : city;
   const langName = LANGUAGES.find((l) => l.code === language)?.name || language;
+  const dir = dirOf(language);
 
   const [activeTab, setActiveTab] = useState("search"); // search | favorites | account
   const [view, setView] = useState(null); // null | category | profile | admin
@@ -3521,10 +3615,10 @@ export default function App() {
     if (!q) return [];
     return businesses.filter((b) =>
       b.name.toLowerCase().includes(q) ||
-      categories.find((c) => c.id === b.category)?.name.toLowerCase().includes(q) ||
+      catNameOf(categories.find((c) => c.id === b.category), language).toLowerCase().includes(q) ||
       b.address.toLowerCase().includes(q)
     );
-  }, [businesses, categories, query]);
+  }, [businesses, categories, query, language]);
 
   const categoryCounts = useMemo(() => {
     const counts = {};
@@ -3585,17 +3679,17 @@ export default function App() {
 
   if (onboardingStep === "intro") {
     return (
-      <div style={styles.app} className="bm-glass-root">
+      <div style={styles.app} className="bm-glass-root" dir={dir}>
         <style>{globalCss}</style>
         <BackgroundField />
-        <Intro onEnter={() => setOnboardingStep("language")} />
+        <Intro onEnter={() => setOnboardingStep("language")} lang={language} />
       </div>
     );
   }
 
   if (onboardingStep === "language") {
     return (
-      <div style={styles.app} className="bm-glass-root">
+      <div style={styles.app} className="bm-glass-root" dir={dirOf(language)}>
         <style>{globalCss}</style>
         <BackgroundField />
         <OnboardingLanguage language={language} onSelect={setLanguage} onContinue={continueFromLanguage} />
@@ -3605,16 +3699,16 @@ export default function App() {
 
   if (onboardingStep === "city") {
     return (
-      <div style={styles.app} className="bm-glass-root">
+      <div style={styles.app} className="bm-glass-root" dir={dir}>
         <style>{globalCss}</style>
         <BackgroundField />
-        <OnboardingCity city={city} onSelect={setCity} onContinue={finishOnboarding} onBack={backToLanguage} />
+        <OnboardingCity city={city} onSelect={setCity} onContinue={finishOnboarding} onBack={backToLanguage} language={language} />
       </div>
     );
   }
 
   return (
-    <div style={styles.app} className="bm-glass-root">
+    <div style={styles.app} className="bm-glass-root" dir={dir}>
       <style>{globalCss}</style>
       <BackgroundField />
 
@@ -3632,6 +3726,7 @@ export default function App() {
             openCategory={openCategory}
             cityName={cityName}
             onChangeCity={changeCity}
+            language={language}
           />
         )}
 
@@ -3642,6 +3737,7 @@ export default function App() {
             favorites={favorites}
             onToggleFavorite={toggleFavorite}
             openProfile={openProfile}
+            language={language}
           />
         )}
 
@@ -3657,6 +3753,7 @@ export default function App() {
             goReplayIntro={replayIntro}
             goChangeLanguage={changeLanguage}
             goChangeCity={changeCity}
+            language={language}
           />
         )}
       </div>
@@ -3671,6 +3768,7 @@ export default function App() {
           openProfile={openProfile}
           onBack={() => { setView(null); setSelectedCategory(null); }}
           cityName={cityName}
+          language={language}
         />
       )}
 
@@ -3681,6 +3779,7 @@ export default function App() {
           isFavorite={favorites.has(selectedBiz.id)}
           onToggleFavorite={() => toggleFavorite(selectedBiz.id)}
           onBack={() => setView(selectedCategory ? "category" : null)}
+          language={language}
         />
       )}
 
@@ -3706,36 +3805,36 @@ export default function App() {
       )}
 
       {showTabBar && (
-        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} favoriteCount={favorites.size} />
+        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} favoriteCount={favorites.size} language={language} />
       )}
     </div>
   );
 }
 
-function BottomNav({ activeTab, setActiveTab, favoriteCount }) {
+function BottomNav({ activeTab, setActiveTab, favoriteCount, language }) {
   const tabs = [
-    { id: "search", label: "Search", icon: "search" },
-    { id: "favorites", label: "Favorites", icon: "heart" },
-    { id: "account", label: "Account", icon: "user" },
+    { id: "search", label: t("navSearch", language), icon: "search" },
+    { id: "favorites", label: t("navFavorites", language), icon: "heart" },
+    { id: "account", label: t("navAccount", language), icon: "user" },
   ];
   return (
     <div className="bm-nav-glass bm-bottom-nav">
-      {tabs.map((t) => {
-        const active = activeTab === t.id;
+      {tabs.map((tab) => {
+        const active = activeTab === tab.id;
         return (
           <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
             className="bm-nav-btn"
             style={active ? { ...styles.navBtn, ...styles.navBtnActive } : styles.navBtn}
           >
             <span style={styles.navIconWrap}>
-              <Icon name={t.icon} size={19} />
-              {t.id === "favorites" && favoriteCount > 0 && (
-                <span style={styles.navBadge}>{favoriteCount}</span>
+              <Icon name={tab.icon} size={19} />
+              {tab.id === "favorites" && favoriteCount > 0 && (
+                <span style={styles.navBadge}>{digits(favoriteCount, language)}</span>
               )}
             </span>
-            <span style={styles.navLabel}>{t.label}</span>
+            <span style={styles.navLabel}>{tab.label}</span>
             {active && <span style={styles.navActiveBar} />}
           </button>
         );
@@ -3758,8 +3857,8 @@ function OnboardingLanguage({ language, onSelect, onContinue }) {
         <Logo width={104} />
       </div>
 
-      <h1 style={styles.onboardH1}>Choose your language</h1>
-      <p style={styles.onboardSub}>You can change this later in Account.</p>
+      <h1 style={styles.onboardH1}>{t("chooseLanguage", language)}</h1>
+      <p style={styles.onboardSub}>{t("changeLaterAccount", language)}</p>
 
       <div style={styles.onboardBody}>
         <div style={styles.choiceList}>
@@ -3786,14 +3885,14 @@ function OnboardingLanguage({ language, onSelect, onContinue }) {
         </div>
       </div>
 
-      <button style={styles.cta} onClick={onContinue}>Continue</button>
+      <button style={styles.cta} onClick={onContinue}>{t("continueBtn", language)}</button>
     </div>
   );
 }
 
 /* ---------------- ONBOARDING: CITY ---------------- */
 
-function OnboardingCity({ city, onSelect, onContinue, onBack }) {
+function OnboardingCity({ city, onSelect, onContinue, onBack, language }) {
   return (
     <div style={styles.onboardWrap}>
       <div style={styles.onboardSteps}>
@@ -3802,19 +3901,20 @@ function OnboardingCity({ city, onSelect, onContinue, onBack }) {
       </div>
 
       <div style={styles.onboardBackRow}>
-        <button style={styles.iconBtnGlass} onClick={onBack} aria-label="Back">
+        <button style={styles.iconBtnGlass} onClick={onBack} aria-label={t("back", language)}>
           <Icon name="back" size={16} />
         </button>
         <Logo width={84} />
       </div>
 
-      <h1 style={styles.onboardH1}>Where are you?</h1>
-      <p style={styles.onboardSub}>We'll show services near you first.</p>
+      <h1 style={styles.onboardH1}>{t("whereAreYou", language)}</h1>
+      <p style={styles.onboardSub}>{t("nearbyFirst", language)}</p>
 
       <div style={styles.onboardBody}>
         <div style={styles.choiceList}>
           {CITIES.map((c, i) => {
             const active = city === c.id;
+            const sub = c.live ? `${digits(c.count, language)} ${t("businessesLabel", language)}` : t("comingSoon", language);
             return (
               <div
                 key={c.id}
@@ -3826,26 +3926,26 @@ function OnboardingCity({ city, onSelect, onContinue, onBack }) {
                   <Icon name="pin" size={17} />
                 </span>
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <b style={styles.choiceName}>{c.name}</b>
-                  <small style={styles.choiceSub}>{c.sub}</small>
+                  <b style={styles.choiceName}>{cityNameOf(c, language)}</b>
+                  <small style={styles.choiceSub}>{sub}</small>
                 </span>
                 {c.live
                   ? <span style={active ? { ...styles.tick, ...styles.tickActive } : styles.tick} />
-                  : <span style={styles.soonChip}>SOON</span>}
+                  : <span style={styles.soonChip}>{t("soonChip", language)}</span>}
               </div>
             );
           })}
         </div>
       </div>
 
-      <button style={styles.cta} onClick={onContinue}>Start exploring</button>
+      <button style={styles.cta} onClick={onContinue}>{t("startExploring", language)}</button>
     </div>
   );
 }
 
 /* ---------------- HOME ---------------- */
 
-function Home({ query, setQuery, searchResults, categoryCounts, categories, businesses, favorites, onToggleFavorite, openProfile, openCategory, cityName, onChangeCity }) {
+function Home({ query, setQuery, searchResults, categoryCounts, categories, businesses, favorites, onToggleFavorite, openProfile, openCategory, cityName, onChangeCity, language }) {
   const [focused, setFocused] = useState(false);
   const businessCount = businesses.length;
   const isSearching = query.trim().length > 0;
@@ -3859,9 +3959,9 @@ function Home({ query, setQuery, searchResults, categoryCounts, categories, busi
         </button>
       </div>
 
-      <h2 style={styles.homeH2} className="bm-hero-title">Find trusted craftsmen &amp; services</h2>
+      <h2 style={styles.homeH2} className="bm-hero-title">{t("homeHeadline", language)}</h2>
       <p style={styles.heroSubtitle} className="bm-hero-sub">
-        {businessCount}+ verified professionals across {categories.length} categories
+        {t("homeSubtitle", language, { count: digits(businessCount, language), n: digits(categories.length, language) })}
       </p>
 
       <div
@@ -3871,7 +3971,7 @@ function Home({ query, setQuery, searchResults, categoryCounts, categories, busi
         <Icon name="search" size={17} />
         <input
           style={styles.searchInput}
-          placeholder="Plumber, electrician, cleaning…"
+          placeholder={t("searchPlaceholder", language)}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -3882,7 +3982,7 @@ function Home({ query, setQuery, searchResults, categoryCounts, categories, busi
       {isSearching ? (
         <>
           <div style={styles.resultsMeta} className="bm-meta" key={`meta-${query}`}>
-            {searchResults.length} results for "{query}"
+            {t("resultsFor", language, { n: digits(searchResults.length, language), q: query })}
           </div>
           <div style={styles.list} key={`grid-${query}`}>
             {searchResults.map((b, i) => (
@@ -3891,19 +3991,20 @@ function Home({ query, setQuery, searchResults, categoryCounts, categories, busi
                 isFavorite={favorites.has(b.id)}
                 onToggleFavorite={() => onToggleFavorite(b.id)}
                 onClick={() => openProfile(b)}
+                language={language}
               />
             ))}
             {searchResults.length === 0 && (
               <div style={styles.empty} className="bm-empty">
                 <span className="bm-orbi" style={{ width: 84, height: 84 }}><Icon name="search" size={30} /></span>
-                No listings match that search.
+                {t("noResults", language)}
               </div>
             )}
           </div>
         </>
       ) : (
         <>
-          <div style={styles.sectionTitle} className="bm-meta">Categories</div>
+          <div style={styles.sectionTitle} className="bm-meta">{t("categoriesLabel", language)}</div>
           <div style={styles.categoryGrid}>
             {categories.map((c, i) => (
               <CategoryTile
@@ -3912,6 +4013,7 @@ function Home({ query, setQuery, searchResults, categoryCounts, categories, busi
                 count={categoryCounts[c.id] || 0}
                 index={i}
                 onClick={() => openCategory(c.id)}
+                language={language}
               />
             ))}
           </div>
@@ -3921,7 +4023,7 @@ function Home({ query, setQuery, searchResults, categoryCounts, categories, busi
   );
 }
 
-function CategoryTile({ category, count, index, onClick }) {
+function CategoryTile({ category, count, index, onClick, language }) {
   return (
     <button
       onClick={onClick}
@@ -3932,20 +4034,20 @@ function CategoryTile({ category, count, index, onClick }) {
         <Icon name={category.icon} size={22} />
       </span>
       <div>
-        <div style={styles.categoryTileName}>{category.name}</div>
-        <div style={styles.categoryTileCount}>{count} places</div>
+        <div style={styles.categoryTileName}>{catNameOf(category, language)}</div>
+        <div style={styles.categoryTileCount}>{t("placesCount", language, { n: digits(count, language) })}</div>
       </div>
     </button>
   );
 }
 
-function CategoryView({ categoryId, categories, businesses, favorites, onToggleFavorite, openProfile, onBack, cityName }) {
+function CategoryView({ categoryId, categories, businesses, favorites, onToggleFavorite, openProfile, onBack, cityName, language }) {
   const category = categories.find((c) => c.id === categoryId);
   const verifiedCount = businesses.filter((b) => b.verified).length;
   return (
     <div style={styles.screenPad}>
       <div style={styles.topbar}>
-        <button style={styles.iconBtnGlass} onClick={onBack} aria-label="Back">
+        <button style={styles.iconBtnGlass} onClick={onBack} aria-label={t("back", language)}>
           <Icon name="back" size={16} />
         </button>
         <span style={styles.cityPill}><Icon name="pin" size={14} /> {cityName}</span>
@@ -3956,8 +4058,8 @@ function CategoryView({ categoryId, categories, businesses, favorites, onToggleF
           <Icon name={category.icon} size={30} />
         </span>
         <div>
-          <h1 style={styles.categoryViewTitle}>{category.name}</h1>
-          <div style={styles.categoryViewSub}>{businesses.length} places · {verifiedCount} verified</div>
+          <h1 style={styles.categoryViewTitle}>{catNameOf(category, language)}</h1>
+          <div style={styles.categoryViewSub}>{t("placesVerifiedCount", language, { n: digits(businesses.length, language), m: digits(verifiedCount, language) })}</div>
         </div>
       </div>
 
@@ -3968,6 +4070,7 @@ function CategoryView({ categoryId, categories, businesses, favorites, onToggleF
             isFavorite={favorites.has(b.id)}
             onToggleFavorite={() => onToggleFavorite(b.id)}
             onClick={() => openProfile(b)}
+            language={language}
           />
         ))}
       </div>
@@ -3975,8 +4078,8 @@ function CategoryView({ categoryId, categories, businesses, favorites, onToggleF
   );
 }
 
-function Card({ biz, categories, index, isFavorite, onToggleFavorite, onClick }) {
-  const catName = categories.find((c) => c.id === biz.category)?.name;
+function Card({ biz, categories, index, isFavorite, onToggleFavorite, onClick, language }) {
+  const cat = categories.find((c) => c.id === biz.category);
   return (
     <button
       style={{ "--i": index % 20 }}
@@ -3986,24 +4089,24 @@ function Card({ biz, categories, index, isFavorite, onToggleFavorite, onClick })
       <span className="bm-orbi" style={{ width: 48, height: 48 }}>
         <Logo width={26} />
       </span>
-      <span style={{ flex: 1, minWidth: 0, display: "grid", gap: 4, textAlign: "left" }}>
+      <span style={{ flex: 1, minWidth: 0, display: "grid", gap: 4, textAlign: "start" }}>
         <span style={styles.cardNameRow}>
           <span style={styles.cardName}>{biz.name}</span>
           {biz.verified && (
-            <span style={styles.verifiedBadge} className="bm-verified" title="Verified">
+            <span style={styles.verifiedBadge} className="bm-verified" title={t("verified", language)}>
               <Icon name="check" size={12} />
             </span>
           )}
         </span>
-        <span style={styles.cardCat}>{catName} · {biz.address.split(",")[0]}</span>
-        <span style={styles.rating}><Icon name="star" size={13} /> {biz.rating} <span style={styles.reviewCount}>({biz.reviews})</span></span>
+        <span style={styles.cardCat}>{catNameOf(cat, language)} · {biz.address.split(",")[0]}</span>
+        <span style={styles.rating}><Icon name="star" size={13} /> {digits(biz.rating, language)} <span style={styles.reviewCount}>({digits(biz.reviews, language)})</span></span>
       </span>
       <span
         role="button"
         style={{ ...styles.favBtn, ...(isFavorite ? styles.favBtnActive : {}) }}
         className="bm-fav-btn"
         onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-        title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        title={isFavorite ? t("removeFavorite", language) : t("addFavorite", language)}
       >
         <Icon name="heart" size={16} />
       </span>
@@ -4013,19 +4116,19 @@ function Card({ biz, categories, index, isFavorite, onToggleFavorite, onClick })
 
 /* ---------------- FAVORITES ---------------- */
 
-function Favorites({ businesses, categories, favorites, onToggleFavorite, openProfile }) {
+function Favorites({ businesses, categories, favorites, onToggleFavorite, openProfile, language }) {
   return (
     <div style={styles.screenPad}>
       <div className="bm-meta">
-        <h1 style={styles.onboardH1}>Favorites</h1>
-        <p style={styles.onboardSub}>Places you saved, in one place.</p>
+        <h1 style={styles.onboardH1}>{t("favoritesTitle", language)}</h1>
+        <p style={styles.onboardSub}>{t("favoritesSub", language)}</p>
       </div>
 
       {businesses.length === 0 ? (
         <div style={styles.empty} className="bm-empty">
           <span className="bm-orbi" style={{ width: 84, height: 84 }}><Icon name="heart" size={30} /></span>
-          <b style={{ color: "#f4f6f7" }}>No favorites yet</b>
-          Tap the heart on any place to save it here.
+          <b style={{ color: "#f4f6f7" }}>{t("noFavoritesTitle", language)}</b>
+          {t("noFavoritesSub", language)}
         </div>
       ) : (
         <div style={styles.list}>
@@ -4035,6 +4138,7 @@ function Favorites({ businesses, categories, favorites, onToggleFavorite, openPr
               isFavorite={favorites.has(b.id)}
               onToggleFavorite={() => onToggleFavorite(b.id)}
               onClick={() => openProfile(b)}
+              language={language}
             />
           ))}
         </div>
@@ -4045,36 +4149,36 @@ function Favorites({ businesses, categories, favorites, onToggleFavorite, openPr
 
 /* ---------------- ACCOUNT ---------------- */
 
-function Account({ businessCount, categoryCount, favoriteCount, cityName, langName, goAdmin, goRegister, goReplayIntro, goChangeLanguage, goChangeCity }) {
+function Account({ businessCount, categoryCount, favoriteCount, cityName, langName, goAdmin, goRegister, goReplayIntro, goChangeLanguage, goChangeCity, language }) {
   const menu = [
-    { icon: "store", title: "List Your Business", sub: "Get your business on Bmnassa", onClick: goRegister },
-    { icon: "shield", title: "Admin Panel", sub: "Manage listings & categories", onClick: goAdmin },
-    { icon: "globe", title: "Language", sub: "Change app language", onClick: goChangeLanguage },
-    { icon: "pin", title: "City", sub: "Change your city", onClick: goChangeCity },
-    { icon: "play", title: "Replay Intro", sub: "See the opening animation again", onClick: goReplayIntro },
+    { icon: "store", title: t("listYourBusiness", language), sub: t("listYourBusinessSub", language), onClick: goRegister },
+    { icon: "shield", title: t("adminPanel", language), sub: t("adminPanelSub", language), onClick: goAdmin },
+    { icon: "globe", title: t("languageLabel", language), sub: t("languageSub", language), onClick: goChangeLanguage },
+    { icon: "pin", title: t("cityLabel", language), sub: t("citySub", language), onClick: goChangeCity },
+    { icon: "play", title: t("replayIntroLabel", language), sub: t("replayIntroSub", language), onClick: goReplayIntro },
   ];
   return (
     <div style={styles.screenPad}>
       <div style={styles.accountHero} className="bm-bizcard">
         <span className="bm-orbi" style={{ width: 72, height: 72 }}><Logo width={40} /></span>
         <div>
-          <h1 style={styles.accountWelcome}>Welcome</h1>
+          <h1 style={styles.accountWelcome}>{t("welcome", language)}</h1>
           <div style={styles.accountSub}>{cityName} · {langName}</div>
         </div>
       </div>
 
       <div style={styles.accountStatsRow} className="bm-cascade">
         <div style={styles.accountStat} className="bm-glass">
-          <span style={styles.accountStatNum}>{businessCount}</span>
-          <span style={styles.accountStatLabel}>Places</span>
+          <span style={styles.accountStatNum}>{digits(businessCount, language)}</span>
+          <span style={styles.accountStatLabel}>{t("placesStat", language)}</span>
         </div>
         <div style={styles.accountStat} className="bm-glass">
-          <span style={styles.accountStatNum}>{categoryCount}</span>
-          <span style={styles.accountStatLabel}>Categories</span>
+          <span style={styles.accountStatNum}>{digits(categoryCount, language)}</span>
+          <span style={styles.accountStatLabel}>{t("categoriesStat", language)}</span>
         </div>
         <div style={styles.accountStat} className="bm-glass">
-          <span style={styles.accountStatNum}>{favoriteCount}</span>
-          <span style={styles.accountStatLabel}>Favorites</span>
+          <span style={styles.accountStatNum}>{digits(favoriteCount, language)}</span>
+          <span style={styles.accountStatLabel}>{t("favoritesStat", language)}</span>
         </div>
       </div>
 
@@ -4111,8 +4215,8 @@ function RegisterBusiness({ categories, onBack }) {
 
   const canSubmit = form.name.trim() && form.category && form.phone.trim() && form.city;
 
-  const catName = categories.find((c) => c.id === form.category)?.name || form.category;
-  const cityName = CITIES.find((c) => c.id === form.city)?.name || form.city;
+  const catName = catNameOf(categories.find((c) => c.id === form.category), "en") || form.category;
+  const cityName = cityNameOf(CITIES.find((c) => c.id === form.city), "en") || form.city;
 
   const openWhatsAppFallback = () => {
     const lines = [
@@ -4207,7 +4311,7 @@ function RegisterBusiness({ categories, onBack }) {
         <select style={styles.input} value={form.category}
           onChange={(e) => setForm({ ...form, category: e.target.value })}>
           <option value="">Category *</option>
-          {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          {categories.map((c) => <option key={c.id} value={c.id}>{catNameOf(c, "en")}</option>)}
         </select>
 
         <input style={styles.input} placeholder="Owner name" value={form.owner}
@@ -4222,7 +4326,7 @@ function RegisterBusiness({ categories, onBack }) {
         <select style={styles.input} value={form.city}
           onChange={(e) => setForm({ ...form, city: e.target.value })}>
           <option value="">City *</option>
-          {CITIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          {CITIES.map((c) => <option key={c.id} value={c.id}>{cityNameOf(c, "en")}</option>)}
         </select>
 
         <input style={styles.input} placeholder="Address / neighborhood" value={form.address}
@@ -4243,8 +4347,9 @@ function RegisterBusiness({ categories, onBack }) {
 
 /* ---------------- PROFILE ---------------- */
 
-function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack }) {
-  const catName = categories.find((c) => c.id === biz.category)?.name;
+function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack, language }) {
+  const cat = categories.find((c) => c.id === biz.category);
+  const catDisplay = catNameOf(cat, language);
   const cleanPhone = biz.phone.replace(/\s+/g, "");
   const waLink = `https://wa.me/964${cleanPhone.replace(/^0/, "")}`;
   const establishedYear = 2024 - (biz.id % 12);
@@ -4253,7 +4358,7 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack }) {
   const qrSrc = buildQrSrc(biz);
 
   const handleShare = async () => {
-    const text = `${biz.name} — ${catName}\n${biz.address}\n${biz.phone}`;
+    const text = `${biz.name} — ${catDisplay}\n${biz.address}\n${biz.phone}`;
     if (navigator.share) {
       try { await navigator.share({ title: biz.name, text }); } catch (e) {}
     } else if (navigator.clipboard) {
@@ -4266,7 +4371,7 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack }) {
   };
 
   const handleSaveContact = () => {
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${biz.name}\nORG:${biz.name}\nTEL;TYPE=CELL:${cleanPhone}\nADR:;;${biz.address};;;;\nNOTE:${catName}\nEND:VCARD`;
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${biz.name}\nORG:${biz.name}\nTEL;TYPE=CELL:${cleanPhone}\nADR:;;${biz.address};;;;\nNOTE:${catDisplay}\nEND:VCARD`;
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -4277,23 +4382,23 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack }) {
   };
 
   const actions = [
-    { icon: "whatsapp", label: "WhatsApp", onClick: () => window.open(waLink, "_blank") },
-    { icon: "share", label: "Share", onClick: handleShare },
-    { icon: "navigation", label: "Directions", onClick: handleDirections },
-    { icon: "idcard", label: "Save contact", onClick: handleSaveContact },
+    { icon: "whatsapp", label: t("whatsappLabel", language), onClick: () => window.open(waLink, "_blank") },
+    { icon: "share", label: t("shareLabel", language), onClick: handleShare },
+    { icon: "navigation", label: t("directionsLabel", language), onClick: handleDirections },
+    { icon: "idcard", label: t("saveContactLabel", language), onClick: handleSaveContact },
   ];
 
   return (
     <div style={styles.profileWrap}>
       <div style={styles.profileTopBar}>
-        <button style={styles.iconBtnGlass} onClick={onBack} aria-label="Back">
+        <button style={styles.iconBtnGlass} onClick={onBack} aria-label={t("back", language)}>
           <Icon name="back" size={16} />
         </button>
-        <span style={styles.profileTopTitle}>Service profile</span>
+        <span style={styles.profileTopTitle}>{t("serviceProfile", language)}</span>
         <button
           style={{ ...styles.iconBtnGlass, ...(isFavorite ? styles.favIconActive : {}) }}
           onClick={onToggleFavorite}
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={isFavorite ? t("removeFavorite", language) : t("addFavorite", language)}
         >
           <Icon name="heart" size={17} />
         </button>
@@ -4304,13 +4409,13 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack }) {
         <div style={styles.profileNameRow}>
           <h1 style={styles.profileName}>{biz.name}</h1>
           {biz.verified && (
-            <span style={styles.verifiedBadgeLg} title="Verified">
+            <span style={styles.verifiedBadgeLg} title={t("verified", language)}>
               <Icon name="check" size={13} />
             </span>
           )}
         </div>
-        <div style={styles.profileCat}>{catName}</div>
-        <div style={styles.rating}><Icon name="star" size={14} /> {biz.rating} <span style={styles.reviewCount}>· {biz.reviews} reviews</span></div>
+        <div style={styles.profileCat}>{catDisplay}</div>
+        <div style={styles.rating}><Icon name="star" size={14} /> {digits(biz.rating, language)} <span style={styles.reviewCount}>· {t("reviewsCount", language, { n: digits(biz.reviews, language) })}</span></div>
       </div>
 
       <div style={styles.actionsRow}>
@@ -4326,36 +4431,36 @@ function Profile({ biz, categories, isFavorite, onToggleFavorite, onBack }) {
 
       <div style={styles.infoBlock} className="bm-glass">
         <div style={styles.infoRow}><Icon name="pin" size={16} /> {biz.address}</div>
-        <div style={styles.infoRow}><Icon name="phone" size={16} /> {biz.phone}</div>
-        {biz.verified && <div style={styles.infoRow}><Icon name="shield" size={16} /> Verified by Bmnassa</div>}
+        <div style={styles.infoRow}><Icon name="phone" size={16} /> <span className="bm-ltr">{biz.phone}</span></div>
+        {biz.verified && <div style={styles.infoRow}><Icon name="shield" size={16} /> {t("verifiedByBmnassa", language)}</div>}
       </div>
 
       <div style={styles.qrWrap} className="bm-glass">
         <img src={qrSrc} alt={`QR code for ${biz.name}`} style={styles.qrImg} />
         <div>
-          <div style={styles.qrTitle}>Digital business card</div>
-          <div style={styles.qrCaption}>Scan to save this contact.</div>
+          <div style={styles.qrTitle}>{t("digitalBusinessCard", language)}</div>
+          <div style={styles.qrCaption}>{t("scanToSave", language)}</div>
         </div>
       </div>
 
       <button style={styles.viewFullBtn} className="bm-view-full" onClick={() => setExpanded((v) => !v)}>
-        {expanded ? "Hide details" : "View Full Profile"}
+        {expanded ? t("hideDetails", language) : t("viewFullProfile", language)}
       </button>
 
       {expanded && (
         <div style={styles.expandedBlock} className="bm-expanded bm-glass">
-          <div style={styles.infoRow}><Icon name="shield" size={16} /> Verified since {establishedYear}</div>
-          <div style={styles.infoRow}><Icon name="star" size={16} /> {biz.reviews} customer reviews on Bmnassa</div>
-          <div style={styles.infoRow}><Icon name="grid" size={16} /> Category: {catName}</div>
+          <div style={styles.infoRow}><Icon name="shield" size={16} /> {t("verifiedSince", language, { year: digits(establishedYear, language) })}</div>
+          <div style={styles.infoRow}><Icon name="star" size={16} /> {t("customerReviewsOn", language, { n: digits(biz.reviews, language) })}</div>
+          <div style={styles.infoRow}><Icon name="grid" size={16} /> {t("categoryColon", language, { cat: catDisplay })}</div>
         </div>
       )}
 
       <div style={styles.ctaRow}>
         <a style={styles.ctaCall} href={`tel:${cleanPhone}`}>
-          <Icon name="phone" size={16} /> Call
+          <Icon name="phone" size={16} /> {t("call", language)}
         </a>
         <a style={styles.ctaWhatsapp} href={waLink} target="_blank" rel="noreferrer">
-          <Icon name="whatsapp" size={16} /> WhatsApp
+          <Icon name="whatsapp" size={16} /> {t("whatsappLabel", language)}
         </a>
       </div>
     </div>
@@ -4401,7 +4506,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
   };
 
   const handleDeleteCategory = (cat, count) => {
-    if (count > 0 && !window.confirm(`${count} business(es) use "${cat.name}". Delete this category anyway? Those listings will stay but won't be browsable by category.`)) {
+    if (count > 0 && !window.confirm(`${count} business(es) use "${catNameOf(cat, "en")}". Delete this category anyway? Those listings will stay but won't be browsable by category.`)) {
       return;
     }
     onDeleteCategory(cat.id);
@@ -4443,7 +4548,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
             <div key={c.id} style={styles.categoryAdminRow}>
               <div style={styles.categoryAdminIcon}><Icon name={c.icon} size={16} /></div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={styles.adminRowName}>{c.name}</div>
+                <div style={styles.adminRowName}>{catNameOf(c, "en")}</div>
                 <div style={styles.adminRowMeta}>{count} businesses</div>
               </div>
               <button style={styles.iconBtn} onClick={() => handleDeleteCategory(c, count)}>
@@ -4470,7 +4575,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
             onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <select style={styles.input} value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.map((c) => <option key={c.id} value={c.id}>{catNameOf(c, "en")}</option>)}
           </select>
           <input style={styles.input} placeholder="Owner name" value={form.owner}
             onChange={(e) => setForm({ ...form, owner: e.target.value })} />
@@ -4504,7 +4609,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
             <img src={buildQrSrc(b, 90)} alt="" style={styles.adminRowQr} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={styles.adminRowName}>{b.name} {b.verified && <Icon name="shield" size={13} />}</div>
-              <div style={styles.adminRowMeta}>{categories.find((c) => c.id === b.category)?.name || "Uncategorized"} · {b.phone}</div>
+              <div style={styles.adminRowMeta}>{catNameOf(categories.find((c) => c.id === b.category), "en") || "Uncategorized"} · {b.phone}</div>
             </div>
             <button style={styles.iconBtn} onClick={() => startEdit(b)}><Icon name="edit" size={15} /></button>
             <button style={styles.iconBtn} onClick={() => onDelete(b.id)}><Icon name="trash" size={15} /></button>
@@ -4518,7 +4623,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
 /* ---------------- STYLES ---------------- */
 
 const globalCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; }
   body { margin: 0; background: #0d1318; }
   input, select, textarea, button { font-family: inherit; }
@@ -4608,7 +4713,10 @@ const globalCss = `
   /* ---- Glass redesign ---- */
   .bm-glass-root, .bm-glass-root * { box-sizing: border-box; }
   .bm-glass-root { font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
+  .bm-glass-root[dir="rtl"] { font-family: 'Noto Kufi Arabic', 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
   .bm-glass-root button, .bm-glass-root a { color: inherit; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+  [dir="rtl"] .bm-icon-flip { transform: scaleX(-1); }
+  .bm-ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
   .bm-blob { position: absolute; filter: blur(38px); opacity: 0.85; pointer-events: none; will-change: transform, border-radius; z-index: 0; }
   .bm-blob.teal { width: 130%; height: 46%; left: -35%; top: -12%; background: radial-gradient(closest-side, #0f6f78, rgba(15,111,120,0.55) 60%, transparent); animation: bmDriftA 14s ease-in-out infinite alternate, bmMorph 11s ease-in-out infinite; }
