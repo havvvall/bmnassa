@@ -77,7 +77,7 @@ function Intro({ onEnter, lang = "ku" }) {
   };
 
   return (
-    <div style={styles.introScreen} className={leaving ? "bm-intro-leave" : ""}>
+    <div style={styles.introScreen} className={[leaving ? "bm-intro-leave" : "", lang === "ar" ? "bm-intro-ar-modern" : "", lang === "ku" ? "bm-intro-ku-modern" : ""].filter(Boolean).join(" ")}>
       <div className="bm-intro-system">
         <div className="bm-intro-ring" />
         <div className="bm-intro-ring r2" />
@@ -5439,7 +5439,7 @@ export default function App() {
 
   if (onboardingStep === "intro") {
     return (
-      <div style={styles.app} className="bm-glass-root" dir={dir}>
+      <div style={styles.app} className="bm-glass-root" dir={dir} data-lang={language}>
         <style>{globalCss}</style>
         <BackgroundField />
         <Intro onEnter={() => setOnboardingStep("language")} lang={language} />
@@ -5449,45 +5449,51 @@ export default function App() {
 
   if (onboardingStep === "language") {
     return (
-      <div style={styles.app} className="bm-glass-root" dir={dirOf(language)}>
+      <div style={styles.app} className="bm-glass-root" dir={dirOf(language)} data-lang={language}>
         <style>{globalCss}</style>
         <BackgroundField />
-        <OnboardingLanguage language={language} onSelect={setLanguage} onContinue={continueFromLanguage} />
+        <div className="bm-ar-scope">
+          <OnboardingLanguage language={language} onSelect={setLanguage} onContinue={continueFromLanguage} />
+        </div>
       </div>
     );
   }
 
   if (onboardingStep === "city") {
     return (
-      <div style={styles.app} className="bm-glass-root" dir={dir}>
+      <div style={styles.app} className="bm-glass-root" dir={dir} data-lang={language}>
         <style>{globalCss}</style>
         <BackgroundField />
-        <OnboardingCity city={city} onSelect={setCity} onContinue={finishOnboarding} onBack={backToLanguage} language={language} />
+        <div className="bm-ar-scope">
+          <OnboardingCity city={city} onSelect={setCity} onContinue={finishOnboarding} onBack={backToLanguage} language={language} />
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={styles.app} className="bm-glass-root" dir={dir}>
+    <div style={styles.app} className="bm-glass-root" dir={dir} data-lang={language}>
       <style>{globalCss}</style>
       <BackgroundField />
 
       <div style={showTabBar ? styles.tabContent : undefined}>
         {view === null && activeTab === "search" && (
-          <Home
-            query={query} setQuery={setQuery}
-            searchResults={searchResults}
-            categoryCounts={categoryCounts}
-            categories={categories}
-            businesses={businesses}
-            favorites={favorites}
-            onToggleFavorite={toggleFavorite}
-            openProfile={openProfileFromSearch}
-            openCategory={openCategory}
-            cityName={cityName}
-            onChangeCity={changeCity}
-            language={language}
-          />
+          <div className="bm-ar-scope">
+            <Home
+              query={query} setQuery={setQuery}
+              searchResults={searchResults}
+              categoryCounts={categoryCounts}
+              categories={categories}
+              businesses={businesses}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+              openProfile={openProfileFromSearch}
+              openCategory={openCategory}
+              cityName={cityName}
+              onChangeCity={changeCity}
+              language={language}
+            />
+          </div>
         )}
 
         {view === null && activeTab === "favorites" && (
@@ -5519,17 +5525,19 @@ export default function App() {
       </div>
 
       {view === "category" && selectedCategory && (
-        <CategoryView
-          categoryId={selectedCategory}
-          categories={categories}
-          businesses={businesses.filter((b) => b.category === selectedCategory)}
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
-          openProfile={openProfile}
-          onBack={() => { setView(null); setSelectedCategory(null); }}
-          cityName={cityName}
-          language={language}
-        />
+        <div className="bm-ar-scope">
+          <CategoryView
+            categoryId={selectedCategory}
+            categories={categories}
+            businesses={businesses.filter((b) => b.category === selectedCategory)}
+            favorites={favorites}
+            onToggleFavorite={toggleFavorite}
+            openProfile={openProfile}
+            onBack={() => { setView(null); setSelectedCategory(null); }}
+            cityName={cityName}
+            language={language}
+          />
+        </div>
       )}
 
       {view === "profile" && selectedBiz && (
@@ -6396,7 +6404,7 @@ function Admin({ businesses, categories, onBack, onSave, onDelete, onAddCategory
 /* ---------------- STYLES ---------------- */
 
 const globalCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Alexandria:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; }
   body { margin: 0; background: #0d1318; }
   input, select, textarea, button { font-family: inherit; }
@@ -6487,6 +6495,10 @@ const globalCss = `
   .bm-glass-root, .bm-glass-root * { box-sizing: border-box; }
   .bm-glass-root { font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
   .bm-glass-root[dir="rtl"] { font-family: 'Noto Kufi Arabic', 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
+  .bm-glass-root[data-lang="ar"] .bm-ar-scope { font-family: 'Alexandria', 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
+  .bm-glass-root[data-lang="ku"] .bm-ar-scope { font-family: 'Vazirmatn', 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
+  .bm-intro-ar-modern { font-family: 'Alexandria', 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
+  .bm-intro-ku-modern { font-family: 'Vazirmatn', 'Manrope', 'Helvetica Neue', Arial, sans-serif; }
   .bm-glass-root button, .bm-glass-root a { color: inherit; font-family: inherit; -webkit-tap-highlight-color: transparent; }
   [dir="rtl"] .bm-icon-flip { transform: scaleX(-1); }
   .bm-ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
