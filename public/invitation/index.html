@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1014">
+<meta name="description" content="Your personal VIP pass to the Bmnassa launch at HITEX26, Erbil. Friday 9 October, 10:30 to 19:00.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bmnassa.vercel.app/invitation">
+<meta property="og:title" content="You're invited: Bmnassa launch at HITEX26">
+<meta property="og:description" content="Friday 9 October · 10:30 – 19:00 · Erbil. Open your personal VIP pass.">
+<meta property="og:image" content="https://bmnassa.vercel.app/invitation/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Bmnassa HITEX26 Pass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: a single event pass centred on the drifting teal/coral field; the host view adds a small link maker under it. One dark look on purpose. */
+:root{
+  --ink:#0b1014; --teal:#1fc6c0; --teal-deep:#0f6f78; --coral:#f0806a;
+  --fg:#f4f6f7; --muted:#8b979d; --dim:#5d686e;
+  --line:rgba(255,255,255,.12); --glass:rgba(255,255,255,.055);
+  --grad:linear-gradient(120deg,var(--teal),var(--coral));
+  --font:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--font);padding-inline:16px;padding-block:28px 40px;overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+.field{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.blob{position:absolute;filter:blur(50px);opacity:.85}
+.blob.t{width:110vw;height:60vh;left:-40vw;top:-22vh;background:radial-gradient(closest-side,var(--teal-deep),rgba(15,111,120,.5) 60%,transparent);animation:dA 16s ease-in-out infinite alternate}
+.blob.c{width:110vw;height:60vh;right:-45vw;bottom:-24vh;background:radial-gradient(closest-side,var(--coral),rgba(185,87,63,.55) 60%,transparent);animation:dB 18s ease-in-out infinite alternate}
+@keyframes dA{to{transform:translate(10vw,6vh) rotate(14deg)}}
+@keyframes dB{to{transform:translate(-12vw,-6vh) rotate(-12deg)}}
+
+.wrap{max-width:400px;margin:0 auto;display:grid;gap:22px}
+.hello{text-align:center;display:grid;gap:6px;animation:up .8s ease both}
+.hello .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+.hello h1{margin:0;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+.hello p{margin:0;color:#c9d1d5;font-size:15px;line-height:1.5}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* the pass */
+.pass{position:relative;border-radius:28px;background:rgba(16,22,27,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);overflow:hidden;animation:dealIn 1s cubic-bezier(.2,.9,.25,1.15) .15s both;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.pass::before{content:"";position:absolute;inset:0;border-radius:28px;padding:1.5px;background:var(--grad);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:3}
+.pass::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-18deg);animation:sheen 5s ease-in-out 1.4s infinite;pointer-events:none;z-index:2}
+@keyframes dealIn{from{opacity:0;transform:translateY(40px) rotate(-3deg) scale(.96)}to{opacity:1;transform:none}}
+@keyframes sheen{0%{left:-60%}35%,100%{left:130%}}
+
+.top{position:relative;padding:22px 22px 18px;display:grid;gap:18px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{width:118px;display:block}
+.logo path{fill:var(--fg)}
+.vip{font-size:11px;font-weight:800;letter-spacing:.2em;padding:7px 12px;border-radius:99px;background:var(--grad);color:#081416}
+.orbitwrap{position:absolute;right:-120px;top:-60px;width:240px;height:240px;opacity:.45;pointer-events:none}
+.ring{position:absolute;inset:0;border:1px solid var(--line);border-radius:50%}
+.ring.r2{inset:22px}
+.spin{position:absolute;inset:0;animation:spin 16s linear infinite}
+.spin.s2{inset:22px;animation-duration:22s;animation-direction:reverse}
+.dot{position:absolute;border-radius:50%;width:10px;height:10px;margin:-5px}
+.dot.t{background:var(--teal);box-shadow:0 0 12px var(--teal)}
+.dot.c{background:var(--coral);box-shadow:0 0 12px var(--coral)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.guest .lab{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.guest .name{margin-top:6px;font-size:clamp(30px,9vw,40px);line-height:1.05;font-weight:800;letter-spacing:-.025em;word-break:break-word;text-wrap:balance}
+.guest .name span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.cell .k{font-size:10.5px;font-weight:700;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.cell .v{margin-top:4px;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.cell.wide{grid-column:1 / -1}
+
+.tear{position:relative;height:0;border-top:2px dashed rgba(255,255,255,.16);margin:0 22px}
+.tear::before,.tear::after{content:"";position:absolute;top:-15px;width:28px;height:28px;border-radius:50%;background:var(--ink);z-index:4}
+.tear::before{left:-37px}.tear::after{right:-37px}
+
+.stub{padding:18px 22px 22px;display:flex;align-items:center;gap:16px}
+.qr{width:92px;height:92px;border-radius:12px;background:#fff;padding:7px;flex:none;display:grid;place-items:center}
+.qr img,.qr canvas{width:100%!important;height:100%!important;display:block}
+.stub .txt{display:grid;gap:4px;min-width:0}
+.stub b{font-size:15px}
+.stub small{color:var(--muted);font-size:12.5px;line-height:1.45}
+.host{font-size:12.5px;color:#c9d1d5}
+
+.btns{display:grid;gap:10px;animation:up .8s ease .5s both}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;height:52px;border-radius:16px;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;border:0}
+.btn.primary{background:var(--grad);color:#081416}
+.btn.ghost{background:var(--glass);border:1px solid var(--line);color:var(--fg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.note{text-align:center;color:var(--muted);font-size:12.5px;margin:0}
+
+/* host link maker */
+.maker{display:grid;gap:14px;padding:20px;border-radius:24px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:up .8s ease .4s both}
+.maker h2{margin:0;font-size:18px;font-weight:800}
+.maker p{margin:-6px 0 0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.maker label{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.maker input{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);padding:0 14px;font-size:16px;outline:none}
+.maker input:focus{border-color:rgba(31,198,192,.55);box-shadow:0 0 0 4px rgba(31,198,192,.1)}
+.out{display:grid;gap:8px}
+.linkbox{font-size:12.5px;color:#c9d1d5;word-break:break-all;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line);user-select:all;font-variant-numeric:tabular-nums}
+.msgbox{font-size:13.5px;line-height:1.55;white-space:pre-wrap;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line);user-select:all}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:99px;background:rgba(20,28,33,.92);border:1px solid var(--line);font-size:13px;font-weight:600;transition:.3s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+[hidden]{display:none!important}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="field" aria-hidden="true"><div class="blob t"></div><div class="blob c"></div></div>
+
+<main class="wrap">
+  <header class="hello">
+    <span class="eyebrow" id="eyebrow">Personal invitation</span>
+    <h1 id="headline">You're invited to the Bmnassa launch</h1>
+    <p id="lede">Haval is launching Bmnassa, a smart business directory for Kurdistan, at HITEX26. Come and see it live.</p>
+  </header>
+
+  <article class="pass" aria-label="Event pass">
+    <div class="top">
+      <div class="orbitwrap" aria-hidden="true">
+        <div class="ring"></div><div class="ring r2"></div>
+        <div class="spin"><span class="dot t" style="left:50%;top:0"></span><span class="dot c" style="left:50%;top:100%"></span></div>
+        <div class="spin s2"><span class="dot c" style="left:100%;top:50%;width:6px;height:6px;margin:-3px"></span></div>
+      </div>
+      <div class="toprow">
+        <svg class="logo" viewBox="0 0 3113 1280" role="img" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
+        <span class="vip">VIP GUEST</span>
+      </div>
+      <div class="guest">
+        <div class="lab">Pass holder</div>
+        <div class="name"><span id="guestName" dir="auto">Your Friend</span></div>
+      </div>
+      <div class="grid">
+        <div class="cell"><div class="k">Event</div><div class="v">HITEX26</div></div>
+        <div class="cell"><div class="k">City</div><div class="v">Erbil</div></div>
+        <div class="cell"><div class="k">Date</div><div class="v">Fri 9 Oct 2026</div></div>
+        <div class="cell"><div class="k">Time</div><div class="v">10:30 – 19:00</div></div>
+        <div class="cell wide" id="boothCell" hidden><div class="k">Find us at</div><div class="v" id="booth"></div></div>
+      </div>
+    </div>
+    <div class="tear" aria-hidden="true"></div>
+    <div class="stub">
+      <div class="qr" id="qr" aria-label="QR code to bmnassa.vercel.app"></div>
+      <div class="txt">
+        <b>Scan to try Bmnassa</b>
+        <small>Find trusted craftsmen and services across Kurdistan.</small>
+        <span class="host">Hosted by Haval, founder</span>
+      </div>
+    </div>
+  </article>
+
+  <div class="btns" id="guestBtns">
+    <a class="btn primary" id="calBtn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Add to my calendar</a>
+    <a class="btn ghost" href="https://bmnassa.vercel.app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>Visit bmnassa.vercel.app</a>
+    <p class="note">The event runs 6–9 October. Haval will be at the stand on Friday.</p>
+  </div>
+
+  <section class="maker" id="maker" aria-label="Make a pass for a friend">
+    <h2>Make a pass for a friend</h2>
+    <p>Type a name. You get a personal link and a message ready to send on WhatsApp.</p>
+    <div style="display:grid;gap:8px">
+      <label for="friend">Friend's name</label>
+      <input id="friend" placeholder="e.g. Ahmed Ali" autocomplete="off" maxlength="30">
+    </div>
+    <div class="out" id="out" hidden>
+      <span class="label" style="font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--muted)">THEIR LINK</span>
+      <div class="linkbox" id="link"></div>
+      <span class="label" style="font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--muted)">MESSAGE</span>
+      <div class="msgbox" id="msg"></div>
+      <div class="row2">
+        <button class="btn ghost" id="copyMsg" type="button">Copy message</button>
+        <a class="btn primary" id="waBtn" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  const PAGE_URL = 'https://bmnassa.vercel.app/invitation';
+  const BOOTH = '';   // e.g. 'Hall 2 · Startup Zone · Booth B14'
+  const $ = id => document.getElementById(id);
+
+  // name comes from the link, e.g. ...#Ahmed-Ali
+  const pretty = s => s.split(/[-_.~]+/).filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const clean = s => s.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
+  let guest = '';
+  try { guest = clean(new URLSearchParams(location.search).get('name') || ''); } catch (e) {}
+  if (!guest && location.hash.length > 1) { try { guest = clean(pretty(decodeURIComponent(location.hash.slice(1)))); } catch (e) {} }
+
+  if (guest) {
+    $('guestName').textContent = guest;
+    $('eyebrow').textContent = 'Personal invitation';
+    const h = $('headline'); h.textContent = ''; const bd = document.createElement('bdi'); bd.textContent = guest.split(' ')[0]; h.append(bd, ', you’re invited');
+    $('maker').hidden = true;
+  } else {
+    $('headline').textContent = 'Your HITEX26 guest pass';
+    $('lede').textContent = 'Preview of the pass your friends will see. Make each friend their own link below.';
+    $('eyebrow').textContent = 'For Haval';
+  }
+  if (BOOTH) { $('boothCell').hidden = false; $('booth').textContent = BOOTH; }
+
+  // Google Calendar event (Baghdad time = UTC+3)
+  const cal = new URL('https://calendar.google.com/calendar/render');
+  cal.searchParams.set('action', 'TEMPLATE');
+  cal.searchParams.set('text', 'Bmnassa launch at HITEX26');
+  cal.searchParams.set('dates', '20261009T073000Z/20261009T160000Z');
+  cal.searchParams.set('details', 'Visit Haval at the Bmnassa stand. bmnassa.vercel.app');
+  cal.searchParams.set('location', 'HITEX26, Erbil');
+  $('calBtn').href = cal.toString();
+
+  // QR to the app
+  try { new QRCode($('qr'), { text: 'https://bmnassa.vercel.app', width: 156, height: 156, colorDark: '#0b1014', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
+  catch (e) { $('qr').hidden = true; }
+
+  // link maker
+  function update(){
+    const t = clean($('friend').value);
+    $('out').hidden = !t;
+    if (!t) return;
+    const link = PAGE_URL + '?name=' + encodeURIComponent(t);
+    const first = t.split(' ')[0];
+    const msg = `Hi ${first}! \u{1F44B}\n\nI'm launching my startup Bmnassa at HITEX26 in Erbil and I'd love you to be there.\n\nHere's your personal pass:\n${link}\n\n\u{1F4C5} Friday 9 October\n\u{1F552} 10:30 – 19:00\n\nSee you there!\nHaval`;
+    $('link').textContent = link;
+    $('msg').textContent = msg;
+    $('waBtn').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  }
+  $('friend').addEventListener('input', update);
+  $('copyMsg').addEventListener('click', () => {
+    const text = $('msg').textContent;
+    const done = () => toast('Message copied');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(selectMsg);
+    } else selectMsg();
+  });
+  function selectMsg(){ const r = document.createRange(); r.selectNodeContents($('msg')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Message selected, press copy'); }
+  let tt; function toast(m){ const t = $('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 1800); }
+  
+})();
+</script>
+</body>
+</html>
