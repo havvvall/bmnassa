@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/a7medfuaad",
+      "destination": "/a7medfuaad/index.html"
+    },
+    {
+      "source": "/a7medfuaad/",
+      "destination": "/a7medfuaad/index.html"
+    },
+    {
       "source": "/eng.haval-baban",
       "destination": "/eng.haval-baban/index.html"
     },
