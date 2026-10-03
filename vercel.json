@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/register",
+      "destination": "/register/index.html"
+    },
+    {
+      "source": "/register/",
+      "destination": "/register/index.html"
+    },
+    {
       "source": "/ph.ayub",
       "destination": "/ph.ayub/index.html"
     },
