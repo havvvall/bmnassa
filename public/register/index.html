@@ -384,8 +384,11 @@ const DRAFT_KEY = 'bmnassa-register-draft';
 let lang = 'en', step = 0;
 const S = {name:'', cat:'', other:'', owner:'', phone:'', same:true, wa:'', city:'', addr:'', desc:'', nfc:false, qty:1, cardName:''};
 try { const l = localStorage.getItem('bmnassa-card-lang'); if (T[l]) lang = l; } catch (e) {}
-try { const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); if (d) Object.assign(S, d); } catch (e) {}
-const saveDraft = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(S)); } catch (e) {} };
+const QP = new URLSearchParams(location.search), KIOSK = QP.has('kiosk');   /* ?kiosk=1: shared stand tablet, keep no drafts */
+if (!KIOSK) { try { const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); if (d) Object.assign(S, d); } catch (e) {} }
+if (QP.get('lang') && T[QP.get('lang')]) lang = QP.get('lang');
+if (QP.get('card')) { S.nfc = true; S.cardName = QP.get('card').trim().slice(0, 40); }
+const saveDraft = () => { if (KIOSK) return; try { localStorage.setItem(DRAFT_KEY, JSON.stringify(S)); } catch (e) {} };
 const L = () => T[lang];
 const catName = (id, lg) => { const c = CATS.find(x => x.id === id); return c ? c.name[lg] : ''; };
 const cityName = (id, lg) => { const c = CITIES.find(x => x.id === id); return c ? c.name[lg] : ''; };
