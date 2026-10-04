@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b1014">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bmnassa Stand">
+<meta name="robots" content="noindex">
+<title>Bmnassa · Stand display</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Kufi+Arabic:wght@500;600;700&display=swap">
+<style>
+/* iPad stand display: the A5 sign, alive. Portrait = stacked like the print; landscape = headline left, QR right. */
+:root{--ink:#0b1014;--teal:#1fc6c0;--teal-deep:#0f6f78;--coral:#f0806a;--fg:#f4f6f7;--soft:#c9d1d5;--muted:#8b979d;--grad:linear-gradient(120deg,var(--teal),var(--coral));color-scheme:dark;
+  --u:min(1vw,0.75vh)}           /* 1 unit scales with the screen */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ink);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+body{color:var(--fg);font-family:'Manrope','Helvetica Neue',Arial,sans-serif;cursor:none}
+.rtl{font-family:'Noto Kufi Arabic','Manrope',sans-serif;direction:rtl}
+
+/* background */
+.bg{position:fixed;inset:0;overflow:hidden;z-index:0}
+.blob{position:absolute;filter:blur(calc(var(--u)*8));will-change:transform,border-radius}
+.blob.t{width:95vmax;height:70vmax;left:-38vmax;top:-34vmax;background:radial-gradient(closest-side,rgba(15,111,120,1),rgba(15,111,120,.5) 60%,transparent);animation:dA 18s ease-in-out infinite alternate,morph 12s ease-in-out infinite}
+.blob.c{width:95vmax;height:70vmax;right:-40vmax;bottom:-36vmax;background:radial-gradient(closest-side,rgba(240,128,106,.95),rgba(185,87,63,.55) 60%,transparent);animation:dB 20s ease-in-out infinite alternate,morph 14s ease-in-out infinite reverse}
+@keyframes dA{to{transform:translate(8vmax,6vmax) rotate(16deg)}}
+@keyframes dB{to{transform:translate(-9vmax,-6vmax) rotate(-14deg)}}
+@keyframes morph{0%,100%{border-radius:42% 58% 63% 37%/45% 38% 62% 55%}50%{border-radius:61% 39% 35% 65%/58% 62% 38% 42%}}
+canvas#dust{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+
+/* layout */
+.stage{position:relative;z-index:2;height:100%;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;text-align:center;padding:calc(var(--u)*6) calc(var(--u)*6) calc(var(--u)*5)}
+.head{display:grid;justify-items:center;gap:calc(var(--u)*2.2)}
+.logo{width:calc(var(--u)*24);height:auto;filter:drop-shadow(0 0 calc(var(--u)*1.6) rgba(255,255,255,.25))}
+.logo path,.plate path,.lockup path{fill:var(--fg)}
+.eyebrow{font-size:calc(var(--u)*1.9);font-weight:800;letter-spacing:.3em;padding-left:.3em;color:var(--teal);margin-top:calc(var(--u)*2)}
+
+/* rotating headline */
+.rot{position:relative;width:min(92vw,calc(var(--u)*90));height:calc(var(--u)*19);display:grid;place-items:center}
+.line{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:calc(var(--u)*.6);opacity:0;transform:translateY(calc(var(--u)*3));filter:blur(8px);transition:opacity .8s ease,transform .9s cubic-bezier(.2,.8,.2,1),filter .8s ease}
+.line.on{opacity:1;transform:none;filter:none}
+.line.out{opacity:0;transform:translateY(calc(var(--u)*-3));filter:blur(8px)}
+.line .big{font-size:calc(var(--u)*7.2);line-height:1.04;font-weight:800;letter-spacing:-.025em}
+.line .big em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.line.rtl .big{font-size:calc(var(--u)*6.2);line-height:1.35;letter-spacing:0;font-weight:700}
+.dots{display:flex;gap:calc(var(--u)*1)}
+.dots i{width:calc(var(--u)*1);height:calc(var(--u)*1);border-radius:9px;background:rgba(255,255,255,.22);transition:width .5s,background .5s}
+.dots i.on{width:calc(var(--u)*3.4);background:var(--grad)}
+
+/* QR hero */
+.mid{display:grid;place-items:center;align-content:center;gap:calc(var(--u)*3.2)}
+.orb{position:relative;width:calc(var(--u)*56);height:calc(var(--u)*56);display:grid;place-items:center}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.13)}
+.ring.r2{inset:calc(var(--u)*-3.5);border-color:rgba(255,255,255,.06)}
+.spin{position:absolute;inset:0;animation:spin 14s linear infinite}
+.spin.s2{inset:calc(var(--u)*-3.5);animation-duration:22s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dot{position:absolute;border-radius:50%}
+.dot.t{background:var(--teal);box-shadow:0 0 calc(var(--u)*2.4) var(--teal)}
+.dot.c{background:var(--coral);box-shadow:0 0 calc(var(--u)*2.4) var(--coral)}
+.ripple{position:absolute;width:calc(var(--u)*42);height:calc(var(--u)*42);border-radius:calc(var(--u)*6);border:2px solid rgba(31,198,192,.55);opacity:0;animation:rip 4.8s cubic-bezier(.2,.7,.2,1) infinite}
+.ripple.b{animation-delay:.5s;border-color:rgba(240,128,106,.45)}
+@keyframes rip{0%{transform:scale(.96);opacity:0}6%{opacity:.9}55%,100%{transform:scale(1.32);opacity:0}}
+
+.frame{position:relative;width:calc(var(--u)*42);height:calc(var(--u)*42);border-radius:calc(var(--u)*5.2);padding:calc(var(--u)*.75);overflow:hidden;box-shadow:0 calc(var(--u)*3) calc(var(--u)*8) rgba(0,0,0,.5),0 0 calc(var(--u)*7) rgba(31,198,192,.18);animation:breath 4.8s ease-in-out infinite}
+@keyframes breath{50%{box-shadow:0 calc(var(--u)*3) calc(var(--u)*8) rgba(0,0,0,.5),0 0 calc(var(--u)*11) rgba(240,128,106,.3)}}
+.frame::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg,var(--teal),var(--coral),#f4c46a,var(--teal));animation:spin 6s linear infinite}
+.qr{position:relative;width:100%;height:100%;border-radius:calc(var(--u)*4.5);background:#fff;padding:calc(var(--u)*3);overflow:hidden}
+.qr svg.code{display:block;width:100%;height:100%}
+.scanline{position:absolute;left:calc(var(--u)*2);right:calc(var(--u)*2);height:calc(var(--u)*5);top:0;background:linear-gradient(180deg,transparent,rgba(31,198,192,.20) 70%,rgba(31,198,192,.75) 96%,transparent);mix-blend-mode:multiply;animation:scan 4.8s cubic-bezier(.6,0,.4,1) infinite;pointer-events:none}
+@keyframes scan{0%{transform:translateY(calc(var(--u)*1));opacity:0}8%{opacity:1}42%{transform:translateY(calc(var(--u)*34));opacity:1}50%,100%{transform:translateY(calc(var(--u)*34));opacity:0}}
+.corner{position:absolute;width:calc(var(--u)*7);height:calc(var(--u)*7);border:calc(var(--u)*.7) solid var(--fg);animation:bracket 2.4s ease-in-out infinite}
+.corner.tl{top:calc(var(--u)*-3);left:calc(var(--u)*-3);border-right:0;border-bottom:0;border-top-left-radius:calc(var(--u)*3)}
+.corner.tr{top:calc(var(--u)*-3);right:calc(var(--u)*-3);border-left:0;border-bottom:0;border-top-right-radius:calc(var(--u)*3)}
+.corner.bl{bottom:calc(var(--u)*-3);left:calc(var(--u)*-3);border-right:0;border-top:0;border-bottom-left-radius:calc(var(--u)*3)}
+.corner.br{bottom:calc(var(--u)*-3);right:calc(var(--u)*-3);border-left:0;border-top:0;border-bottom-right-radius:calc(var(--u)*3)}
+.corner.tl{--x:-1;--y:-1}.corner.tr{--x:1;--y:-1}.corner.bl{--x:-1;--y:1}.corner.br{--x:1;--y:1}
+@keyframes bracket{50%{transform:translate(calc(var(--x)*var(--u)*1),calc(var(--y)*var(--u)*1));border-color:var(--teal)}}
+.plate{position:absolute;left:50%;top:50%;width:calc(var(--u)*10);height:calc(var(--u)*10);transform:translate(-50%,-50%);border-radius:calc(var(--u)*2.2);background:#0b1014;display:grid;place-items:center;border:calc(var(--u)*.9) solid #fff}
+.plate svg{width:calc(var(--u)*7)}
+
+.scan{display:grid;justify-items:center;gap:calc(var(--u)*1)}
+.cta{display:flex;align-items:center;gap:calc(var(--u)*1.6);font-size:calc(var(--u)*3.4);font-weight:800}
+.cta .ph{width:calc(var(--u)*5.4);height:calc(var(--u)*5.4);border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#081416;animation:bob 1.6s ease-in-out infinite}
+.cta .ph svg{width:55%;height:55%;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@keyframes bob{50%{transform:translateY(calc(var(--u)*-.8))}}
+.cta span{color:var(--muted);font-weight:700}
+.cta2{display:flex;gap:calc(var(--u)*2);font-size:calc(var(--u)*2.5);color:var(--soft);font-weight:600}
+.cta2 i{font-style:normal;color:#5d686e}
+
+/* footer */
+.foot{display:grid;justify-items:center;gap:calc(var(--u)*2.4);width:100%}
+.perks{display:flex;justify-content:center;gap:calc(var(--u)*1.4);flex-wrap:wrap}
+.perk{display:flex;align-items:center;gap:calc(var(--u)*1);height:calc(var(--u)*5.4);padding:0 calc(var(--u)*2.2);border-radius:99px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);font-size:calc(var(--u)*2);font-weight:800;white-space:nowrap;position:relative;overflow:hidden}
+.perk svg{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4);fill:none;stroke:var(--teal);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.perk::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-18deg);animation:sheen 6s ease-in-out infinite}
+.perk:nth-child(2)::after{animation-delay:.25s}.perk:nth-child(3)::after{animation-delay:.5s}
+@keyframes sheen{0%{left:-60%}22%,100%{left:140%}}
+.ticker{width:100%;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.track{display:flex;gap:calc(var(--u)*3);width:max-content;animation:tick 60s linear infinite;font-size:calc(var(--u)*2.1);font-weight:700;color:var(--soft);white-space:nowrap}
+.track span{display:flex;align-items:center;gap:calc(var(--u)*3)}
+.track span::after{content:"";width:calc(var(--u)*.8);height:calc(var(--u)*.8);border-radius:50%;background:var(--teal);opacity:.7}
+@keyframes tick{to{transform:translateX(-50%)}}
+.url{font-size:calc(var(--u)*3);font-weight:800}
+.url b{color:var(--teal)}
+
+/* landscape: headline left, QR right */
+@media (orientation:landscape){
+  :root{--u:min(.75vw,1vh)}
+  .stage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;column-gap:calc(var(--u)*4);align-items:center}
+  .head{grid-column:1;grid-row:1}
+  .mid{grid-column:2;grid-row:1}
+  .foot{grid-column:1 / -1;grid-row:2}
+  .rot{width:100%}
+  .head,.mid{min-width:0;width:100%}
+}
+
+/* start overlay */
+.start{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(5,8,10,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer;transition:opacity .5s}
+.start.off{opacity:0;pointer-events:none}
+.start div{display:grid;justify-items:center;gap:12px;padding:22px 28px;border-radius:22px;background:rgba(16,22,27,.85);border:1px solid rgba(255,255,255,.14);font-size:17px;font-weight:800}
+.start small{font-size:13px;color:var(--muted);font-weight:600;max-width:30ch;text-align:center;line-height:1.5}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="blob t"></div><div class="blob c"></div></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+
+<main class="stage">
+  <section class="head">
+    <svg class="logo" viewBox="0 0 3113 1280" role="img" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
+    <div class="eyebrow">FOR BUSINESSES</div>
+    <div class="rot" id="rot">
+      <div class="line on"><div class="big">List your business<br><em>for free.</em></div></div>
+      <div class="line rtl" lang="ckb"><div class="big">کارەکەت <em>بەخۆڕایی</em><br>تۆمار بکە</div></div>
+      <div class="line rtl" lang="ar"><div class="big">سجّل عملك<br><em>مجاناً</em></div></div>
+    </div>
+    <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
+  </section>
+
+  <section class="mid">
+    <div class="orb">
+      <div class="ring"></div><div class="ring r2"></div>
+      <div class="spin"><span class="dot t" style="left:calc(50% - var(--u)*1.4);top:calc(var(--u)*-1.4);width:calc(var(--u)*2.8);height:calc(var(--u)*2.8)"></span><span class="dot c" style="left:calc(50% - var(--u)*1);bottom:calc(var(--u)*-1);width:calc(var(--u)*2);height:calc(var(--u)*2)"></span></div>
+      <div class="spin s2"><span class="dot t" style="left:calc(var(--u)*-.7);top:50%;width:calc(var(--u)*1.4);height:calc(var(--u)*1.4)"></span><span class="dot c" style="right:calc(var(--u)*5);top:calc(var(--u)*5);width:calc(var(--u)*1.2);height:calc(var(--u)*1.2)"></span></div>
+      <span class="ripple"></span><span class="ripple b"></span>
+      <div class="frame">
+        <div class="qr">
+          <svg class="code" viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR code to bmnassa.vercel.app/register"><path stroke="#0b1014" d="M0 0.5h7m3 0h1m2 0h3m1 0h4m1 0h2m2 0h1m1 0h1m1 0h7m-37 1h1m5 0h1m5 0h1m2 0h4m1 0h2m2 0h1m3 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m2 0h2m1 0h2m1 0h1m3 0h2m2 0h4m3 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m2 0h2m1 0h3m1 0h1m1 0h5m1 0h4m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m3 0h2m1 0h1m3 0h2m1 0h1m2 0h3m2 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m2 0h2m3 0h1m1 0h4m2 0h2m2 0h1m3 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-29 1h1m1 0h2m2 0h2m1 0h2m3 0h2m1 0h4m-27 1h2m2 0h4m1 0h6m4 0h2m1 0h4m1 0h2m1 0h1m-33 1h2m1 0h1m4 0h2m1 0h2m1 0h1m5 0h1m1 0h2m1 0h1m1 0h1m2 0h3m-33 1h1m2 0h1m2 0h3m1 0h2m3 0h1m2 0h2m1 0h5m2 0h2m3 0h1m1 0h1m-36 1h6m1 0h9m5 0h1m1 0h4m1 0h1m3 0h3m-35 1h4m2 0h1m1 0h3m1 0h1m1 0h1m6 0h1m3 0h3m1 0h4m1 0h2m-36 1h3m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m1 0h3m1 0h3m-36 1h2m2 0h4m1 0h1m2 0h5m1 0h1m2 0h2m4 0h1m2 0h1m2 0h2m-34 1h3m2 0h1m1 0h1m4 0h1m1 0h2m1 0h1m2 0h3m4 0h2m-31 1h5m1 0h1m1 0h3m1 0h1m1 0h2m4 0h1m2 0h3m3 0h1m3 0h2m1 0h1m-37 1h1m2 0h2m3 0h1m1 0h2m1 0h4m2 0h2m3 0h2m1 0h1m2 0h1m3 0h1m1 0h1m-37 1h8m3 0h2m2 0h3m1 0h1m2 0h2m1 0h3m2 0h3m2 0h2m-35 1h2m3 0h1m2 0h6m2 0h3m1 0h1m4 0h3m2 0h2m2 0h1m-35 1h2m1 0h2m1 0h4m3 0h1m2 0h1m1 0h3m1 0h1m1 0h1m1 0h1m3 0h2m-33 1h3m4 0h1m4 0h2m1 0h1m2 0h2m2 0h2m6 0h1m2 0h1m-35 1h2m2 0h1m1 0h2m2 0h1m2 0h2m3 0h1m1 0h3m3 0h1m2 0h1m2 0h1m1 0h1m-34 1h1m2 0h2m5 0h2m3 0h1m1 0h3m1 0h1m1 0h6m3 0h2m-35 1h4m1 0h2m1 0h2m3 0h1m2 0h4m10 0h1m2 0h4m-36 1h4m3 0h1m1 0h1m1 0h3m2 0h4m2 0h1m4 0h1m3 0h1m2 0h2m-36 1h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h1m5 0h1m1 0h2m1 0h1m2 0h2m2 0h1m3 0h1m-36 1h1m1 0h1m2 0h1m1 0h2m3 0h2m1 0h2m1 0h1m1 0h3m1 0h1m3 0h2m3 0h1m1 0h2m-35 1h3m1 0h3m2 0h1m2 0h3m5 0h4m1 0h6m-25 1h4m1 0h3m1 0h9m1 0h2m3 0h3m1 0h1m-37 1h7m1 0h3m1 0h1m2 0h1m1 0h2m2 0h1m3 0h1m2 0h1m1 0h1m1 0h2m1 0h2m-37 1h1m5 0h1m2 0h1m3 0h1m1 0h1m1 0h1m9 0h2m3 0h2m-34 1h1m1 0h3m1 0h1m2 0h3m2 0h1m2 0h4m1 0h1m3 0h1m1 0h6m1 0h2m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h2m4 0h2m3 0h1m2 0h1m1 0h4m-34 1h1m1 0h3m1 0h1m1 0h2m2 0h1m2 0h2m1 0h2m1 0h2m3 0h3m1 0h6m-36 1h1m5 0h1m5 0h2m5 0h2m1 0h6m1 0h2m2 0h2m-35 1h7m3 0h2m6 0h1m3 0h2m1 0h2m7 0h3"/></svg>
+          <div class="scanline"></div>
+          <div class="plate"><svg viewBox="0 0 3113 1280"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg></div>
+        </div>
+      </div>
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    </div>
+    <div class="scan">
+      <div class="cta"><span class="ph"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/></svg></span>Scan to register <span>· 2 min</span></div>
+      <div class="cta2 rtl"><span>سکان بکە و تۆمار بکە</span><i>·</i><span>امسح وسجّل</span></div>
+    </div>
+  </section>
+
+  <section class="foot">
+    <div class="perks">
+      <span class="perk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Free listing</span>
+      <span class="perk"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>Verified badge</span>
+      <span class="perk"><svg viewBox="0 0 24 24"><path d="M6 8.5a5 5 0 010 7M9.5 6a8.5 8.5 0 010 12M13 3.5a12 12 0 010 17"/></svg>NFC business card</span>
+    </div>
+    <div class="ticker" aria-hidden="true"><div class="track" id="track"></div></div>
+    <div class="url">bmnassa.vercel.app<b>/register</b></div>
+  </section>
+</main>
+
+<div class="start" id="start"><div><span>Tap to start the display</span><small>Turns on full screen and keeps the iPad awake where supported.</small></div></div>
+
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // rotating headline: EN -> KU -> AR
+  const lines = [...document.querySelectorAll('.line')], dots = [...document.querySelectorAll('#dots i')];
+  let i = 0;
+  setInterval(() => {
+    const prev = lines[i]; prev.classList.remove('on'); prev.classList.add('out');
+    setTimeout(() => prev.classList.remove('out'), 900);
+    i = (i + 1) % lines.length; lines[i].classList.add('on');
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+  }, 4200);
+
+  // category ticker in all three languages
+  const C = ['Plumbers','پاکژکردنەوەی ماڵ','الهندسة المدنية','Electricians','دارتاشی','الصيدليات','Civil Engineers','ژوانگای جوانی','ميكانيكا السيارات','Pharmacies','کارەبایی','المطاعم والضيافة','Architects','سەلمانی','التكييف والتبريد','Photographers','ئەندازیاری شارستانی','المحاماة','Car Mechanics','نانەوایی و شیرینی','تنظيف المنازل','Interior Designers','وێنەگری','صيانة الحاسوب'];
+  const html = C.map(c => `<span${/[؀-ۿ]/.test(c) ? ' class="rtl"' : ''}>${c}</span>`).join('');
+  document.getElementById('track').innerHTML = html + html;
+
+  // floating dust
+  const cv = document.getElementById('dust'), ctx = cv.getContext('2d'); let W, H, pts = [];
+  function size(){ const d = devicePixelRatio || 1; W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    pts = Array.from({length: 70}, () => ({x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.6 + .4, vx: (Math.random() - .5) * .2, vy: -Math.random() * .35 - .08, a: Math.random() * .5 + .15})); }
+  size(); addEventListener('resize', size);
+  (function tick(){ ctx.clearRect(0, 0, W, H); for (const p of pts){ p.x += p.vx; p.y += p.vy; if (p.y < -4){ p.y = H + 4; p.x = Math.random() * W; } ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fillStyle = `rgba(255,255,255,${p.a})`; ctx.fill(); } if (!reduce) requestAnimationFrame(tick); })();
+
+  // start: full screen + keep awake
+  let lock = null;
+  async function keepAwake(){ try { if ('wakeLock' in navigator) { lock = await navigator.wakeLock.request('screen'); } } catch (e) {} }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && lock !== null) keepAwake(); });
+  document.getElementById('start').addEventListener('click', async () => {
+    const el = document.documentElement;
+    try { if (el.requestFullscreen) await el.requestFullscreen(); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); } catch (e) {}
+    keepAwake(); document.getElementById('start').classList.add('off');
+  });
+  // skip the overlay when opened from the Home Screen (already full screen)
+  if (navigator.standalone || matchMedia('(display-mode: standalone)').matches) { document.getElementById('start').classList.add('off'); document.addEventListener('click', keepAwake, {once: true}); }
+})();
+</script>
+</body>
+</html>
