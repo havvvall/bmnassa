@@ -135,6 +135,22 @@ textarea.inp{height:118px;padding:13px 15px;resize:vertical;line-height:1.55}
 .cat .tk svg{width:11px;height:11px;stroke-width:3.4;opacity:0}
 .cat[aria-pressed="true"] .tk svg{opacity:1}
 .cities{display:flex;flex-wrap:wrap;gap:8px}
+.mapbox{position:relative;height:240px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0e1418}
+#map{position:absolute;inset:0;background:#0e1418}
+.mapbox::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);pointer-events:none;z-index:500}
+.maprow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:99px;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.mbtn .i{width:18px;height:18px;color:var(--teal)}
+.mbtn:disabled{opacity:.6}
+.pinst{font-size:12.5px;font-weight:700;color:var(--muted);margin-top:8px;min-height:1.2em}
+.pinst.ok{color:var(--teal)}.pinst.bad{color:var(--err)}
+.pinI{background:none;border:0}
+.pinI span{display:block;width:30px;height:30px;margin:2px 0 0 2px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--teal),var(--coral));border:3px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+.pinI span::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff}
+.leaflet-container{font:inherit;background:#0e1418}
+.leaflet-control-attribution{background:rgba(11,16,20,.7)!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--soft)!important}
+.leaflet-bar a{background:#141c21!important;color:var(--fg)!important;border-color:var(--line)!important}
 .city{padding:10px 15px;border-radius:99px;border:1px solid var(--line);background:var(--glass);font-size:14px;font-weight:700;cursor:pointer;transition:.2s}
 .city[aria-pressed="true"]{background:var(--fg);color:#0b1014;border-color:var(--fg)}
 .switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:15px;background:var(--glass);border:1px solid var(--line);cursor:pointer;font-size:14px;font-weight:700}
@@ -266,6 +282,11 @@ textarea.inp{height:118px;padding:13px 15px;resize:vertical;line-height:1.55}
         <h2 data-t="s3Title"></h2>
         <p class="hint" data-t="s3Hint"></p>
         <div class="fld"><span class="lab" id="cityLab" data-t="fCity"></span><div class="cities" id="cities" role="group" aria-labelledby="cityLab"></div><div class="err" id="eCity"></div></div>
+        <div class="fld"><span class="lab"><span data-t="fPin"></span> <span class="opt" data-t="optional"></span></span>
+          <div class="mapbox" id="mapbox" dir="ltr"><div id="map"></div></div>
+          <div class="maprow"><button type="button" class="mbtn" id="pinMe"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/><circle cx="12" cy="12" r="7"/></svg><span data-t="pinMe"></span></button><button type="button" class="mbtn" id="pinClear" hidden><span data-t="pinClear"></span></button></div>
+          <div class="pinst" id="pinSt"></div>
+        </div>
         <div class="fld"><label for="fAddr"><span data-t="fAddr"></span> <span class="opt" data-t="optional"></span></label><input class="inp" id="fAddr" autocomplete="street-address" maxlength="80"></div>
       </div>
 
@@ -339,9 +360,9 @@ const T = {
   perk1:'Free listing', perk2:'Verified badge', perk3:'NFC digital card', livePreview:'LIVE PREVIEW', call:'Call', wa:'WhatsApp',
   pvName:'Your business name', pvMeta:'Category · City',
   steps:['Business','Contact','Location','Finish'], next:'Continue', submit:'Submit my business', sending:'Sending…',
-  s1Title:'Your business', s1Hint:'What is it called, and what do you do?', fName:'BUSINESS NAME', namePh:'e.g. Arin Plumbing', fCat:'CATEGORY', fOther:'TYPE YOUR CATEGORY', otherPh:'e.g. Pharmacy, Gym',
-  s2Title:'How customers reach you', s2Hint:'This number will show on your listing.', fOwner:'OWNER NAME', ownerPh:'e.g. Arin Kamal', fPhone:'PHONE NUMBER', sameWa:'WhatsApp is the same number', fWa:'WHATSAPP NUMBER', optional:'(optional)',
-  s3Title:'Where you are', s3Hint:'Pick your city. Add your area so customers nearby find you first.', fCity:'CITY', fAddr:'AREA OR STREET', addrPh:'e.g. Salim St, Bakrajo',
+  s1Title:'Your business', s1Hint:'What is it called, and what do you do?', fName:'BUSINESS NAME', namePh:'e.g. Harem Plumbing', fCat:'CATEGORY', fOther:'TYPE YOUR CATEGORY', otherPh:'e.g. Pharmacy, Gym',
+  s2Title:'How customers reach you', s2Hint:'This number will show on your listing.', fOwner:'OWNER NAME', ownerPh:'e.g. Harem Kamal', fPhone:'PHONE NUMBER', sameWa:'WhatsApp is the same number', fWa:'WHATSAPP NUMBER', optional:'(optional)',
+  fPin:'PIN YOUR LOCATION', pinHint:'Tap the map or drag the pin to your exact spot.', pinMe:'Use my location', pinClear:'Remove pin', pinWait:'Finding you…', pinErr:'Could not get your location. Tap the map instead.', pinOk:'Location pinned', rvPin:'Map pin', s3Title:'Where you are', s3Hint:'Pick your city. Add your area so customers nearby find you first.', fCity:'CITY', fAddr:'AREA OR STREET', addrPh:'e.g. Salim St, Bakrajo',
   s4Title:'Almost done', s4Hint:'Tell customers what you offer, then check your details.', fDesc:'DESCRIPTION', descPh:'e.g. Leak repair, water heaters and bathroom fitting. 10 years of experience.', reviewLab:'YOUR DETAILS',
   rv:{name:'Business', cat:'Category', owner:'Owner', phone:'Phone', wa:'WhatsApp', city:'City', addr:'Area'},
   eName:'Please enter your business name.', eCat:'Please pick a category.', eOther:'Please type your category.', ePhone:'Please enter a valid phone number, e.g. 0750 123 4567.', eCity:'Please pick your city.',
@@ -353,9 +374,9 @@ const T = {
   perk1:'تۆمارکردنی بەخۆڕایی', perk2:'نیشانەی پشتڕاستکراوە', perk3:'کارتی دیجیتاڵی NFC', livePreview:'پێشبینینی ڕاستەوخۆ', call:'پەیوەندی', wa:'واتساپ',
   pvName:'ناوی کارەکەت', pvMeta:'بوار · شار',
   steps:['کار','پەیوەندی','شوێن','کۆتایی'], next:'بەردەوامبوون', submit:'ناردنی کارەکەم', sending:'دەنێردرێت…',
-  s1Title:'کارەکەت', s1Hint:'ناوی چییە و چی کار دەکەیت؟', fName:'ناوی کار', namePh:'بۆ نموونە: ئارین بۆ کارسازی بۆری', fCat:'بوار', fOther:'بوارەکەت بنووسە', otherPh:'بۆ نموونە: دەرمانخانە، هۆڵی وەرزش',
-  s2Title:'کڕیاران چۆن پەیوەندیت پێوە دەکەن', s2Hint:'ئەم ژمارەیە لە لاپەڕەکەتدا دەردەکەوێت.', fOwner:'ناوی خاوەن کار', ownerPh:'بۆ نموونە: ئارین کامل', fPhone:'ژمارەی تەلەفۆن', sameWa:'واتساپ هەمان ژمارەیە', fWa:'ژمارەی واتساپ', optional:'(ئارەزوومەندانە)',
-  s3Title:'لە کوێیت', s3Hint:'شارەکەت هەڵبژێرە. ناوچەکەت زیاد بکە بۆ ئەوەی کڕیارانی نزیک یەکەم جار بتدۆزنەوە.', fCity:'شار', fAddr:'ناوچە یان شەقام', addrPh:'بۆ نموونە: شەقامی سالم، بەکرەجۆ',
+  s1Title:'کارەکەت', s1Hint:'ناوی چییە و چی کار دەکەیت؟', fName:'ناوی کار', namePh:'بۆ نموونە: هەرێم بۆ کارسازی بۆری', fCat:'بوار', fOther:'بوارەکەت بنووسە', otherPh:'بۆ نموونە: دەرمانخانە، هۆڵی وەرزش',
+  s2Title:'کڕیاران چۆن پەیوەندیت پێوە دەکەن', s2Hint:'ئەم ژمارەیە لە لاپەڕەکەتدا دەردەکەوێت.', fOwner:'ناوی خاوەن کار', ownerPh:'بۆ نموونە: هەرێم کامل', fPhone:'ژمارەی تەلەفۆن', sameWa:'واتساپ هەمان ژمارەیە', fWa:'ژمارەی واتساپ', optional:'(ئارەزوومەندانە)',
+  fPin:'شوێنەکەت لەسەر نەخشە دیاری بکە', pinHint:'دەست لە نەخشەکە بدە یان نیشانەکە ڕابکێشە بۆ شوێنی ورد.', pinMe:'شوێنی ئێستام', pinClear:'لابردنی نیشانە', pinWait:'شوێنەکەت دەدۆزرێتەوە…', pinErr:'نەتوانرا شوێنەکەت وەربگیرێت. دەست لە نەخشەکە بدە.', pinOk:'شوێنەکەت دیاریکرا', rvPin:'نەخشە', s3Title:'لە کوێیت', s3Hint:'شارەکەت هەڵبژێرە. ناوچەکەت زیاد بکە بۆ ئەوەی کڕیارانی نزیک یەکەم جار بتدۆزنەوە.', fCity:'شار', fAddr:'ناوچە یان شەقام', addrPh:'بۆ نموونە: شەقامی سالم، بەکرەجۆ',
   s4Title:'خەریکە تەواو دەبێت', s4Hint:'بە کڕیاران بڵێ چی پێشکەش دەکەیت، پاشان زانیارییەکانت پشکنە.', fDesc:'وەسف', descPh:'بۆ نموونە: چاککردنەوەی دزە، ئاوگەرمکەر و دامەزراندنی گەرماو. ١٠ ساڵ ئەزموون.', reviewLab:'زانیارییەکانت',
   rv:{name:'کار', cat:'بوار', owner:'خاوەن', phone:'تەلەفۆن', wa:'واتساپ', city:'شار', addr:'ناوچە'},
   eName:'تکایە ناوی کارەکەت بنووسە.', eCat:'تکایە بوارێک هەڵبژێرە.', eOther:'تکایە بوارەکەت بنووسە.', ePhone:'تکایە ژمارەیەکی دروست بنووسە، بۆ نموونە ٠٧٥٠ ١٢٣ ٤٥٦٧.', eCity:'تکایە شارەکەت هەڵبژێرە.',
@@ -367,9 +388,9 @@ const T = {
   perk1:'إدراج مجاني', perk2:'شارة التوثيق', perk3:'بطاقة رقمية NFC', livePreview:'معاينة مباشرة', call:'اتصال', wa:'واتساب',
   pvName:'اسم عملك', pvMeta:'المجال · المدينة',
   steps:['العمل','التواصل','الموقع','الإنهاء'], next:'متابعة', submit:'أرسل عملي', sending:'جارٍ الإرسال…',
-  s1Title:'عملك', s1Hint:'ما اسمه، وما الذي تقدمه؟', fName:'اسم العمل', namePh:'مثال: آرين للسباكة', fCat:'المجال', fOther:'اكتب مجالك', otherPh:'مثال: صيدلية، نادٍ رياضي',
-  s2Title:'كيف يتواصل معك العملاء', s2Hint:'سيظهر هذا الرقم في صفحتك.', fOwner:'اسم صاحب العمل', ownerPh:'مثال: آرين كامل', fPhone:'رقم الهاتف', sameWa:'رقم واتساب هو نفس الرقم', fWa:'رقم واتساب', optional:'(اختياري)',
-  s3Title:'أين أنت', s3Hint:'اختر مدينتك. أضف منطقتك ليجدك العملاء القريبون أولاً.', fCity:'المدينة', fAddr:'المنطقة أو الشارع', addrPh:'مثال: شارع سالم، بكرجو',
+  s1Title:'عملك', s1Hint:'ما اسمه، وما الذي تقدمه؟', fName:'اسم العمل', namePh:'مثال: هريم للسباكة', fCat:'المجال', fOther:'اكتب مجالك', otherPh:'مثال: صيدلية، نادٍ رياضي',
+  s2Title:'كيف يتواصل معك العملاء', s2Hint:'سيظهر هذا الرقم في صفحتك.', fOwner:'اسم صاحب العمل', ownerPh:'مثال: هريم كامل', fPhone:'رقم الهاتف', sameWa:'رقم واتساب هو نفس الرقم', fWa:'رقم واتساب', optional:'(اختياري)',
+  fPin:'حدّد موقعك على الخريطة', pinHint:'المس الخريطة أو اسحب الدبوس إلى موقعك بالضبط.', pinMe:'استخدم موقعي', pinClear:'إزالة الدبوس', pinWait:'جارٍ تحديد موقعك…', pinErr:'تعذّر تحديد موقعك. المس الخريطة بدلاً من ذلك.', pinOk:'تم تحديد موقعك', rvPin:'الخريطة', s3Title:'أين أنت', s3Hint:'اختر مدينتك. أضف منطقتك ليجدك العملاء القريبون أولاً.', fCity:'المدينة', fAddr:'المنطقة أو الشارع', addrPh:'مثال: شارع سالم، بكرجو',
   s4Title:'أوشكت على الانتهاء', s4Hint:'أخبر العملاء بما تقدمه، ثم راجع بياناتك.', fDesc:'الوصف', descPh:'مثال: إصلاح التسريبات، سخانات المياه وتركيب الحمامات. خبرة ١٠ سنوات.', reviewLab:'بياناتك',
   rv:{name:'العمل', cat:'المجال', owner:'صاحب العمل', phone:'الهاتف', wa:'واتساب', city:'المدينة', addr:'المنطقة'},
   eName:'يرجى إدخال اسم عملك.', eCat:'يرجى اختيار مجال.', eOther:'يرجى كتابة مجالك.', ePhone:'يرجى إدخال رقم صحيح، مثال ٠٧٥٠ ١٢٣ ٤٥٦٧.', eCity:'يرجى اختيار مدينتك.',
@@ -382,7 +403,7 @@ const T = {
 /* ---------- state ---------- */
 const DRAFT_KEY = 'bmnassa-register-draft';
 let lang = 'en', step = 0;
-const S = {name:'', cat:'', other:'', owner:'', phone:'', same:true, wa:'', city:'', addr:'', desc:'', nfc:false, qty:1, cardName:''};
+const S = {name:'', cat:'', other:'', owner:'', phone:'', same:true, wa:'', city:'', addr:'', desc:'', nfc:false, qty:1, cardName:'', lat:null, lng:null};
 try { const l = localStorage.getItem('bmnassa-card-lang'); if (T[l]) lang = l; } catch (e) {}
 const QP = new URLSearchParams(location.search), KIOSK = QP.has('kiosk');   /* ?kiosk=1: shared stand tablet, keep no drafts */
 if (!KIOSK) { try { const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); if (d) Object.assign(S, d); } catch (e) {} }
@@ -402,6 +423,7 @@ function renderStatic(){
   const t = L();
   document.documentElement.lang = lang === 'ku' ? 'ckb' : lang;
   document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+  if (typeof syncPin === 'function' && document.getElementById('pinSt')) { try { syncPin(false); } catch (e) {} }
   document.querySelectorAll('[data-t]').forEach(el => { const v = t[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
   $('fName').placeholder = t.namePh; $('fOther').placeholder = t.otherPh; $('fOwner').placeholder = t.ownerPh; $('fAddr').placeholder = t.addrPh; $('fDesc').placeholder = t.descPh;
   document.querySelectorAll('.langs button').forEach((b, i) => { const on = b.dataset.lang === lang; b.setAttribute('aria-pressed', on); if (on) $('langThumb').style.transform = `translateX(${i * 100}%)`; });
@@ -418,6 +440,7 @@ function renderSteps(){
   document.querySelectorAll('.pane').forEach(p => p.hidden = +p.dataset.pane !== step);
   $('backBtn').hidden = step === 0;
   $('nextLabel').textContent = step === 3 ? t.submit : t.next;
+  if (step === 2) initMap();
   $('nextIcon').style.display = step === 3 ? 'none' : '';
 }
 function renderPreview(){
@@ -437,7 +460,7 @@ function renderNfc(){
   $('nfcBox').classList.toggle('on', S.nfc); $('nfcMore').hidden = !S.nfc; $('fNfc').checked = S.nfc;
 }
 function renderReview(){
-  const t = L(), r = t.rv, rows = [[r.name, S.name.trim()], [r.cat, catShown(lang)], [r.owner, S.owner.trim()], [r.phone, S.phone.trim(), 1], [r.wa, (S.same ? S.phone : S.wa).trim(), 1], [r.city, cityName(S.city, lang)], [r.addr, S.addr.trim()], [t.rvNfc, S.nfc ? t.cards(S.qty) + ((S.cardName.trim() || S.name.trim()) ? ' · ' + (S.cardName.trim() || S.name.trim()) : '') : '']];
+  const t = L(), r = t.rv, rows = [[r.name, S.name.trim()], [r.cat, catShown(lang)], [r.owner, S.owner.trim()], [r.phone, S.phone.trim(), 1], [r.wa, (S.same ? S.phone : S.wa).trim(), 1], [r.city, cityName(S.city, lang)], [r.addr, S.addr.trim()], [t.rvPin, S.lat != null ? t.pinOk : ''], [t.rvNfc, S.nfc ? t.cards(S.qty) + ((S.cardName.trim() || S.name.trim()) ? ' · ' + (S.cardName.trim() || S.name.trim()) : '') : '']];
   $('review').innerHTML = rows.filter(x => x[1]).map(([k, v, ltr]) => `<div class="rv"><span>${k}</span><span${ltr ? ' class="ltr"' : ''}>${esc(v)}</span></div>`).join('');
 }
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -455,7 +478,7 @@ $('fCardName').addEventListener('input', e => { S.cardName = e.target.value; sav
 $('fSame').addEventListener('change', e => { S.same = e.target.checked; $('waWrap').hidden = S.same; saveDraft(); renderReview(); });
 $('cats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; S.cat = b.dataset.cat; saveDraft();
   document.querySelectorAll('.cat').forEach(x => x.setAttribute('aria-pressed', x.dataset.cat === S.cat)); $('otherWrap').hidden = S.cat !== 'other'; if (S.cat === 'other') $('fOther').focus(); $('eCat').textContent = ''; renderPreview(); renderReview(); });
-$('cities').addEventListener('click', e => { const b = e.target.closest('[data-city]'); if (!b) return; S.city = b.dataset.city; saveDraft();
+$('cities').addEventListener('click', e => { const b = e.target.closest('[data-city]'); if (!b) return; S.city = b.dataset.city; saveDraft(); centerOnCity();
   document.querySelectorAll('.city').forEach(x => x.setAttribute('aria-pressed', x.dataset.city === S.city)); $('eCity').textContent = ''; renderPreview(); renderReview(); });
 
 /* ---------- steps ---------- */
@@ -486,7 +509,7 @@ async function send(){
   const phone = normDigits(S.phone.trim()), wa = normDigits((S.same ? S.phone : S.wa).trim());
   const order = S.nfc ? `NFC CARD ORDER: ${S.qty} card${S.qty > 1 ? 's' : ''}, name on card: ${S.cardName.trim() || S.name.trim()}` : '';
   const descOut = [order, S.desc.trim()].filter(Boolean).join(' | ');
-  const params = new URLSearchParams({ name: S.name.trim(), category: S.cat === 'other' ? S.other.trim() : catName(S.cat, 'en'), owner: S.owner.trim(), phone, whatsapp: wa, city: cityName(S.city, 'en'), address: S.addr.trim(), description: descOut });
+  const params = new URLSearchParams({ name: S.name.trim(), category: S.cat === 'other' ? S.other.trim() : catName(S.cat, 'en'), owner: S.owner.trim(), phone, whatsapp: wa, city: cityName(S.city, 'en'), address: [S.addr.trim(), mapLink()].filter(Boolean).join(' | '), description: descOut });
   let fallback = false;
   try { await fetch(SHEET, { method: 'POST', mode: 'no-cors', body: params }); }
   catch (err) {
@@ -500,7 +523,62 @@ async function send(){
   if (!fallback) { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} }
   $('panel').scrollIntoView({behavior: 'smooth', block: 'start'});
 }
-$('againBtn').onclick = () => { Object.assign(S, {name:'', cat:'', other:'', owner:'', phone:'', same:true, wa:'', city:'', addr:'', desc:'', nfc:false, qty:1, cardName:''}); saveDraft(); step = 0; syncInputs(); renderStatic(); $('done').hidden = true; $('form').hidden = false; $('stepsWrap').hidden = false; };
+$('againBtn').onclick = () => { Object.assign(S, {name:'', cat:'', other:'', owner:'', phone:'', same:true, wa:'', city:'', addr:'', desc:'', nfc:false, qty:1, cardName:'', lat:null, lng:null}); saveDraft(); step = 0; syncInputs(); syncPin(true); renderStatic(); $('done').hidden = true; $('form').hidden = false; $('stepsWrap').hidden = false; };
+
+/* ---------- map pin ---------- */
+const CITY_LL = {erbil:[36.1912,44.0092], sulaymaniyah:[35.5613,45.4366], kirkuk:[35.4681,44.3922], duhok:[36.8669,42.9503], halabja:[35.1779,45.9862]};
+let LF = null, map = null, pin = null, leafletP = null;
+const mapLink = () => S.lat != null ? `https://maps.google.com/?q=${S.lat},${S.lng}` : '';
+function loadLeaflet(){
+  if (leafletP) return leafletP;
+  leafletP = new Promise((res, rej) => {
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(css);
+    const js = document.createElement('script'); js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    js.onload = () => { LF = window.L.noConflict ? window.L.noConflict() : window.L; res(LF); }; js.onerror = rej; document.head.appendChild(js);
+  });
+  return leafletP;
+}
+function initMap(){
+  if (map) { setTimeout(() => map.invalidateSize(), 60); return; }
+  loadLeaflet().then(() => {
+    if (map) return;
+    const start = S.lat != null ? [S.lat, S.lng] : (CITY_LL[S.city] || [36.0, 44.6]);
+    map = LF.map('map', {zoomControl: true, attributionControl: true}).setView(start, S.lat != null ? 16 : (S.city ? 12 : 7));
+    LF.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {maxZoom: 19, subdomains: 'abcd', attribution: '&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
+    map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+    map.on('click', e => setPin(e.latlng.lat, e.latlng.lng, false));
+    syncPin(false);
+    setTimeout(() => map.invalidateSize(), 60);
+  }).catch(() => { $('mapbox').hidden = true; });
+}
+function centerOnCity(){ if (map && S.lat == null && CITY_LL[S.city]) map.flyTo(CITY_LL[S.city], 12, {duration: .8}); }
+function setPin(lat, lng, fly){
+  S.lat = +lat.toFixed(6); S.lng = +lng.toFixed(6); saveDraft();
+  if (map && fly) map.flyTo([S.lat, S.lng], 16, {duration: .8});
+  syncPin(false); renderReview();
+}
+function syncPin(reset){
+  if (reset && map) map.setView([36.0, 44.6], 7);
+  const t = L(), st = $('pinSt');
+  if (map) {
+    if (S.lat != null) {
+      if (!pin) { pin = LF.marker([S.lat, S.lng], {draggable: true, icon: LF.divIcon({className: 'pinI', html: '<span></span>', iconSize: [36, 40], iconAnchor: [17, 38]})}).addTo(map);
+        pin.on('dragend', () => { const p = pin.getLatLng(); setPin(p.lat, p.lng, false); }); }
+      else pin.setLatLng([S.lat, S.lng]);
+    } else if (pin) { pin.remove(); pin = null; }
+  }
+  $('pinClear').hidden = S.lat == null;
+  st.className = 'pinst' + (S.lat != null ? ' ok' : '');
+  if (S.lat != null) { st.textContent = '✓ ' + t.pinOk + ' · '; const c = document.createElement('bdi'); c.dir = 'ltr'; c.textContent = S.lat.toFixed(5) + ', ' + S.lng.toFixed(5); st.appendChild(c); } else st.textContent = t.pinHint;
+}
+$('pinClear').addEventListener('click', () => { S.lat = S.lng = null; saveDraft(); syncPin(false); renderReview(); });
+$('pinMe').addEventListener('click', () => {
+  const t = L(), b = $('pinMe'), st = $('pinSt');
+  if (!navigator.geolocation) { st.className = 'pinst bad'; st.textContent = t.pinErr; return; }
+  b.disabled = true; st.className = 'pinst'; st.textContent = t.pinWait;
+  navigator.geolocation.getCurrentPosition(p => { b.disabled = false; initMap(); loadLeaflet().then(() => setPin(p.coords.latitude, p.coords.longitude, true)); },
+    () => { b.disabled = false; st.className = 'pinst bad'; st.textContent = t.pinErr; }, {enableHighAccuracy: true, timeout: 12000, maximumAge: 60000});
+});
 
 /* ---------- language ---------- */
 document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
