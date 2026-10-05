@@ -148,6 +148,7 @@ textarea.inp{height:118px;padding:13px 15px;resize:vertical;line-height:1.55}
 .pinI span{display:block;width:30px;height:30px;margin:2px 0 0 2px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--teal),var(--coral));border:3px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.5)}
 .pinI span::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff}
 .leaflet-container{font:inherit;background:#0e1418}
+.darkt{filter:brightness(.88) saturate(.9)}
 .leaflet-control-attribution{background:rgba(11,16,20,.7)!important;color:var(--muted)!important;font-size:10px}
 .leaflet-control-attribution a{color:var(--soft)!important}
 .leaflet-bar a{background:#141c21!important;color:var(--fg)!important;border-color:var(--line)!important}
@@ -362,7 +363,7 @@ const T = {
   steps:['Business','Contact','Location','Finish'], next:'Continue', submit:'Submit my business', sending:'Sending…',
   s1Title:'Your business', s1Hint:'What is it called, and what do you do?', fName:'BUSINESS NAME', namePh:'e.g. Harem Plumbing', fCat:'CATEGORY', fOther:'TYPE YOUR CATEGORY', otherPh:'e.g. Pharmacy, Gym',
   s2Title:'How customers reach you', s2Hint:'This number will show on your listing.', fOwner:'OWNER NAME', ownerPh:'e.g. Harem Kamal', fPhone:'PHONE NUMBER', sameWa:'WhatsApp is the same number', fWa:'WHATSAPP NUMBER', optional:'(optional)',
-  fPin:'PIN YOUR LOCATION', pinHint:'Tap the map or drag the pin to your exact spot.', pinMe:'Use my location', pinClear:'Remove pin', pinWait:'Finding you…', pinErr:'Could not get your location. Tap the map instead.', pinOk:'Location pinned', rvPin:'Map pin', eOwner:'Please enter the owner\'s name.', eWa:'Please enter a valid WhatsApp number.', ePin:'Please pin your location on the map.', eAddr:'Please enter your area or street.', eDesc:'Please describe what you offer (at least 10 characters).', s3Title:'Where you are', s3Hint:'Pick your city. Add your area so customers nearby find you first.', fCity:'CITY', fAddr:'AREA OR STREET', addrPh:'e.g. Salim St, Bakrajo',
+  fPin:'PIN YOUR LOCATION', pinHint:'Tap the map or drag the pin to your exact spot.', pinMe:'Use my location', pinClear:'Remove pin', pinWait:'Finding you…', pinErr:'Could not get your location. Tap the map instead.', pinOk:'Location pinned', rvPin:'Map pin', eOwner:'Please enter the owner\'s name.', eWa:'Please enter a valid WhatsApp number.', ePin:'Please pin your location on the map.', eAddr:'Please enter your area or street.', eDesc:'Please describe what you offer (at least 10 characters).', pinDenied:'Location access is off. Allow it for your browser in Settings → Privacy → Location Services, or just tap the map.', s3Title:'Where you are', s3Hint:'Pick your city. Add your area so customers nearby find you first.', fCity:'CITY', fAddr:'AREA OR STREET', addrPh:'e.g. Salim St, Bakrajo',
   s4Title:'Almost done', s4Hint:'Tell customers what you offer, then check your details.', fDesc:'DESCRIPTION', descPh:'e.g. Leak repair, water heaters and bathroom fitting. 10 years of experience.', reviewLab:'YOUR DETAILS',
   rv:{name:'Business', cat:'Category', owner:'Owner', phone:'Phone', wa:'WhatsApp', city:'City', addr:'Area'},
   eName:'Please enter your business name.', eCat:'Please pick a category.', eOther:'Please type your category.', ePhone:'Please enter a valid phone number, e.g. 0750 123 4567.', eCity:'Please pick your city.',
@@ -376,7 +377,7 @@ const T = {
   steps:['کار','پەیوەندی','شوێن','کۆتایی'], next:'بەردەوامبوون', submit:'ناردنی کارەکەم', sending:'دەنێردرێت…',
   s1Title:'کارەکەت', s1Hint:'ناوی چییە و چی کار دەکەیت؟', fName:'ناوی کار', namePh:'بۆ نموونە: هەرێم بۆ کارسازی بۆری', fCat:'بوار', fOther:'بوارەکەت بنووسە', otherPh:'بۆ نموونە: دەرمانخانە، هۆڵی وەرزش',
   s2Title:'کڕیاران چۆن پەیوەندیت پێوە دەکەن', s2Hint:'ئەم ژمارەیە لە لاپەڕەکەتدا دەردەکەوێت.', fOwner:'ناوی خاوەن کار', ownerPh:'بۆ نموونە: هەرێم کامل', fPhone:'ژمارەی تەلەفۆن', sameWa:'واتساپ هەمان ژمارەیە', fWa:'ژمارەی واتساپ', optional:'(ئارەزوومەندانە)',
-  fPin:'شوێنەکەت لەسەر نەخشە دیاری بکە', pinHint:'دەست لە نەخشەکە بدە یان نیشانەکە ڕابکێشە بۆ شوێنی ورد.', pinMe:'شوێنی ئێستام', pinClear:'لابردنی نیشانە', pinWait:'شوێنەکەت دەدۆزرێتەوە…', pinErr:'نەتوانرا شوێنەکەت وەربگیرێت. دەست لە نەخشەکە بدە.', pinOk:'شوێنەکەت دیاریکرا', rvPin:'نەخشە', eOwner:'تکایە ناوی خاوەن بنووسە.', eWa:'تکایە ژمارەی واتساپێکی دروست بنووسە.', ePin:'تکایە شوێنەکەت لەسەر نەخشە دیاری بکە.', eAddr:'تکایە ناوچە یان شەقامەکەت بنووسە.', eDesc:'تکایە بنووسە چی پێشکەش دەکەیت (لانیکەم ١٠ پیت).', s3Title:'لە کوێیت', s3Hint:'شارەکەت هەڵبژێرە. ناوچەکەت زیاد بکە بۆ ئەوەی کڕیارانی نزیک یەکەم جار بتدۆزنەوە.', fCity:'شار', fAddr:'ناوچە یان شەقام', addrPh:'بۆ نموونە: شەقامی سالم، بەکرەجۆ',
+  fPin:'شوێنەکەت لەسەر نەخشە دیاری بکە', pinHint:'دەست لە نەخشەکە بدە یان نیشانەکە ڕابکێشە بۆ شوێنی ورد.', pinMe:'شوێنی ئێستام', pinClear:'لابردنی نیشانە', pinWait:'شوێنەکەت دەدۆزرێتەوە…', pinErr:'نەتوانرا شوێنەکەت وەربگیرێت. دەست لە نەخشەکە بدە.', pinOk:'شوێنەکەت دیاریکرا', rvPin:'نەخشە', eOwner:'تکایە ناوی خاوەن بنووسە.', eWa:'تکایە ژمارەی واتساپێکی دروست بنووسە.', ePin:'تکایە شوێنەکەت لەسەر نەخشە دیاری بکە.', eAddr:'تکایە ناوچە یان شەقامەکەت بنووسە.', eDesc:'تکایە بنووسە چی پێشکەش دەکەیت (لانیکەم ١٠ پیت).', pinDenied:'دەستگەیشتن بە شوێن کوژاوەتەوە. لە ڕێکخستنەکان ← تایبەتمەندی ← خزمەتگوزاری شوێن ڕێگە بە وێبگەڕەکەت بدە، یان تەنها دەست لە نەخشەکە بدە.', s3Title:'لە کوێیت', s3Hint:'شارەکەت هەڵبژێرە. ناوچەکەت زیاد بکە بۆ ئەوەی کڕیارانی نزیک یەکەم جار بتدۆزنەوە.', fCity:'شار', fAddr:'ناوچە یان شەقام', addrPh:'بۆ نموونە: شەقامی سالم، بەکرەجۆ',
   s4Title:'خەریکە تەواو دەبێت', s4Hint:'بە کڕیاران بڵێ چی پێشکەش دەکەیت، پاشان زانیارییەکانت پشکنە.', fDesc:'وەسف', descPh:'بۆ نموونە: چاککردنەوەی دزە، ئاوگەرمکەر و دامەزراندنی گەرماو. ١٠ ساڵ ئەزموون.', reviewLab:'زانیارییەکانت',
   rv:{name:'کار', cat:'بوار', owner:'خاوەن', phone:'تەلەفۆن', wa:'واتساپ', city:'شار', addr:'ناوچە'},
   eName:'تکایە ناوی کارەکەت بنووسە.', eCat:'تکایە بوارێک هەڵبژێرە.', eOther:'تکایە بوارەکەت بنووسە.', ePhone:'تکایە ژمارەیەکی دروست بنووسە، بۆ نموونە ٠٧٥٠ ١٢٣ ٤٥٦٧.', eCity:'تکایە شارەکەت هەڵبژێرە.',
@@ -390,7 +391,7 @@ const T = {
   steps:['العمل','التواصل','الموقع','الإنهاء'], next:'متابعة', submit:'أرسل عملي', sending:'جارٍ الإرسال…',
   s1Title:'عملك', s1Hint:'ما اسمه، وما الذي تقدمه؟', fName:'اسم العمل', namePh:'مثال: هريم للسباكة', fCat:'المجال', fOther:'اكتب مجالك', otherPh:'مثال: صيدلية، نادٍ رياضي',
   s2Title:'كيف يتواصل معك العملاء', s2Hint:'سيظهر هذا الرقم في صفحتك.', fOwner:'اسم صاحب العمل', ownerPh:'مثال: هريم كامل', fPhone:'رقم الهاتف', sameWa:'رقم واتساب هو نفس الرقم', fWa:'رقم واتساب', optional:'(اختياري)',
-  fPin:'حدّد موقعك على الخريطة', pinHint:'المس الخريطة أو اسحب الدبوس إلى موقعك بالضبط.', pinMe:'استخدم موقعي', pinClear:'إزالة الدبوس', pinWait:'جارٍ تحديد موقعك…', pinErr:'تعذّر تحديد موقعك. المس الخريطة بدلاً من ذلك.', pinOk:'تم تحديد موقعك', rvPin:'الخريطة', eOwner:'يرجى إدخال اسم المالك.', eWa:'يرجى إدخال رقم واتساب صحيح.', ePin:'يرجى تحديد موقعك على الخريطة.', eAddr:'يرجى إدخال المنطقة أو الشارع.', eDesc:'يرجى وصف ما تقدمه (١٠ أحرف على الأقل).', s3Title:'أين أنت', s3Hint:'اختر مدينتك. أضف منطقتك ليجدك العملاء القريبون أولاً.', fCity:'المدينة', fAddr:'المنطقة أو الشارع', addrPh:'مثال: شارع سالم، بكرجو',
+  fPin:'حدّد موقعك على الخريطة', pinHint:'المس الخريطة أو اسحب الدبوس إلى موقعك بالضبط.', pinMe:'استخدم موقعي', pinClear:'إزالة الدبوس', pinWait:'جارٍ تحديد موقعك…', pinErr:'تعذّر تحديد موقعك. المس الخريطة بدلاً من ذلك.', pinOk:'تم تحديد موقعك', rvPin:'الخريطة', eOwner:'يرجى إدخال اسم المالك.', eWa:'يرجى إدخال رقم واتساب صحيح.', ePin:'يرجى تحديد موقعك على الخريطة.', eAddr:'يرجى إدخال المنطقة أو الشارع.', eDesc:'يرجى وصف ما تقدمه (١٠ أحرف على الأقل).', pinDenied:'الوصول إلى الموقع مغلق. اسمح به لمتصفحك من الإعدادات ← الخصوصية ← خدمات الموقع، أو المس الخريطة فقط.', s3Title:'أين أنت', s3Hint:'اختر مدينتك. أضف منطقتك ليجدك العملاء القريبون أولاً.', fCity:'المدينة', fAddr:'المنطقة أو الشارع', addrPh:'مثال: شارع سالم، بكرجو',
   s4Title:'أوشكت على الانتهاء', s4Hint:'أخبر العملاء بما تقدمه، ثم راجع بياناتك.', fDesc:'الوصف', descPh:'مثال: إصلاح التسريبات، سخانات المياه وتركيب الحمامات. خبرة ١٠ سنوات.', reviewLab:'بياناتك',
   rv:{name:'العمل', cat:'المجال', owner:'صاحب العمل', phone:'الهاتف', wa:'واتساب', city:'المدينة', addr:'المنطقة'},
   eName:'يرجى إدخال اسم عملك.', eCat:'يرجى اختيار مجال.', eOther:'يرجى كتابة مجالك.', ePhone:'يرجى إدخال رقم صحيح، مثال ٠٧٥٠ ١٢٣ ٤٥٦٧.', eCity:'يرجى اختيار مدينتك.',
@@ -549,8 +550,8 @@ function initMap(){
     if (map) return;
     const start = S.lat != null ? [S.lat, S.lng] : (CITY_LL[S.city] || [36.0, 44.6]);
     map = LF.map('map', {zoomControl: true, attributionControl: true}).setView(start, S.lat != null ? 16 : (S.city ? 12 : 7));
-    const TILES = [['https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {maxZoom: 19, subdomains: 'abcd', attribution: '&copy; OpenStreetMap &copy; CARTO'}],
-                   ['https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; OpenStreetMap'}]];
+    const TILES = [['https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, className: 'darkt', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}],
+                   ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom: 19, className: 'darkt', attribution: 'Tiles &copy; Esri'}]];
     let ti = 0, bad = 0, good = 0, layer = null;
     const useTiles = i => { if (layer) layer.remove(); bad = good = 0; layer = LF.tileLayer(TILES[i][0], TILES[i][1]).addTo(map);
       layer.on('tileload', () => good++); layer.on('tileerror', () => { if (++bad >= 3 && !good && ti < TILES.length - 1) useTiles(++ti); }); };
@@ -586,8 +587,12 @@ $('pinMe').addEventListener('click', () => {
   const t = L(), b = $('pinMe'), st = $('pinSt');
   if (!navigator.geolocation) { st.className = 'pinst bad'; st.textContent = t.pinErr; return; }
   b.disabled = true; st.className = 'pinst'; st.textContent = t.pinWait;
-  navigator.geolocation.getCurrentPosition(p => { b.disabled = false; initMap(); loadLeaflet().then(() => setPin(p.coords.latitude, p.coords.longitude, true)); },
-    () => { b.disabled = false; st.className = 'pinst bad'; st.textContent = t.pinErr; }, {enableHighAccuracy: true, timeout: 12000, maximumAge: 60000});
+  const ok = p => { b.disabled = false; initMap(); loadLeaflet().then(() => setPin(p.coords.latitude, p.coords.longitude, true)); };
+  const no = e => { b.disabled = false; st.className = 'pinst bad'; st.textContent = e && e.code === 1 ? t.pinDenied : t.pinErr; };
+  navigator.geolocation.getCurrentPosition(ok, e => {
+    if (e && e.code === 1) return no(e);
+    navigator.geolocation.getCurrentPosition(ok, no, {enableHighAccuracy: false, timeout: 15000, maximumAge: 300000});
+  }, {enableHighAccuracy: true, timeout: 9000, maximumAge: 60000});
 });
 
 /* ---------- language ---------- */
