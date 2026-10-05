@@ -272,28 +272,28 @@ textarea.inp{height:118px;padding:13px 15px;resize:vertical;line-height:1.55}
       <div class="pane" data-pane="1" hidden>
         <h2 data-t="s2Title"></h2>
         <p class="hint" data-t="s2Hint"></p>
-        <div class="fld"><label for="fOwner"><span data-t="fOwner"></span> <span class="opt" data-t="optional"></span></label><input class="inp" id="fOwner" autocomplete="name" maxlength="50"></div>
+        <div class="fld"><label for="fOwner"><span data-t="fOwner"></span></label><input class="inp" id="fOwner" autocomplete="name" maxlength="50"><div class="err" id="eOwner"></div></div>
         <div class="fld"><label for="fPhone" data-t="fPhone"></label><input class="inp ltr" id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07xx xxx xxxx" dir="ltr" maxlength="18"><div class="err" id="ePhone"></div></div>
         <label class="switch"><span data-t="sameWa"></span><input type="checkbox" id="fSame" checked><span class="tg"></span></label>
-        <div class="fld" id="waWrap" hidden><label for="fWa" data-t="fWa"></label><input class="inp ltr" id="fWa" type="tel" inputmode="tel" placeholder="07xx xxx xxxx" dir="ltr" maxlength="18"></div>
+        <div class="fld" id="waWrap" hidden><label for="fWa" data-t="fWa"></label><input class="inp ltr" id="fWa" type="tel" inputmode="tel" placeholder="07xx xxx xxxx" dir="ltr" maxlength="18"><div class="err" id="eWa"></div></div>
       </div>
 
       <div class="pane" data-pane="2" hidden>
         <h2 data-t="s3Title"></h2>
         <p class="hint" data-t="s3Hint"></p>
         <div class="fld"><span class="lab" id="cityLab" data-t="fCity"></span><div class="cities" id="cities" role="group" aria-labelledby="cityLab"></div><div class="err" id="eCity"></div></div>
-        <div class="fld"><span class="lab"><span data-t="fPin"></span> <span class="opt" data-t="optional"></span></span>
+        <div class="fld"><span class="lab"><span data-t="fPin"></span></span>
           <div class="mapbox" id="mapbox" dir="ltr"><div id="map"></div></div>
           <div class="maprow"><button type="button" class="mbtn" id="pinMe"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/><circle cx="12" cy="12" r="7"/></svg><span data-t="pinMe"></span></button><button type="button" class="mbtn" id="pinClear" hidden><span data-t="pinClear"></span></button></div>
-          <div class="pinst" id="pinSt"></div>
+          <div class="pinst" id="pinSt"></div><div class="err" id="ePin"></div>
         </div>
-        <div class="fld"><label for="fAddr"><span data-t="fAddr"></span> <span class="opt" data-t="optional"></span></label><input class="inp" id="fAddr" autocomplete="street-address" maxlength="80"></div>
+        <div class="fld"><label for="fAddr"><span data-t="fAddr"></span></label><input class="inp" id="fAddr" autocomplete="street-address" maxlength="80"><div class="err" id="eAddr"></div></div>
       </div>
 
       <div class="pane" data-pane="3" hidden>
         <h2 data-t="s4Title"></h2>
         <p class="hint" data-t="s4Hint"></p>
-        <div class="fld"><label for="fDesc"><span data-t="fDesc"></span> <span class="opt" data-t="optional"></span></label><textarea class="inp" id="fDesc" maxlength="300"></textarea><div class="count"><span class="ltr" id="descCount">0 / 300</span></div></div>
+        <div class="fld"><label for="fDesc"><span data-t="fDesc"></span></label><textarea class="inp" id="fDesc" maxlength="300"></textarea><div class="count"><span class="ltr" id="descCount">0 / 300</span></div><div class="err" id="eDesc"></div></div>
         <div class="nfc" id="nfcBox">
           <div class="row1">
             <div class="mini" aria-hidden="true"><div><div class="mtop"><svg class="logo" viewBox="0 0 3113 1280"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg><svg class="i" viewBox="0 0 24 24"><path d="M6 8.5a5 5 0 010 7M9.5 6a8.5 8.5 0 010 12M13 3.5a12 12 0 010 17"/></svg></div><b id="miniName"></b></div></div>
@@ -362,7 +362,7 @@ const T = {
   steps:['Business','Contact','Location','Finish'], next:'Continue', submit:'Submit my business', sending:'Sending…',
   s1Title:'Your business', s1Hint:'What is it called, and what do you do?', fName:'BUSINESS NAME', namePh:'e.g. Harem Plumbing', fCat:'CATEGORY', fOther:'TYPE YOUR CATEGORY', otherPh:'e.g. Pharmacy, Gym',
   s2Title:'How customers reach you', s2Hint:'This number will show on your listing.', fOwner:'OWNER NAME', ownerPh:'e.g. Harem Kamal', fPhone:'PHONE NUMBER', sameWa:'WhatsApp is the same number', fWa:'WHATSAPP NUMBER', optional:'(optional)',
-  fPin:'PIN YOUR LOCATION', pinHint:'Tap the map or drag the pin to your exact spot.', pinMe:'Use my location', pinClear:'Remove pin', pinWait:'Finding you…', pinErr:'Could not get your location. Tap the map instead.', pinOk:'Location pinned', rvPin:'Map pin', s3Title:'Where you are', s3Hint:'Pick your city. Add your area so customers nearby find you first.', fCity:'CITY', fAddr:'AREA OR STREET', addrPh:'e.g. Salim St, Bakrajo',
+  fPin:'PIN YOUR LOCATION', pinHint:'Tap the map or drag the pin to your exact spot.', pinMe:'Use my location', pinClear:'Remove pin', pinWait:'Finding you…', pinErr:'Could not get your location. Tap the map instead.', pinOk:'Location pinned', rvPin:'Map pin', eOwner:'Please enter the owner\'s name.', eWa:'Please enter a valid WhatsApp number.', ePin:'Please pin your location on the map.', eAddr:'Please enter your area or street.', eDesc:'Please describe what you offer (at least 10 characters).', s3Title:'Where you are', s3Hint:'Pick your city. Add your area so customers nearby find you first.', fCity:'CITY', fAddr:'AREA OR STREET', addrPh:'e.g. Salim St, Bakrajo',
   s4Title:'Almost done', s4Hint:'Tell customers what you offer, then check your details.', fDesc:'DESCRIPTION', descPh:'e.g. Leak repair, water heaters and bathroom fitting. 10 years of experience.', reviewLab:'YOUR DETAILS',
   rv:{name:'Business', cat:'Category', owner:'Owner', phone:'Phone', wa:'WhatsApp', city:'City', addr:'Area'},
   eName:'Please enter your business name.', eCat:'Please pick a category.', eOther:'Please type your category.', ePhone:'Please enter a valid phone number, e.g. 0750 123 4567.', eCity:'Please pick your city.',
@@ -376,7 +376,7 @@ const T = {
   steps:['کار','پەیوەندی','شوێن','کۆتایی'], next:'بەردەوامبوون', submit:'ناردنی کارەکەم', sending:'دەنێردرێت…',
   s1Title:'کارەکەت', s1Hint:'ناوی چییە و چی کار دەکەیت؟', fName:'ناوی کار', namePh:'بۆ نموونە: هەرێم بۆ کارسازی بۆری', fCat:'بوار', fOther:'بوارەکەت بنووسە', otherPh:'بۆ نموونە: دەرمانخانە، هۆڵی وەرزش',
   s2Title:'کڕیاران چۆن پەیوەندیت پێوە دەکەن', s2Hint:'ئەم ژمارەیە لە لاپەڕەکەتدا دەردەکەوێت.', fOwner:'ناوی خاوەن کار', ownerPh:'بۆ نموونە: هەرێم کامل', fPhone:'ژمارەی تەلەفۆن', sameWa:'واتساپ هەمان ژمارەیە', fWa:'ژمارەی واتساپ', optional:'(ئارەزوومەندانە)',
-  fPin:'شوێنەکەت لەسەر نەخشە دیاری بکە', pinHint:'دەست لە نەخشەکە بدە یان نیشانەکە ڕابکێشە بۆ شوێنی ورد.', pinMe:'شوێنی ئێستام', pinClear:'لابردنی نیشانە', pinWait:'شوێنەکەت دەدۆزرێتەوە…', pinErr:'نەتوانرا شوێنەکەت وەربگیرێت. دەست لە نەخشەکە بدە.', pinOk:'شوێنەکەت دیاریکرا', rvPin:'نەخشە', s3Title:'لە کوێیت', s3Hint:'شارەکەت هەڵبژێرە. ناوچەکەت زیاد بکە بۆ ئەوەی کڕیارانی نزیک یەکەم جار بتدۆزنەوە.', fCity:'شار', fAddr:'ناوچە یان شەقام', addrPh:'بۆ نموونە: شەقامی سالم، بەکرەجۆ',
+  fPin:'شوێنەکەت لەسەر نەخشە دیاری بکە', pinHint:'دەست لە نەخشەکە بدە یان نیشانەکە ڕابکێشە بۆ شوێنی ورد.', pinMe:'شوێنی ئێستام', pinClear:'لابردنی نیشانە', pinWait:'شوێنەکەت دەدۆزرێتەوە…', pinErr:'نەتوانرا شوێنەکەت وەربگیرێت. دەست لە نەخشەکە بدە.', pinOk:'شوێنەکەت دیاریکرا', rvPin:'نەخشە', eOwner:'تکایە ناوی خاوەن بنووسە.', eWa:'تکایە ژمارەی واتساپێکی دروست بنووسە.', ePin:'تکایە شوێنەکەت لەسەر نەخشە دیاری بکە.', eAddr:'تکایە ناوچە یان شەقامەکەت بنووسە.', eDesc:'تکایە بنووسە چی پێشکەش دەکەیت (لانیکەم ١٠ پیت).', s3Title:'لە کوێیت', s3Hint:'شارەکەت هەڵبژێرە. ناوچەکەت زیاد بکە بۆ ئەوەی کڕیارانی نزیک یەکەم جار بتدۆزنەوە.', fCity:'شار', fAddr:'ناوچە یان شەقام', addrPh:'بۆ نموونە: شەقامی سالم، بەکرەجۆ',
   s4Title:'خەریکە تەواو دەبێت', s4Hint:'بە کڕیاران بڵێ چی پێشکەش دەکەیت، پاشان زانیارییەکانت پشکنە.', fDesc:'وەسف', descPh:'بۆ نموونە: چاککردنەوەی دزە، ئاوگەرمکەر و دامەزراندنی گەرماو. ١٠ ساڵ ئەزموون.', reviewLab:'زانیارییەکانت',
   rv:{name:'کار', cat:'بوار', owner:'خاوەن', phone:'تەلەفۆن', wa:'واتساپ', city:'شار', addr:'ناوچە'},
   eName:'تکایە ناوی کارەکەت بنووسە.', eCat:'تکایە بوارێک هەڵبژێرە.', eOther:'تکایە بوارەکەت بنووسە.', ePhone:'تکایە ژمارەیەکی دروست بنووسە، بۆ نموونە ٠٧٥٠ ١٢٣ ٤٥٦٧.', eCity:'تکایە شارەکەت هەڵبژێرە.',
@@ -390,7 +390,7 @@ const T = {
   steps:['العمل','التواصل','الموقع','الإنهاء'], next:'متابعة', submit:'أرسل عملي', sending:'جارٍ الإرسال…',
   s1Title:'عملك', s1Hint:'ما اسمه، وما الذي تقدمه؟', fName:'اسم العمل', namePh:'مثال: هريم للسباكة', fCat:'المجال', fOther:'اكتب مجالك', otherPh:'مثال: صيدلية، نادٍ رياضي',
   s2Title:'كيف يتواصل معك العملاء', s2Hint:'سيظهر هذا الرقم في صفحتك.', fOwner:'اسم صاحب العمل', ownerPh:'مثال: هريم كامل', fPhone:'رقم الهاتف', sameWa:'رقم واتساب هو نفس الرقم', fWa:'رقم واتساب', optional:'(اختياري)',
-  fPin:'حدّد موقعك على الخريطة', pinHint:'المس الخريطة أو اسحب الدبوس إلى موقعك بالضبط.', pinMe:'استخدم موقعي', pinClear:'إزالة الدبوس', pinWait:'جارٍ تحديد موقعك…', pinErr:'تعذّر تحديد موقعك. المس الخريطة بدلاً من ذلك.', pinOk:'تم تحديد موقعك', rvPin:'الخريطة', s3Title:'أين أنت', s3Hint:'اختر مدينتك. أضف منطقتك ليجدك العملاء القريبون أولاً.', fCity:'المدينة', fAddr:'المنطقة أو الشارع', addrPh:'مثال: شارع سالم، بكرجو',
+  fPin:'حدّد موقعك على الخريطة', pinHint:'المس الخريطة أو اسحب الدبوس إلى موقعك بالضبط.', pinMe:'استخدم موقعي', pinClear:'إزالة الدبوس', pinWait:'جارٍ تحديد موقعك…', pinErr:'تعذّر تحديد موقعك. المس الخريطة بدلاً من ذلك.', pinOk:'تم تحديد موقعك', rvPin:'الخريطة', eOwner:'يرجى إدخال اسم المالك.', eWa:'يرجى إدخال رقم واتساب صحيح.', ePin:'يرجى تحديد موقعك على الخريطة.', eAddr:'يرجى إدخال المنطقة أو الشارع.', eDesc:'يرجى وصف ما تقدمه (١٠ أحرف على الأقل).', s3Title:'أين أنت', s3Hint:'اختر مدينتك. أضف منطقتك ليجدك العملاء القريبون أولاً.', fCity:'المدينة', fAddr:'المنطقة أو الشارع', addrPh:'مثال: شارع سالم، بكرجو',
   s4Title:'أوشكت على الانتهاء', s4Hint:'أخبر العملاء بما تقدمه، ثم راجع بياناتك.', fDesc:'الوصف', descPh:'مثال: إصلاح التسريبات، سخانات المياه وتركيب الحمامات. خبرة ١٠ سنوات.', reviewLab:'بياناتك',
   rv:{name:'العمل', cat:'المجال', owner:'صاحب العمل', phone:'الهاتف', wa:'واتساب', city:'المدينة', addr:'المنطقة'},
   eName:'يرجى إدخال اسم عملك.', eCat:'يرجى اختيار مجال.', eOther:'يرجى كتابة مجالك.', ePhone:'يرجى إدخال رقم صحيح، مثال ٠٧٥٠ ١٢٣ ٤٥٦٧.', eCity:'يرجى اختيار مدينتك.',
@@ -482,13 +482,14 @@ $('cities').addEventListener('click', e => { const b = e.target.closest('[data-c
   document.querySelectorAll('.city').forEach(x => x.setAttribute('aria-pressed', x.dataset.city === S.city)); $('eCity').textContent = ''; renderPreview(); renderReview(); });
 
 /* ---------- steps ---------- */
-function clearErrors(){ ['eName','eCat','ePhone','eCity'].forEach(id => $(id).textContent = ''); document.querySelectorAll('.inp.bad').forEach(x => x.classList.remove('bad')); }
+function clearErrors(){ ['eName','eCat','ePhone','eCity','eOwner','eWa','ePin','eAddr','eDesc'].forEach(id => $(id).textContent = ''); document.querySelectorAll('.inp.bad').forEach(x => x.classList.remove('bad')); }
 function validate(s){
   const t = L(); clearErrors(); let ok = true, first = null;
   const fail = (errId, msg, inp) => { $(errId).textContent = msg; if (inp) { $(inp).classList.add('bad'); first = first || $(inp); } ok = false; };
   if (s === 0){ if (!S.name.trim()) fail('eName', t.eName, 'fName'); if (!S.cat) fail('eCat', t.eCat); else if (S.cat === 'other' && !S.other.trim()) fail('eCat', t.eOther, 'fOther'); }
-  if (s === 1){ if (!phoneOk(S.phone)) fail('ePhone', t.ePhone, 'fPhone'); }
-  if (s === 2){ if (!S.city) fail('eCity', t.eCity); }
+  if (s === 1){ if (!S.owner.trim()) fail('eOwner', t.eOwner, 'fOwner'); if (!phoneOk(S.phone)) fail('ePhone', t.ePhone, 'fPhone'); if (!S.same && !phoneOk(S.wa)) fail('eWa', t.eWa, 'fWa'); }
+  if (s === 2){ if (!S.city) fail('eCity', t.eCity); if (S.lat == null && !(mapFailed && !navigator.geolocation)) fail('ePin', t.ePin); if (!S.addr.trim()) fail('eAddr', t.eAddr, 'fAddr'); }
+  if (s === 3){ if (S.desc.trim().length < 10) fail('eDesc', t.eDesc, 'fDesc'); }
   if (first) first.focus();
   return ok;
 }
@@ -498,7 +499,7 @@ $('backBtn').onclick = () => go(step - 1);
 $('form').addEventListener('submit', async e => {
   e.preventDefault();
   if (step < 3){ if (validate(step)) go(step + 1); return; }
-  for (let s = 0; s < 3; s++) if (!validate(s)) { go(s); validate(s); return; }
+  for (let s = 0; s < 4; s++) if (!validate(s)) { go(s); validate(s); return; }
   await send();
 });
 
@@ -527,15 +528,19 @@ $('againBtn').onclick = () => { Object.assign(S, {name:'', cat:'', other:'', own
 
 /* ---------- map pin ---------- */
 const CITY_LL = {erbil:[36.1912,44.0092], sulaymaniyah:[35.5613,45.4366], kirkuk:[35.4681,44.3922], duhok:[36.8669,42.9503], halabja:[35.1779,45.9862]};
-let LF = null, map = null, pin = null, leafletP = null;
+let LF = null, map = null, pin = null, leafletP = null, mapFailed = false;
 const mapLink = () => S.lat != null ? `https://maps.google.com/?q=${S.lat},${S.lng}` : '';
 function loadLeaflet(){
   if (leafletP) return leafletP;
-  leafletP = new Promise((res, rej) => {
-    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(css);
-    const js = document.createElement('script'); js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    js.onload = () => { LF = window.L.noConflict ? window.L.noConflict() : window.L; res(LF); }; js.onerror = rej; document.head.appendChild(js);
+  const SRC = [['/register/leaflet/leaflet.css', '/register/leaflet/leaflet.js'], ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js']];
+  const tryLoad = i => new Promise((res, rej) => {
+    if (i >= SRC.length) return rej(new Error('leaflet'));
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = SRC[i][0]; document.head.appendChild(css);
+    const js = document.createElement('script'); js.src = SRC[i][1];
+    js.onload = () => { if (!window.L) return tryLoad(i + 1).then(res, rej); LF = window.L.noConflict ? window.L.noConflict() : window.L; res(LF); };
+    js.onerror = () => tryLoad(i + 1).then(res, rej); document.head.appendChild(js);
   });
+  leafletP = tryLoad(0);
   return leafletP;
 }
 function initMap(){
@@ -544,16 +549,21 @@ function initMap(){
     if (map) return;
     const start = S.lat != null ? [S.lat, S.lng] : (CITY_LL[S.city] || [36.0, 44.6]);
     map = LF.map('map', {zoomControl: true, attributionControl: true}).setView(start, S.lat != null ? 16 : (S.city ? 12 : 7));
-    LF.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {maxZoom: 19, subdomains: 'abcd', attribution: '&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
+    const TILES = [['https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {maxZoom: 19, subdomains: 'abcd', attribution: '&copy; OpenStreetMap &copy; CARTO'}],
+                   ['https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; OpenStreetMap'}]];
+    let ti = 0, bad = 0, good = 0, layer = null;
+    const useTiles = i => { if (layer) layer.remove(); bad = good = 0; layer = LF.tileLayer(TILES[i][0], TILES[i][1]).addTo(map);
+      layer.on('tileload', () => good++); layer.on('tileerror', () => { if (++bad >= 3 && !good && ti < TILES.length - 1) useTiles(++ti); }); };
+    useTiles(0);
     map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
     map.on('click', e => setPin(e.latlng.lat, e.latlng.lng, false));
     syncPin(false);
     setTimeout(() => map.invalidateSize(), 60);
-  }).catch(() => { $('mapbox').hidden = true; });
+  }).catch(() => { $('mapbox').hidden = true; mapFailed = true; });
 }
 function centerOnCity(){ if (map && S.lat == null && CITY_LL[S.city]) map.flyTo(CITY_LL[S.city], 12, {duration: .8}); }
 function setPin(lat, lng, fly){
-  S.lat = +lat.toFixed(6); S.lng = +lng.toFixed(6); saveDraft();
+  S.lat = +lat.toFixed(6); S.lng = +lng.toFixed(6); saveDraft(); $('ePin').textContent = '';
   if (map && fly) map.flyTo([S.lat, S.lng], 16, {duration: .8});
   syncPin(false); renderReview();
 }
