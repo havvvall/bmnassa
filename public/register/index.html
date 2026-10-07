@@ -106,7 +106,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .step.on .n{background:var(--grad);border-color:transparent;color:#081416;box-shadow:0 0 0 5px rgba(31,198,192,.14)}
 .bar{height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
 .bar i{display:block;height:100%;width:25%;background:var(--grad);border-radius:4px;transition:width .5s cubic-bezier(.3,1.2,.5,1)}
-[dir="rtl"] .bar{transform:scaleX(-1)}
+[dir="rtl"] .bar{transform:none}
 
 .pane{display:grid;gap:14px;animation:paneIn .45s cubic-bezier(.2,.8,.2,1) both}
 @keyframes paneIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
@@ -296,6 +296,8 @@ body:not(.intro) .panel{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
 .btn.main:disabled{opacity:.7}
 .locbig .i,.mbtn .i,.btn svg{color:#0b1014!important}
 .btn.ghost{box-shadow:0 0 0 1px rgba(255,255,255,.2)}
+/* RTL: progress fills from the right */
+[dir=rtl] .bar i{margin-left:auto;margin-right:0;background:linear-gradient(240deg,var(--teal),var(--coral))}
 </style>
 </head>
 <body>
