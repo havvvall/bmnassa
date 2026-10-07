@@ -511,7 +511,11 @@ async function send(){
   const phone = normDigits(S.phone.trim()), wa = normDigits((S.same ? S.phone : S.wa).trim());
   const order = S.nfc ? `NFC CARD ORDER: ${S.qty} card${S.qty > 1 ? 's' : ''}, name on card: ${S.cardName.trim() || S.name.trim()}` : '';
   const descOut = [order, S.desc.trim()].filter(Boolean).join(' | ');
-  const params = new URLSearchParams({ name: S.name.trim(), category: S.cat === 'other' ? S.other.trim() : catName(S.cat, 'en'), owner: S.owner.trim(), phone, whatsapp: wa, city: cityName(S.city, 'en'), address: [S.addr.trim(), mapLink()].filter(Boolean).join(' | '), description: descOut });
+  const params = new URLSearchParams({ name: S.name.trim(), category: S.cat === 'other' ? S.other.trim() : catName(S.cat, 'en'), owner: S.owner.trim(), phone, whatsapp: wa, city: cityName(S.city, 'en'), address: [S.addr.trim(), mapLink()].filter(Boolean).join(' | '), description: descOut,
+    /* separate columns for the updated sheet script (older script ignores these) */
+    area: S.addr.trim(), map_link: mapLink(), lat: S.lat != null ? String(S.lat) : '', lng: S.lng != null ? String(S.lng) : '',
+    about: S.desc.trim(), nfc: S.nfc ? 'Yes' : 'No', nfc_qty: S.nfc ? String(S.qty) : '', nfc_name: S.nfc ? (S.cardName.trim() || S.name.trim()) : '',
+    lang: {en: 'English', ku: 'Kurdish', ar: 'Arabic'}[lang] || lang, source: KIOSK ? 'HITEX stand iPad' : 'Website' });
   let fallback = false;
   try { await fetch(SHEET, { method: 'POST', mode: 'no-cors', body: params }); }
   catch (err) {
