@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1014">
+<meta name="description" content="Eng. Haval Baban, Civil Engineer in Sulaymaniyah. Design and construction. Call, WhatsApp, prices and project photos.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://bmnassa.vercel.app/eng.haval-baban/profile">
+<meta property="og:title" content="Eng. Haval Baban · Civil Engineer">
+<meta property="og:description" content="Design and construction in Sulaymaniyah. Tap to call, WhatsApp, see prices and projects.">
+<meta property="og:image" content="https://bmnassa.vercel.app/eng.haval-baban/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Eng. Haval Baban · Bmnassa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Alexandria:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one phone-width column on the drifting teal/coral field; gallery, price list and "send my number" open as bottom sheets; EN / Kurdish / Arabic switch on top. One dark look on purpose. */
+:root{
+  --ink:#0b1014; --teal:#1fc6c0; --teal-deep:#0f6f78; --coral:#f0806a;
+  --fg:#f4f6f7; --soft:#c9d1d5; --muted:#8b979d; --dim:#5d686e; --gold:#f4c46a;
+  --line:rgba(255,255,255,.12); --glass:rgba(255,255,255,.06);
+  --grad:linear-gradient(120deg,var(--teal),var(--coral));
+  --font:'Manrope', 'Helvetica Neue', Arial, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--font);padding-inline:16px;padding-block:16px 28px;overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+html[lang="ar"] body{font-family:'Alexandria','Noto Kufi Arabic','Manrope',sans-serif}
+html[lang="ckb"] body{font-family:'Vazirmatn','Noto Kufi Arabic','Manrope',sans-serif}
+.langs button[lang="ar"]{font-family:'Alexandria','Noto Kufi Arabic',sans-serif}
+.langs button[lang="ckb"]{font-family:'Vazirmatn','Noto Kufi Arabic',sans-serif}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+[dir="rtl"] .chev{transform:scaleX(-1)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+
+.field{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.blob{position:absolute;filter:blur(50px)}
+.blob.t{width:120vw;height:55vh;left:-45vw;top:-22vh;background:radial-gradient(closest-side,var(--teal-deep),rgba(15,111,120,.5) 60%,transparent);animation:dA 16s ease-in-out infinite alternate}
+.blob.c{width:120vw;height:55vh;right:-50vw;bottom:-24vh;background:radial-gradient(closest-side,var(--coral),rgba(185,87,63,.5) 60%,transparent);opacity:.75;animation:dB 18s ease-in-out infinite alternate}
+@keyframes dA{to{transform:translate(10vw,6vh) rotate(14deg)}}
+@keyframes dB{to{transform:translate(-12vw,-6vh) rotate(-12deg)}}
+
+.page{max-width:400px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px;transition:opacity .22s ease,filter .22s ease,transform .22s ease}
+.page.swap{opacity:0;filter:blur(8px);transform:translateY(6px)}
+.page>*{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* language switch */
+.langs{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:228px;padding:4px;border-radius:99px;background:rgba(16,22,27,.7);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);direction:ltr}
+.langs .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:99px;background:var(--grad);box-shadow:0 4px 18px rgba(31,198,192,.35);transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
+.langs button{position:relative;z-index:1;height:34px;border:0;background:none;cursor:pointer;font-size:13px;font-weight:800;color:var(--soft);border-radius:99px;transition:color .3s}
+.langs button[aria-pressed="true"]{color:#081416}
+
+.tapped{display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:99px;background:var(--glass);border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--soft)}
+.tapped svg{width:16px;height:16px;color:var(--teal);stroke-width:2}
+
+.orbit{position:relative;width:200px;height:200px;display:grid;place-items:center}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.11)}
+.ring.r2{inset:18px;border-color:rgba(255,255,255,.08)}
+.spin{position:absolute;inset:0;animation:spin 16s linear infinite}
+.spin.s2{inset:18px;animation-duration:24s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dot{position:absolute;border-radius:50%}
+.dot.t{background:var(--teal);box-shadow:0 0 14px var(--teal)}
+.dot.c{background:var(--coral);box-shadow:0 0 14px var(--coral)}
+.avatar{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.15),rgba(255,255,255,.03) 65%),#172026;border:1px solid rgba(255,255,255,.18);box-shadow:0 0 60px rgba(255,255,255,.06);animation:breathe 5s ease-in-out infinite}
+.avatar svg{width:86px;height:auto;filter:drop-shadow(0 0 8px rgba(255,255,255,.25))}
+@keyframes breathe{50%{box-shadow:0 0 70px 6px rgba(255,255,255,.1)}}
+.logo path{fill:var(--fg)}
+
+.who{display:grid;justify-items:center;gap:4px;text-align:center}
+.who .nm{display:flex;align-items:center;gap:8px;font-size:27px;font-weight:800;letter-spacing:-.02em}
+[dir="rtl"] .who .nm{letter-spacing:0}
+.who .role{font-size:14px;color:var(--soft);font-weight:600}
+.tick{width:21px;height:21px;border-radius:50%;background:var(--teal);color:#062022;display:grid;place-items:center;flex:none}
+.tick svg{width:12px;height:12px;stroke-width:3.2}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.chip{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:99px;background:var(--glass);border:1px solid var(--line);font-size:12px;font-weight:700}
+.chip.ver{color:#7fe3df}
+.chip.ver svg{width:14px;height:14px;stroke-width:2.2}
+.chip.rate svg{width:13px;height:13px;fill:var(--gold);stroke:var(--gold)}
+.chip.open{background:rgba(31,198,192,.12);border-color:rgba(31,198,192,.4);color:#7fe3df}
+.chip.closed{background:rgba(240,128,106,.12);border-color:rgba(240,128,106,.4);color:#f6a998}
+.chip .pip{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+
+.tiles{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{height:96px;border-radius:22px;background:var(--glass);border:1px solid var(--line);text-decoration:none;display:flex;flex-direction:column;justify-content:space-between;padding:14px 16px;transition:transform .2s,background .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);min-width:0}
+.tile:hover{transform:translateY(-2px);background:rgba(255,255,255,.09)}
+.tile:active{transform:scale(.97)}
+.tile svg{width:24px;height:24px;color:var(--teal)}
+.tile b{display:block;font-size:15px}
+.tile small{display:block;font-size:11.5px;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile.primary{background:var(--teal);border-color:var(--teal);color:#062022}
+.tile.primary svg{color:#062022}
+.tile.primary small{color:#0b3b3c}
+
+.sec{width:100%;display:flex;flex-direction:column;gap:8px}
+.lab{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+[dir="rtl"] .lab{letter-spacing:0;font-size:12.5px}
+.about{margin:0;font-size:14px;line-height:1.7;color:var(--soft)}
+
+.row{display:flex;align-items:center;gap:12px;padding:0 16px;min-height:64px;border-radius:20px;background:var(--glass);border:1px solid var(--line);text-align:start;cursor:pointer;width:100%;transition:background .2s}
+.row:hover{background:rgba(255,255,255,.09)}
+.row .txt{flex:1;min-width:0;display:grid;gap:1px}
+.row b{font-size:15px}
+.row small{font-size:12.5px;color:var(--muted);font-weight:600}
+.row .chev{width:18px;height:18px;color:var(--dim);stroke-width:2}
+.photos{flex-direction:column;align-items:stretch;gap:12px;padding:14px 16px}
+.photos .head{display:flex;align-items:center;gap:12px}
+.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.thumbs>span{aspect-ratio:1;border-radius:10px;border:1px solid rgba(255,255,255,.08);overflow:hidden;display:block}
+.thumbs svg{display:block;width:100%;height:100%}
+.thumbs .more{display:grid;place-items:center;background:var(--glass);font-size:13px;font-weight:800;color:var(--soft)}
+
+.box{border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.11);padding:2px 16px;display:flex;flex-direction:column}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13.5px}
+.kv:last-child{border-bottom:0}
+.kv span:first-child{color:var(--muted);font-weight:600;flex:none}
+.kv span:last-child{font-weight:700;text-align:end;min-width:0;overflow-wrap:anywhere}
+.hours{padding:6px 8px;font-size:13.5px}
+.hr{display:flex;justify-content:space-between;padding:9px 10px;border-radius:12px;color:var(--soft);font-weight:600}
+.hr .t{font-variant-numeric:tabular-nums}
+.hr.today{background:rgba(31,198,192,.12);color:var(--fg);font-weight:800}
+.hr.off{color:var(--muted)}
+.hrhead{display:flex;justify-content:space-between;align-items:center}
+.hrhead .state{font-size:12px;font-weight:700}
+
+.socials{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.soc{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);display:grid;place-items:center;cursor:pointer;transition:transform .2s,border-color .2s}
+.soc:hover{transform:translateY(-2px);border-color:rgba(31,198,192,.5)}
+.soc svg{width:20px;height:20px}
+
+.save{width:100%;height:56px;border-radius:18px;border:0;background:var(--grad);color:#081416;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;margin-top:4px}
+.save svg{width:20px;height:20px;stroke-width:2}
+.save:active{transform:scale(.98)}
+.linkbtn{background:none;border:0;font-size:13px;font-weight:700;color:var(--soft);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
+.powered{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:99px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);text-decoration:none;margin-top:8px}
+.powered span{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.16em}
+[dir="rtl"] .powered span{letter-spacing:0;font-size:12px}
+.powered svg{width:66px;height:27px}
+.sample{font-size:11.5px;color:var(--dim);text-align:center;margin:0}
+
+/* sheets */
+.scrim{position:fixed;inset:0;background:rgba(5,8,10,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:50%;bottom:0;width:min(100%,430px);max-height:86vh;transform:translate(-50%,105%);transition:transform .45s cubic-bezier(.2,.85,.25,1);z-index:21;background:#11181d;border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet.on{transform:translate(-50%,0)}
+.grab{width:42px;height:5px;border-radius:5px;background:rgba(255,255,255,.2);margin:10px auto 4px}
+.shead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 20px 12px}
+.shead h2{margin:0;font-size:19px;font-weight:800}
+.shead small{display:block;color:var(--muted);font-size:12.5px;font-weight:600;margin-top:2px}
+.x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--glass);display:grid;place-items:center;cursor:pointer;flex:none}
+.x svg{width:18px;height:18px;stroke-width:2}
+.sbody{overflow-y:auto;padding:4px 20px 22px}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:0 20px 12px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.grab,.shead,.filters{flex:none}
+.sbody{flex:1;min-height:0}
+.f{flex:none;padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:var(--glass);font-size:12.5px;font-weight:700;cursor:pointer}
+.f[aria-pressed="true"]{background:var(--fg);color:#0b1014;border-color:var(--fg)}
+.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.ph{position:relative;aspect-ratio:1;border-radius:12px;border:1px solid rgba(255,255,255,.08);cursor:pointer;overflow:hidden;padding:0;display:block;background:#1a2226;animation:pop .4s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+.ph svg{display:block;width:100%;height:100%}
+.ph .cap{position:absolute;inset-inline:0;bottom:0;padding:16px 6px 5px;font-size:10px;font-weight:700;color:#fff;text-align:start;line-height:1.25;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.prices{display:flex;flex-direction:column}
+.pr{display:flex;align-items:baseline;gap:10px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.pr:last-child{border-bottom:0}
+.pr .n{flex:1;min-width:0}
+.pr .n b{display:block;font-size:14.5px}
+.pr .n small{color:var(--muted);font-size:12px;font-weight:600}
+.pr .p{font-weight:800;font-size:14.5px;white-space:nowrap;text-align:end}
+.pr .p em{font-style:normal;color:var(--muted);font-size:11.5px;font-weight:700}
+.pcat{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--teal);margin:14px 0 2px}
+[dir="rtl"] .pcat{letter-spacing:0;font-size:12.5px}
+.pcat:first-child{margin-top:0}
+.note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 0 0}
+.form{display:grid;gap:12px}
+.form label{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--muted)}
+.form input{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);padding:0 14px;font-size:16px;outline:none}
+.form input:focus{border-color:rgba(31,198,192,.55);box-shadow:0 0 0 4px rgba(31,198,192,.1)}
+
+.lightbox{position:fixed;inset:0;z-index:30;background:rgba(5,8,10,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.lightbox.on{opacity:1;pointer-events:auto}
+.lightbox .big{width:min(100%,400px);aspect-ratio:1;border-radius:20px;border:1px solid var(--line);overflow:hidden}
+.lightbox .big svg{display:block;width:100%;height:100%}
+.lightbox .cap{text-align:center;display:grid;gap:3px}
+.lightbox .cap b{font-size:16px}
+.lightbox .cap small{color:var(--muted);font-size:13px}
+.lbnav{display:flex;gap:12px;direction:ltr}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;padding:11px 18px;border-radius:99px;background:rgba(20,28,33,.95);border:1px solid var(--line);font-size:13px;font-weight:700;transition:.3s;pointer-events:none;z-index:40;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="field" aria-hidden="true"><div class="blob t"></div><div class="blob c"></div></div>
+
+<main class="page" id="page">
+  <div class="langs" role="group" aria-label="Language">
+    <span class="thumb" id="langThumb"></span>
+    <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    <button type="button" data-lang="ku" aria-pressed="false" lang="ckb">کوردی</button>
+    <button type="button" data-lang="ar" aria-pressed="false" lang="ar">عربي</button>
+  </div>
+
+  <div class="tapped"><svg class="i" viewBox="0 0 24 24"><path d="M6 8.5a5 5 0 010 7M9.5 6a8.5 8.5 0 010 12M13 3.5a12 12 0 010 17"/></svg><span data-t="tapped"></span></div>
+
+  <div class="orbit" aria-hidden="true">
+    <div class="ring"></div><div class="ring r2"></div>
+    <div class="spin"><span class="dot t" style="left:93px;top:-7px;width:14px;height:14px"></span><span class="dot c" style="left:94px;bottom:-6px;width:11px;height:11px"></span></div>
+    <div class="spin s2"><span class="dot t" style="left:-4px;top:76px;width:7px;height:7px"></span><span class="dot c" style="right:-3px;top:40px;width:6px;height:6px"></span></div>
+    <div class="avatar"><svg class="logo" viewBox="0 0 3113 1280"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg></div>
+  </div>
+
+  <div class="who">
+    <div class="nm"><span data-t="name"></span> <span class="tick" aria-label="Verified"><svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div>
+    <div class="role" data-t="role"></div>
+  </div>
+
+  <div class="chips">
+    <span class="chip ver"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span data-t="verified"></span></span>
+    <span class="chip open" id="openChip"><span class="pip"></span><span id="openText"></span></span>
+  </div>
+
+  <div class="tiles">
+    <a class="tile primary" href="tel:+9647701218832"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg><span><b data-t="call"></b><small class="ltr">0770 121 8832</small></span></a>
+    <a class="tile" href="https://wa.me/9647701218832" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1112 20a8 8 0 01-4.1-1.1L4 20z"/></svg><span><b data-t="wa"></b><small data-t="waSub"></small></span></a>
+    <a class="tile" href="mailto:haval.rizgar96@gmail.com"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg><span><b data-t="email"></b><small class="ltr">haval.rizgar96@gmail.com</small></span></a>
+    <a class="tile" href="https://www.google.com/maps/search/?api=1&query=Bakhtiyari%2C%20Sulaymaniyah" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><b data-t="dir"></b><small data-t="area"></small></span></a>
+  </div>
+
+  <section class="sec">
+    <div class="lab" data-t="about"></div>
+    <p class="about" data-t="aboutText"></p>
+  </section>
+
+  <section class="sec">
+    <button class="row photos" id="openPhotos" type="button">
+      <span class="head"><svg class="i" viewBox="0 0 24 24" style="color:var(--teal)"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+        <span class="txt"><b data-t="photos"></b><small id="photoCount"></small></span>
+        <svg class="i chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
+      <span class="thumbs" id="thumbs"></span>
+    </button>
+    <button class="row" id="openPrices" type="button">
+      <svg class="i" viewBox="0 0 24 24" style="color:var(--coral)"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+      <span class="txt"><b data-t="prices"></b><small data-t="pricesSub"></small></span>
+      <svg class="i chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <section class="sec">
+    <div class="lab" data-t="details"></div>
+    <div class="box">
+      <div class="kv"><span data-t="kCat"></span><span data-t="vCat"></span></div>
+      <div class="kv"><span data-t="kSvc"></span><span data-t="vSvc"></span></div>
+      <div class="kv"><span data-t="kAddr"></span><span data-t="vAddr"></span></div>
+      <div class="kv"><span data-t="kPhone"></span><span class="ltr">0770 121 8832</span></div>
+      <div class="kv"><span data-t="email"></span><span class="ltr">haval.rizgar96@gmail.com</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="hrhead"><div class="lab" data-t="hours"></div><span class="state" id="hrState"></span></div>
+    <div class="box hours" id="hours"></div>
+  </section>
+
+  <section class="sec" style="align-items:center">
+    <div class="lab" data-t="follow"></div>
+    <div class="socials">
+      <a class="soc" href="https://www.instagram.com/havvvall/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+      <a class="soc" href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok"><svg class="i" viewBox="0 0 24 24" style="stroke-width:1.9"><path d="M14 3v11.5a3.5 3.5 0 11-3.5-3.5"/><path d="M14 3c.6 2.6 2.4 4.3 5 4.6"/></svg></a>
+      <a class="soc" href="https://www.facebook.com/heval.re" target="_blank" rel="noopener" aria-label="Facebook"><svg class="i" viewBox="0 0 24 24" style="stroke-width:1.9"><path d="M15 3.5h-2.2A3.8 3.8 0 009 7.3V21M6 11h8"/></svg></a>
+      <a class="soc" href="https://x.com" target="_blank" rel="noopener" aria-label="X"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;stroke-width:2"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
+      <a class="soc" href="https://bmnassa.vercel.app" target="_blank" rel="noopener" aria-label="Website"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></a>
+      <button class="soc" id="shareBtn" type="button" aria-label="Share"><svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button>
+    </div>
+  </section>
+
+  <button class="save" id="saveBtn" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M7.5 17c1-2 2.6-3 4.5-3s3.5 1 4.5 3"/></svg><span data-t="save"></span></button>
+  <button class="linkbtn" id="sendNum" type="button" data-t="sendNum"></button>
+
+  <a class="powered" href="https://bmnassa.vercel.app" target="_blank" rel="noopener"><span data-t="powered"></span><svg class="logo" viewBox="0 0 3113 1280" role="img" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg></a>
+  <p class="sample" data-t="sample"></p>
+</main>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="sheetPhotos" role="dialog" aria-modal="true" aria-labelledby="phTitle">
+  <div class="grab"></div>
+  <div class="shead"><div><h2 id="phTitle" data-t="photos"></h2><small data-t="tapPhoto"></small></div><button class="x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="filters" id="filters"></div>
+  <div class="sbody"><div class="gal" id="gal"></div></div>
+</section>
+
+<section class="sheet" id="sheetPrices" role="dialog" aria-modal="true" aria-labelledby="prTitle">
+  <div class="grab"></div>
+  <div class="shead"><div><h2 id="prTitle" data-t="prices"></h2><small data-t="pricesHead"></small></div><button class="x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sbody"><div class="prices" id="prices"></div>
+    <p class="note" data-t="priceNote"></p>
+    <button class="save" style="margin-top:14px" id="quoteBtn" type="button" data-t="quote"></button>
+  </div>
+</section>
+
+<section class="sheet" id="sheetSend" role="dialog" aria-modal="true" aria-labelledby="sdTitle">
+  <div class="grab"></div>
+  <div class="shead"><div><h2 id="sdTitle" data-t="sendTitle"></h2><small data-t="sendSub"></small></div><button class="x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sbody">
+    <form class="form" id="sendForm">
+      <div style="display:grid;gap:8px"><label for="yName" data-t="yName"></label><input id="yName" autocomplete="name" required></div>
+      <div style="display:grid;gap:8px"><label for="yPhone" data-t="yPhone"></label><input id="yPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="07xx xxx xxxx" dir="ltr" required></div>
+      <button class="save" type="submit" data-t="send"></button>
+    </form>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo">
+  <div class="big" id="lbImg"></div>
+  <div class="cap"><b id="lbCap"></b><small id="lbSub"></small></div>
+  <div class="lbnav">
+    <button class="x" id="lbPrev" aria-label="Previous photo"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="x" id="lbClose" aria-label="Close photo"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button class="x" id="lbNext" aria-label="Next photo"><svg class="i" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+document.querySelectorAll('.page > *').forEach((el, i) => el.style.animationDelay = (i * 0.05) + 's');
+
+/* ---------- words in three languages ---------- */
+const T = {
+ en: {tapped:'Connected by tapping a Bmnassa card', name:'Eng. Haval Baban', role:'Civil Engineer · Sulaymaniyah', verified:'Verified by Bmnassa',
+  call:'Call', wa:'WhatsApp', waSub:'Send a message', email:'Email', dir:'Directions', area:'Bakhtiyari',
+  about:'About', aboutText:'Civil engineer offering design and construction services, from house plans and structural calculations to site supervision and full turnkey building. Clear quotes before work starts.',
+  photos:'Photos of our work', photoCount:n => n + ' photos of projects', prices:'Price list', pricesSub:'Design and construction prices',
+  details:'Business details', kCat:'Category', vCat:'Civil engineering', kSvc:'Services', vSvc:'Design, supervision, construction', kAddr:'Address', vAddr:'Bakhtiyari, Sulaymaniyah', kPhone:'Phone',
+  hours:'Opening hours', follow:'Follow', save:'Save contact', sendNum:'Send Haval my number', powered:'POWERED BY', sample:'Design preview with example prices, hours and project images.',
+  tapPhoto:'Tap a photo to see it larger', pricesHead:'Eng. Haval Baban · prices in Iraqi dinar', priceNote:'Example prices for this preview. The final quote depends on the project size, location and materials.', quote:'Ask for a quote on WhatsApp',
+  sendTitle:'Send Haval your number', sendSub:'Haval will save it and can call you back', yName:'YOUR NAME', yPhone:'YOUR PHONE', send:'Send', namePh:'e.g. Sara Kamal',
+  openUntil:h => 'Open until ' + h, opensToday:h => 'Opens today at ' + h, closedTomorrow:h => 'Closed · opens tomorrow ' + h, closedDay:(d, h) => 'Closed · opens ' + d + ' ' + h,
+  openNow:'Open now', closedNow:'Closed now', today:'Today', closed:'Closed',
+  days:['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'],
+  all:'All', cats:{ext:'Exterior', int:'Interior', site:'Site works', plan:'Plans'},
+  from:'from', iqd:'IQD', m2:'/ m²', month:'/ month',
+  tSaved:'In the live card, this saves Haval to your contacts', tSent:'In the live card, Haval receives your number', tCopied:'Card link copied', tShare:'Share works in the live card',
+  waText:'Hi Eng. Haval, I saw your Bmnassa card and would like a quote for my project.', of:'of', myNum:(n, p) => 'Hi Eng. Haval, this is ' + n + '. My number is ' + p + '.', shareTitle:'Eng. Haval Baban · Civil Engineer'},
+ ku: {tapped:'لە ڕێگەی کارتی Bmnassa پەیوەندیت کرد', name:'ئەندازیار هەڤاڵ بابان', role:'ئەندازیاری شارستانی · سلێمانی', verified:'پشتڕاستکراوە لەلایەن Bmnassa',
+  call:'پەیوەندی', wa:'واتساپ', waSub:'نامە بنێرە', email:'ئیمەیڵ', dir:'نەخشە', area:'بەختیاری',
+  about:'دەربارە', aboutText:'ئەندازیاری شارستانی، خزمەتگوزاری دیزاین و بیناسازی پێشکەش دەکات، لە نەخشەی خانووەوە و حیسابی پێکهاتە تا چاودێری شوێنی کار و بیناسازی تەواو. پێش دەستپێکردنی کار نرخێکی ڕوون دەدرێت.',
+  photos:'وێنەی کارەکانمان', photoCount:n => n + ' وێنەی پرۆژە', prices:'لیستی نرخ', pricesSub:'نرخی دیزاین و بیناسازی',
+  details:'زانیاری کار', kCat:'بوار', vCat:'ئەندازیاری شارستانی', kSvc:'خزمەتگوزارییەکان', vSvc:'دیزاین، چاودێری، بیناسازی', kAddr:'ناونیشان', vAddr:'بەختیاری، سلێمانی', kPhone:'ژمارە',
+  hours:'کاتی کارکردن', follow:'فۆڵۆمان بکە', save:'پاشەکەوتکردنی ژمارە', sendNum:'ژمارەکەم بۆ هەڤاڵ بنێرە', powered:'بە پشتیوانی', sample:'پێشبینینی دیزاین، نرخ و کات و وێنەکان نموونەن.',
+  tapPhoto:'دەست لە وێنەیەک بدە بۆ گەورەکردنی', pricesHead:'ئەندازیار هەڤاڵ بابان · نرخ بە دیناری عێراقی', priceNote:'ئەم نرخانە نموونەن. نرخی کۆتایی بەپێی قەبارە، شوێن و کەرەستەی پرۆژە دیاری دەکرێت.', quote:'داوای نرخ لە واتساپ',
+  sendTitle:'ژمارەکەت بۆ هەڤاڵ بنێرە', sendSub:'هەڤاڵ پاشەکەوتی دەکات و دەتوانێت پەیوەندیت پێوە بکات', yName:'ناوت', yPhone:'ژمارەی مۆبایلت', send:'ناردن', namePh:'بۆ نموونە: سارا کامل',
+  openUntil:h => 'کراوەیە تا ' + h, opensToday:h => 'ئەمڕۆ کاتژمێر ' + h + ' دەکرێتەوە', closedTomorrow:h => 'داخراوە · بەیانی ' + h + ' دەکرێتەوە', closedDay:(d, h) => 'داخراوە · ' + d + ' ' + h + ' دەکرێتەوە',
+  openNow:'ئێستا کراوەیە', closedNow:'ئێستا داخراوە', today:'ئەمڕۆ', closed:'داخراوە',
+  days:['شەممە','یەکشەممە','دووشەممە','سێشەممە','چوارشەممە','پێنجشەممە','هەینی'],
+  all:'هەمووی', cats:{ext:'دەرەوە', int:'ناوەوە', site:'کاری مەیدانی', plan:'نەخشە'},
+  from:'لە', iqd:'دینار', m2:'بۆ هەر م²', month:'مانگانە',
+  tSaved:'لە کارتی ڕاستەقینەدا، هەڤاڵ دەچێتە ناو ژمارەکانت', tSent:'لە کارتی ڕاستەقینەدا، ژمارەکەت دەگاتە هەڤاڵ', tCopied:'بەستەری کارت کۆپی کرا', tShare:'هاوبەشکردن لە کارتی ڕاستەقینەدا کار دەکات',
+  waText:'سڵاو ئەندازیار هەڤاڵ، کارتی Bmnassa-م بینی و داوای نرخ دەکەم بۆ پرۆژەکەم.', of:'لە', myNum:(n, p) => 'سڵاو ئەندازیار هەڤاڵ، من ' + n + 'م. ژمارەکەم ' + p + 'ە.', shareTitle:'ئەندازیار هەڤاڵ بابان · ئەندازیاری شارستانی'},
+ ar: {tapped:'تم الاتصال عبر بطاقة Bmnassa', name:'م. هفال بابان', role:'مهندس مدني · السليمانية', verified:'موثّق من Bmnassa',
+  call:'اتصال', wa:'واتساب', waSub:'أرسل رسالة', email:'البريد', dir:'الاتجاهات', area:'بختياري',
+  about:'نبذة', aboutText:'مهندس مدني يقدم خدمات التصميم والبناء، من مخططات المنازل والحسابات الإنشائية إلى الإشراف على الموقع والبناء المتكامل. عرض سعر واضح قبل بدء العمل.',
+  photos:'صور أعمالنا', photoCount:n => n + ' صورة للمشاريع', prices:'قائمة الأسعار', pricesSub:'أسعار التصميم والبناء',
+  details:'تفاصيل العمل', kCat:'المجال', vCat:'الهندسة المدنية', kSvc:'الخدمات', vSvc:'تصميم، إشراف، بناء', kAddr:'العنوان', vAddr:'بختياري، السليمانية', kPhone:'الهاتف',
+  hours:'ساعات العمل', follow:'تابعنا', save:'حفظ جهة الاتصال', sendNum:'أرسل رقمي إلى هفال', powered:'بدعم من', sample:'معاينة تصميم بأسعار وأوقات وصور تجريبية.',
+  tapPhoto:'اضغط على الصورة لتكبيرها', pricesHead:'م. هفال بابان · الأسعار بالدينار العراقي', priceNote:'أسعار تقديرية للمعاينة. يعتمد السعر النهائي على حجم المشروع وموقعه والمواد.', quote:'اطلب عرض سعر عبر واتساب',
+  sendTitle:'أرسل رقمك إلى هفال', sendSub:'سيحفظه هفال ويمكنه الاتصال بك', yName:'اسمك', yPhone:'رقم هاتفك', send:'إرسال', namePh:'مثال: سارة كامل',
+  openUntil:h => 'مفتوح حتى ' + h, opensToday:h => 'يفتح اليوم الساعة ' + h, closedTomorrow:h => 'مغلق · يفتح غداً ' + h, closedDay:(d, h) => 'مغلق · يفتح ' + d + ' ' + h,
+  openNow:'مفتوح الآن', closedNow:'مغلق الآن', today:'اليوم', closed:'مغلق',
+  days:['السبت','الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'],
+  all:'الكل', cats:{ext:'خارجي', int:'داخلي', site:'أعمال الموقع', plan:'مخططات'},
+  from:'من', iqd:'د.ع', m2:'لكل م²', month:'شهرياً',
+  tSaved:'في البطاقة الفعلية يُحفظ هفال في جهات اتصالك', tSent:'في البطاقة الفعلية يصل رقمك إلى هفال', tCopied:'تم نسخ رابط البطاقة', tShare:'المشاركة تعمل في البطاقة الفعلية',
+  waText:'مرحباً م. هفال، رأيت بطاقتك على Bmnassa وأود طلب عرض سعر لمشروعي.', of:'من', myNum:(n, p) => 'مرحباً م. هفال، أنا ' + n + '. رقمي ' + p + '.', shareTitle:'م. هفال بابان · مهندس مدني'}
+};
+const CAPS = {
+ ext:{en:['Modern villa facade','Two-storey family house','Residential building','House at dusk'], ku:['ڕووکاری ڤیلای مۆدێرن','خانووی دوو نهۆمی','بینای نیشتەجێبوون','خانوو لە ئێوارەدا'], ar:['واجهة فيلا حديثة','منزل من طابقين','مبنى سكني','منزل عند الغروب']},
+ int:{en:['Living room design','Open-plan lounge','Bright family room','Reading corner'], ku:['دیزاینی هۆڵی دانیشتن','هۆڵی کراوە','ژووری خێزان','گۆشەی خوێندنەوە'], ar:['تصميم غرفة المعيشة','صالة مفتوحة','غرفة عائلية مشرقة','ركن القراءة']},
+ site:{en:['Concrete skeleton works','Slab casting day','Columns and rebar','Site with tower crane'], ku:['کاری هەیکەلی کۆنکرێت','ڕۆژی بەستنی سەقف','کۆڵەکە و ئاسن','شوێنی کار لەگەڵ کرێن'], ar:['أعمال الهيكل الخرساني','يوم صب السقف','أعمدة وحديد تسليح','موقع مع رافعة برجية']},
+ plan:{en:['Ground floor plan','First floor plan','Site layout plan'], ku:['نەخشەی نهۆمی خوارەوە','نەخشەی نهۆمی یەکەم','نەخشەی شوێن'], ar:['مخطط الطابق الأرضي','مخطط الطابق الأول','مخطط الموقع']}
+};
+const PLACES = {en:['Bakhtiyari','Sarchnar','Raparin','Azadi','Goizha','Kani Ba'], ku:['بەختیاری','سەرچنار','ڕاپەڕین','ئازادی','گۆیژە','کانی با'], ar:['بختياري','سرچنار','رابرين','آزادي','كويزة','كاني با']};
+const PRICES = [
+ {cat:{en:'Design',ku:'دیزاین',ar:'التصميم'}, items:[
+  [{en:'Architectural design',ku:'دیزاینی تەلارسازی',ar:'التصميم المعماري'},{en:'House plans, elevations, sections',ku:'نەخشەی خانوو، ڕووکار، بڕگە',ar:'مخططات، واجهات، مقاطع'},1,'6,000','m2'],
+  [{en:'Structural design',ku:'دیزاینی پێکهاتەیی',ar:'التصميم الإنشائي'},{en:'Calculations and structural drawings',ku:'حیساب و نەخشەی پێکهاتە',ar:'حسابات ومخططات إنشائية'},1,'4,000','m2'],
+  [{en:'Interior design',ku:'دیزاینی ناوەوە',ar:'التصميم الداخلي'},{en:'Layout, finishes, lighting plan',ku:'دابەشکردن، ڕووپۆش، ڕووناکی',ar:'توزيع، تشطيبات، إضاءة'},1,'10,000','m2'],
+  [{en:'3D visualisation',ku:'وێنەی سێ ڕەهەندی',ar:'تصاميم ثلاثية الأبعاد'},{en:'Exterior views of the building',ku:'دیمەنی دەرەوەی بینا',ar:'مناظر خارجية للمبنى'},1,'250,000',''],
+  [{en:'Permit drawings',ku:'نەخشەی مۆڵەت',ar:'مخططات الترخيص'},{en:'Municipality submission set',ku:'بۆ پێشکەشکردن بە شارەوانی',ar:'للتقديم إلى البلدية'},1,'300,000','']]},
+ {cat:{en:'Construction',ku:'بیناسازی',ar:'البناء'}, items:[
+  [{en:'Skeleton (grey) works',ku:'کاری هەیکەل',ar:'أعمال الهيكل'},{en:'Foundation, columns, slabs, walls',ku:'بناغە، کۆڵەکە، سەقف، دیوار',ar:'أساسات، أعمدة، سقوف، جدران'},1,'160,000','m2'],
+  [{en:'Full construction',ku:'بیناسازی تەواو',ar:'بناء متكامل'},{en:'Turnkey, ready to move in',ku:'ئامادە بۆ نیشتەجێبوون',ar:'جاهز للسكن'},1,'450,000','m2'],
+  [{en:'Renovation',ku:'نۆژەنکردنەوە',ar:'ترميم'},{en:'Existing house or apartment',ku:'خانوو یان شوقەی هەبوو',ar:'منزل أو شقة قائمة'},1,'120,000','m2'],
+  [{en:'Site supervision',ku:'چاودێری شوێنی کار',ar:'الإشراف على الموقع'},{en:'Engineer on site, weekly reports',ku:'ئەندازیار لە شوێنی کار، ڕاپۆرتی هەفتانە',ar:'مهندس في الموقع، تقارير أسبوعية'},1,'750,000','month']]},
+ {cat:{en:'Consulting',ku:'ڕاوێژکاری',ar:'الاستشارات'}, items:[
+  [{en:'Site visit and advice',ku:'سەردان و ڕاوێژ',ar:'زيارة واستشارة'},{en:'One visit with written notes',ku:'یەک سەردان لەگەڵ تێبینی نووسراو',ar:'زيارة واحدة مع ملاحظات مكتوبة'},0,'50,000',''],
+  [{en:'Bill of quantities',ku:'خشتەی بڕەکان',ar:'جدول الكميات'},{en:'Materials and cost estimate',ku:'خەمڵاندنی کەرەستە و تێچوو',ar:'تقدير المواد والتكلفة'},1,'250,000',''],
+  [{en:'Building inspection',ku:'پشکنینی بینا',ar:'فحص المبنى'},{en:'Cracks, structure, safety check',ku:'درز، پێکهاتە، سەلامەتی',ar:'تشققات، إنشاء، سلامة'},1,'150,000','']]}
+];
+
+/* ---------- illustrated project images (drawn, random but repeatable) ---------- */
+function rng(seed){ let a = seed * 2654435761 >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const pick = (r, a) => a[Math.floor(r() * a.length)];
+function sky(id, top, bottom){ return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bottom}"/></linearGradient></defs><rect width="300" height="300" fill="url(#${id})"/>`; }
+
+function exterior(seed){
+  const r = rng(seed), id = 'e' + seed;
+  const [s1, s2, dusk] = pick(r, [['#7fb3d1','#e8dccb',0],['#244e63','#f09a7a',1],['#a3c7dc','#f2ece2',0],['#1b3446','#d9876a',1]]);
+  let s = `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${sky(id, s1, s2)}`;
+  if (!dusk) s += `<circle cx="${50 + r() * 200}" cy="${40 + r() * 30}" r="16" fill="#fff6e0" opacity=".85"/>`;
+  else s += `<circle cx="${60 + r() * 180}" cy="${150 + r() * 20}" r="34" fill="#ffb68f" opacity=".5"/>`;
+  s += `<path d="M0 ${170 + r() * 20} Q 75 ${150 + r() * 20} 150 ${165 + r() * 15} T 300 ${160 + r() * 20} V 240 H 0 Z" fill="${dusk ? '#2a3b46' : '#9fb3b8'}" opacity=".55"/>`;
+  s += `<rect y="236" width="300" height="64" fill="${dusk ? '#3a3a3c' : '#9b9384'}"/><rect y="236" width="300" height="5" fill="${dusk ? '#4a4a4c' : '#b4ab9b'}"/>`;
+  const floors = 2 + Math.floor(r() * 2), wall = pick(r, ['#ece8e1','#e2dacd','#cbbca6','#d8d4cc']), dark = pick(r, ['#2f3438','#3c4044','#4a3f36']);
+  const x0 = 40 + r() * 25, w0 = 190 + r() * 30, fh = 52;
+  for (let i = 0; i < floors; i++){
+    const off = i === 0 ? 0 : (r() * 40 - 10), w = w0 - i * (20 + r() * 25), x = x0 + off, y = 236 - (i + 1) * fh;
+    const fill = (i === floors - 1 && r() > .5) ? dark : wall;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${fh}" fill="${fill}"/>`;
+    s += `<rect x="${x - 6}" y="${y - 5}" width="${w + 14}" height="6" fill="${dark}"/>`;
+    const n = 2 + Math.floor(r() * 3), ww = (w - 20) / n;
+    for (let k = 0; k < n; k++){
+      if (i === 0 && k === 0){ s += `<rect x="${x + 12}" y="${y + 14}" width="18" height="${fh - 14}" fill="#7a5638"/>`; continue; }
+      const lit = dusk ? r() > .3 : r() > .8, gx = x + 10 + k * ww + 4, gw = ww - 10;
+      s += `<rect x="${gx}" y="${y + 12}" width="${gw}" height="${fh - 24}" rx="1" fill="${lit ? '#f6c86e' : (dusk ? '#33505e' : '#6f8d9b')}" opacity="${lit ? .95 : .9}"/>`;
+      s += `<rect x="${gx + gw / 2 - 1}" y="${y + 12}" width="2" height="${fh - 24}" fill="${dark}" opacity=".5"/>`;
+    }
+  }
+  s += `<rect x="0" y="218" width="${x0 - 8}" height="18" fill="#c9bfae"/><rect x="${x0 + w0 + 14}" y="218" width="300" height="18" fill="#c9bfae"/>`;
+  const tx = r() > .5 ? 22 + r() * 12 : 262 + r() * 14;
+  s += `<rect x="${tx - 2}" y="196" width="4" height="40" fill="#5a4330"/><circle cx="${tx}" cy="186" r="${18 + r() * 8}" fill="${dusk ? '#2e4a3a' : '#5d7d52'}"/><circle cx="${tx + 8}" cy="176" r="12" fill="${dusk ? '#365642' : '#6f9160'}"/>`;
+  return s + '</svg>';
+}
+
+function interior(seed){
+  const r = rng(seed), id = 'i' + seed;
+  const wall = pick(r, ['#ebe5db','#dcd6cc','#d3dcd9','#e8dccb','#cfd4d8']), shade = pick(r, ['#c9c1b4','#bdb5a8','#b7c1bd']);
+  const floor = pick(r, ['#a87a53','#8f6a4b','#cfc6b8','#b88c63']), sofa = pick(r, ['#5d7b7e','#8b5a49','#3f4a53','#b9a383','#6c6f7d']);
+  let s = `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6f2f6"/><stop offset="1" stop-color="#b9d6e0"/></linearGradient><radialGradient id="${id}g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".8"/><stop offset="1" stop-color="#ffe7b0" stop-opacity="0"/></radialGradient></defs>`;
+  s += `<rect width="300" height="300" fill="${wall}"/>`;
+  s += `<polygon points="0,0 300,0 240,48 60,48" fill="#f3efe8"/>`;
+  s += `<polygon points="0,0 60,48 60,205 0,300" fill="${shade}"/><polygon points="300,0 240,48 240,205 300,300" fill="${shade}" opacity=".85"/>`;
+  s += `<polygon points="60,205 240,205 300,300 0,300" fill="${floor}"/>`;
+  for (let k = 1; k < 7; k++){ const bx = 60 + k * 180 / 7, tx = (bx - 150) * 300 / 180 + 150; s += `<line x1="${bx}" y1="205" x2="${tx}" y2="300" stroke="#000" stroke-opacity=".12" stroke-width="1"/>`; }
+  const wx = 140 + r() * 30;
+  s += `<rect x="${wx}" y="70" width="80" height="92" fill="url(#${id})"/><rect x="${wx - 3}" y="67" width="86" height="98" fill="none" stroke="#fff" stroke-width="5"/><line x1="${wx + 40}" y1="70" x2="${wx + 40}" y2="162" stroke="#fff" stroke-width="3"/>`;
+  s += `<path d="M${wx + 2} 150 Q ${wx + 25} 130 ${wx + 45} 148 T ${wx + 78} 140 V 162 H ${wx + 2} Z" fill="#9fc0a6" opacity=".7"/>`;
+  s += `<rect x="78" y="90" width="44" height="34" fill="${pick(r, ['#c98d6b','#5f8f95','#d6b46a','#7b6f9a'])}" opacity=".8"/><rect x="76" y="88" width="48" height="38" fill="none" stroke="#3b3b3b" stroke-width="2"/>`;
+  s += `<ellipse cx="150" cy="252" rx="92" ry="22" fill="${pick(r, ['#e9e1d3','#d7c9b3','#8aa3a5','#c4a99a'])}" opacity=".85"/>`;
+  s += `<rect x="70" y="168" width="104" height="22" rx="6" fill="${sofa}"/><rect x="70" y="150" width="104" height="24" rx="8" fill="${sofa}" opacity=".9"/><rect x="64" y="160" width="14" height="32" rx="5" fill="${sofa}"/><rect x="166" y="160" width="14" height="32" rx="5" fill="${sofa}"/>`;
+  s += `<rect x="82" y="157" width="22" height="16" rx="5" fill="#f1e9dc" opacity=".9"/>`;
+  s += `<rect x="118" y="214" width="66" height="8" rx="3" fill="#3a2f27"/><rect x="124" y="222" width="4" height="14" fill="#3a2f27"/><rect x="174" y="222" width="4" height="14" fill="#3a2f27"/>`;
+  const lx = 120 + r() * 60;
+  s += `<line x1="${lx}" y1="0" x2="${lx}" y2="64" stroke="#2b2b2b" stroke-width="1.5"/><path d="M${lx - 16} 78 Q ${lx} 56 ${lx + 16} 78 Z" fill="#2f3337"/><circle cx="${lx}" cy="86" r="40" fill="url(#${id}g)"/>`;
+  const px = r() > .5 ? 214 : 30;
+  s += `<rect x="${px}" y="186" width="22" height="22" rx="3" fill="#c4b49c"/><ellipse cx="${px + 4}" cy="176" rx="8" ry="16" fill="#58784e" transform="rotate(-20 ${px + 4} 176)"/><ellipse cx="${px + 18}" cy="174" rx="8" ry="17" fill="#6a8c5c" transform="rotate(18 ${px + 18} 174)"/><ellipse cx="${px + 11}" cy="168" rx="7" ry="18" fill="#4f6e46"/>`;
+  return s + '</svg>';
+}
+
+function site(seed){
+  const r = rng(seed), id = 's' + seed;
+  const [s1, s2] = pick(r, [['#bcd2dc','#ece4d6'],['#9fbfd0','#f1e6d2'],['#d6dfe2','#efe2cf'],['#7fa6bd','#f0c9a6']]);
+  let s = `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${sky(id, s1, s2)}`;
+  s += `<path d="M0 240 Q 80 228 160 236 T 300 232 V 300 H 0 Z" fill="#9b8364"/><path d="M0 262 Q 120 252 300 264 V 300 H 0 Z" fill="#87704f"/>`;
+  const floors = 2 + Math.floor(r() * 3), bays = 3 + Math.floor(r() * 2), bx = 40 + r() * 30, bw = 150 + r() * 30, fh = 40, cw = bw / bays;
+  for (let i = 0; i < floors; i++){
+    const y = 238 - (i + 1) * fh, top = i === floors - 1;
+    for (let k = 0; k <= bays; k++) s += `<rect x="${bx + k * cw - 4}" y="${y}" width="8" height="${fh}" fill="#a7a6a1"/>`;
+    if (!top || r() > .5) s += `<rect x="${bx - 8}" y="${y - 6}" width="${bw + 16}" height="7" fill="#8f8e89"/>`;
+    else for (let k = 0; k <= bays; k++) for (let b = -2; b <= 2; b += 2) s += `<line x1="${bx + k * cw + b}" y1="${y}" x2="${bx + k * cw + b}" y2="${y - 16}" stroke="#7a4c2c" stroke-width="1.2"/>`;
+    if (i < floors - 1 && r() > .55) for (let k = 0; k < bays; k++) if (r() > .4) s += `<rect x="${bx + k * cw + 5}" y="${y + 8}" width="${cw - 10}" height="${fh - 10}" fill="#b9775a" opacity=".75"/>`;
+  }
+  const sx = bx + bw + 10, sh = floors * fh;
+  for (let k = 0; k <= 2; k++) s += `<line x1="${sx + k * 10}" y1="${238 - sh}" x2="${sx + k * 10}" y2="238" stroke="#5a6a73" stroke-width="1.5"/>`;
+  for (let y = 238; y > 238 - sh; y -= 20) s += `<line x1="${sx}" y1="${y}" x2="${sx + 20}" y2="${y}" stroke="#5a6a73" stroke-width="1.5"/><line x1="${sx}" y1="${y}" x2="${sx + 20}" y2="${y - 20}" stroke="#5a6a73" stroke-width="1"/>`;
+  const cx = r() > .5 ? 26 + r() * 10 : 250 + r() * 14, cy = 38 + r() * 10, crane = '#e4a83a';
+  s += `<rect x="${cx - 5}" y="${cy}" width="10" height="${238 - cy}" fill="none" stroke="${crane}" stroke-width="2"/>`;
+  for (let y = cy; y < 238; y += 12) s += `<line x1="${cx - 5}" y1="${y}" x2="${cx + 5}" y2="${y + 12}" stroke="${crane}" stroke-width="1.4"/>`;
+  const dirc = cx < 150 ? 1 : -1, jl = 150 + r() * 40;
+  s += `<rect x="${dirc > 0 ? cx - 28 : cx - jl}" y="${cy - 6}" width="${jl + 28}" height="6" fill="${crane}"/>`;
+  s += `<rect x="${dirc > 0 ? cx - 30 : cx + 14}" y="${cy}" width="16" height="12" fill="#4b4f53"/>`;
+  s += `<polygon points="${cx - 5},${cy - 6} ${cx},${cy - 22} ${cx + 5},${cy - 6}" fill="${crane}"/>`;
+  const hx = cx + dirc * (60 + r() * (jl - 80)), hy = 110 + r() * 50;
+  s += `<line x1="${hx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="#333" stroke-width="1"/><rect x="${hx - 12}" y="${hy}" width="24" height="12" fill="#6d6a64"/>`;
+  s += `<ellipse cx="${bx + bw / 2 + 40}" cy="252" rx="30" ry="9" fill="#c9a86e"/><ellipse cx="${bx - 6}" cy="250" rx="18" ry="6" fill="#8a8a86"/>`;
+  return s + '</svg>';
+}
+
+function plan(seed){
+  const r = rng(seed);
+  let s = `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#123a5c"/>`;
+  for (let k = 0; k <= 300; k += 15) s += `<line x1="${k}" y1="0" x2="${k}" y2="300" stroke="#fff" stroke-opacity=".06"/><line x1="0" y1="${k}" x2="300" y2="${k}" stroke="#fff" stroke-opacity=".06"/>`;
+  const X = 40, Y = 45, W = 220, H = 205, vx = 90 + r() * 50, hy = 100 + r() * 40, vx2 = 170 + r() * 40;
+  s += `<rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="none" stroke="#e8f1f8" stroke-width="5"/>`;
+  s += `<line x1="${vx}" y1="${Y}" x2="${vx}" y2="${hy}" stroke="#e8f1f8" stroke-width="3"/><line x1="${X}" y1="${hy}" x2="${X + W}" y2="${hy}" stroke="#e8f1f8" stroke-width="3"/><line x1="${vx2}" y1="${hy}" x2="${vx2}" y2="${Y + H}" stroke="#e8f1f8" stroke-width="3"/>`;
+  s += `<line x1="${X}" y1="${hy + 60}" x2="${vx2}" y2="${hy + 60}" stroke="#e8f1f8" stroke-width="2"/>`;
+  s += `<path d="M${vx - 22} ${hy} A 22 22 0 0 1 ${vx} ${hy - 22}" fill="none" stroke="#9cc6e4" stroke-width="1.5"/><path d="M${vx2} ${hy + 30} A 22 22 0 0 0 ${vx2 + 22} ${hy + 8}" fill="none" stroke="#9cc6e4" stroke-width="1.5"/>`;
+  s += `<rect x="${X + 20}" y="${Y - 3}" width="36" height="6" fill="#123a5c" stroke="#9cc6e4"/><rect x="${X + W - 70}" y="${Y + H - 3}" width="40" height="6" fill="#123a5c" stroke="#9cc6e4"/>`;
+  s += `<rect x="${vx2 + 12}" y="${hy + 14}" width="${X + W - vx2 - 26}" height="38" rx="3" fill="none" stroke="#9cc6e4" stroke-width="1.5"/><rect x="${X + 14}" y="${Y + 14}" width="40" height="28" fill="none" stroke="#9cc6e4" stroke-width="1.5"/>`;
+  s += `<line x1="${X}" y1="270" x2="${X + W}" y2="270" stroke="#9cc6e4" stroke-width="1"/><line x1="${X}" y1="264" x2="${X}" y2="276" stroke="#9cc6e4"/><line x1="${X + W}" y1="264" x2="${X + W}" y2="276" stroke="#9cc6e4"/>`;
+  s += `<rect x="${X + W / 2 - 22}" y="264" width="44" height="12" fill="#123a5c"/><text x="${X + W / 2}" y="273.5" font-family="monospace" font-size="9" fill="#cfe3f2" text-anchor="middle">${(10 + Math.floor(r() * 8))}.00 m</text>`;
+  s += `<text x="270" y="30" font-family="monospace" font-size="10" fill="#9cc6e4" text-anchor="end">N ↑</text>`;
+  return s + '</svg>';
+}
+
+const DRAW = {ext: exterior, int: interior, site: site, plan: plan};
+const mixR = rng(2026);
+const POOL = [].concat(Array(7).fill('ext'), Array(7).fill('int'), Array(7).fill('site'), Array(3).fill('plan'));
+for (let i = POOL.length - 1; i > 0; i--){ const j = Math.floor(mixR() * (i + 1)); [POOL[i], POOL[j]] = [POOL[j], POOL[i]]; }
+const counters = {ext:0, int:0, site:0, plan:0};
+const PHOTOS = POOL.map((kind, i) => { const n = counters[kind]++; return {kind, cap: n, place: (i * 5) % 6, year: 2024 + (i % 3), svg: DRAW[kind](100 + i * 17)}; });
+
+/* ---------- language ---------- */
+let lang = 'en', sheetOpen = null;
+try { const saved = localStorage.getItem('bmnassa-card-lang'); if (T[saved]) lang = saved; } catch (e) {}
+const L = () => T[lang];
+
+function applyText(){
+  const t = L();
+  document.documentElement.lang = lang === 'ku' ? 'ckb' : lang;
+  document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+  document.querySelectorAll('[data-t]').forEach(el => { const v = t[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+  $('yName').placeholder = t.namePh;
+  $('photoCount').textContent = t.photoCount(PHOTOS.length);
+  document.querySelectorAll('.langs button').forEach((b, i) => { const on = b.dataset.lang === lang; b.setAttribute('aria-pressed', on); if (on) $('langThumb').style.transform = `translateX(${i * 100}%)`; });
+  renderHours(); renderPrices(); if (sheetOpen === 'sheetPhotos') renderGallery();
+}
+document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.lang === lang) return;
+  lang = b.dataset.lang; try { localStorage.setItem('bmnassa-card-lang', lang); } catch (e) {}
+  const page = $('page'); page.classList.add('swap');
+  setTimeout(() => { applyText(); page.classList.remove('swap'); }, 220);
+}));
+
+/* ---------- gallery ---------- */
+$('thumbs').innerHTML = PHOTOS.slice(0, 3).map(p => `<span>${p.svg}</span>`).join('') + `<span class="more">+${PHOTOS.length - 3}</span>`;
+let filter = 'all', shown = PHOTOS, lbIndex = 0;
+const capOf = p => CAPS[p.kind][lang][p.cap % CAPS[p.kind][lang].length];
+const subOf = p => PLACES[lang][p.place] + ' · ' + p.year;
+function renderGallery(){
+  const t = L();
+  $('filters').innerHTML = ['all', 'ext', 'int', 'site', 'plan'].map(k => `<button class="f" type="button" aria-pressed="${k === filter}" data-f="${k}">${k === 'all' ? t.all : t.cats[k]}</button>`).join('');
+  shown = filter === 'all' ? PHOTOS : PHOTOS.filter(p => p.kind === filter);
+  $('gal').innerHTML = shown.map((p, i) => `<button class="ph" type="button" data-i="${i}" style="animation-delay:${i * 0.025}s" aria-label="${capOf(p)}">${p.svg}<span class="cap">${capOf(p)}</span></button>`).join('');
+}
+$('filters').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; filter = b.dataset.f; renderGallery(); });
+$('gal').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (!b) return; openLb(+b.dataset.i); });
+function openLb(i){ lbIndex = (i + shown.length) % shown.length; const p = shown[lbIndex]; $('lbImg').innerHTML = p.svg; $('lbCap').textContent = capOf(p); $('lbSub').textContent = subOf(p) + ' · ' + (lbIndex + 1) + ' ' + L().of + ' ' + shown.length; $('lightbox').classList.add('on'); }
+$('lbPrev').onclick = () => openLb(lbIndex - 1);
+$('lbNext').onclick = () => openLb(lbIndex + 1);
+$('lbClose').onclick = () => $('lightbox').classList.remove('on');
+
+/* ---------- prices ---------- */
+function renderPrices(){
+  const t = L();
+  $('prices').innerHTML = PRICES.map(g => `<div class="pcat">${g.cat[lang].toUpperCase()}</div>` + g.items.map(([n, d, f, p, u]) =>
+    `<div class="pr"><div class="n"><b>${n[lang]}</b><small>${d[lang]}</small></div><div class="p">${f ? `<em>${t.from}</em> ` : ''}<span class="ltr">${p}</span> ${t.iqd}${u ? ` <em>${t[u]}</em>` : ''}</div></div>`).join('')).join('');
+}
+
+/* ---------- opening hours (Kurdistan week, Friday off) ---------- */
+const HOURS = [[9,18],[9,18],[9,18],[9,18],[9,18],[9,14],null];
+const jsToRow = [1, 2, 3, 4, 5, 6, 0];
+function renderHours(){
+  const t = L(), now = new Date(new Date().toLocaleString('en-US', {timeZone: 'Asia/Baghdad'})), today = jsToRow[now.getDay()], h = now.getHours() + now.getMinutes() / 60;
+  const fmt = x => x + ':00';
+  $('hours').innerHTML = HOURS.map((o, i) => `<div class="hr ${i === today ? 'today' : ''} ${o ? '' : 'off'}"><span>${t.days[i]}${i === today ? ' · ' + t.today : ''}</span><span class="t ltr">${o ? fmt(o[0]) + ' – ' + fmt(o[1]) : t.closed}</span></div>`).join('');
+  const o = HOURS[today], isOpen = o && h >= o[0] && h < o[1];
+  if (isOpen){ $('openChip').className = 'chip open'; $('openText').textContent = t.openUntil(fmt(o[1])); $('hrState').textContent = t.openNow; $('hrState').style.color = '#7fe3df'; }
+  else {
+    $('openChip').className = 'chip closed';
+    if (o && h < o[0]) $('openText').textContent = t.opensToday(fmt(o[0]));
+    else { let n = 1; while (!HOURS[(today + n) % 7]) n++; const nx = HOURS[(today + n) % 7]; $('openText').textContent = n === 1 ? t.closedTomorrow(fmt(nx[0])) : t.closedDay(t.days[(today + n) % 7], fmt(nx[0])); }
+    $('hrState').textContent = t.closedNow; $('hrState').style.color = '#f6a998';
+  }
+}
+
+/* ---------- sheets & actions ---------- */
+const scrim = $('scrim');
+function show(id){ if (sheetOpen) $(sheetOpen).classList.remove('on'); sheetOpen = id; $(id).classList.add('on'); scrim.classList.add('on'); }
+function hide(){ if (sheetOpen) $(sheetOpen).classList.remove('on'); sheetOpen = null; scrim.classList.remove('on'); }
+$('openPhotos').onclick = () => { renderGallery(); show('sheetPhotos'); };
+$('openPrices').onclick = () => show('sheetPrices');
+$('sendNum').onclick = () => { show('sheetSend'); setTimeout(() => $('yName').focus(), 350); };
+scrim.onclick = hide;
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = hide);
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('lightbox').classList.contains('on')) $('lightbox').classList.remove('on'); else hide(); });
+const LIVE = true, CARD_URL = 'https://bmnassa.vercel.app/eng.haval-baban';
+function openLink(href){ const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove(); }
+$('quoteBtn').onclick = () => openLink('https://wa.me/9647701218832?text=' + encodeURIComponent(L().waText));
+$('sendForm').addEventListener('submit', e => {
+  e.preventDefault(); const n = $('yName').value.trim(), p = $('yPhone').value.trim();
+  hide(); e.target.reset();
+  if (LIVE) openLink('https://wa.me/9647701218832?text=' + encodeURIComponent(L().myNum(n, p))); else toast(L().tSent);
+});
+$('saveBtn').onclick = () => {
+  if (!LIVE) { toast(L().tSaved); return; }
+  const vcf = ['BEGIN:VCARD','VERSION:3.0','N:Baban;Haval;;Eng.;','FN:Eng. Haval Baban','TITLE:Civil Engineer','TEL;TYPE=CELL:+9647701218832','EMAIL;TYPE=INTERNET:haval.rizgar96@gmail.com','ADR;TYPE=WORK:;;Bakhtiyari;Sulaymaniyah;;;Iraq','URL:' + CARD_URL,'NOTE:Saved from a Bmnassa digital card','END:VCARD'].join('\r\n');
+  const url = URL.createObjectURL(new Blob([vcf], {type: 'text/vcard'}));
+  const a = document.createElement('a'); a.href = url; a.download = 'Haval-Baban.vcf'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+};
+$('shareBtn').onclick = async () => {
+  if (LIVE && navigator.share) { try { await navigator.share({title: L().shareTitle, url: CARD_URL}); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  const url = LIVE ? CARD_URL : 'https://bmnassa.vercel.app';
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => toast(L().tCopied), () => toast(L().tShare)); else toast(L().tShare);
+};
+if (LIVE) $('page').querySelector('.sample').hidden = true;
+let tt; function toast(m){ const x = $('toast'); x.textContent = m; x.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => x.classList.remove('on'), 2400); }
+
+applyText();
+})();
+</script>
+</body>
+</html>

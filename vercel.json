@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/eng.haval-baban/profile",
+      "destination": "/eng.haval-baban/profile/index.html"
+    },
+    {
+      "source": "/eng.haval-baban/profile/",
+      "destination": "/eng.haval-baban/profile/index.html"
+    },
+    {
       "source": "/stand",
       "destination": "/stand/index.html"
     },
