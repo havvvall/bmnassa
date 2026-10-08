@@ -666,7 +666,7 @@ async function send(){
     language: {en: 'English', ku: 'Kurdish', ar: 'Arabic'}[lang] || lang, source: KIOSK ? 'HITEX stand iPad' : 'Website'};
   const dbSave = fetch('https://hfcqvcduuhzfxijsniav.supabase.co/rest/v1/registrations', {method: 'POST',
     headers: {apikey: 'sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh', 'Content-Type': 'application/json', Prefer: 'return=minimal'},
-    body: JSON.stringify(dbRow)}).then(r => r.ok).catch(() => false);
+    body: JSON.stringify(dbRow)}).then(async r => { if (!r.ok) console.warn('Bmnassa: sign-up not saved to database', r.status, await r.text()); return r.ok; }).catch(e => { console.warn('Bmnassa: database unreachable', e); return false; });
   try { await fetch(SHEET, { method: 'POST', mode: 'no-cors', body: params }); }
   catch (err) {
     fallback = true;
