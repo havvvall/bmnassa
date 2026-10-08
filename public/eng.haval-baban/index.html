@@ -2,6 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
+<meta name="format-detection" content="telephone=no, email=no, address=no">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1014">
 <meta name="description" content="Eng. Haval Baban, Civil Engineer in Sulaymaniyah. Design and construction. Call, WhatsApp, prices and project photos.">
@@ -126,6 +127,14 @@ body{margin:0;color:var(--cfg);font-family:var(--f-ui);-webkit-font-smoothing:an
 .act i{backdrop-filter:none}
 .act:active i,.full:active,.btn:active{background:var(--cglass)!important}
 .full small{opacity:.7}
+/* iOS Safari: hide the far side halfway through the flip (backface-visibility alone leaks on iPhone) */
+.front{visibility:visible;transition:visibility 0s linear .45s,background .5s,color .5s}
+.back{visibility:hidden;transition:visibility 0s linear .45s,background .5s,color .5s}
+.card.flip .front{visibility:hidden}
+.card.flip .back{visibility:visible}
+.face,.face *{-webkit-backface-visibility:hidden;backface-visibility:hidden}
+a[href^="tel"],.list b{color:inherit;text-decoration:none}
+@media (prefers-reduced-motion:reduce){.front,.back{transition:none}}
 </style>
 
 <div class="scene">
