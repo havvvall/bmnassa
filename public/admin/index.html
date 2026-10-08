@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b1014">
+<title>Bmnassa Back Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Kufi+Arabic:wght@500;600;700&display=swap">
+<style>
+/* Layout: sidebar + work area on desktop, top tabs on phones. Dashboard tiles → bars, list = dense table, editor = right drawer. */
+:root{
+  --bg:#0b1014; --panel:#11181d; --panel2:#151e24; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --fg:#f4f6f7; --soft:#c3ccd0; --muted:#87939a; --teal:#1fc6c0; --coral:#f0806a; --amber:#f2b84b; --red:#ef6b6b; --green:#3fcf8e;
+  --f:'Manrope','Helvetica Neue',Arial,sans-serif; --fk:'Noto Kufi Arabic','Manrope',sans-serif; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.logo path{fill:currentColor}
+.rtl{font-family:var(--fk);direction:rtl}
+.num{font-variant-numeric:tabular-nums}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(600px 400px at 0% 0%,rgba(15,111,120,.45),transparent 70%),radial-gradient(600px 400px at 100% 100%,rgba(240,128,106,.25),transparent 70%)}
+.lbox{width:min(380px,100%);display:grid;gap:16px;padding:28px;border-radius:24px;background:var(--panel);border:1px solid var(--line)}
+.lbox .logo{width:120px;height:auto}
+.lbox h1{margin:0;font-size:20px}
+.lbox p{margin:-8px 0 0;color:var(--muted);font-size:13px}
+
+/* form controls */
+label.f{display:grid;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--soft);text-transform:uppercase}
+.in,select.in,textarea.in{width:100%;height:44px;border-radius:12px;border:1.5px solid #e7ecee;background:#f4f6f7;color:#0b1014;padding:0 12px;font-weight:600;font-size:14px;outline:none;text-transform:none;letter-spacing:0}
+textarea.in{height:auto;min-height:70px;padding:10px 12px}
+.in:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(31,198,192,.3)}
+.in.rtl{text-align:right}
+.btn{height:42px;padding:0 16px;border-radius:12px;border:0;background:#fff;color:#0b1014;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line2)}
+.btn.ok{background:var(--green);color:#06210f}
+.btn.danger{background:transparent;color:var(--red);border:1.5px solid rgba(239,107,107,.5)}
+.btn.danger.sure{background:var(--red);color:#2a0606}
+.btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.err{color:var(--red);font-size:13px;font-weight:700;min-height:1em}
+
+/* shell */
+#app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:20px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px;background:var(--panel)}
+.side .logo{width:104px;height:auto;margin:4px 10px 18px}
+.nav{display:flex;align-items:center;gap:10px;height:42px;padding:0 12px;border-radius:12px;border:0;background:none;color:var(--soft);font-weight:700;cursor:pointer;text-align:start}
+.nav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav[aria-current=page]{background:#fff;color:#0b1014}
+.nav .badge{margin-inline-start:auto;min-width:22px;height:22px;border-radius:99px;background:var(--amber);color:#2a1c00;font-size:11.5px;font-weight:800;display:grid;place-items:center;padding:0 6px}
+.side .me{margin-top:auto;display:grid;gap:8px;padding:12px;border-radius:14px;background:var(--panel2);font-size:12.5px;color:var(--muted);word-break:break-all}
+main{padding:26px 30px 60px;min-width:0}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.head h1{margin:0;font-size:24px;letter-spacing:-.02em}
+.head small{color:var(--muted);font-size:13px;font-weight:600}
+
+/* dashboard */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.tile{padding:16px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:grid;gap:4px;cursor:pointer;text-align:start;color:var(--fg)}
+.tile b{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.tile span{font-size:12.5px;color:var(--muted);font-weight:700}
+.tile i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:6px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.card{padding:18px;border-radius:18px;background:var(--panel);border:1px solid var(--line);min-width:0}
+.card h2{margin:0 0 14px;font-size:14px;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.card h2 small{color:var(--muted);font-weight:600}
+.bars{display:grid;gap:9px}
+.bar{display:grid;grid-template-columns:minmax(0,150px) 1fr 40px;gap:10px;align-items:center;font-size:13px;cursor:pointer}
+.bar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--soft);font-weight:600}
+.bar u{height:8px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden;text-decoration:none}
+.bar u i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--coral))}
+.bar b{text-align:end;font-weight:800}
+.mini{display:grid;gap:2px}
+.mini .r{display:flex;align-items:center;gap:10px;padding:10px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:8px}
+.mini .r:first-child{border-top:0}
+.mini .r:hover{background:var(--panel2)}
+.mini .r div{flex:1;min-width:0}
+.mini .r b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .r small{color:var(--muted);font-size:12px}
+.empty{color:var(--muted);font-size:13px;padding:8px 2px}
+
+/* list */
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tools .in{height:40px;width:auto;flex:1 1 140px}
+.tools .search{flex:3 1 240px}
+.tablewrap{border-radius:16px;border:1px solid var(--line);overflow-x:auto;background:var(--panel)}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{text-align:start;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel2);position:sticky;top:0}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.row{cursor:pointer}
+tr.row:hover td{background:rgba(255,255,255,.03)}
+td .nm{font-weight:800}
+td .ku{display:block;font-family:var(--fk);color:var(--muted);font-size:12px;direction:rtl;text-align:start}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:99px;font-size:11.5px;font-weight:800;text-transform:capitalize}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-approved{background:rgba(63,207,142,.12);color:var(--green)}
+.s-pending{background:rgba(242,184,75,.14);color:var(--amber)}
+.s-rejected{background:rgba(239,107,107,.13);color:var(--red)}
+.s-hidden,.s-other{background:rgba(255,255,255,.08);color:var(--soft)}
+.vchk{color:var(--teal);font-weight:800}
+.more{display:flex;justify-content:center;margin-top:12px}
+.count{color:var(--muted);font-size:13px;font-weight:700;margin:0 0 10px}
+
+/* editor drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);z-index:21;background:var(--panel);border-left:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;box-shadow:-30px 0 60px rgba(0,0,0,.4)}
+.dh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.dh h2{margin:0;font-size:18px}
+.dh small{color:var(--muted);font-weight:600}
+.db{overflow-y:auto;padding:18px 20px;display:grid;gap:18px;align-content:start}
+.grp{display:grid;gap:12px}
+.grp>h3{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line2);cursor:pointer;font-weight:700;font-size:13.5px}
+.sw input{width:20px;height:20px;accent-color:var(--teal)}
+.df{display:flex;gap:8px;align-items:center;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.df .grow{flex:1}
+.msg{font-size:13px;font-weight:700}
+.msg.bad{color:var(--red)}.msg.good{color:var(--green)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;background:#fff;color:#0b1014;font-weight:800;padding:12px 18px;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.4)}
+.load{color:var(--muted);font-weight:700;padding:30px 0}
+
+@media (max-width:900px){
+  #app{grid-template-columns:1fr}
+  .side{position:sticky;top:0;z-index:10;height:auto;flex-direction:row;align-items:center;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;gap:4px}
+  .side .logo{width:78px;margin:0 8px 0 2px;flex:none}
+  .nav{flex:none;height:38px;padding:0 10px;font-size:13px}
+  .nav .lbl-long{display:none}
+  .side .me{margin:0 0 0 auto;padding:0;background:none;flex:none}
+  .side .me span{display:none}
+  main{padding:18px 16px 50px}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:1fr}
+  .three{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="login" hidden>
+  <form class="lbox" id="loginForm">
+    <svg class="logo" viewBox="0 0 3113 1280" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
+    <h1>Back office</h1>
+    <p>Sign in with your Bmnassa admin account.</p>
+    <label class="f">Email<input class="in" id="lEmail" type="email" autocomplete="username" required></label>
+    <label class="f">Password<input class="in" id="lPass" type="password" autocomplete="current-password" required></label>
+    <button class="btn" type="submit" id="lBtn">Sign in</button>
+    <div class="err" id="lErr" role="alert"></div>
+  </form>
+</section>
+
+<!-- APP -->
+<div id="app" hidden>
+  <aside class="side">
+    <svg class="logo" viewBox="0 0 3113 1280" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
+    <button class="nav" data-view="dash"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Dashboard</button>
+    <button class="nav" data-view="list"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Businesses<span class="badge" id="pendBadge" hidden></span></button>
+    <button class="nav" id="addBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Add<span class="lbl-long"> business</span></span></button>
+    <div class="me"><span id="meEmail"></span><button class="btn ghost" id="outBtn" style="height:34px">Sign out</button></div>
+  </aside>
+  <main>
+    <section id="dash">
+      <div class="head"><h1>Dashboard</h1><small id="syncAt"></small></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="grid2">
+        <div class="card"><h2>Waiting for review <small id="pendN"></small></h2><div class="mini" id="pendList"></div></div>
+        <div class="card"><h2>Recently added</h2><div class="mini" id="recent"></div></div>
+        <div class="card"><h2>By category <small>approved</small></h2><div class="bars" id="byCat"></div></div>
+        <div class="card"><h2>By city <small>approved</small></h2><div class="bars" id="byCity"></div></div>
+      </div>
+    </section>
+
+    <section id="list" hidden>
+      <div class="head"><h1>Businesses</h1><button class="btn" id="addBtn2"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add business</button></div>
+      <div class="tools">
+        <input class="in search" id="q" type="search" placeholder="Search name, owner, phone, area…" autocomplete="off">
+        <select class="in" id="fStatus"><option value="">All statuses</option></select>
+        <select class="in" id="fCat"><option value="">All categories</option></select>
+        <select class="in" id="fCity"><option value="">All cities</option></select>
+        <select class="in" id="fVer"><option value="">Verified: any</option><option value="1">Verified</option><option value="0">Not verified</option></select>
+      </div>
+      <p class="count num" id="count"></p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>#</th><th>Business</th><th>Category</th><th>City</th><th>Phone</th><th>Status</th><th>Verified</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="more"><button class="btn ghost" id="moreBtn" hidden>Show more</button></div>
+    </section>
+    <div class="load" id="loading">Loading data…</div>
+  </main>
+</div>
+
+<!-- EDITOR -->
+<div class="scrim" id="scrim" hidden></div>
+<form class="drawer" id="ed" hidden novalidate>
+  <div class="dh"><div><h2 id="edTitle"></h2><small id="edSub"></small></div><button type="button" class="btn ghost" id="edClose" aria-label="Close" style="width:42px;padding:0">✕</button></div>
+  <div class="db">
+    <div class="grp"><h3>Name</h3>
+      <label class="f">English *<input class="in" id="e_name_en" required maxlength="120"></label>
+      <div class="two"><label class="f">Kurdish<input class="in rtl" id="e_name_ku" dir="rtl" maxlength="120"></label><label class="f">Arabic<input class="in rtl" id="e_name_ar" dir="rtl" maxlength="120"></label></div>
+    </div>
+    <div class="grp"><h3>Listing</h3>
+      <div class="two"><label class="f">Category *<select class="in" id="e_category_id" required></select></label><label class="f">City *<select class="in" id="e_city_id" required></select></label></div>
+      <div class="two"><label class="f">Status<select class="in" id="e_status"></select></label><label class="sw"><span>Verified by Bmnassa</span><input type="checkbox" id="e_verified"></label></div>
+      <label class="f">Profile link (handle)<input class="in" id="e_handle" placeholder="e.g. eng.haval-baban" maxlength="60"></label>
+    </div>
+    <div class="grp"><h3>Contact</h3>
+      <label class="f">Owner<input class="in" id="e_owner" maxlength="80"></label>
+      <div class="two"><label class="f">Phone *<input class="in" id="e_phone" inputmode="tel" required maxlength="20"></label><label class="f">WhatsApp<input class="in" id="e_whatsapp" inputmode="tel" maxlength="20"></label></div>
+    </div>
+    <div class="grp"><h3>Address</h3>
+      <label class="f">English<input class="in" id="e_address_en" maxlength="160"></label>
+      <div class="two"><label class="f">Kurdish<input class="in rtl" id="e_address_ku" dir="rtl" maxlength="160"></label><label class="f">Arabic<input class="in rtl" id="e_address_ar" dir="rtl" maxlength="160"></label></div>
+    </div>
+    <div class="grp"><h3>Rating</h3>
+      <div class="two"><label class="f">Rating (0–5)<input class="in num" id="e_rating" type="number" min="0" max="5" step="0.1"></label><label class="f">Reviews<input class="in num" id="e_reviews" type="number" min="0" step="1"></label></div>
+    </div>
+  </div>
+  <div class="df">
+    <button type="button" class="btn danger" id="edDel">Delete</button>
+    <span class="msg grow" id="edMsg" role="status"></span>
+    <button type="button" class="btn ok" id="edApprove">Approve</button>
+    <button type="submit" class="btn" id="edSave">Save</button>
+  </div>
+</form>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  const SB = 'https://hfcqvcduuhzfxijsniav.supabase.co';
+  const KEY = 'sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh';
+  const SKEY = 'bm_admin_session';
+  const CITIES = [['erbil','Erbil'],['sulaymaniyah','Sulaymaniyah'],['kirkuk','Kirkuk'],['duhok','Duhok'],['halabja','Halabja']];
+  const STATUSES = ['approved','pending','rejected','hidden'];
+  const FIELDS = ['name_en','name_ku','name_ar','category_id','city_id','status','handle','owner','phone','whatsapp','address_en','address_ku','address_ar','rating','reviews'];
+  const PAGE = 60;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let session = null, cats = [], biz = [], shown = PAGE, editing = null, view = 'dash';
+
+  /* ---------- auth ---------- */
+  function saveSession(s){ session = s; try { s ? localStorage.setItem(SKEY, JSON.stringify(s)) : localStorage.removeItem(SKEY); } catch (e) {} }
+  async function authCall(grant, body){
+    const r = await fetch(`${SB}/auth/v1/token?grant_type=${grant}`, {method: 'POST', headers: {apikey: KEY, 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error_description || j.msg || j.message || ('Sign-in failed (' + r.status + ')'));
+    return {access_token: j.access_token, refresh_token: j.refresh_token, expires_at: Date.now() + (j.expires_in || 3600) * 1000, email: (j.user && j.user.email) || body.email};
+  }
+  async function refresh(){ if (!session || !session.refresh_token) throw new Error('Session expired'); saveSession(Object.assign(await authCall('refresh_token', {refresh_token: session.refresh_token}), {email: session.email})); }
+
+  /* ---------- data API ---------- */
+  async function api(path, opt = {}, retried){
+    if (session && session.expires_at - Date.now() < 60000 && !retried) { try { await refresh(); } catch (e) { return signOut('Please sign in again.'); } }
+    const headers = Object.assign({apikey: KEY, 'Content-Type': 'application/json'}, session ? {Authorization: 'Bearer ' + session.access_token} : {}, opt.headers || {});
+    const r = await fetch(`${SB}/rest/v1/${path}`, Object.assign({}, opt, {headers}));
+    if (r.status === 401 && !retried && session) { try { await refresh(); } catch (e) { return signOut('Please sign in again.'); } return api(path, opt, true); }
+    const text = await r.text(); let data = null; try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
+    if (!r.ok) { const m = (data && (data.message || data.hint)) || ('HTTP ' + r.status); const err = new Error(m); err.code = data && data.code; err.status = r.status; throw err; }
+    return data;
+  }
+  async function selectAll(table, query){
+    let all = [];
+    for (let off = 0; ; off += 1000) { const rows = await api(`${table}?${query}&limit=1000&offset=${off}`); all = all.concat(rows || []); if (!rows || rows.length < 1000) break; }
+    return all;
+  }
+  async function loadData(){
+    $('loading').hidden = false;
+    try {
+      [cats, biz] = await Promise.all([selectAll('categories', 'select=*&order=sort_order.asc'), selectAll('businesses', 'select=*&order=id.asc')]);
+      $('syncAt').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+      fillFilters(); render();
+    } catch (e) { toast('Could not load data: ' + e.message); }
+    $('loading').hidden = true;
+  }
+
+  /* ---------- helpers ---------- */
+  const catName = id => { const c = cats.find(x => x.id === id); return c ? c.name_en : (id || '—'); };
+  const cityName = id => { const c = CITIES.find(x => x[0] === id); return c ? c[1] : (id || '—'); };
+  const stClass = s => STATUSES.includes(s) ? 's-' + s : 's-other';
+  const pill = s => `<span class="pill ${stClass(s)}">${esc(s || 'none')}</span>`;
+  const allStatuses = () => Array.from(new Set(STATUSES.concat(biz.map(b => b.status).filter(Boolean))));
+  const allCities = () => Array.from(new Set(CITIES.map(c => c[0]).concat(biz.map(b => b.city_id).filter(Boolean))));
+  function toast(t){ const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 3200); }
+
+  /* ---------- views ---------- */
+  function go(v){ view = v; $('dash').hidden = v !== 'dash'; $('list').hidden = v !== 'list'; document.querySelectorAll('.nav[data-view]').forEach(b => b.toggleAttribute('aria-current', b.dataset.view === v)); document.querySelectorAll('.nav[data-view]').forEach(b => { if (b.dataset.view === v) b.setAttribute('aria-current', 'page'); }); render(); window.scrollTo(0, 0); }
+  function render(){
+    const pend = biz.filter(b => b.status === 'pending');
+    $('pendBadge').hidden = !pend.length; $('pendBadge').textContent = pend.length;
+    if (view === 'dash') renderDash(pend); else renderList();
+  }
+  function bars(el, pairs, onClick){
+    const max = Math.max(1, ...pairs.map(p => p[2]));
+    el.innerHTML = pairs.length ? pairs.map(([id, label, n]) => `<div class="bar" data-id="${esc(id)}"><span title="${esc(label)}">${esc(label)}</span><u><i style="width:${(n / max * 100).toFixed(1)}%"></i></u><b class="num">${n}</b></div>`).join('') : '<div class="empty">No data yet.</div>';
+    el.onclick = e => { const b = e.target.closest('.bar'); if (b) onClick(b.dataset.id); };
+  }
+  function miniRows(list){ return list.map(b => `<div class="r" data-id="${b.id}"><div><b>${esc(b.name_en)}</b><small>${esc(catName(b.category_id))} · ${esc(cityName(b.city_id))}</small></div>${pill(b.status)}</div>`).join(''); }
+  function renderDash(pend){
+    const appr = biz.filter(b => b.status === 'approved'), ver = biz.filter(b => b.verified);
+    const T = [['all', 'All businesses', biz.length, 'var(--soft)'], ['approved', 'Live in the app', appr.length, 'var(--green)'], ['pending', 'Waiting for review', pend.length, 'var(--amber)'], ['verified', 'Verified', ver.length, 'var(--teal)']];
+    $('tiles').innerHTML = T.map(([k, l, n, c]) => `<button class="tile" data-k="${k}"><b class="num">${n}</b><span><i style="background:${c}"></i>${l}</span></button>`).join('');
+    $('pendN').textContent = pend.length ? pend.length + ' waiting' : '';
+    $('pendList').innerHTML = pend.length ? miniRows(pend.slice(0, 6)) : '<div class="empty">Nothing waiting. New registrations with status “pending” appear here.</div>';
+    $('recent').innerHTML = biz.length ? miniRows(biz.slice().sort((a, b) => b.id - a.id).slice(0, 6)) : '<div class="empty">No businesses yet.</div>';
+    const byCat = cats.map(c => [c.id, c.name_en, appr.filter(b => b.category_id === c.id).length]).filter(p => p[2]).sort((a, b) => b[2] - a[2]);
+    bars($('byCat'), byCat, id => { setFilters({cat: id, status: 'approved'}); go('list'); });
+    const byCity = allCities().map(id => [id, cityName(id), appr.filter(b => b.city_id === id).length]).filter(p => p[2]).sort((a, b) => b[2] - a[2]);
+    bars($('byCity'), byCity, id => { setFilters({city: id, status: 'approved'}); go('list'); });
+  }
+  function fillFilters(){
+    const keep = {s: $('fStatus').value, c: $('fCat').value, ci: $('fCity').value};
+    $('fStatus').innerHTML = '<option value="">All statuses</option>' + allStatuses().map(s => `<option value="${esc(s)}">${esc(s[0].toUpperCase() + s.slice(1))}</option>`).join('');
+    $('fCat').innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
+    $('fCity').innerHTML = '<option value="">All cities</option>' + allCities().map(id => `<option value="${esc(id)}">${esc(cityName(id))}</option>`).join('');
+    $('fStatus').value = keep.s; $('fCat').value = keep.c; $('fCity').value = keep.ci;
+    $('e_category_id').innerHTML = cats.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
+    $('e_city_id').innerHTML = allCities().map(id => `<option value="${esc(id)}">${esc(cityName(id))}</option>`).join('');
+    $('e_status').innerHTML = allStatuses().map(s => `<option value="${esc(s)}">${esc(s[0].toUpperCase() + s.slice(1))}</option>`).join('');
+  }
+  function setFilters(f){ $('q').value = ''; $('fStatus').value = f.status || ''; $('fCat').value = f.cat || ''; $('fCity').value = f.city || ''; $('fVer').value = f.ver || ''; shown = PAGE; }
+  function filtered(){
+    const q = $('q').value.trim().toLowerCase(), st = $('fStatus').value, c = $('fCat').value, ci = $('fCity').value, v = $('fVer').value;
+    return biz.filter(b => (!st || b.status === st) && (!c || b.category_id === c) && (!ci || b.city_id === ci) && (!v || (!!b.verified === (v === '1'))) &&
+      (!q || [b.name_en, b.name_ku, b.name_ar, b.owner, b.phone, b.whatsapp, b.address_en, b.address_ku, b.handle, String(b.id)].some(x => x && String(x).toLowerCase().includes(q))));
+  }
+  function renderList(){
+    const list = filtered().sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || b.id - a.id);
+    $('count').textContent = list.length === biz.length ? `${list.length} businesses` : `${list.length} of ${biz.length} businesses`;
+    $('rows').innerHTML = list.slice(0, shown).map(b => `<tr class="row" data-id="${b.id}"><td class="num" style="color:var(--muted)">${b.id}</td>
+      <td><span class="nm">${esc(b.name_en)}</span>${b.name_ku ? `<span class="ku">${esc(b.name_ku)}</span>` : ''}</td>
+      <td>${esc(catName(b.category_id))}</td><td>${esc(cityName(b.city_id))}</td><td class="num">${esc(b.phone || '—')}</td><td>${pill(b.status)}</td><td>${b.verified ? '<span class="vchk">✓</span>' : ''}</td></tr>`).join('')
+      || '<tr><td colspan="7" class="empty" style="padding:22px">No businesses match these filters.</td></tr>';
+    $('moreBtn').hidden = list.length <= shown;
+  }
+
+  /* ---------- editor ---------- */
+  function openEditor(b){
+    editing = b || null;
+    const d = b || {status: 'approved', city_id: 'sulaymaniyah', category_id: cats[0] && cats[0].id, rating: 0, reviews: 0, verified: false};
+    FIELDS.forEach(f => { const el = $('e_' + f); if (el) el.value = d[f] == null ? '' : d[f]; });
+    $('e_verified').checked = !!d.verified;
+    $('edTitle').textContent = b ? b.name_en || 'Business' : 'New business';
+    $('edSub').textContent = b ? `#${b.id} · ${b.status || 'no status'}` : 'Fill in the details and save';
+    $('edDel').hidden = !b; $('edApprove').hidden = !b || b.status === 'approved';
+    $('edDel').classList.remove('sure'); $('edDel').textContent = 'Delete';
+    msg('');
+    $('ed').hidden = false; $('scrim').hidden = false; setTimeout(() => $('e_name_en').focus(), 50);
+  }
+  function closeEditor(){ $('ed').hidden = true; $('scrim').hidden = true; editing = null; }
+  function msg(t, kind){ const m = $('edMsg'); m.textContent = t; m.className = 'msg grow' + (kind ? ' ' + kind : ''); }
+  function readForm(){
+    const o = {};
+    FIELDS.forEach(f => { const v = $('e_' + f).value.trim(); o[f] = v === '' ? null : v; });
+    o.rating = o.rating == null ? 0 : Math.max(0, Math.min(5, Number(o.rating) || 0));
+    o.reviews = o.reviews == null ? 0 : Math.max(0, parseInt(o.reviews, 10) || 0);
+    o.verified = $('e_verified').checked;
+    return o;
+  }
+  const NOPERM = 'Your account is not allowed to change data yet. Run the admin SQL in Supabase, then try again.';
+  async function save(extra){
+    const o = Object.assign(readForm(), extra || {});
+    if (!o.name_en) { msg('English name is required.', 'bad'); $('e_name_en').focus(); return; }
+    if (!o.phone) { msg('Phone is required.', 'bad'); $('e_phone').focus(); return; }
+    $('edSave').disabled = $('edApprove').disabled = true; msg('Saving…');
+    try {
+      let row;
+      if (editing) {
+        const r = await api(`businesses?id=eq.${editing.id}`, {method: 'PATCH', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)});
+        if (!r || !r.length) throw new Error(NOPERM);
+        row = r[0]; biz = biz.map(b => b.id === row.id ? row : b);
+      } else {
+        let r;
+        try { r = await api('businesses', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); }
+        catch (e) {
+          if (e.code === '23502' && /id/.test(e.message)) { o.id = biz.reduce((m, b) => Math.max(m, Number(b.id) || 0), 0) + 1; r = await api('businesses', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); }
+          else throw e;
+        }
+        if (!r || !r.length) throw new Error(NOPERM);
+        row = r[0]; biz.push(row);
+      }
+      fillFilters(); render(); closeEditor(); toast(editing ? 'Saved' : `Saved “${row.name_en}”`);
+    } catch (e) {
+      msg(/row-level security|permission|42501/i.test(e.message + (e.code || '')) ? NOPERM : e.message, 'bad');
+    }
+    $('edSave').disabled = $('edApprove').disabled = false;
+  }
+  async function del(){
+    const b = $('edDel');
+    if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'Tap again to delete'; return; }
+    b.disabled = true; msg('Deleting…');
+    try {
+      const r = await api(`businesses?id=eq.${editing.id}`, {method: 'DELETE', headers: {Prefer: 'return=representation'}});
+      if (!r || !r.length) throw new Error(NOPERM);
+      const name = editing.name_en; biz = biz.filter(x => x.id !== editing.id); render(); closeEditor(); toast(`Deleted “${name}”`);
+    } catch (e) { msg(/row-level security|permission|42501/i.test(e.message + (e.code || '')) ? NOPERM : e.message, 'bad'); b.classList.remove('sure'); b.textContent = 'Delete'; }
+    b.disabled = false;
+  }
+
+  /* ---------- wiring ---------- */
+  function signIn(s){ saveSession(s); $('login').hidden = true; $('app').hidden = false; $('meEmail').textContent = s.email || ''; go('dash'); loadData(); }
+  function signOut(note){ saveSession(null); $('app').hidden = true; $('login').hidden = false; $('lErr').textContent = typeof note === 'string' ? note : ''; closeEditor(); }
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault(); $('lErr').textContent = ''; $('lBtn').disabled = true;
+    try { signIn(await authCall('password', {email: $('lEmail').value.trim(), password: $('lPass').value})); }
+    catch (err) { $('lErr').textContent = /invalid/i.test(err.message) ? 'Wrong email or password.' : err.message; }
+    $('lBtn').disabled = false;
+  });
+  $('outBtn').addEventListener('click', () => signOut());
+  document.querySelectorAll('.nav[data-view]').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
+  $('addBtn').addEventListener('click', () => openEditor(null)); $('addBtn2').addEventListener('click', () => openEditor(null));
+  $('tiles').addEventListener('click', e => { const t = e.target.closest('.tile'); if (!t) return; const k = t.dataset.k;
+    setFilters(k === 'verified' ? {ver: '1'} : k === 'all' ? {} : {status: k}); go('list'); });
+  ['pendList', 'recent'].forEach(id => $(id).addEventListener('click', e => { const r = e.target.closest('.r'); if (r) openEditor(biz.find(b => String(b.id) === r.dataset.id)); }));
+  $('rows').addEventListener('click', e => { const r = e.target.closest('tr.row'); if (r) openEditor(biz.find(b => String(b.id) === r.dataset.id)); });
+  ['q', 'fStatus', 'fCat', 'fCity', 'fVer'].forEach(id => $(id).addEventListener('input', () => { shown = PAGE; renderList(); }));
+  $('moreBtn').addEventListener('click', () => { shown += PAGE; renderList(); });
+  $('ed').addEventListener('submit', e => { e.preventDefault(); save(); });
+  $('edApprove').addEventListener('click', () => save({status: 'approved'}));
+  $('edDel').addEventListener('click', del);
+  $('edClose').addEventListener('click', closeEditor); $('scrim').addEventListener('click', closeEditor);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ed').hidden) closeEditor(); });
+
+  let stored = null; try { stored = JSON.parse(localStorage.getItem(SKEY) || 'null'); } catch (e) {}
+  if (stored && stored.refresh_token) signIn(stored); else signOut();
+})();
+</script>
+</body>
+</html>
