@@ -5266,6 +5266,77 @@ const BUSINESSES = [
   }
 ];
 
+/* ---------------- LIVE DATA (Supabase) ----------------
+   The app shows the bundled data above immediately, then replaces it with the
+   live database content (and remembers it for next time). If the database
+   cannot be reached, the bundled data simply stays. */
+
+const SUPABASE_URL = "https://hfcqvcduuhzfxijsniav.supabase.co";
+const SUPABASE_KEY = "sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh"; // public key: safe in the app
+const DATA_CACHE_KEY = "bm_data_cache_v1";
+
+async function sbSelect(table, query) {
+  const pageSize = 1000;
+  let all = [];
+  for (let offset = 0; ; offset += pageSize) {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${table}?${query}&limit=${pageSize}&offset=${offset}`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) throw new Error(`${table}: HTTP ${res.status}`);
+    const rows = await res.json();
+    all = all.concat(rows);
+    if (rows.length < pageSize) break;
+  }
+  return all;
+}
+
+function rowToCategory(r) {
+  return { id: r.id, name: { en: r.name_en, ku: r.name_ku || r.name_en, ar: r.name_ar || r.name_en }, icon: r.icon };
+}
+
+function rowToBusiness(r) {
+  return {
+    id: r.id,
+    name: { en: r.name_en, ku: r.name_ku || r.name_en, ar: r.name_ar || r.name_en },
+    category: r.category_id,
+    city: r.city_id,
+    handle: r.handle,
+    owner: r.owner || "",
+    phone: r.phone || "",
+    whatsapp: r.whatsapp || "",
+    address: { en: r.address_en || "", ku: r.address_ku || r.address_en || "", ar: r.address_ar || r.address_en || "" },
+    rating: Number(r.rating) || 0,
+    reviews: r.reviews || 0,
+    verified: !!r.verified,
+  };
+}
+
+async function loadLiveData() {
+  const [catRows, bizRows] = await Promise.all([
+    sbSelect("categories", "select=*&order=sort_order.asc"),
+    sbSelect("businesses", "select=*&status=eq.approved&order=id.asc"),
+  ]);
+  return { categories: catRows.map(rowToCategory), businesses: bizRows.map(rowToBusiness) };
+}
+
+function readDataCache() {
+  try {
+    const raw = localStorage.getItem(DATA_CACHE_KEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    return d && d.businesses && d.businesses.length && d.categories && d.categories.length ? d : null;
+  } catch (e) { return null; }
+}
+
+function writeDataCache(d) {
+  try {
+    const raw = JSON.stringify(d);
+    if (raw.length < 1500000) localStorage.setItem(DATA_CACHE_KEY, raw);
+  } catch (e) {}
+}
+
+
 
 /* ---------------- ICONS (inline, no deps) ---------------- */
 
@@ -5363,8 +5434,21 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedBiz, setSelectedBiz] = useState(null);
-  const [businesses, setBusinesses] = useState(BUSINESSES);
-  const [categories, setCategories] = useState(INITIAL_CATEGORIES);
+  const [businesses, setBusinesses] = useState(() => (readDataCache() || {}).businesses || BUSINESSES);
+  const [categories, setCategories] = useState(() => (readDataCache() || {}).categories || INITIAL_CATEGORIES);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadLiveData()
+      .then((d) => {
+        if (cancelled || !d.businesses.length || !d.categories.length) return;
+        setBusinesses(d.businesses);
+        setCategories(d.categories);
+        writeDataCache(d);
+      })
+      .catch(() => { /* keep bundled/cached data */ });
+    return () => { cancelled = true; };
+  }, []);
   const [favorites, setFavorites] = useState(() => new Set());
   const [editing, setEditing] = useState(null);
 
