@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Kufi+Arabic:wght@500;600;700&display=swap">
 <style>
-/* Layout: sidebar + work area on desktop, top tabs on phones. Dashboard tiles → bars, list = dense table, editor = right drawer. */
+/* Layout: sidebar + work area (top scroller on phones). Each page = header, tools, table or cards; editors open as a right drawer. */
 :root{
   --bg:#0b1014; --panel:#11181d; --panel2:#151e24; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
   --fg:#f4f6f7; --soft:#c3ccd0; --muted:#87939a; --teal:#1fc6c0; --coral:#f0806a; --amber:#f2b84b; --red:#ef6b6b; --green:#3fcf8e;
@@ -20,135 +20,147 @@
 html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-size:14px;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 .logo path{fill:currentColor}
-.rtl{font-family:var(--fk);direction:rtl}
 .num{font-variant-numeric:tabular-nums}
+.rtl{font-family:var(--fk);direction:rtl}
 
-/* login */
 #login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(600px 400px at 0% 0%,rgba(15,111,120,.45),transparent 70%),radial-gradient(600px 400px at 100% 100%,rgba(240,128,106,.25),transparent 70%)}
 .lbox{width:min(380px,100%);display:grid;gap:16px;padding:28px;border-radius:24px;background:var(--panel);border:1px solid var(--line)}
-.lbox .logo{width:120px;height:auto}
-.lbox h1{margin:0;font-size:20px}
-.lbox p{margin:-8px 0 0;color:var(--muted);font-size:13px}
+.lbox h1{margin:0;font-size:20px}.lbox p{margin:-8px 0 0;color:var(--muted);font-size:13px}
 
-/* form controls */
 label.f{display:grid;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--soft);text-transform:uppercase}
-.in,select.in,textarea.in{width:100%;height:44px;border-radius:12px;border:1.5px solid #e7ecee;background:#f4f6f7;color:#0b1014;padding:0 12px;font-weight:600;font-size:14px;outline:none;text-transform:none;letter-spacing:0}
-textarea.in{height:auto;min-height:70px;padding:10px 12px}
+.in{width:100%;height:44px;border-radius:12px;border:1.5px solid #e7ecee;background:#f4f6f7;color:#0b1014;padding:0 12px;font-weight:600;font-size:14px;outline:none;letter-spacing:0;text-transform:none}
+textarea.in{height:auto;min-height:80px;padding:10px 12px;resize:vertical}
 .in:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(31,198,192,.3)}
+.in[readonly]{background:#dfe5e8;color:#4a565c}
 .in.rtl{text-align:right}
-.btn{height:42px;padding:0 16px;border-radius:12px;border:0;background:#fff;color:#0b1014;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn{height:42px;padding:0 16px;border-radius:12px;border:0;background:#fff;color:#0b1014;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;text-decoration:none}
 .btn:disabled{opacity:.55;cursor:progress}
+.btn.sm{height:34px;padding:0 12px;font-size:13px}
 .btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line2)}
 .btn.ok{background:var(--green);color:#06210f}
+.btn.teal{background:var(--teal);color:#062022}
 .btn.danger{background:transparent;color:var(--red);border:1.5px solid rgba(239,107,107,.5)}
 .btn.danger.sure{background:var(--red);color:#2a0606}
 .btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .err{color:var(--red);font-size:13px;font-weight:700;min-height:1em}
 
-/* shell */
-#app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
-.side{position:sticky;top:0;height:100vh;padding:20px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px;background:var(--panel)}
-.side .logo{width:104px;height:auto;margin:4px 10px 18px}
-.nav{display:flex;align-items:center;gap:10px;height:42px;padding:0 12px;border-radius:12px;border:0;background:none;color:var(--soft);font-weight:700;cursor:pointer;text-align:start}
-.nav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.nav[aria-current=page]{background:#fff;color:#0b1014}
-.nav .badge{margin-inline-start:auto;min-width:22px;height:22px;border-radius:99px;background:var(--amber);color:#2a1c00;font-size:11.5px;font-weight:800;display:grid;place-items:center;padding:0 6px}
+#app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:18px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;background:var(--panel)}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand .mk{width:38px;height:38px;border-radius:11px;background:var(--teal);color:#062022;display:grid;place-items:center;flex:none}
+.brand .mk svg{width:28px;height:auto}
+.brand b{display:block;font-size:15px}.brand small{display:block;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--muted)}
+.nav{display:flex;align-items:center;gap:10px;height:42px;padding:0 12px;border-radius:12px;border:0;background:none;color:var(--soft);font-weight:700;cursor:pointer;text-align:start;flex:none}
+.nav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nav[aria-current=page]{background:var(--teal);color:#062022}
+.nav .badge{margin-inline-start:auto;min-width:24px;height:20px;border-radius:99px;background:var(--coral);color:#2a0e06;font-size:11.5px;font-weight:800;display:grid;place-items:center;padding:0 7px}
+.nav[aria-current=page] .badge{background:#062022;color:var(--teal)}
 .side .me{margin-top:auto;display:grid;gap:8px;padding:12px;border-radius:14px;background:var(--panel2);font-size:12.5px;color:var(--muted);word-break:break-all}
 main{padding:26px 30px 60px;min-width:0}
-.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .head h1{margin:0;font-size:24px;letter-spacing:-.02em}
-.head small{color:var(--muted);font-size:13px;font-weight:600}
+.head p{margin:4px 0 0;color:var(--muted);font-size:13px;font-weight:600}
+.head .acts{display:flex;gap:8px;flex-wrap:wrap}
 
-/* dashboard */
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
-.tile{padding:16px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:grid;gap:4px;cursor:pointer;text-align:start;color:var(--fg)}
+.tile{padding:16px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:grid;gap:4px;text-align:start;color:var(--fg);font:inherit}
+button.tile{cursor:pointer}
 .tile b{font-size:30px;font-weight:800;letter-spacing:-.02em}
 .tile span{font-size:12.5px;color:var(--muted);font-weight:700}
 .tile i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:6px}
-.grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
 .card{padding:18px;border-radius:18px;background:var(--panel);border:1px solid var(--line);min-width:0}
-.card h2{margin:0 0 14px;font-size:14px;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.card+.card{margin-top:0}
+.card h2{margin:0 0 12px;font-size:14px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .card h2 small{color:var(--muted);font-weight:600}
+.stack{display:grid;gap:14px}
 .bars{display:grid;gap:9px}
 .bar{display:grid;grid-template-columns:minmax(0,150px) 1fr 40px;gap:10px;align-items:center;font-size:13px;cursor:pointer}
 .bar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--soft);font-weight:600}
 .bar u{height:8px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden;text-decoration:none}
 .bar u i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--coral))}
 .bar b{text-align:end;font-weight:800}
-.mini{display:grid;gap:2px}
+.mini{display:grid}
 .mini .r{display:flex;align-items:center;gap:10px;padding:10px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:8px}
 .mini .r:first-child{border-top:0}
 .mini .r:hover{background:var(--panel2)}
 .mini .r div{flex:1;min-width:0}
 .mini .r b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mini .r small{color:var(--muted);font-size:12px}
-.empty{color:var(--muted);font-size:13px;padding:8px 2px}
+.empty{color:var(--muted);font-size:13px;padding:10px 2px}
 
-/* list */
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .tools .in{height:40px;width:auto;flex:1 1 140px}
 .tools .search{flex:3 1 240px}
 .tablewrap{border-radius:16px;border:1px solid var(--line);overflow-x:auto;background:var(--panel)}
-table{width:100%;border-collapse:collapse;min-width:760px}
-th{text-align:start;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel2);position:sticky;top:0}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th{text-align:start;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel2)}
 td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
 tr.row{cursor:pointer}
 tr.row:hover td{background:rgba(255,255,255,.03)}
 td .nm{font-weight:800}
+td .sub{display:block;color:var(--muted);font-size:12px}
 td .ku{display:block;font-family:var(--fk);color:var(--muted);font-size:12px;direction:rtl;text-align:start}
-.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:99px;font-size:11.5px;font-weight:800;text-transform:capitalize}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:99px;font-size:11.5px;font-weight:800;text-transform:capitalize;white-space:nowrap}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.s-approved{background:rgba(63,207,142,.12);color:var(--green)}
-.s-pending{background:rgba(242,184,75,.14);color:var(--amber)}
+.s-approved,.s-live{background:rgba(63,207,142,.12);color:var(--green)}
+.s-pending,.s-new{background:rgba(242,184,75,.14);color:var(--amber)}
 .s-rejected{background:rgba(239,107,107,.13);color:var(--red)}
-.s-hidden,.s-other{background:rgba(255,255,255,.08);color:var(--soft)}
-.vchk{color:var(--teal);font-weight:800}
+.s-hidden,.s-other,.s-soon{background:rgba(255,255,255,.08);color:var(--soft)}
+.chk{color:var(--teal);font-weight:800}
 .more{display:flex;justify-content:center;margin-top:12px}
 .count{color:var(--muted);font-size:13px;font-weight:700;margin:0 0 10px}
+.note{padding:14px 16px;border-radius:14px;background:rgba(242,184,75,.08);border:1px solid rgba(242,184,75,.3);color:var(--soft);font-size:13px;line-height:1.55;margin-bottom:14px}
+.note b{color:var(--amber)}
+.sql{margin:10px 0 0;max-height:260px;overflow:auto;padding:12px;border-radius:12px;background:#070a0c;border:1px solid var(--line);font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#cfe;white-space:pre}
+.addrow{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.addrow .in{flex:1 1 240px;height:42px}
 
-/* editor drawer */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20}
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);z-index:21;background:var(--panel);border-left:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;box-shadow:-30px 0 60px rgba(0,0,0,.4)}
 .dh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
-.dh h2{margin:0;font-size:18px}
-.dh small{color:var(--muted);font-weight:600}
+.dh h2{margin:0;font-size:18px}.dh small{color:var(--muted);font-weight:600}
 .db{overflow-y:auto;padding:18px 20px;display:grid;gap:18px;align-content:start}
 .grp{display:grid;gap:12px}
 .grp>h3{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line2);cursor:pointer;font-weight:700;font-size:13.5px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line2);cursor:pointer;font-weight:700;font-size:13.5px;align-self:end}
 .sw input{width:20px;height:20px;accent-color:var(--teal)}
 .df{display:flex;gap:8px;align-items:center;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
-.df .grow{flex:1}
+.df .grow{flex:1;min-width:120px}
 .msg{font-size:13px;font-weight:700}
 .msg.bad{color:var(--red)}.msg.good{color:var(--green)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;background:#fff;color:#0b1014;font-weight:800;padding:12px 18px;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.4)}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.kv div{padding:10px 12px;border-top:1px solid var(--line);font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.kv div:nth-child(-n+2){border-top:0}
+.kv div:nth-child(odd){color:var(--muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;background:var(--panel2)}
+.kv a{color:var(--teal);font-weight:700}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;background:#fff;color:#0b1014;font-weight:800;padding:12px 18px;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.4);max-width:90vw}
 .load{color:var(--muted);font-weight:700;padding:30px 0}
 
 @media (max-width:900px){
   #app{grid-template-columns:1fr}
-  .side{position:sticky;top:0;z-index:10;height:auto;flex-direction:row;align-items:center;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;gap:4px}
-  .side .logo{width:78px;margin:0 8px 0 2px;flex:none}
-  .nav{flex:none;height:38px;padding:0 10px;font-size:13px}
-  .nav .lbl-long{display:none}
+  .side{position:sticky;top:0;z-index:10;height:auto;flex-direction:row;align-items:center;padding:10px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;gap:4px}
+  .brand{padding:0 6px 0 0;flex:none}.brand div{display:none}
+  .nav{height:38px;padding:0 10px;font-size:13px}
+  .nav svg{display:none}
   .side .me{margin:0 0 0 auto;padding:0;background:none;flex:none}
   .side .me span{display:none}
   main{padding:18px 16px 50px}
   .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grid2{grid-template-columns:1fr}
-  .three{grid-template-columns:1fr}
+  .kv{grid-template-columns:110px 1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <section id="login" hidden>
   <form class="lbox" id="loginForm">
-    <svg class="logo" viewBox="0 0 3113 1280" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
-    <h1>Back office</h1>
-    <p>Sign in with your Bmnassa admin account.</p>
+    <div class="brand" style="padding:0"><span class="mk"><svg class="logo" viewBox="0 0 3113 1280"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg></span><div><b>Bmnassa</b><small>BACK OFFICE</small></div></div>
+    <h1>Sign in</h1>
+    <p>Use your Bmnassa admin account.</p>
     <label class="f">Email<input class="in" id="lEmail" type="email" autocomplete="username" required></label>
     <label class="f">Password<input class="in" id="lPass" type="password" autocomplete="current-password" required></label>
     <button class="btn" type="submit" id="lBtn">Sign in</button>
@@ -156,64 +168,101 @@ td .ku{display:block;font-family:var(--fk);color:var(--muted);font-size:12px;dir
   </form>
 </section>
 
-<!-- APP -->
 <div id="app" hidden>
   <aside class="side">
-    <svg class="logo" viewBox="0 0 3113 1280" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
+    <div class="brand"><span class="mk"><svg class="logo" viewBox="0 0 3113 1280"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg></span><div><b>Bmnassa</b><small>BACK OFFICE</small></div></div>
     <button class="nav" data-view="dash"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Dashboard</button>
-    <button class="nav" data-view="list"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Businesses<span class="badge" id="pendBadge" hidden></span></button>
-    <button class="nav" id="addBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Add<span class="lbl-long"> business</span></span></button>
-    <div class="me"><span id="meEmail"></span><button class="btn ghost" id="outBtn" style="height:34px">Sign out</button></div>
+    <button class="nav" data-view="biz"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Businesses</button>
+    <button class="nav" data-view="pending"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Pending approval<span class="badge num" id="pendBadge" hidden></span></button>
+    <button class="nav" data-view="cats"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Categories</button>
+    <button class="nav" data-view="cities"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Cities</button>
+    <button class="nav" data-view="hitex"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>HITEX26 sign-ups</button>
+    <button class="nav" data-view="admins"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>Admins</button>
+    <div class="me"><span id="meEmail"></span><button class="btn ghost sm" id="outBtn">Sign out</button></div>
   </aside>
+
   <main>
-    <section id="dash">
-      <div class="head"><h1>Dashboard</h1><small id="syncAt"></small></div>
+    <div id="setupNote" class="note" hidden></div>
+
+    <section data-page="dash">
+      <div class="head"><div><h1>Dashboard</h1><p id="syncAt"></p></div><div class="acts"><button class="btn ghost sm" data-reload>Refresh</button><button class="btn sm" data-add="biz">Add business</button></div></div>
       <div class="tiles" id="tiles"></div>
       <div class="grid2">
-        <div class="card"><h2>Waiting for review <small id="pendN"></small></h2><div class="mini" id="pendList"></div></div>
-        <div class="card"><h2>Recently added</h2><div class="mini" id="recent"></div></div>
-        <div class="card"><h2>By category <small>approved</small></h2><div class="bars" id="byCat"></div></div>
-        <div class="card"><h2>By city <small>approved</small></h2><div class="bars" id="byCity"></div></div>
+        <div class="card"><h2>Waiting for review <small id="pendN"></small></h2><div class="mini" id="dPend"></div></div>
+        <div class="card"><h2>Recently added</h2><div class="mini" id="dRecent"></div></div>
+        <div class="card"><h2>By category <small>live</small></h2><div class="bars" id="byCat"></div></div>
+        <div class="card"><h2>By city <small>live</small></h2><div class="bars" id="byCity"></div></div>
       </div>
     </section>
 
-    <section id="list" hidden>
-      <div class="head"><h1>Businesses</h1><button class="btn" id="addBtn2"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add business</button></div>
+    <section data-page="biz" hidden>
+      <div class="head"><div><h1>Businesses</h1><p>Everything in the database, including pending and hidden.</p></div><div class="acts"><button class="btn" data-add="biz">Add business</button></div></div>
       <div class="tools">
-        <input class="in search" id="q" type="search" placeholder="Search name, owner, phone, area…" autocomplete="off">
-        <select class="in" id="fStatus"><option value="">All statuses</option></select>
-        <select class="in" id="fCat"><option value="">All categories</option></select>
-        <select class="in" id="fCity"><option value="">All cities</option></select>
+        <input class="in search" id="q" type="search" placeholder="Search name, owner, phone, area, #id…" autocomplete="off">
+        <select class="in" id="fStatus"></select><select class="in" id="fCat"></select><select class="in" id="fCity"></select>
         <select class="in" id="fVer"><option value="">Verified: any</option><option value="1">Verified</option><option value="0">Not verified</option></select>
       </div>
-      <p class="count num" id="count"></p>
-      <div class="tablewrap"><table>
-        <thead><tr><th>#</th><th>Business</th><th>Category</th><th>City</th><th>Phone</th><th>Status</th><th>Verified</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table></div>
+      <p class="count num" id="bizCount"></p>
+      <div class="tablewrap"><table><thead><tr><th>#</th><th>Business</th><th>Category</th><th>City</th><th>Phone</th><th>Status</th><th>Verified</th></tr></thead><tbody id="bizRows"></tbody></table></div>
       <div class="more"><button class="btn ghost" id="moreBtn" hidden>Show more</button></div>
+    </section>
+
+    <section data-page="pending" hidden>
+      <div class="head"><div><h1>Pending approval</h1><p>New sign-ups from the register form and businesses marked pending.</p></div></div>
+      <div class="stack">
+        <div class="card"><h2>New sign-ups <small id="regN"></small></h2><div id="pRegs"></div></div>
+        <div class="card"><h2>Businesses marked pending <small id="bizPN"></small></h2><div class="mini" id="pBiz"></div></div>
+      </div>
+    </section>
+
+    <section data-page="cats" hidden>
+      <div class="head"><div><h1>Categories</h1><p>Shown in the app in this order.</p></div><div class="acts"><button class="btn" data-add="cat">Add category</button></div></div>
+      <div class="tablewrap"><table><thead><tr><th>Order</th><th>Name</th><th>Kurdish</th><th>Arabic</th><th>ID</th><th>Icon</th><th>Businesses</th></tr></thead><tbody id="catRows"></tbody></table></div>
+    </section>
+
+    <section data-page="cities" hidden>
+      <div class="head"><div><h1>Cities</h1><p>“Live” cities are open in the app; others show as coming soon.</p></div><div class="acts"><button class="btn" data-add="city">Add city</button></div></div>
+      <div class="tablewrap"><table><thead><tr><th>Order</th><th>Name</th><th>Kurdish</th><th>Arabic</th><th>ID</th><th>Status</th><th>Businesses</th></tr></thead><tbody id="cityRows"></tbody></table></div>
+    </section>
+
+    <section data-page="hitex" hidden>
+      <div class="head"><div><h1>HITEX26 sign-ups</h1><p>Registered on the stand iPad or during 6–9 October 2026.</p></div><div class="acts"><button class="btn ghost" id="csvBtn">Download CSV</button></div></div>
+      <div class="tiles" id="hTiles"></div>
+      <div class="grid2" style="margin-bottom:14px">
+        <div class="card"><h2>By day</h2><div class="bars" id="hDay"></div></div>
+        <div class="card"><h2>By category</h2><div class="bars" id="hCat"></div></div>
+      </div>
+      <div class="tablewrap"><table><thead><tr><th>Time</th><th>Business</th><th>Category</th><th>City</th><th>Phone</th><th>NFC card</th><th>Status</th></tr></thead><tbody id="hRows"></tbody></table></div>
+    </section>
+
+    <section data-page="admins" hidden>
+      <div class="head"><div><h1>Admins</h1><p>These emails can sign in here and change data.</p></div></div>
+      <form class="addrow" id="adminForm"><input class="in" id="adminEmail" type="email" placeholder="name@example.com" required><button class="btn" type="submit">Add admin</button></form>
+      <div class="note" style="background:rgba(31,198,192,.07);border-color:rgba(31,198,192,.3)">A new admin also needs a login: in Supabase go to <b style="color:var(--teal)">Authentication → Users → Add user</b> with the same email and a password.</div>
+      <div class="tablewrap"><table><thead><tr><th>Email</th><th>Added</th><th></th></tr></thead><tbody id="adminRows"></tbody></table></div>
     </section>
     <div class="load" id="loading">Loading data…</div>
   </main>
 </div>
 
-<!-- EDITOR -->
 <div class="scrim" id="scrim" hidden></div>
+
+<!-- business editor -->
 <form class="drawer" id="ed" hidden novalidate>
-  <div class="dh"><div><h2 id="edTitle"></h2><small id="edSub"></small></div><button type="button" class="btn ghost" id="edClose" aria-label="Close" style="width:42px;padding:0">✕</button></div>
+  <div class="dh"><div><h2 id="edTitle"></h2><small id="edSub"></small></div><button type="button" class="btn ghost" data-close style="width:42px;padding:0" aria-label="Close">✕</button></div>
   <div class="db">
     <div class="grp"><h3>Name</h3>
-      <label class="f">English *<input class="in" id="e_name_en" required maxlength="120"></label>
+      <label class="f">English *<input class="in" id="e_name_en" maxlength="120"></label>
       <div class="two"><label class="f">Kurdish<input class="in rtl" id="e_name_ku" dir="rtl" maxlength="120"></label><label class="f">Arabic<input class="in rtl" id="e_name_ar" dir="rtl" maxlength="120"></label></div>
     </div>
     <div class="grp"><h3>Listing</h3>
-      <div class="two"><label class="f">Category *<select class="in" id="e_category_id" required></select></label><label class="f">City *<select class="in" id="e_city_id" required></select></label></div>
+      <div class="two"><label class="f">Category *<select class="in" id="e_category_id"></select></label><label class="f">City *<select class="in" id="e_city_id"></select></label></div>
       <div class="two"><label class="f">Status<select class="in" id="e_status"></select></label><label class="sw"><span>Verified by Bmnassa</span><input type="checkbox" id="e_verified"></label></div>
       <label class="f">Profile link (handle)<input class="in" id="e_handle" placeholder="e.g. eng.haval-baban" maxlength="60"></label>
     </div>
     <div class="grp"><h3>Contact</h3>
       <label class="f">Owner<input class="in" id="e_owner" maxlength="80"></label>
-      <div class="two"><label class="f">Phone *<input class="in" id="e_phone" inputmode="tel" required maxlength="20"></label><label class="f">WhatsApp<input class="in" id="e_whatsapp" inputmode="tel" maxlength="20"></label></div>
+      <div class="two"><label class="f">Phone *<input class="in" id="e_phone" inputmode="tel" maxlength="20"></label><label class="f">WhatsApp<input class="in" id="e_whatsapp" inputmode="tel" maxlength="20"></label></div>
     </div>
     <div class="grp"><h3>Address</h3>
       <label class="f">English<input class="in" id="e_address_en" maxlength="160"></label>
@@ -223,27 +272,45 @@ td .ku{display:block;font-family:var(--fk);color:var(--muted);font-size:12px;dir
       <div class="two"><label class="f">Rating (0–5)<input class="in num" id="e_rating" type="number" min="0" max="5" step="0.1"></label><label class="f">Reviews<input class="in num" id="e_reviews" type="number" min="0" step="1"></label></div>
     </div>
   </div>
-  <div class="df">
-    <button type="button" class="btn danger" id="edDel">Delete</button>
-    <span class="msg grow" id="edMsg" role="status"></span>
-    <button type="button" class="btn ok" id="edApprove">Approve</button>
-    <button type="submit" class="btn" id="edSave">Save</button>
+  <div class="df"><button type="button" class="btn danger" id="edDel">Delete</button><span class="msg grow" id="edMsg" role="status"></span><button type="button" class="btn ok" id="edApprove">Approve</button><button type="submit" class="btn" id="edSave">Save</button></div>
+</form>
+
+<!-- registration viewer -->
+<div class="drawer" id="rv" hidden>
+  <div class="dh"><div><h2 id="rvTitle"></h2><small id="rvSub"></small></div><button type="button" class="btn ghost" data-close style="width:42px;padding:0" aria-label="Close">✕</button></div>
+  <div class="db"><div class="kv" id="rvKv"></div></div>
+  <div class="df"><button type="button" class="btn danger" id="rvDel">Delete</button><button type="button" class="btn ghost" id="rvReject">Reject</button><span class="msg grow" id="rvMsg" role="status"></span><button type="button" class="btn ok" id="rvApprove">Approve → create business</button></div>
+</div>
+
+<!-- simple editor (category / city) -->
+<form class="drawer" id="se" hidden novalidate>
+  <div class="dh"><div><h2 id="seTitle"></h2><small id="seSub"></small></div><button type="button" class="btn ghost" data-close style="width:42px;padding:0" aria-label="Close">✕</button></div>
+  <div class="db">
+    <div class="grp">
+      <label class="f">English name *<input class="in" id="s_name_en" maxlength="80"></label>
+      <div class="two"><label class="f">Kurdish<input class="in rtl" id="s_name_ku" dir="rtl" maxlength="80"></label><label class="f">Arabic<input class="in rtl" id="s_name_ar" dir="rtl" maxlength="80"></label></div>
+      <div class="two"><label class="f">ID (used in links)<input class="in" id="s_id" maxlength="40" placeholder="e.g. pharmacy"></label><label class="f">Order<input class="in num" id="s_sort_order" type="number" step="1"></label></div>
+      <label class="f" id="s_iconWrap">Icon name<input class="in" id="s_icon" maxlength="30" placeholder="e.g. wrench, bolt, building"></label>
+      <label class="sw" id="s_liveWrap"><span>Live in the app</span><input type="checkbox" id="s_live"></label>
+    </div>
   </div>
+  <div class="df"><button type="button" class="btn danger" id="seDel">Delete</button><span class="msg grow" id="seMsg" role="status"></span><button type="submit" class="btn" id="seSave">Save</button></div>
 </form>
 <div class="toast" id="toast" hidden></div>
 
 <script>
 (function(){
-  const SB = 'https://hfcqvcduuhzfxijsniav.supabase.co';
-  const KEY = 'sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh';
-  const SKEY = 'bm_admin_session';
-  const CITIES = [['erbil','Erbil'],['sulaymaniyah','Sulaymaniyah'],['kirkuk','Kirkuk'],['duhok','Duhok'],['halabja','Halabja']];
-  const STATUSES = ['approved','pending','rejected','hidden'];
-  const FIELDS = ['name_en','name_ku','name_ar','category_id','city_id','status','handle','owner','phone','whatsapp','address_en','address_ku','address_ar','rating','reviews'];
+  const SB = 'https://hfcqvcduuhzfxijsniav.supabase.co', KEY = 'sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh', SKEY = 'bm_admin_session';
+  const SETUP_SQL = "-- Bmnassa back office setup (safe to run more than once)\n\n-- 1) Admins: who may change data\ncreate table if not exists public.admins (email text primary key, created_at timestamptz default now());\ninsert into public.admins (email) values ('haval.rizgar96@gmail.com') on conflict do nothing;\nalter table public.admins enable row level security;\n\ncreate or replace function public.is_admin() returns boolean\nlanguage sql stable security definer set search_path = public as $$\n  select exists (select 1 from public.admins where lower(email) = lower(auth.jwt() ->> 'email'))\n$$;\n\ndrop policy if exists \"admins manage admins\" on public.admins;\ncreate policy \"admins manage admins\" on public.admins\n  for all to authenticated using (public.is_admin()) with check (public.is_admin());\n\n-- 2) Businesses and categories: admins can add, edit and delete\ndrop policy if exists \"admins manage businesses\" on public.businesses;\ncreate policy \"admins manage businesses\" on public.businesses\n  for all to authenticated using (public.is_admin()) with check (public.is_admin());\n\ndrop policy if exists \"admins manage categories\" on public.categories;\ncreate policy \"admins manage categories\" on public.categories\n  for all to authenticated using (public.is_admin()) with check (public.is_admin());\n\n-- 3) Cities\ncreate table if not exists public.cities (\n  id text primary key, name_en text not null, name_ku text, name_ar text,\n  live boolean not null default true, sort_order int not null default 0\n);\ninsert into public.cities (id, name_en, name_ku, name_ar, live, sort_order) values\n  ('erbil', 'Erbil', '\u0647\u06d5\u0648\u0644\u06ce\u0631', '\u0623\u0631\u0628\u064a\u0644', true, 0),\n  ('sulaymaniyah', 'Sulaymaniyah', '\u0633\u0644\u06ce\u0645\u0627\u0646\u06cc', '\u0627\u0644\u0633\u0644\u064a\u0645\u0627\u0646\u064a\u0629', true, 1),\n  ('kirkuk', 'Kirkuk', '\u06a9\u06d5\u0631\u06a9\u0648\u0648\u06a9', '\u0643\u0631\u0643\u0648\u0643', false, 2),\n  ('duhok', 'Duhok', '\u062f\u0647\u06c6\u06a9', '\u062f\u0647\u0648\u0643', false, 3),\n  ('halabja', 'Halabja', '\u0647\u06d5\u06b5\u06d5\u0628\u062c\u06d5', '\u062d\u0644\u0628\u062c\u0629', false, 4)\non conflict (id) do nothing;\nalter table public.cities enable row level security;\ndrop policy if exists \"anyone reads cities\" on public.cities;\ncreate policy \"anyone reads cities\" on public.cities for select using (true);\ndrop policy if exists \"admins manage cities\" on public.cities;\ncreate policy \"admins manage cities\" on public.cities\n  for all to authenticated using (public.is_admin()) with check (public.is_admin());\n\n-- 4) Registrations from bmnassa.vercel.app/register\ncreate table if not exists public.registrations (\n  id bigint generated by default as identity primary key,\n  created_at timestamptz not null default now(),\n  status text not null default 'new',          -- new | approved | rejected\n  business_name text not null,\n  category_id text, category_other text,\n  owner text, phone text, whatsapp text,\n  city_id text, area text, building text, apartment text,\n  lat double precision, lng double precision, map_link text,\n  description text,\n  nfc boolean not null default false, nfc_qty int, nfc_name text,\n  language text, source text,\n  business_id bigint, note text\n);\nalter table public.registrations enable row level security;\ndrop policy if exists \"public can submit\" on public.registrations;\ncreate policy \"public can submit\" on public.registrations\n  for insert to anon, authenticated with check (status = 'new' and business_id is null);\ndrop policy if exists \"admins manage registrations\" on public.registrations;\ncreate policy \"admins manage registrations\" on public.registrations\n  for all to authenticated using (public.is_admin()) with check (public.is_admin());\ngrant insert on public.registrations to anon;\n\n-- 5) Category used by the register form that the app list did not have yet\ninsert into public.categories (id, name_en, name_ku, name_ar, icon, sort_order)\nvalues ('pharmacy', 'Pharmacies', '\u062f\u06d5\u0631\u0645\u0627\u0646\u062e\u0627\u0646\u06d5', '\u0627\u0644\u0635\u064a\u062f\u0644\u064a\u0627\u062a', 'grid', 25)\non conflict (id) do nothing;\n";
+  const FALLBACK_CITIES = [['erbil','Erbil'],['sulaymaniyah','Sulaymaniyah'],['kirkuk','Kirkuk'],['duhok','Duhok'],['halabja','Halabja']].map(([id, n], i) => ({id, name_en: n, live: i < 2, sort_order: i}));
+  const B_STATUSES = ['approved','pending','rejected','hidden'];
+  const BF = ['name_en','name_ku','name_ar','category_id','city_id','status','handle','owner','phone','whatsapp','address_en','address_ku','address_ar','rating','reviews'];
+  const HITEX_FROM = Date.parse('2026-10-06T00:00:00+03:00'), HITEX_TO = Date.parse('2026-10-10T00:00:00+03:00');
   const PAGE = 60;
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  let session = null, cats = [], biz = [], shown = PAGE, editing = null, view = 'dash';
+  const D = {cats: [], cities: [], biz: [], regs: [], admins: []}, missing = {};
+  let session = null, view = 'dash', shown = PAGE, editing = null, regOpen = null, linkReg = null, simple = null;
 
   /* ---------- auth ---------- */
   function saveSession(s){ session = s; try { s ? localStorage.setItem(SKEY, JSON.stringify(s)) : localStorage.removeItem(SKEY); } catch (e) {} }
@@ -253,179 +320,307 @@ td .ku{display:block;font-family:var(--fk);color:var(--muted);font-size:12px;dir
     if (!r.ok) throw new Error(j.error_description || j.msg || j.message || ('Sign-in failed (' + r.status + ')'));
     return {access_token: j.access_token, refresh_token: j.refresh_token, expires_at: Date.now() + (j.expires_in || 3600) * 1000, email: (j.user && j.user.email) || body.email};
   }
-  async function refresh(){ if (!session || !session.refresh_token) throw new Error('Session expired'); saveSession(Object.assign(await authCall('refresh_token', {refresh_token: session.refresh_token}), {email: session.email})); }
-
-  /* ---------- data API ---------- */
+  async function refresh(){ if (!session || !session.refresh_token) throw new Error('expired'); saveSession(Object.assign(await authCall('refresh_token', {refresh_token: session.refresh_token}), {email: session.email})); }
   async function api(path, opt = {}, retried){
-    if (session && session.expires_at - Date.now() < 60000 && !retried) { try { await refresh(); } catch (e) { return signOut('Please sign in again.'); } }
+    if (session && session.expires_at - Date.now() < 60000 && !retried) { try { await refresh(); } catch (e) { signOut('Please sign in again.'); throw e; } }
     const headers = Object.assign({apikey: KEY, 'Content-Type': 'application/json'}, session ? {Authorization: 'Bearer ' + session.access_token} : {}, opt.headers || {});
     const r = await fetch(`${SB}/rest/v1/${path}`, Object.assign({}, opt, {headers}));
-    if (r.status === 401 && !retried && session) { try { await refresh(); } catch (e) { return signOut('Please sign in again.'); } return api(path, opt, true); }
+    if (r.status === 401 && !retried && session) { try { await refresh(); } catch (e) { signOut('Please sign in again.'); throw e; } return api(path, opt, true); }
     const text = await r.text(); let data = null; try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
-    if (!r.ok) { const m = (data && (data.message || data.hint)) || ('HTTP ' + r.status); const err = new Error(m); err.code = data && data.code; err.status = r.status; throw err; }
+    if (!r.ok) { const err = new Error((data && (data.message || data.hint)) || ('HTTP ' + r.status)); err.code = data && data.code; err.status = r.status; throw err; }
     return data;
   }
-  async function selectAll(table, query){
-    let all = [];
-    for (let off = 0; ; off += 1000) { const rows = await api(`${table}?${query}&limit=1000&offset=${off}`); all = all.concat(rows || []); if (!rows || rows.length < 1000) break; }
-    return all;
-  }
+  async function selectAll(table, query){ let all = []; for (let off = 0; ; off += 1000) { const rows = await api(`${table}?${query}&limit=1000&offset=${off}`); all = all.concat(rows || []); if (!rows || rows.length < 1000) break; } return all; }
+  const isMissing = e => e && (e.code === 'PGRST205' || e.code === '42P01' || e.status === 404 || /could not find the table|does not exist/i.test(e.message));
+  const NOPERM = 'Not allowed: run the setup SQL in Supabase (see the note at the top), then try again.';
+  const permMsg = e => /row-level security|permission|42501/i.test((e.message || '') + (e.code || '')) ? NOPERM : e.message;
+
   async function loadData(){
     $('loading').hidden = false;
-    try {
-      [cats, biz] = await Promise.all([selectAll('categories', 'select=*&order=sort_order.asc'), selectAll('businesses', 'select=*&order=id.asc')]);
-      $('syncAt').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-      fillFilters(); render();
-    } catch (e) { toast('Could not load data: ' + e.message); }
-    $('loading').hidden = true;
+    const get = async (key, table, q) => { try { D[key] = await selectAll(table, q); missing[key] = false; } catch (e) { if (isMissing(e)) { missing[key] = true; D[key] = []; } else { toast(table + ': ' + e.message); } } };
+    await Promise.all([get('cats', 'categories', 'select=*&order=sort_order.asc'), get('biz', 'businesses', 'select=*&order=id.asc'), get('cities', 'cities', 'select=*&order=sort_order.asc'), get('regs', 'registrations', 'select=*&order=created_at.desc'), get('admins', 'admins', 'select=*&order=email.asc')]);
+    if (missing.cities || !D.cities.length) D.cities = FALLBACK_CITIES;
+    $('syncAt').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    $('loading').hidden = true; setupNote(); fillSelects(); render();
+  }
+  function setupNote(){
+    const miss = ['cities', 'regs', 'admins'].filter(k => missing[k]);
+    const n = $('setupNote'); n.hidden = !miss.length;
+    if (miss.length) n.innerHTML = `<b>One-time setup needed.</b> Run this in Supabase → SQL Editor to turn on ${miss.map(k => ({cities: 'Cities', regs: 'register-form sign-ups', admins: 'Admins'})[k]).join(', ')} and editing rights. <button class="btn sm" id="copySql" style="margin-inline-start:8px">Copy SQL</button><pre class="sql">${esc(SETUP_SQL)}</pre>`;
+    const cb = $('copySql'); if (cb) cb.onclick = async () => { try { await navigator.clipboard.writeText(SETUP_SQL); toast('SQL copied'); } catch (e) { toast('Select the SQL and copy it'); } };
   }
 
   /* ---------- helpers ---------- */
-  const catName = id => { const c = cats.find(x => x.id === id); return c ? c.name_en : (id || '—'); };
-  const cityName = id => { const c = CITIES.find(x => x[0] === id); return c ? c[1] : (id || '—'); };
-  const stClass = s => STATUSES.includes(s) ? 's-' + s : 's-other';
-  const pill = s => `<span class="pill ${stClass(s)}">${esc(s || 'none')}</span>`;
-  const allStatuses = () => Array.from(new Set(STATUSES.concat(biz.map(b => b.status).filter(Boolean))));
-  const allCities = () => Array.from(new Set(CITIES.map(c => c[0]).concat(biz.map(b => b.city_id).filter(Boolean))));
-  function toast(t){ const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 3200); }
-
-  /* ---------- views ---------- */
-  function go(v){ view = v; $('dash').hidden = v !== 'dash'; $('list').hidden = v !== 'list'; document.querySelectorAll('.nav[data-view]').forEach(b => b.toggleAttribute('aria-current', b.dataset.view === v)); document.querySelectorAll('.nav[data-view]').forEach(b => { if (b.dataset.view === v) b.setAttribute('aria-current', 'page'); }); render(); window.scrollTo(0, 0); }
-  function render(){
-    const pend = biz.filter(b => b.status === 'pending');
-    $('pendBadge').hidden = !pend.length; $('pendBadge').textContent = pend.length;
-    if (view === 'dash') renderDash(pend); else renderList();
-  }
+  const catName = id => { const c = D.cats.find(x => x.id === id); return c ? c.name_en : (id || '—'); };
+  const cityName = id => { const c = D.cities.find(x => x.id === id); return c ? c.name_en : (id || '—'); };
+  const pill = (s, label) => `<span class="pill ${['approved','pending','rejected','hidden','new','live','soon'].includes(s) ? 's-' + s : 's-other'}">${esc(label || s || 'none')}</span>`;
+  const when = t => { if (!t) return '—'; const d = new Date(t); return d.toLocaleDateString([], {day: '2-digit', month: 'short'}) + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); };
+  const newRegs = () => D.regs.filter(r => r.status === 'new');
+  const pendBiz = () => D.biz.filter(b => b.status === 'pending');
+  const isHitex = r => /hitex/i.test(r.source || '') || (Date.parse(r.created_at) >= HITEX_FROM && Date.parse(r.created_at) < HITEX_TO);
+  const regCat = r => r.category_id === 'other' ? (r.category_other || 'Other') : catName(r.category_id);
+  function toast(t){ const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 3400); }
   function bars(el, pairs, onClick){
     const max = Math.max(1, ...pairs.map(p => p[2]));
     el.innerHTML = pairs.length ? pairs.map(([id, label, n]) => `<div class="bar" data-id="${esc(id)}"><span title="${esc(label)}">${esc(label)}</span><u><i style="width:${(n / max * 100).toFixed(1)}%"></i></u><b class="num">${n}</b></div>`).join('') : '<div class="empty">No data yet.</div>';
-    el.onclick = e => { const b = e.target.closest('.bar'); if (b) onClick(b.dataset.id); };
+    el.onclick = onClick ? (e => { const b = e.target.closest('.bar'); if (b) onClick(b.dataset.id); }) : null;
   }
-  function miniRows(list){ return list.map(b => `<div class="r" data-id="${b.id}"><div><b>${esc(b.name_en)}</b><small>${esc(catName(b.category_id))} · ${esc(cityName(b.city_id))}</small></div>${pill(b.status)}</div>`).join(''); }
-  function renderDash(pend){
-    const appr = biz.filter(b => b.status === 'approved'), ver = biz.filter(b => b.verified);
-    const T = [['all', 'All businesses', biz.length, 'var(--soft)'], ['approved', 'Live in the app', appr.length, 'var(--green)'], ['pending', 'Waiting for review', pend.length, 'var(--amber)'], ['verified', 'Verified', ver.length, 'var(--teal)']];
+  const bizMini = list => list.map(b => `<div class="r" data-biz="${b.id}"><div><b>${esc(b.name_en)}</b><small>${esc(catName(b.category_id))} · ${esc(cityName(b.city_id))}</small></div>${pill(b.status)}</div>`).join('');
+  const regMini = list => list.map(r => `<div class="r" data-reg="${r.id}"><div><b>${esc(r.business_name)}</b><small>Sign-up · ${esc(regCat(r))} · ${esc(cityName(r.city_id))} · ${when(r.created_at)}</small></div>${pill('new', 'New')}</div>`).join('');
+
+  /* ---------- views ---------- */
+  function go(v){ view = v; document.querySelectorAll('[data-page]').forEach(p => p.hidden = p.dataset.page !== v);
+    document.querySelectorAll('.nav[data-view]').forEach(b => b.dataset.view === v ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')); render(); window.scrollTo(0, 0); }
+  function render(){
+    const waiting = newRegs().length + pendBiz().length;
+    $('pendBadge').hidden = !waiting; $('pendBadge').textContent = waiting;
+    ({dash: rDash, biz: rBiz, pending: rPending, cats: rCats, cities: rCities, hitex: rHitex, admins: rAdmins})[view]();
+  }
+  function rDash(){
+    const live = D.biz.filter(b => b.status === 'approved'), waiting = newRegs().length + pendBiz().length;
+    const T = [['all', 'All businesses', D.biz.length, 'var(--soft)'], ['approved', 'Live in the app', live.length, 'var(--green)'], ['waiting', 'Waiting for review', waiting, 'var(--amber)'], ['hitex', 'HITEX26 sign-ups', D.regs.filter(isHitex).length, 'var(--coral)']];
     $('tiles').innerHTML = T.map(([k, l, n, c]) => `<button class="tile" data-k="${k}"><b class="num">${n}</b><span><i style="background:${c}"></i>${l}</span></button>`).join('');
-    $('pendN').textContent = pend.length ? pend.length + ' waiting' : '';
-    $('pendList').innerHTML = pend.length ? miniRows(pend.slice(0, 6)) : '<div class="empty">Nothing waiting. New registrations with status “pending” appear here.</div>';
-    $('recent').innerHTML = biz.length ? miniRows(biz.slice().sort((a, b) => b.id - a.id).slice(0, 6)) : '<div class="empty">No businesses yet.</div>';
-    const byCat = cats.map(c => [c.id, c.name_en, appr.filter(b => b.category_id === c.id).length]).filter(p => p[2]).sort((a, b) => b[2] - a[2]);
-    bars($('byCat'), byCat, id => { setFilters({cat: id, status: 'approved'}); go('list'); });
-    const byCity = allCities().map(id => [id, cityName(id), appr.filter(b => b.city_id === id).length]).filter(p => p[2]).sort((a, b) => b[2] - a[2]);
-    bars($('byCity'), byCity, id => { setFilters({city: id, status: 'approved'}); go('list'); });
+    $('pendN').textContent = waiting ? waiting + ' waiting' : '';
+    $('dPend').innerHTML = waiting ? regMini(newRegs().slice(0, 4)) + bizMini(pendBiz().slice(0, Math.max(0, 6 - Math.min(4, newRegs().length)))) : '<div class="empty">Nothing waiting. New sign-ups from the register form appear here.</div>';
+    $('dRecent').innerHTML = D.biz.length ? bizMini(D.biz.slice().sort((a, b) => b.id - a.id).slice(0, 6)) : '<div class="empty">No businesses yet.</div>';
+    bars($('byCat'), D.cats.map(c => [c.id, c.name_en, live.filter(b => b.category_id === c.id).length]).filter(p => p[2]).sort((a, b) => b[2] - a[2]), id => { setFilters({cat: id, status: 'approved'}); go('biz'); });
+    bars($('byCity'), D.cities.map(c => [c.id, c.name_en, live.filter(b => b.city_id === c.id).length]).filter(p => p[2]).sort((a, b) => b[2] - a[2]), id => { setFilters({city: id, status: 'approved'}); go('biz'); });
   }
-  function fillFilters(){
-    const keep = {s: $('fStatus').value, c: $('fCat').value, ci: $('fCity').value};
-    $('fStatus').innerHTML = '<option value="">All statuses</option>' + allStatuses().map(s => `<option value="${esc(s)}">${esc(s[0].toUpperCase() + s.slice(1))}</option>`).join('');
-    $('fCat').innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
-    $('fCity').innerHTML = '<option value="">All cities</option>' + allCities().map(id => `<option value="${esc(id)}">${esc(cityName(id))}</option>`).join('');
-    $('fStatus').value = keep.s; $('fCat').value = keep.c; $('fCity').value = keep.ci;
-    $('e_category_id').innerHTML = cats.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
-    $('e_city_id').innerHTML = allCities().map(id => `<option value="${esc(id)}">${esc(cityName(id))}</option>`).join('');
-    $('e_status').innerHTML = allStatuses().map(s => `<option value="${esc(s)}">${esc(s[0].toUpperCase() + s.slice(1))}</option>`).join('');
+  function fillSelects(){
+    const keep = ['fStatus', 'fCat', 'fCity'].map(id => $(id).value);
+    const sts = Array.from(new Set(B_STATUSES.concat(D.biz.map(b => b.status).filter(Boolean))));
+    $('fStatus').innerHTML = '<option value="">All statuses</option>' + sts.map(s => `<option value="${esc(s)}">${esc(s[0].toUpperCase() + s.slice(1))}</option>`).join('');
+    $('fCat').innerHTML = '<option value="">All categories</option>' + D.cats.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
+    $('fCity').innerHTML = '<option value="">All cities</option>' + D.cities.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
+    ['fStatus', 'fCat', 'fCity'].forEach((id, i) => $(id).value = keep[i]);
+    $('e_category_id').innerHTML = D.cats.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
+    $('e_city_id').innerHTML = D.cities.map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join('');
+    $('e_status').innerHTML = sts.map(s => `<option value="${esc(s)}">${esc(s[0].toUpperCase() + s.slice(1))}</option>`).join('');
   }
   function setFilters(f){ $('q').value = ''; $('fStatus').value = f.status || ''; $('fCat').value = f.cat || ''; $('fCity').value = f.city || ''; $('fVer').value = f.ver || ''; shown = PAGE; }
-  function filtered(){
+  function rBiz(){
     const q = $('q').value.trim().toLowerCase(), st = $('fStatus').value, c = $('fCat').value, ci = $('fCity').value, v = $('fVer').value;
-    return biz.filter(b => (!st || b.status === st) && (!c || b.category_id === c) && (!ci || b.city_id === ci) && (!v || (!!b.verified === (v === '1'))) &&
-      (!q || [b.name_en, b.name_ku, b.name_ar, b.owner, b.phone, b.whatsapp, b.address_en, b.address_ku, b.handle, String(b.id)].some(x => x && String(x).toLowerCase().includes(q))));
-  }
-  function renderList(){
-    const list = filtered().sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || b.id - a.id);
-    $('count').textContent = list.length === biz.length ? `${list.length} businesses` : `${list.length} of ${biz.length} businesses`;
-    $('rows').innerHTML = list.slice(0, shown).map(b => `<tr class="row" data-id="${b.id}"><td class="num" style="color:var(--muted)">${b.id}</td>
-      <td><span class="nm">${esc(b.name_en)}</span>${b.name_ku ? `<span class="ku">${esc(b.name_ku)}</span>` : ''}</td>
-      <td>${esc(catName(b.category_id))}</td><td>${esc(cityName(b.city_id))}</td><td class="num">${esc(b.phone || '—')}</td><td>${pill(b.status)}</td><td>${b.verified ? '<span class="vchk">✓</span>' : ''}</td></tr>`).join('')
-      || '<tr><td colspan="7" class="empty" style="padding:22px">No businesses match these filters.</td></tr>';
+    const list = D.biz.filter(b => (!st || b.status === st) && (!c || b.category_id === c) && (!ci || b.city_id === ci) && (!v || (!!b.verified === (v === '1'))) &&
+      (!q || [b.name_en, b.name_ku, b.name_ar, b.owner, b.phone, b.whatsapp, b.address_en, b.address_ku, b.handle, '#' + b.id].some(x => x && String(x).toLowerCase().includes(q))))
+      .sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || b.id - a.id);
+    $('bizCount').textContent = list.length === D.biz.length ? `${list.length} businesses` : `${list.length} of ${D.biz.length} businesses`;
+    $('bizRows').innerHTML = list.slice(0, shown).map(b => `<tr class="row" data-biz="${b.id}"><td class="num" style="color:var(--muted)">${b.id}</td><td><span class="nm">${esc(b.name_en)}</span>${b.name_ku ? `<span class="ku">${esc(b.name_ku)}</span>` : ''}</td><td>${esc(catName(b.category_id))}</td><td>${esc(cityName(b.city_id))}</td><td class="num">${esc(b.phone || '—')}</td><td>${pill(b.status)}</td><td>${b.verified ? '<span class="chk">✓</span>' : ''}</td></tr>`).join('') || '<tr><td colspan="7" class="empty" style="padding:22px">No businesses match these filters.</td></tr>';
     $('moreBtn').hidden = list.length <= shown;
   }
+  function regTable(list, cols){
+    return `<div class="tablewrap" style="border:0"><table><thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${list.map(r => `<tr class="row" data-reg="${r.id}"><td class="num">${when(r.created_at)}</td><td><span class="nm">${esc(r.business_name)}</span><span class="sub">${esc(r.owner || '')}</span></td><td>${esc(regCat(r))}</td><td>${esc(cityName(r.city_id))}</td><td class="num">${esc(r.phone || '—')}</td><td>${r.nfc ? `<span class="chk">✓ ${esc(r.nfc_qty || 1)}</span>` : ''}</td><td>${pill(r.status, r.status === 'new' ? 'New' : r.status)}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  function rPending(){
+    const nr = newRegs(), pb = pendBiz();
+    $('regN').textContent = nr.length ? nr.length + ' new' : '';
+    $('bizPN').textContent = pb.length ? String(pb.length) : '';
+    $('pRegs').innerHTML = missing.regs ? '<div class="empty">Sign-ups from the register form will appear here after the one-time setup (see the note at the top).</div>' : nr.length ? regTable(nr, ['Received', 'Business', 'Category', 'City', 'Phone', 'NFC card', 'Status']) : '<div class="empty">No new sign-ups.</div>';
+    $('pBiz').innerHTML = pb.length ? bizMini(pb) : '<div class="empty">No businesses marked pending.</div>';
+  }
+  function rCats(){
+    $('catRows').innerHTML = D.cats.map(c => `<tr class="row" data-cat="${esc(c.id)}"><td class="num">${esc(c.sort_order)}</td><td class="nm">${esc(c.name_en)}</td><td class="rtl">${esc(c.name_ku || '')}</td><td class="rtl">${esc(c.name_ar || '')}</td><td style="color:var(--muted)">${esc(c.id)}</td><td style="color:var(--muted)">${esc(c.icon || '')}</td><td class="num">${D.biz.filter(b => b.category_id === c.id).length}</td></tr>`).join('') || '<tr><td colspan="7" class="empty" style="padding:22px">No categories.</td></tr>';
+  }
+  function rCities(){
+    $('cityRows').innerHTML = (missing.cities ? '<tr><td colspan="7" class="empty" style="padding:14px 14px 0">Showing the built-in list. Run the setup SQL to edit cities.</td></tr>' : '') +
+      D.cities.map(c => `<tr class="row" data-city="${esc(c.id)}"><td class="num">${esc(c.sort_order)}</td><td class="nm">${esc(c.name_en)}</td><td class="rtl">${esc(c.name_ku || '')}</td><td class="rtl">${esc(c.name_ar || '')}</td><td style="color:var(--muted)">${esc(c.id)}</td><td>${c.live ? pill('live', 'Live') : pill('soon', 'Coming soon')}</td><td class="num">${D.biz.filter(b => b.city_id === c.id).length}</td></tr>`).join('');
+  }
+  function rHitex(){
+    const list = D.regs.filter(isHitex), nfc = list.filter(r => r.nfc);
+    const cards = nfc.reduce((s, r) => s + (parseInt(r.nfc_qty, 10) || 1), 0);
+    $('hTiles').innerHTML = [['Sign-ups', list.length, 'var(--coral)'], ['Approved', list.filter(r => r.status === 'approved').length, 'var(--green)'], ['Waiting', list.filter(r => r.status === 'new').length, 'var(--amber)'], ['NFC cards ordered', cards, 'var(--teal)']]
+      .map(([l, n, c]) => `<div class="tile"><b class="num">${n}</b><span><i style="background:${c}"></i>${l}</span></div>`).join('');
+    const days = {}; list.forEach(r => { const d = new Date(r.created_at).toLocaleDateString([], {weekday: 'short', day: '2-digit', month: 'short'}); days[d] = (days[d] || 0) + 1; });
+    bars($('hDay'), Object.entries(days).map(([d, n]) => [d, d, n]));
+    const cs = {}; list.forEach(r => { const k = regCat(r); cs[k] = (cs[k] || 0) + 1; });
+    bars($('hCat'), Object.entries(cs).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k, k, n]));
+    $('hRows').innerHTML = missing.regs ? '<tr><td colspan="7" class="empty" style="padding:22px">Run the one-time setup to start collecting sign-ups.</td></tr>' :
+      list.map(r => `<tr class="row" data-reg="${r.id}"><td class="num">${when(r.created_at)}</td><td><span class="nm">${esc(r.business_name)}</span><span class="sub">${esc(r.owner || '')}</span></td><td>${esc(regCat(r))}</td><td>${esc(cityName(r.city_id))}</td><td class="num">${esc(r.phone || '—')}</td><td>${r.nfc ? `<span class="chk">✓ ${esc(r.nfc_qty || 1)}</span>` : ''}</td><td>${pill(r.status, r.status === 'new' ? 'New' : r.status)}</td></tr>`).join('') || '<tr><td colspan="7" class="empty" style="padding:22px">No HITEX26 sign-ups yet.</td></tr>';
+  }
+  function rAdmins(){
+    $('adminForm').hidden = !!missing.admins;
+    $('adminRows').innerHTML = missing.admins ? '<tr><td colspan="3" class="empty" style="padding:22px">Run the one-time setup to manage admins here.</td></tr>' :
+      D.admins.map(a => `<tr><td class="nm">${esc(a.email)}${session && a.email.toLowerCase() === (session.email || '').toLowerCase() ? ' <span class="sub" style="display:inline">(you)</span>' : ''}</td><td class="num" style="color:var(--muted)">${a.created_at ? when(a.created_at) : '—'}</td><td style="text-align:end">${session && a.email.toLowerCase() === (session.email || '').toLowerCase() ? '' : `<button class="btn danger sm" data-rm="${esc(a.email)}">Remove</button>`}</td></tr>`).join('') || '<tr><td colspan="3" class="empty" style="padding:22px">No admins listed.</td></tr>';
+  }
 
-  /* ---------- editor ---------- */
-  function openEditor(b){
-    editing = b || null;
-    const d = b || {status: 'approved', city_id: 'sulaymaniyah', category_id: cats[0] && cats[0].id, rating: 0, reviews: 0, verified: false};
-    FIELDS.forEach(f => { const el = $('e_' + f); if (el) el.value = d[f] == null ? '' : d[f]; });
+  /* ---------- drawers ---------- */
+  function openDrawer(id){ ['ed', 'rv', 'se'].forEach(d => $(d).hidden = d !== id); $('scrim').hidden = false; }
+  function closeDrawers(){ ['ed', 'rv', 'se'].forEach(d => $(d).hidden = true); $('scrim').hidden = true; editing = regOpen = linkReg = simple = null; }
+  const setMsg = (id, t, k) => { const m = $(id); m.textContent = t; m.className = 'msg grow' + (k ? ' ' + k : ''); };
+
+  /* business editor */
+  function openBiz(b, prefill, reg){
+    editing = b || null; linkReg = reg || null;
+    const d = b || Object.assign({status: 'approved', city_id: 'sulaymaniyah', category_id: D.cats[0] && D.cats[0].id, rating: 0, reviews: 0, verified: false}, prefill || {});
+    BF.forEach(f => { const el = $('e_' + f); if (el) el.value = d[f] == null ? '' : d[f]; });
     $('e_verified').checked = !!d.verified;
-    $('edTitle').textContent = b ? b.name_en || 'Business' : 'New business';
-    $('edSub').textContent = b ? `#${b.id} · ${b.status || 'no status'}` : 'Fill in the details and save';
+    $('edTitle').textContent = b ? (b.name_en || 'Business') : reg ? 'Approve sign-up' : 'New business';
+    $('edSub').textContent = b ? `#${b.id} · ${b.status || 'no status'}` : reg ? `From sign-up #${reg.id}. Check the details, then save to publish.` : 'Fill in the details and save';
     $('edDel').hidden = !b; $('edApprove').hidden = !b || b.status === 'approved';
-    $('edDel').classList.remove('sure'); $('edDel').textContent = 'Delete';
-    msg('');
-    $('ed').hidden = false; $('scrim').hidden = false; setTimeout(() => $('e_name_en').focus(), 50);
+    $('edSave').textContent = reg ? 'Publish business' : 'Save';
+    $('edDel').classList.remove('sure'); $('edDel').textContent = 'Delete'; setMsg('edMsg', '');
+    const ce = $('e_category_id'); const ph = ce.querySelector('option[value=""]'); if (ph) ph.remove();
+    if (!d.category_id || !D.cats.some(c => c.id === d.category_id)) {
+      ce.insertAdjacentHTML('afterbegin', '<option value="">Choose a category…</option>'); ce.value = '';
+      if (reg) setMsg('edMsg', 'They chose “' + regCat(reg) + '”, which is not a category yet. Pick one, or add it under Categories first.', 'bad');
+    }
+    openDrawer('ed'); setTimeout(() => $('e_name_en').focus(), 50);
   }
-  function closeEditor(){ $('ed').hidden = true; $('scrim').hidden = true; editing = null; }
-  function msg(t, kind){ const m = $('edMsg'); m.textContent = t; m.className = 'msg grow' + (kind ? ' ' + kind : ''); }
-  function readForm(){
-    const o = {};
-    FIELDS.forEach(f => { const v = $('e_' + f).value.trim(); o[f] = v === '' ? null : v; });
-    o.rating = o.rating == null ? 0 : Math.max(0, Math.min(5, Number(o.rating) || 0));
-    o.reviews = o.reviews == null ? 0 : Math.max(0, parseInt(o.reviews, 10) || 0);
-    o.verified = $('e_verified').checked;
-    return o;
+  function readBiz(){
+    const o = {}; BF.forEach(f => { const v = $('e_' + f).value.trim(); o[f] = v === '' ? null : v; });
+    o.rating = Math.max(0, Math.min(5, Number(o.rating) || 0)); o.reviews = Math.max(0, parseInt(o.reviews, 10) || 0); o.verified = $('e_verified').checked; return o;
   }
-  const NOPERM = 'Your account is not allowed to change data yet. Run the admin SQL in Supabase, then try again.';
-  async function save(extra){
-    const o = Object.assign(readForm(), extra || {});
-    if (!o.name_en) { msg('English name is required.', 'bad'); $('e_name_en').focus(); return; }
-    if (!o.phone) { msg('Phone is required.', 'bad'); $('e_phone').focus(); return; }
-    $('edSave').disabled = $('edApprove').disabled = true; msg('Saving…');
+  async function insertBiz(o){
+    try { return await api('businesses', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); }
+    catch (e) { if (e.code === '23502' && /id/.test(e.message)) { o.id = D.biz.reduce((m, b) => Math.max(m, Number(b.id) || 0), 0) + 1; return api('businesses', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); } throw e; }
+  }
+  async function saveBiz(extra){
+    const o = Object.assign(readBiz(), extra || {});
+    if (!o.name_en) { setMsg('edMsg', 'English name is required.', 'bad'); $('e_name_en').focus(); return; }
+    if (!o.phone) { setMsg('edMsg', 'Phone is required.', 'bad'); $('e_phone').focus(); return; }
+    if (!o.category_id) { setMsg('edMsg', 'Choose a category.', 'bad'); $('e_category_id').focus(); return; }
+    $('edSave').disabled = $('edApprove').disabled = true; setMsg('edMsg', 'Saving…');
     try {
       let row;
-      if (editing) {
-        const r = await api(`businesses?id=eq.${editing.id}`, {method: 'PATCH', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)});
-        if (!r || !r.length) throw new Error(NOPERM);
-        row = r[0]; biz = biz.map(b => b.id === row.id ? row : b);
-      } else {
-        let r;
-        try { r = await api('businesses', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); }
-        catch (e) {
-          if (e.code === '23502' && /id/.test(e.message)) { o.id = biz.reduce((m, b) => Math.max(m, Number(b.id) || 0), 0) + 1; r = await api('businesses', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); }
-          else throw e;
-        }
-        if (!r || !r.length) throw new Error(NOPERM);
-        row = r[0]; biz.push(row);
-      }
-      fillFilters(); render(); closeEditor(); toast(editing ? 'Saved' : `Saved “${row.name_en}”`);
-    } catch (e) {
-      msg(/row-level security|permission|42501/i.test(e.message + (e.code || '')) ? NOPERM : e.message, 'bad');
-    }
+      if (editing) { const r = await api(`businesses?id=eq.${editing.id}`, {method: 'PATCH', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)}); if (!r || !r.length) throw new Error(NOPERM); row = r[0]; D.biz = D.biz.map(b => b.id === row.id ? row : b); }
+      else { const r = await insertBiz(o); if (!r || !r.length) throw new Error(NOPERM); row = r[0]; D.biz.push(row); }
+      if (linkReg) { try { const rr = await api(`registrations?id=eq.${linkReg.id}`, {method: 'PATCH', headers: {Prefer: 'return=representation'}, body: JSON.stringify({status: 'approved', business_id: row.id})}); if (rr && rr[0]) D.regs = D.regs.map(x => x.id === rr[0].id ? rr[0] : x); } catch (e) { toast('Business saved, but the sign-up could not be marked approved: ' + e.message); } }
+      const wasNew = !editing, fromReg = !!linkReg;
+      fillSelects(); closeDrawers(); render(); toast(fromReg ? `Published “${row.name_en}”` : wasNew ? `Added “${row.name_en}”` : 'Saved');
+    } catch (e) { setMsg('edMsg', permMsg(e), 'bad'); }
     $('edSave').disabled = $('edApprove').disabled = false;
   }
-  async function del(){
-    const b = $('edDel');
-    if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'Tap again to delete'; return; }
-    b.disabled = true; msg('Deleting…');
-    try {
-      const r = await api(`businesses?id=eq.${editing.id}`, {method: 'DELETE', headers: {Prefer: 'return=representation'}});
-      if (!r || !r.length) throw new Error(NOPERM);
-      const name = editing.name_en; biz = biz.filter(x => x.id !== editing.id); render(); closeEditor(); toast(`Deleted “${name}”`);
-    } catch (e) { msg(/row-level security|permission|42501/i.test(e.message + (e.code || '')) ? NOPERM : e.message, 'bad'); b.classList.remove('sure'); b.textContent = 'Delete'; }
+  async function delBiz(){
+    const b = $('edDel'); if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'Tap again to delete'; return; }
+    b.disabled = true; setMsg('edMsg', 'Deleting…');
+    try { const r = await api(`businesses?id=eq.${editing.id}`, {method: 'DELETE', headers: {Prefer: 'return=representation'}}); if (!r || !r.length) throw new Error(NOPERM);
+      const n = editing.name_en; D.biz = D.biz.filter(x => x.id !== editing.id); closeDrawers(); render(); toast(`Deleted “${n}”`); }
+    catch (e) { setMsg('edMsg', permMsg(e), 'bad'); b.classList.remove('sure'); b.textContent = 'Delete'; }
     b.disabled = false;
   }
 
+  /* registration viewer */
+  function openReg(r){
+    regOpen = r;
+    $('rvTitle').textContent = r.business_name; $('rvSub').textContent = `Sign-up #${r.id} · ${when(r.created_at)} · ${r.status}`;
+    const rows = [['Category', regCat(r)], ['Owner', r.owner], ['Phone', r.phone], ['WhatsApp', r.whatsapp], ['City', cityName(r.city_id)], ['Area / street', r.area], ['Building', r.building], ['Apartment / office', r.apartment],
+      ['Map', r.map_link ? `<a href="${esc(r.map_link)}" target="_blank" rel="noopener">Open pin in Google Maps</a>` : ''], ['Description', r.description],
+      ['NFC card', r.nfc ? `Yes · ${esc(r.nfc_qty || 1)} card(s) · name: ${esc(r.nfc_name || r.business_name)}` : 'No'], ['Language', r.language], ['Source', r.source],
+      ['Business', r.business_id ? `#${esc(r.business_id)} (created)` : '']];
+    $('rvKv').innerHTML = rows.filter(x => x[1]).map(([k, v]) => `<div>${esc(k)}</div><div>${/^<a /.test(v) || /^Yes ·/.test(v) ? v : esc(v)}</div>`).join('');
+    $('rvApprove').hidden = r.status === 'approved'; $('rvReject').hidden = r.status !== 'new';
+    $('rvDel').classList.remove('sure'); $('rvDel').textContent = 'Delete'; setMsg('rvMsg', '');
+    openDrawer('rv');
+  }
+  function regToBiz(r){
+    const addr = [r.area, r.building && 'Building ' + r.building, r.apartment && 'Apt/Office ' + r.apartment].filter(Boolean).join(', ');
+    const cat = D.cats.find(c => c.id === r.category_id) ? r.category_id : '';
+    const city = D.cities.find(c => c.id === r.city_id) ? r.city_id : 'sulaymaniyah';
+    return {name_en: r.business_name, owner: r.owner, phone: r.phone, whatsapp: r.whatsapp || r.phone, city_id: city, category_id: cat,
+      address_en: addr ? addr + ', ' + cityName(city) : cityName(city), status: 'approved', verified: false, rating: 0, reviews: 0};
+  }
+  async function patchReg(fields, okText){
+    try { const r = await api(`registrations?id=eq.${regOpen.id}`, {method: 'PATCH', headers: {Prefer: 'return=representation'}, body: JSON.stringify(fields)}); if (!r || !r.length) throw new Error(NOPERM);
+      D.regs = D.regs.map(x => x.id === r[0].id ? r[0] : x); closeDrawers(); render(); toast(okText); }
+    catch (e) { setMsg('rvMsg', permMsg(e), 'bad'); }
+  }
+
+  /* category / city editor */
+  function openSimple(kind, row){
+    simple = {kind, row};
+    $('seTitle').textContent = row ? row.name_en : kind === 'cat' ? 'New category' : 'New city';
+    $('seSub').textContent = row ? `${kind === 'cat' ? 'Category' : 'City'} · ${row.id}` : 'Fill in the names and save';
+    ['name_en', 'name_ku', 'name_ar', 'id', 'sort_order', 'icon'].forEach(f => $('s_' + f).value = row && row[f] != null ? row[f] : '');
+    if (!row) $('s_sort_order').value = (kind === 'cat' ? D.cats : D.cities).reduce((m, x) => Math.max(m, Number(x.sort_order) || 0), -1) + 1;
+    $('s_id').readOnly = !!row; $('s_live').checked = row ? !!row.live : true;
+    $('s_iconWrap').hidden = kind !== 'cat'; $('s_liveWrap').hidden = kind !== 'city';
+    $('seDel').hidden = !row; $('seDel').classList.remove('sure'); $('seDel').textContent = 'Delete'; setMsg('seMsg', '');
+    openDrawer('se'); setTimeout(() => $('s_name_en').focus(), 50);
+  }
+  const slug = s => String(s || '').toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  async function saveSimple(){
+    const {kind, row} = simple, table = kind === 'cat' ? 'categories' : 'cities', key = kind === 'cat' ? 'cats' : 'cities';
+    if (kind === 'city' && missing.cities) { setMsg('seMsg', 'Run the setup SQL first to edit cities.', 'bad'); return; }
+    const o = {name_en: $('s_name_en').value.trim(), name_ku: $('s_name_ku').value.trim() || null, name_ar: $('s_name_ar').value.trim() || null, sort_order: parseInt($('s_sort_order').value, 10) || 0};
+    if (kind === 'cat') o.icon = $('s_icon').value.trim() || 'grid'; else o.live = $('s_live').checked;
+    if (!o.name_en) { setMsg('seMsg', 'English name is required.', 'bad'); return; }
+    const id = row ? row.id : (slug($('s_id').value) || slug(o.name_en));
+    if (!row && D[key].some(x => x.id === id)) { setMsg('seMsg', `The ID “${id}” is already used.`, 'bad'); return; }
+    $('seSave').disabled = true; setMsg('seMsg', 'Saving…');
+    try {
+      const r = row ? await api(`${table}?id=eq.${encodeURIComponent(id)}`, {method: 'PATCH', headers: {Prefer: 'return=representation'}, body: JSON.stringify(o)})
+                    : await api(table, {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify(Object.assign({id}, o))});
+      if (!r || !r.length) throw new Error(NOPERM);
+      D[key] = row ? D[key].map(x => x.id === id ? r[0] : x) : D[key].concat(r[0]);
+      D[key].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+      fillSelects(); closeDrawers(); render(); toast(row ? 'Saved' : `Added “${o.name_en}”`);
+    } catch (e) { setMsg('seMsg', permMsg(e), 'bad'); }
+    $('seSave').disabled = false;
+  }
+  async function delSimple(){
+    const {kind, row} = simple, table = kind === 'cat' ? 'categories' : 'cities', key = kind === 'cat' ? 'cats' : 'cities';
+    const used = D.biz.filter(b => (kind === 'cat' ? b.category_id : b.city_id) === row.id).length;
+    if (used) { setMsg('seMsg', `${used} businesses use this ${kind === 'cat' ? 'category' : 'city'}. Move them first.`, 'bad'); return; }
+    const b = $('seDel'); if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'Tap again to delete'; return; }
+    try { const r = await api(`${table}?id=eq.${encodeURIComponent(row.id)}`, {method: 'DELETE', headers: {Prefer: 'return=representation'}}); if (!r || !r.length) throw new Error(NOPERM);
+      D[key] = D[key].filter(x => x.id !== row.id); fillSelects(); closeDrawers(); render(); toast(`Deleted “${row.name_en}”`); }
+    catch (e) { setMsg('seMsg', permMsg(e), 'bad'); b.classList.remove('sure'); b.textContent = 'Delete'; }
+  }
+
+  /* admins */
+  $('adminForm').addEventListener('submit', async e => {
+    e.preventDefault(); const email = $('adminEmail').value.trim().toLowerCase(); if (!email) return;
+    if (D.admins.some(a => a.email.toLowerCase() === email)) { toast('Already an admin'); return; }
+    try { const r = await api('admins', {method: 'POST', headers: {Prefer: 'return=representation'}, body: JSON.stringify({email})}); if (!r || !r.length) throw new Error(NOPERM); D.admins.push(r[0]); $('adminEmail').value = ''; render(); toast(`Added ${email}`); }
+    catch (err) { toast(permMsg(err)); }
+  });
+  $('adminRows').addEventListener('click', async e => {
+    const b = e.target.closest('[data-rm]'); if (!b) return;
+    if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'Tap again'; return; }
+    try { const r = await api(`admins?email=eq.${encodeURIComponent(b.dataset.rm)}`, {method: 'DELETE', headers: {Prefer: 'return=representation'}}); if (!r || !r.length) throw new Error(NOPERM); D.admins = D.admins.filter(a => a.email !== b.dataset.rm); render(); toast('Removed'); }
+    catch (err) { toast(permMsg(err)); }
+  });
+
+  /* CSV */
+  $('csvBtn').addEventListener('click', () => {
+    const list = D.regs.filter(isHitex); if (!list.length) { toast('No HITEX26 sign-ups yet'); return; }
+    const cols = ['id', 'created_at', 'status', 'business_name', 'category_id', 'category_other', 'owner', 'phone', 'whatsapp', 'city_id', 'area', 'building', 'apartment', 'map_link', 'description', 'nfc', 'nfc_qty', 'nfc_name', 'language', 'source'];
+    const q = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const csv = '﻿' + [cols.join(',')].concat(list.map(r => cols.map(c => q(r[c])).join(','))).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+    const a = document.createElement('a'); a.href = url; a.download = 'bmnassa-hitex26-signups.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+  });
+
   /* ---------- wiring ---------- */
   function signIn(s){ saveSession(s); $('login').hidden = true; $('app').hidden = false; $('meEmail').textContent = s.email || ''; go('dash'); loadData(); }
-  function signOut(note){ saveSession(null); $('app').hidden = true; $('login').hidden = false; $('lErr').textContent = typeof note === 'string' ? note : ''; closeEditor(); }
-  $('loginForm').addEventListener('submit', async e => {
-    e.preventDefault(); $('lErr').textContent = ''; $('lBtn').disabled = true;
-    try { signIn(await authCall('password', {email: $('lEmail').value.trim(), password: $('lPass').value})); }
-    catch (err) { $('lErr').textContent = /invalid/i.test(err.message) ? 'Wrong email or password.' : err.message; }
-    $('lBtn').disabled = false;
-  });
+  function signOut(note){ saveSession(null); $('app').hidden = true; $('login').hidden = false; $('lErr').textContent = typeof note === 'string' ? note : ''; closeDrawers(); }
+  $('loginForm').addEventListener('submit', async e => { e.preventDefault(); $('lErr').textContent = ''; $('lBtn').disabled = true;
+    try { signIn(await authCall('password', {email: $('lEmail').value.trim(), password: $('lPass').value})); } catch (err) { $('lErr').textContent = /invalid/i.test(err.message) ? 'Wrong email or password.' : err.message; }
+    $('lBtn').disabled = false; });
   $('outBtn').addEventListener('click', () => signOut());
   document.querySelectorAll('.nav[data-view]').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
-  $('addBtn').addEventListener('click', () => openEditor(null)); $('addBtn2').addEventListener('click', () => openEditor(null));
-  $('tiles').addEventListener('click', e => { const t = e.target.closest('.tile'); if (!t) return; const k = t.dataset.k;
-    setFilters(k === 'verified' ? {ver: '1'} : k === 'all' ? {} : {status: k}); go('list'); });
-  ['pendList', 'recent'].forEach(id => $(id).addEventListener('click', e => { const r = e.target.closest('.r'); if (r) openEditor(biz.find(b => String(b.id) === r.dataset.id)); }));
-  $('rows').addEventListener('click', e => { const r = e.target.closest('tr.row'); if (r) openEditor(biz.find(b => String(b.id) === r.dataset.id)); });
-  ['q', 'fStatus', 'fCat', 'fCity', 'fVer'].forEach(id => $(id).addEventListener('input', () => { shown = PAGE; renderList(); }));
-  $('moreBtn').addEventListener('click', () => { shown += PAGE; renderList(); });
-  $('ed').addEventListener('submit', e => { e.preventDefault(); save(); });
-  $('edApprove').addEventListener('click', () => save({status: 'approved'}));
-  $('edDel').addEventListener('click', del);
-  $('edClose').addEventListener('click', closeEditor); $('scrim').addEventListener('click', closeEditor);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ed').hidden) closeEditor(); });
+  document.querySelectorAll('[data-reload]').forEach(b => b.addEventListener('click', loadData));
+  document.addEventListener('click', e => {
+    const add = e.target.closest('[data-add]'); if (add) { const k = add.dataset.add; k === 'biz' ? openBiz(null) : openSimple(k, null); return; }
+    const t = e.target.closest('.tile[data-k]'); if (t) { const k = t.dataset.k; if (k === 'waiting') return go('pending'); if (k === 'hitex') return go('hitex'); setFilters(k === 'all' ? {} : {status: k}); return go('biz'); }
+    const rb = e.target.closest('[data-biz]'); if (rb) { const b = D.biz.find(x => String(x.id) === rb.dataset.biz); if (b) openBiz(b); return; }
+    const rr = e.target.closest('[data-reg]'); if (rr) { const r = D.regs.find(x => String(x.id) === rr.dataset.reg); if (r) openReg(r); return; }
+    const rc = e.target.closest('[data-cat]'); if (rc) { openSimple('cat', D.cats.find(x => x.id === rc.dataset.cat)); return; }
+    const rci = e.target.closest('[data-city]'); if (rci) { openSimple('city', D.cities.find(x => x.id === rci.dataset.city)); return; }
+    if (e.target.closest('[data-close]') || e.target === $('scrim')) closeDrawers();
+  });
+  ['q', 'fStatus', 'fCat', 'fCity', 'fVer'].forEach(id => $(id).addEventListener('input', () => { shown = PAGE; rBiz(); }));
+  $('moreBtn').addEventListener('click', () => { shown += PAGE; rBiz(); });
+  $('ed').addEventListener('submit', e => { e.preventDefault(); saveBiz(); });
+  $('edApprove').addEventListener('click', () => saveBiz({status: 'approved'}));
+  $('edDel').addEventListener('click', delBiz);
+  $('rvApprove').addEventListener('click', () => { const r = regOpen; openBiz(null, regToBiz(r), r); });
+  $('rvReject').addEventListener('click', () => patchReg({status: 'rejected'}, 'Sign-up rejected'));
+  $('rvDel').addEventListener('click', async () => { const b = $('rvDel'); if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'Tap again to delete'; return; }
+    try { const r = await api(`registrations?id=eq.${regOpen.id}`, {method: 'DELETE', headers: {Prefer: 'return=representation'}}); if (!r || !r.length) throw new Error(NOPERM); D.regs = D.regs.filter(x => x.id !== regOpen.id); closeDrawers(); render(); toast('Sign-up deleted'); }
+    catch (e) { setMsg('rvMsg', permMsg(e), 'bad'); } });
+  $('se').addEventListener('submit', e => { e.preventDefault(); saveSimple(); });
+  $('seDel').addEventListener('click', delSimple);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
 
   let stored = null; try { stored = JSON.parse(localStorage.getItem(SKEY) || 'null'); } catch (e) {}
   if (stored && stored.refresh_token) signIn(stored); else signOut();

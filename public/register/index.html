@@ -657,12 +657,23 @@ async function send(){
     about: S.desc.trim(), nfc: S.nfc ? 'Yes' : 'No', nfc_qty: S.nfc ? String(S.qty) : '', nfc_name: S.nfc ? (S.cardName.trim() || S.name.trim()) : '',
     lang: {en: 'English', ku: 'Kurdish', ar: 'Arabic'}[lang] || lang, source: KIOSK ? 'HITEX stand iPad' : 'Website' });
   let fallback = false;
+  /* also save into the Bmnassa database (registrations table) so it shows up in the back office */
+  const dbRow = {status: 'new', business_name: S.name.trim(), category_id: S.cat || null, category_other: S.cat === 'other' ? S.other.trim() : null,
+    owner: S.owner.trim() || null, phone: phone || null, whatsapp: wa || null, city_id: S.city || null,
+    area: S.addr.trim() || null, building: (S.bldg || '').trim() || null, apartment: (S.apt || '').trim() || null,
+    lat: S.lat, lng: S.lng, map_link: mapLink() || null, description: S.desc.trim() || null,
+    nfc: !!S.nfc, nfc_qty: S.nfc ? S.qty : null, nfc_name: S.nfc ? (S.cardName.trim() || S.name.trim()) : null,
+    language: {en: 'English', ku: 'Kurdish', ar: 'Arabic'}[lang] || lang, source: KIOSK ? 'HITEX stand iPad' : 'Website'};
+  const dbSave = fetch('https://hfcqvcduuhzfxijsniav.supabase.co/rest/v1/registrations', {method: 'POST',
+    headers: {apikey: 'sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh', 'Content-Type': 'application/json', Prefer: 'return=minimal'},
+    body: JSON.stringify(dbRow)}).then(r => r.ok).catch(() => false);
   try { await fetch(SHEET, { method: 'POST', mode: 'no-cors', body: params }); }
   catch (err) {
     fallback = true;
     const lines = ['New business registration for Bmnassa:', '', 'Business name: ' + params.get('name'), 'Category: ' + params.get('category'), params.get('owner') && 'Owner: ' + params.get('owner'), 'Phone: ' + phone, wa && 'WhatsApp: ' + wa, 'City: ' + params.get('city'), params.get('address') && 'Address / neighborhood: ' + params.get('address'), order && '>> ' + order, S.desc.trim() && 'Description: ' + S.desc.trim()].filter(Boolean);
     const a = document.createElement('a'); a.href = 'https://wa.me/' + TEAM_WA + '?text=' + encodeURIComponent(lines.join('\n')); a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
   }
+  await Promise.race([dbSave, new Promise(r => setTimeout(r, 6000))]);
   const sp = $('spin'); if (sp) sp.remove(); btn.disabled = false;
   const t = L(); $('doneTitle').textContent = fallback ? t.fbTitle : t.okTitle; $('doneText').textContent = fallback ? t.fbText : t.okText;
   $('form').hidden = true; $('stepsWrap').hidden = true; $('done').hidden = false;
