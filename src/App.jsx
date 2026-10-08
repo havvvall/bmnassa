@@ -5281,9 +5281,9 @@ async function sbSelect(table, query) {
   for (let offset = 0; ; offset += pageSize) {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/${table}?${query}&limit=${pageSize}&offset=${offset}`,
-      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+      { headers: { apikey: SUPABASE_KEY } } // new sb_publishable_ keys go in apikey only (not a JWT, so no Bearer header)
     );
-    if (!res.ok) throw new Error(`${table}: HTTP ${res.status}`);
+    if (!res.ok) throw new Error(`${table}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`);
     const rows = await res.json();
     all = all.concat(rows);
     if (rows.length < pageSize) break;
@@ -5446,7 +5446,7 @@ export default function App() {
         setCategories(d.categories);
         writeDataCache(d);
       })
-      .catch(() => { /* keep bundled/cached data */ });
+      .catch((err) => { console.warn('[Bmnassa] live data not loaded, using built-in list:', err && err.message); });
     return () => { cancelled = true; };
   }, []);
   const [favorites, setFavorites] = useState(() => new Set());
