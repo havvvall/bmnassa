@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="format-detection" content="telephone=no, email=no, address=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1014">
+<meta name="description" content="Hanar Nwralden Abdullah, AC & Refrigeration in Erbil. Free quote. Call or WhatsApp.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://bmnassa.vercel.app/hanar">
+<meta property="og:title" content="Hanar Nwralden Abdullah · AC & Refrigeration">
+<meta property="og:description" content="AC & refrigeration in Erbil. Free quote. Tap to call or WhatsApp.">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Hanar Abdullah · Bmnassa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Kufi+Arabic:wght@500;600;700;800&display=swap">
+</head>
+<body>
+<style>
+/* Layout: the whole phone screen is the card; front = identity + actions, back = contacts + QR; colour sheet slides up inside the card. Single dark brand world. */
+:root{
+  --ink:#06090b; --teal:#1fc6c0; --coral:#f0806a;
+  --card:#0b1014; --cfg:#f4f6f7; --csoft:rgba(244,246,247,.66); --cline:rgba(244,246,247,.16); --cglass:rgba(244,246,247,.08); --cline2:rgba(244,246,247,.38);
+  --bbg:#ffffff; --bfg:#0b1014;
+  --f-ui:'Manrope','Helvetica Neue',Arial,sans-serif; --f-kufi:'Noto Kufi Arabic','Manrope',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.qr{display:block!important}
+.qr>svg{width:100%!important;height:100%!important;display:block}
+html,body{height:100%;background:var(--ink)}
+body{margin:0;color:var(--cfg);font-family:var(--f-ui);-webkit-font-smoothing:antialiased;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));display:flex;justify-content:center}
+[dir=rtl] body,[dir=rtl] button,[dir=rtl] a{font-family:var(--f-kufi)}
+.scene{width:100%;max-width:440px;height:100%;min-height:600px;perspective:2000px}
+.card{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.card.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:30px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);color:var(--cfg);
+  box-shadow:0 30px 70px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.07);transition:background .5s,color .5s;
+  display:flex;flex-direction:column;padding:18px 20px 20px}
+.face::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 55% at 0% 0%,rgba(255,255,255,.17),transparent 60%),radial-gradient(80% 50% at 100% 100%,rgba(0,0,0,.25),transparent 60%),repeating-linear-gradient(118deg,rgba(255,255,255,.022) 0 2px,transparent 2px 7px)}
+.face::after{content:"";position:absolute;inset:-30%;pointer-events:none;background:linear-gradient(105deg,transparent 44%,rgba(255,255,255,.1) 50%,transparent 56%);animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{0%,45%{transform:translateX(-55%)}85%,100%{transform:translateX(55%)}}
+.face>*{position:relative;z-index:1}
+.back{transform:rotateY(180deg)}
+.card.flip .front,.card:not(.flip) .back{pointer-events:none}
+.edge{position:absolute!important;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--teal),var(--coral))}
+.logo path{fill:currentColor}
+
+/* top bar inside card */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.langs{direction:ltr;position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:3px;border-radius:99px;background:var(--cglass);border:1px solid var(--cline);width:164px}
+.langs .thumb{position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/3);border-radius:99px;background:var(--bbg);transition:transform .4s cubic-bezier(.3,1.3,.5,1),background .5s}
+.langs button{position:relative;z-index:1;height:30px;border:0;background:none;color:var(--csoft);font-weight:800;font-size:12px;cursor:pointer;border-radius:99px}
+.langs button[aria-pressed=true]{color:var(--bfg)}
+.langs button[lang=ckb],.langs button[lang=ar]{font-family:var(--f-kufi)}
+.tools{display:flex;gap:8px}
+.ib{width:40px;height:40px;border-radius:50%;border:1px solid var(--cline);background:var(--cglass);color:var(--cfg);display:grid;place-items:center;cursor:pointer}
+.ib svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.ib.dot{position:relative}
+.ib.dot::after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;right:-1px;top:-1px;background:conic-gradient(#1fc6c0,#f0806a,#e7dfd1,#1b2a4a,#1fc6c0);border:2px solid var(--card)}
+
+/* front identity */
+.id{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:10px 4px}
+.chiprow{display:flex;align-items:center;gap:12px}
+.mono{width:72px;height:72px;border-radius:22px;border:2px solid currentColor;display:grid;place-items:center;font-weight:800;font-size:26px;letter-spacing:.02em}
+.nfc{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:99px;background:var(--cglass);border:1px solid var(--cline);font-size:12px;font-weight:700;color:var(--csoft)}
+.nfc svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.nm{font-size:clamp(34px,10.5vw,46px);font-weight:800;letter-spacing:-.035em;line-height:1.02;text-wrap:balance}
+[dir=rtl] .nm{letter-spacing:0;line-height:1.35}
+.rl{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--csoft)}
+[dir=rtl] .rl{letter-spacing:0}
+.loc{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--csoft)}
+.loc svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* actions */
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.act{display:grid;justify-items:center;gap:7px;text-decoration:none;color:var(--cfg);font-size:12px;font-weight:700;background:none;border:0;padding:0;cursor:pointer}
+.act i{width:100%;max-width:64px;aspect-ratio:1;border-radius:20px;background:var(--bbg);color:var(--bfg);display:grid;place-items:center;box-shadow:0 10px 22px rgba(0,0,0,.3);transition:background .5s,color .5s}
+.act svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.full{display:flex;align-items:center;gap:12px;height:62px;padding:0 20px;border-radius:20px;background:var(--bbg);color:var(--bfg);text-decoration:none;box-shadow:0 12px 26px rgba(0,0,0,.32);transition:background .5s,color .5s}
+.full div{flex:1;min-width:0}.full b{display:block;font-size:16px;font-weight:800}.full small{font-size:12px;font-weight:600;opacity:.65}
+.full svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+[dir=rtl] .full .arr{transform:scaleX(-1)}
+.sig{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--csoft);text-transform:uppercase}
+[dir=rtl] .sig{letter-spacing:0}
+.sig .logo{width:74px;height:auto;color:var(--cfg)}
+
+/* back */
+.qrwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:8px 0}
+.qr{width:min(58vw,230px);aspect-ratio:1;background:#fff;border-radius:24px;padding:14px;display:grid;place-items:center;box-shadow:0 16px 34px rgba(0,0,0,.35)}
+.qr svg{width:100%;height:auto;display:block}
+.qr canvas,.qr img{width:100%!important;height:auto!important;display:block}
+.qrwrap small{font-size:13px;font-weight:700;color:var(--csoft)}
+.list{list-style:none;margin:0 0 14px;padding:0;border-radius:20px;border:1px solid var(--cline);background:var(--cglass);overflow:hidden}
+.list li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--cline);min-width:0}
+.list li:first-child{border-top:0}
+.list svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.list div{display:grid;gap:1px;min-width:0}
+.list small{font-size:11px;font-weight:700;color:var(--csoft);letter-spacing:.06em;text-transform:uppercase}
+[dir=rtl] .list small{letter-spacing:0}
+.list b{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .ltr{direction:ltr;unicode-bidi:isolate}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:54px;border-radius:18px;border:0;background:var(--bbg);color:var(--bfg);font:inherit;font-size:14.5px;font-weight:800;text-decoration:none;cursor:pointer;transition:background .5s,color .5s}
+.btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+
+/* colour sheet */
+.sheet{position:absolute!important;left:10px;right:10px;bottom:10px;z-index:5!important;border-radius:24px;padding:16px;background:rgba(10,14,17,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);color:#f4f6f7;
+  transform:translateY(120%);transition:transform .45s cubic-bezier(.2,.8,.2,1);display:grid;gap:12px}
+.sheet.open{transform:none}
+.sheet .hd{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800}
+.sheet .hd button{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:16px}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;justify-items:center}
+.sw button{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.22);cursor:pointer;padding:0}
+.sw button[aria-pressed=true]{box-shadow:0 0 0 3px #0a0e11,0 0 0 5px #fff}
+.sw label{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:2px dashed rgba(255,255,255,.4);cursor:pointer;position:relative;overflow:hidden}
+.sw input[type=color]{position:absolute;inset:-8px;width:60px;height:60px;border:0;padding:0;opacity:0;cursor:pointer}
+.sw label span{font-size:20px;font-weight:700;color:#fff;pointer-events:none}
+.sheet small{font-size:12px;color:#8b979d;font-weight:600}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.face::after{animation:none}}
+/* transparent buttons: outline only, no fill */
+.act i,.full,.btn{background:transparent!important;color:var(--cfg)!important;box-shadow:none!important;border:1.5px solid var(--cline2)!important}
+.act i{backdrop-filter:none}
+.act:active i,.full:active,.btn:active{background:var(--cglass)!important}
+.full small{opacity:.7}
+/* iOS Safari: hide the far side halfway through the flip (backface-visibility alone leaks on iPhone) */
+.front{visibility:visible;transition:visibility 0s linear .45s,background .5s,color .5s}
+.back{visibility:hidden;transition:visibility 0s linear .45s,background .5s,color .5s}
+.card.flip .front{visibility:hidden}
+.card.flip .back{visibility:visible}
+.face,.face *{-webkit-backface-visibility:hidden;backface-visibility:hidden}
+a[href^="tel"],.list b{color:inherit;text-decoration:none}
+@media (prefers-reduced-motion:reduce){.front,.back{transition:none}}
+</style>
+
+<div class="scene">
+  <div class="card" id="card">
+    <!-- FRONT -->
+    <section class="face front" aria-label="Card front">
+      <div class="bar">
+        <div class="langs" role="group" aria-label="Language"><span class="thumb"></span>
+          <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ku" lang="ckb" aria-pressed="false">کوردی</button><button type="button" data-lang="ar" lang="ar" aria-pressed="false">عربي</button></div>
+        <div class="tools">
+          <button type="button" class="ib dot" data-open="colors" aria-label="Card colour"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 005-5c0-4-4-7.4-9-7.4z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></svg></button>
+          <button type="button" class="ib" data-flip aria-label="Flip card"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 01-13.7 5.6L4 15M4 20v-5h5"/></svg></button>
+        </div>
+      </div>
+      <div class="id">
+        <div class="chiprow"><div class="mono" data-t="mono"></div>
+          <span class="nfc"><svg viewBox="0 0 24 24"><path d="M6 8.5a5 5 0 010 7M9.5 6a8.5 8.5 0 010 12M13 3.5a12 12 0 010 17"/></svg><span data-t="nfc"></span></span></div>
+        <div class="nm" data-t="name"></div>
+        <div class="rl" data-t="role"></div>
+        <div class="loc"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span data-t="addr"></span></div>
+      </div>
+      <div class="acts">
+        <a class="act" href="tel:+9647712099191"><i><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></i><span data-t="call"></span></a>
+        <a class="act" href="https://wa.me/9647712099191" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1112 20a8 8 0 01-4.1-1.1L4 20z"/></svg></i><span data-t="wa"></span></a>
+        <a class="act" href="https://www.google.com/maps/search/?api=1&query=Rena+Towers+Kirkuk+Street+Erbil" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></i><span data-t="map"></span></a>
+        <button type="button" class="act" data-save><i><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M7.5 17.5a5 5 0 019 0"/></svg></i><span data-t="save"></span></button>
+      </div>
+      <a class="full" href="https://bmnassa.vercel.app/" target="_blank" rel="noopener"><div><b data-t="full"></b><small data-t="fullSub"></small></div><svg class="arr" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="sig"><span data-t="flipHint"></span><svg class="logo" viewBox="0 0 3113 1280" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg></div>
+      <span class="edge"></span>
+    </section>
+
+    <!-- BACK -->
+    <section class="face back" aria-label="Card back">
+      <div class="bar">
+        <svg class="logo" viewBox="0 0 3113 1280" style="width:84px;height:auto" aria-label="Bmnassa"><path d="M1273 281 L1250 258 L1229 253 L1214 254 L1200 259 L1189 268 L1174 296 L1173 822 L1169 831 L1156 840 L1143 840 L1137 837 L903 596 L894 578 L890 554 L889 378 L885 363 L878 352 L858 337 L829 334 L811 339 L793 355 L785 379 L781 449 L781 702 L777 711 L764 720 L749 718 L734 705 L538 503 L518 476 L484 410 L468 391 L459 386 L440 383 L419 387 L404 399 L396 414 L393 432 L393 679 L388 693 L373 704 L359 701 L331 674 L153 482 L60 387 L49 383 L23 386 L8 401 L0 426 L0 1033 L5 1052 L12 1063 L31 1078 L68 1079 L86 1068 L101 1048 L103 659 L106 648 L115 635 L132 632 L140 636 L321 819 L387 890 L395 910 L399 936 L409 955 L429 972 L441 976 L465 976 L475 973 L494 957 L501 945 L503 676 L511 661 L517 657 L528 657 L551 675 L779 915 L788 933 L790 944 L791 1017 L799 1043 L811 1057 L821 1063 L835 1066 L863 1064 L878 1054 L891 1036 L894 1019 L894 803 L897 794 L905 786 L921 784 L950 807 L1164 1026 L1172 1040 L1179 1067 L1182 1145 L1193 1163 L1212 1176 L1251 1174 L1273 1152 L1278 1127 L1278 301 Z M1379 25 L1373 46 L1373 1200 L1375 1243 L1383 1259 L1392 1268 L1415 1278 L1426 1279 L1455 1269 L1465 1259 L1477 1234 L1478 1192 L1489 1169 L1733 916 L1741 912 L1756 915 L1765 928 L1766 1129 L1781 1156 L1794 1165 L1805 1168 L1835 1167 L1857 1152 L1868 1132 L1871 1090 L1878 1076 L2087 859 L2123 826 L2137 829 L2148 851 L2150 1039 L2165 1060 L2184 1070 L2212 1071 L2232 1059 L2245 1041 L2252 1005 L2263 995 L2552 994 L2587 990 L2616 968 L2627 941 L2628 733 L2632 722 L2645 713 L2655 716 L2673 732 L2874 938 L2877 959 L2869 986 L2870 1033 L2879 1058 L2893 1082 L2917 1106 L2936 1118 L2962 1127 L3019 1127 L3059 1109 L3091 1077 L3107 1046 L3112 1018 L3110 978 L3100 949 L3083 923 L3071 911 L3046 894 L3009 879 L2998 863 L2998 441 L2993 418 L2980 403 L2963 393 L2930 394 L2906 415 L2901 426 L2898 466 L2900 774 L2894 790 L2885 798 L2877 799 L2870 796 L2850 777 L2632 543 L2623 521 L2619 463 L2609 446 L2588 428 L2562 423 L2264 422 L2254 416 L2246 384 L2230 364 L2210 354 L2187 355 L2164 368 L2150 392 L2149 629 L2140 652 L1904 892 L1894 897 L1878 894 L1871 887 L1868 878 L1868 499 L1871 491 L1908 457 L1923 437 L1934 409 L1938 372 L1932 338 L1911 298 L1875 267 L1852 257 L1825 253 L1802 253 L1776 258 L1738 278 L1723 291 L1706 314 L1696 336 L1691 358 L1690 387 L1694 411 L1701 428 L1719 456 L1757 490 L1762 501 L1763 676 L1755 717 L1742 739 L1708 778 L1527 968 L1504 984 L1487 981 L1477 967 L1477 43 L1466 18 L1458 10 L1441 1 L1402 3 L1387 14 Z M2257 530 L2272 527 L2498 527 L2512 531 L2520 539 L2526 554 L2526 867 L2522 877 L2513 886 L2505 889 L2260 888 L2252 882 L2247 861 L2248 544 Z"/></svg>
+        <div class="tools">
+          <button type="button" class="ib dot" data-open="colors" aria-label="Card colour"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 005-5c0-4-4-7.4-9-7.4z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></svg></button>
+          <button type="button" class="ib" data-flip aria-label="Flip card"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 01-13.7 5.6L4 15M4 20v-5h5"/></svg></button>
+        </div>
+      </div>
+      <div class="qrwrap"><div class="qr" id="qr"><svg role="img" aria-label="QR code to this card" shape-rendering="crispEdges" viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" width="29" height="29" class="segno"><path class="qrline" stroke="#0b1014" d="M0 0.5h7m1 0h1m1 0h1m2 0h1m1 0h6m1 0h7m-29 1h1m5 0h1m2 0h1m3 0h1m1 0h3m2 0h1m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m4 0h4m1 0h1m1 0h3m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h5m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h1m3 0h1m1 0h4m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-19 1h1m3 0h1m3 0h1m1 0h1m-20 1h7m4 0h2m1 0h3m1 0h1m3 0h2m3 0h1m-28 1h1m1 0h2m3 0h2m2 0h2m1 0h2m1 0h2m1 0h2m1 0h2m2 0h1m-29 1h8m1 0h2m3 0h1m3 0h1m2 0h2m1 0h2m-24 1h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h3m4 0h3m1 0h1m1 0h1m-25 1h1m2 0h1m3 0h5m1 0h2m3 0h1m1 0h1m1 0h4m-29 1h4m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h4m1 0h2m1 0h2m-29 1h2m3 0h3m1 0h3m1 0h2m3 0h1m3 0h2m-24 1h1m1 0h1m4 0h1m1 0h1m4 0h2m3 0h1m1 0h2m1 0h2m1 0h2m-29 1h1m2 0h2m1 0h2m2 0h1m1 0h1m1 0h1m2 0h1m2 0h1m4 0h2m-27 1h1m3 0h2m7 0h1m1 0h1m2 0h7m2 0h2m-29 1h1m1 0h2m2 0h2m1 0h2m1 0h4m1 0h2m3 0h3m1 0h1m-27 1h1m1 0h4m2 0h2m1 0h1m2 0h1m7 0h4m1 0h1m-28 1h1m1 0h1m3 0h1m5 0h2m1 0h1m1 0h1m2 0h5m1 0h2m-20 1h1m1 0h2m1 0h1m3 0h1m2 0h1m3 0h2m2 0h1m-29 1h7m1 0h2m4 0h4m1 0h2m1 0h1m1 0h1m-25 1h1m5 0h1m1 0h6m1 0h1m2 0h3m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h3m1 0h3m2 0h7m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h3m1 0h2m2 0h1m1 0h4m1 0h1m3 0h2m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h3m1 0h13m-28 1h1m5 0h1m1 0h1m2 0h1m1 0h1m1 0h1m3 0h3m2 0h2m1 0h1m-28 1h7m7 0h2m1 0h1m1 0h1m4 0h1m1 0h1"/></svg></div><small data-t="scan"></small></div>
+      <ul class="list">
+        <li><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg><div><small data-t="lPhone"></small><b class="ltr">0771 209 9191</b></div></li>
+        <li><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg><div><small data-t="lOffer"></small><b data-t="offer"></b></div></li>
+        <li><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><small data-t="lAddr"></small><b data-t="addrFull"></b></div></li>
+      </ul>
+      <div class="two">
+        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=Rena+Towers+Kirkuk+Street+Erbil" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg><span data-t="map"></span></a>
+        <button type="button" class="btn" data-save><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M7.5 17.5a5 5 0 019 0"/></svg><span data-t="saveC"></span></button>
+      </div>
+      <span class="edge"></span>
+    </section>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" role="dialog" aria-label="Card colour">
+  <div class="hd"><span data-t="color"></span><button type="button" id="closeSheet" aria-label="Close">✕</button></div>
+  <div class="sw" id="sw"></div>
+  <small data-t="colorNote"></small>
+</div>
+
+<script>
+(function(){
+  const T = {
+    en:{name:'Hanar Nwralden Abdullah', role:'AC & Refrigeration', addr:'Kirkuk St, Erbil', addrFull:'Rena Towers B-21, Kirkuk St, Erbil', mono:'HA', nfc:'Tap · Scan · Save',
+        call:'Call', wa:'WhatsApp', map:'Directions', save:'Save', saveC:'Save contact', full:'Find more on Bmnassa', fullSub:'AC & refrigeration services in Erbil',
+        flipHint:'Tap ↻ to flip', scan:'Scan to open this card', lPhone:'Phone · WhatsApp', lOffer:'Offer', offer:'Free quote', lAddr:'Address',
+        color:'Card colour', colorNote:'The card owner picks this once. Visitors see the chosen colour.'},
+    ku:{name:'هەنار نورەدین عەبدوڵا', role:'ئێرکۆندیشن و ساردکەرەوە', addr:'شەقامی کەرکووک، هەولێر', addrFull:'ڕێنا تاوەر B-21، شەقامی کەرکووک، هەولێر', mono:'هـ ع', nfc:'لێدان · سکان · پاشەکەوت',
+        call:'پەیوەندی', wa:'واتساپ', map:'ڕێنمایی', save:'پاشەکەوت', saveC:'پاشەکەوتکردنی ژمارە', full:'زیاتر لە Bmnassa', fullSub:'خزمەتگوزاری ئێرکۆندیشن و ساردکەرەوە لە هەولێر',
+        flipHint:'↻ بۆ وەرگێڕان', scan:'سکان بکە بۆ کردنەوەی ئەم کارتە', lPhone:'تەلەفۆن · واتساپ', lOffer:'پێشکەش', offer:'نرخدانانی بێبەرامبەر', lAddr:'ناونیشان',
+        color:'ڕەنگی کارت', colorNote:'خاوەنی کارت یەک جار ئەمە هەڵدەبژێرێت. سەردانیکەران ڕەنگە هەڵبژێردراوەکە دەبینن.'},
+    ar:{name:'هنار نورالدين عبدالله', role:'تكييف وتبريد', addr:'شارع كركوك، أربيل', addrFull:'أبراج رينا B-21، شارع كركوك، أربيل', mono:'ه ع', nfc:'المس · امسح · احفظ',
+        call:'اتصال', wa:'واتساب', map:'الاتجاهات', save:'حفظ', saveC:'حفظ جهة الاتصال', full:'المزيد على Bmnassa', fullSub:'خدمات التكييف والتبريد في أربيل',
+        flipHint:'↻ لقلب البطاقة', scan:'امسح لفتح هذه البطاقة', lPhone:'الهاتف · واتساب', lOffer:'العرض', offer:'تسعيرة مجانية', lAddr:'العنوان',
+        color:'لون البطاقة', colorNote:'يختار صاحب البطاقة اللون مرة واحدة، ويراه الزوار.'}
+  };
+  const COLORS = [['Midnight','#0b1014'],['Teal','#0f6f78'],['Coral','#d9674f'],['Navy','#1b2a4a'],['Forest','#1f4d3a'],['Burgundy','#6b1f2e'],['Plum','#3b2350'],['Sand','#e7dfd1'],['Pearl','#f4f6f7']];
+  let lang = 'en';
+  const $ = id => document.getElementById(id), card = $('card'), sheet = $('sheet'), R = document.documentElement.style;
+  function lum(hex){ const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; }
+  function paint(hex){
+    const light = lum(hex) > .45;
+    R.setProperty('--card', hex);
+    R.setProperty('--cfg', light ? '#0b1014' : '#f4f6f7');
+    R.setProperty('--csoft', light ? 'rgba(11,16,20,.62)' : 'rgba(244,246,247,.66)');
+    R.setProperty('--cline', light ? 'rgba(11,16,20,.14)' : 'rgba(244,246,247,.16)');
+    R.setProperty('--cglass', light ? 'rgba(11,16,20,.05)' : 'rgba(244,246,247,.08)'); R.setProperty('--cline2', light ? 'rgba(11,16,20,.34)' : 'rgba(244,246,247,.38)');
+    R.setProperty('--bbg', light ? '#0b1014' : '#ffffff'); R.setProperty('--bfg', light ? '#ffffff' : '#0b1014');
+    document.querySelectorAll('#sw button').forEach(b => b.setAttribute('aria-pressed', b.dataset.c === hex));
+    try { localStorage.setItem('bm-hanar-color', hex); } catch (e) {}
+  }
+  function render(){
+    const t = T[lang], h = document.documentElement;
+    h.lang = lang === 'ku' ? 'ckb' : lang; h.dir = lang === 'en' ? 'ltr' : 'rtl';
+    document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t[el.dataset.t]; });
+    document.querySelectorAll('.langs').forEach(g => g.querySelectorAll('button').forEach((b, i) => { const on = b.dataset.lang === lang; b.setAttribute('aria-pressed', on); if (on) g.querySelector('.thumb').style.transform = `translateX(${i * 100}%)`; }));
+  }
+  $('sw').innerHTML = COLORS.map(([n, c]) => `<button type="button" data-c="${c}" aria-label="${n}" title="${n}" style="background:${c}"></button>`).join('') +
+    `<label title="Custom"><input type="color" id="custom" value="#5b3fd1" aria-label="Custom colour"><span>+</span></label>`;
+  $('sw').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (b) paint(b.dataset.c); });
+  $('custom').addEventListener('input', e => paint(e.target.value));
+  document.querySelectorAll('[data-flip]').forEach(b => b.addEventListener('click', () => { sheet.classList.remove('open'); card.classList.toggle('flip'); }));
+  document.querySelectorAll('[data-open=colors]').forEach(b => b.addEventListener('click', () => sheet.classList.toggle('open')));
+  $('closeSheet').addEventListener('click', () => sheet.classList.remove('open'));
+  document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => { lang = b.dataset.lang; render(); }));
+  const CARD_COLOR = '#1b2a4a';            // owner's chosen colour (visitors always see this)
+  const OWNER = location.hash === '#colors'; // owner opens …/hanar#colors to try colours
+  if (!OWNER) document.querySelectorAll('[data-open=colors]').forEach(b => b.hidden = true);
+  let saved = null; if (OWNER) { try { saved = localStorage.getItem('bm-hanar-color'); } catch (e) {} }
+  paint(saved || CARD_COLOR); render();
+  document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
+    const vcf = ['BEGIN:VCARD','VERSION:3.0','N:Abdullah;Hanar;Nwralden;;','FN:Hanar Nwralden Abdullah','TITLE:AC & Refrigeration','TEL;TYPE=CELL:+9647712099191','ADR;TYPE=WORK:;Rena Towers B-21;Kirkuk Street;Erbil;;;Iraq','URL:https://bmnassa.vercel.app/hanar','NOTE:Free quote · Saved from a Bmnassa digital card','END:VCARD'].join('\r\n');
+    const url = URL.createObjectURL(new Blob([vcf], {type: 'text/vcard'}));
+    const a = document.createElement('a'); a.href = url; a.download = 'Hanar-Abdullah.vcf'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }));
+})();
+</script>
+
+</body>
+</html>

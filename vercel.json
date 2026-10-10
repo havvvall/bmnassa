@@ -33,6 +33,14 @@
       "destination": "/register/index.html"
     },
     {
+      "source": "/hanar",
+      "destination": "/hanar/index.html"
+    },
+    {
+      "source": "/hanar/",
+      "destination": "/hanar/index.html"
+    },
+    {
       "source": "/ph.ayub",
       "destination": "/ph.ayub/index.html"
     },
