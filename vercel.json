@@ -41,12 +41,12 @@
       "destination": "/hamaemad/index.html"
     },
     {
-      "source": "/hanar",
-      "destination": "/hanar/index.html"
+      "source": "/wzazan-hanar",
+      "destination": "/wzazan-hanar/index.html"
     },
     {
-      "source": "/hanar/",
-      "destination": "/hanar/index.html"
+      "source": "/wzazan-hanar/",
+      "destination": "/wzazan-hanar/index.html"
     },
     {
       "source": "/ph.ayub",
@@ -79,6 +79,18 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/hanar/:path*",
+      "destination": "/wzazan-hanar",
+      "permanent": false
+    },
+    {
+      "source": "/hanar",
+      "destination": "/wzazan-hanar",
+      "permanent": false
     }
   ]
 }
