@@ -33,6 +33,14 @@
       "destination": "/register/index.html"
     },
     {
+      "source": "/hamaemad",
+      "destination": "/hamaemad/index.html"
+    },
+    {
+      "source": "/hamaemad/",
+      "destination": "/hamaemad/index.html"
+    },
+    {
       "source": "/hanar",
       "destination": "/hanar/index.html"
     },
