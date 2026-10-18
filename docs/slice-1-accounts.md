@@ -1,15 +1,21 @@
 # Slice 1 · Accounts
 
-What it adds: phone sign-in with a 6-digit code, a profile for every person (customer, owner or team), and the first version 1 screens: opening screen, choose language and city, sign in, verify, your name, account. All in English, Kurdish and Arabic.
+What it adds: sign-in with a 6-digit code sent by email, a profile for every person (customer, owner or team), and the first version 1 screens: opening screen, choose language and city, sign in, check your email, your name, account. All in English, Kurdish and Arabic.
+
+Phone codes by SMS are paused: Twilio needs Bmnassa's business registration first. The phone column stays in the database so SMS can come back later.
 
 ## Turn it on (once)
 
-1. **Database.** Supabase → SQL Editor → paste `supabase/migrations/001_accounts.sql` → Run.
-2. **Phone sign-in.** Supabase → Authentication → Sign In / Providers → Phone → turn on.
-   - SMS provider: Twilio Verify. Paste the Account SID, Auth Token and Verify Service SID from the Twilio console.
-   - While WhatsApp is waiting for Meta's approval, codes go by SMS. A Twilio trial account can only send to numbers you verify in Twilio, which is enough for testing.
-3. **Make yourself team.** Sign in once on the test link with 0770 121 8832, then run the last line of the SQL file again.
-4. **Switch to WhatsApp later.** When Twilio approves the WhatsApp sender, add `VITE_OTP_CHANNEL=whatsapp` in the hosting settings and redeploy. SMS stays as the backup button.
+1. **Database.** Supabase → SQL Editor (the full editor) → paste `supabase/migrations/002_email_signin.sql` → Run.
+2. **Email sign-in.** Supabase → Authentication → Sign In / Providers → Email → on. "Confirm email" can stay on. Set **Email OTP length** to 6.
+3. **The email itself.** Supabase → Authentication → Emails → Templates → **Magic Link**:
+   - Subject: `Bmnassa code: {{ .Token }}`
+   - Body: paste `supabase/email/sign-in-code.html`. It shows the code (`{{ .Token }}`) instead of a link.
+   - Do the same for **Confirm signup**, because a brand-new person gets that template on the first sign-in.
+4. **Make yourself team.** Sign in once on the test link with your email, then run the last line of the SQL file again.
+5. **Sending to everyone (before other testers).** Supabase's own mail only reaches the project's team members and a few emails an hour. Add your own sender under Authentication → Emails → SMTP Settings:
+   - Now: a Gmail address with an app password (host `smtp.gmail.com`, port 465). Free, about 500 emails a day.
+   - Once bmnassa.com is bought: Resend or Brevo with `codes@bmnassa.com`, which looks more trustworthy and lands in Spam less.
 
 ## Settings the app reads
 
@@ -17,7 +23,6 @@ What it adds: phone sign-in with a 6-digit code, a profile for every person (cus
 | --- | --- | --- |
 | `VITE_SUPABASE_URL` | the Bmnassa project | Supabase project address |
 | `VITE_SUPABASE_KEY` | the publishable key | Public key; tables are protected by row-level security |
-| `VITE_OTP_CHANNEL` | `sms` | `whatsapp` once Twilio's WhatsApp sender is approved |
 
 ## Not in this slice
 

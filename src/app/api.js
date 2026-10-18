@@ -4,8 +4,6 @@
 export const SB_URL = import.meta.env.VITE_SUPABASE_URL || "https://hfcqvcduuhzfxijsniav.supabase.co";
 export const SB_KEY = import.meta.env.VITE_SUPABASE_KEY || "sb_publishable_oz8_r7FdYNbPYBOgofjriw__JVhsBOh";
 
-// Which channel sends the sign-in code first. "sms" until Twilio's WhatsApp sender is approved.
-export const OTP_CHANNEL = import.meta.env.VITE_OTP_CHANNEL === "whatsapp" ? "whatsapp" : "sms";
 
 const SESSION_KEY = "bm_session";
 
@@ -97,32 +95,21 @@ async function freshSession() {
   }
 }
 
-// ---------- phone sign-in ----------
+// ---------- email sign-in ----------
+// A 6-digit code goes to the person's email. Phone sign-in comes back once Bmnassa is registered.
 
-// "0770 121 8832", "770 121 8832" or "+964 770…" -> "+9647701218832"; null if it is not an Iraqi mobile.
-export function normalisePhone(input) {
-  let d = String(input || "")
-    .replace(/[٠-٩]/g, (c) => "٠١٢٣٤٥٦٧٨٩".indexOf(c))
-    .replace(/[۰-۹]/g, (c) => "۰۱۲۳۴۵۶۷۸۹".indexOf(c))
-    .replace(/[^\d+]/g, "");
-  if (d.startsWith("+")) d = d.slice(1);
-  if (d.startsWith("00")) d = d.slice(2);
-  if (d.startsWith("964")) d = d.slice(3);
-  if (d.startsWith("0")) d = d.slice(1);
-  return /^7\d{9}$/.test(d) ? "+964" + d : null;
+// Trims, lower-cases and checks the shape; null if it is not an email address.
+export function normaliseEmail(input) {
+  const e = String(input || "").trim().toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e) ? e : null;
 }
 
-export function prettyPhone(e164) {
-  const d = String(e164 || "").replace(/\D/g, "").replace(/^964/, "");
-  return d.length === 10 ? `+964 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}` : e164 || "";
+export function sendCode(email) {
+  return call("/auth/v1/otp", { method: "POST", body: { email, create_user: true } });
 }
 
-export function sendCode(phone, channel = OTP_CHANNEL) {
-  return call("/auth/v1/otp", { method: "POST", body: { phone, channel, create_user: true } });
-}
-
-export async function verifyCode(phone, token) {
-  const data = await call("/auth/v1/verify", { method: "POST", body: { type: "sms", phone, token } });
+export async function verifyCode(email, token) {
+  const data = await call("/auth/v1/verify", { method: "POST", body: { type: "email", email, token } });
   return keepSession(data);
 }
 

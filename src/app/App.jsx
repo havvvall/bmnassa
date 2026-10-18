@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./app.css";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
-  OTP_CHANNEL, normalisePhone, prettyPhone, sendCode, verifyCode, signOut,
+  normaliseEmail, sendCode, verifyCode, signOut,
   getSession, getMyProfile, updateMyProfile, getCities,
 } from "./api.js";
 
@@ -33,7 +33,7 @@ function errorKey(e) {
   const c = String((e && e.code) || "");
   if (c === "network") return "send_failed";
   if ((e && e.status === 429) || /rate_limit/.test(c)) return "too_many";
-  if (/phone_provider_disabled|unsupported phone provider/i.test(c + " " + (e && e.message))) return "not_ready";
+  if (/provider_disabled|email_provider|signups? not allowed|otp_disabled/i.test(c + " " + (e && e.message))) return "not_ready";
   return "send_failed";
 }
 
@@ -100,20 +100,20 @@ function Welcome({ lang, setLang, city, setCity, onDone }) {
   );
 }
 
-function SignIn({ lang, phone, setPhone, onSent, onBack }) {
-  const [value, setValue] = useState(phone ? prettyPhone(phone).replace("+964 ", "0") : "");
+function SignIn({ lang, email, setEmail, onSent, onBack }) {
+  const [value, setValue] = useState(email || "");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [detail, setDetail] = useState("");
   const submit = async (e) => {
     e.preventDefault();
-    const p = normalisePhone(value);
-    if (!p) { setErr("phone_invalid"); return; }
+    const m = normaliseEmail(value);
+    if (!m) { setErr("email_invalid"); return; }
     setBusy(true); setErr(""); setDetail("");
     try {
-      await sendCode(p, OTP_CHANNEL);
-      setPhone(p);
-      onSent(OTP_CHANNEL);
+      await sendCode(m);
+      setEmail(m);
+      onSent();
     } catch (ex) {
       setErr(errorKey(ex));
       setDetail(errorDetail(ex));
@@ -129,13 +129,13 @@ function SignIn({ lang, phone, setPhone, onSent, onBack }) {
         <p className="sub">{t(lang, "signin_sub")}</p>
       </div>
       <div className="stack">
-        <label className="label" htmlFor="phone">{t(lang, "phone_label")}</label>
-        <div className={"field ltr" + (err === "phone_invalid" ? " invalid" : "")}>
-          <span className="prefix">+964</span>
-          <input id="phone" type="tel" inputMode="tel" autoComplete="tel-national" placeholder="0770 123 4567"
-            value={value} onChange={(e) => { setValue(e.target.value); setErr(""); }} aria-invalid={err === "phone_invalid"} aria-describedby="phone-err" />
+        <label className="label" htmlFor="email">{t(lang, "email_label")}</label>
+        <div className={"field ltr" + (err === "email_invalid" ? " invalid" : "")}>
+          <input id="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
+            placeholder="name@gmail.com" dir="ltr"
+            value={value} onChange={(e) => { setValue(e.target.value); setErr(""); }} aria-invalid={err === "email_invalid"} aria-describedby="email-err" />
         </div>
-        <div id="phone-err" className="err" role="alert">{err ? t(lang, err) : ""}</div>
+        <div id="email-err" className="err" role="alert">{err ? t(lang, err) : ""}</div>
         {detail ? <div className="note ltr" style={{ fontSize: 11 }}>{detail}</div> : null}
       </div>
       <span className="spacer" />
@@ -145,12 +145,11 @@ function SignIn({ lang, phone, setPhone, onSent, onBack }) {
   );
 }
 
-function Verify({ lang, phone, channel: firstChannel, onVerified, onChangeNumber }) {
+function Verify({ lang, email, onVerified, onChangeEmail }) {
   const [code, setCode] = useState("");
-  const [channel, setChannel] = useState(firstChannel || OTP_CHANNEL);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
-  const [wait, setWait] = useState(30);
+  const [wait, setWait] = useState(60);
   const inputRef = useRef(null);
 
   useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
@@ -163,23 +162,22 @@ function Verify({ lang, phone, channel: firstChannel, onVerified, onChangeNumber
   const check = async (token) => {
     setBusy(true); setErr("");
     try {
-      await verifyCode(phone, token);
+      await verifyCode(email, token);
       onVerified();
     } catch (ex) {
       setErr(ex.status === 429 ? "too_many" : ex.code === "network" ? "send_failed" : "code_wrong");
       setCode("");
-      inputRef.current && inputRef.current.focus();
+      setTimeout(() => inputRef.current && inputRef.current.focus(), 0);
     } finally {
       setBusy(false);
     }
   };
 
-  const resend = async (ch) => {
+  const resend = async () => {
     setErr("");
     try {
-      await sendCode(phone, ch);
-      setChannel(ch);
-      setWait(30);
+      await sendCode(email);
+      setWait(60);
     } catch (ex) {
       setErr(errorKey(ex));
     }
@@ -194,18 +192,17 @@ function Verify({ lang, phone, channel: firstChannel, onVerified, onChangeNumber
     if (v.length === 6 && !busy) check(v);
   };
 
-  const mm = `0:${String(Math.max(wait, 0)).padStart(2, "0")}`;
-  const other = channel === "whatsapp" ? "sms" : "whatsapp";
+  const mm = `${Math.floor(Math.max(wait, 0) / 60)}:${String(Math.max(wait, 0) % 60).padStart(2, "0")}`;
 
   return (
     <>
-      <div className="top"><Back lang={lang} onClick={onChangeNumber} /><span className="grow" /><TestTag lang={lang} /></div>
+      <div className="top"><Back lang={lang} onClick={onChangeEmail} /><span className="grow" /><TestTag lang={lang} /></div>
       <div className="stack">
         <h1>{t(lang, "verify_title")}</h1>
         <p className="sub">
-          {t(lang, channel === "whatsapp" ? "sent_whatsapp" : "sent_sms")}{" "}
-          <b className="ltr">{prettyPhone(phone)}</b>{" "}
-          <button type="button" className="link" onClick={onChangeNumber}>{t(lang, "change")}</button>
+          {t(lang, "sent_email")}{" "}
+          <b><bdi dir="ltr">{email}</bdi></b>{" "}
+          <button type="button" className="link" onClick={onChangeEmail}>{t(lang, "change")}</button>
         </p>
       </div>
       <div className="stack">
@@ -213,17 +210,12 @@ function Verify({ lang, phone, channel: firstChannel, onVerified, onChangeNumber
         <input id="code" ref={inputRef} className="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]*"
           maxLength={6} value={code} onChange={onInput} aria-invalid={!!err} aria-describedby="code-err" disabled={busy} />
         <div id="code-err" className="err" role="alert">{err ? t(lang, err) : ""}</div>
-        <p className="note">{t(lang, "autofill")}</p>
+        <p className="note">{t(lang, "spam_hint")}</p>
       </div>
       <div className="stack" style={{ alignItems: "flex-start" }}>
-        <button type="button" className="link" disabled={wait > 0} onClick={() => resend(channel)}>
+        <button type="button" className="link" disabled={wait > 0} onClick={resend}>
           {wait > 0 ? t(lang, "resend_in", { s: mm }) : t(lang, "resend")}
         </button>
-        {import.meta.env.VITE_OTP_CHANNEL === "whatsapp" || channel === "whatsapp" ? (
-          <button type="button" className="link" disabled={wait > 0} onClick={() => resend(other)}>
-            {t(lang, other === "sms" ? "by_sms" : "by_whatsapp")}
-          </button>
-        ) : null}
       </div>
       <span className="spacer" />
       <button type="button" className="btn" disabled={busy || code.length !== 6} onClick={() => check(code)}>
@@ -297,7 +289,7 @@ function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSig
         <button type="button" className="link" onClick={onEditName}>{t(lang, "edit")}</button>
       </div>
       <div className="panel">
-        <div className="row"><span className="k">{t(lang, "phone")}</span><span className="v"><bdi dir="ltr">{prettyPhone(profile && profile.phone)}</bdi></span></div>
+        <div className="row"><span className="k">{t(lang, "email")}</span><span className="v" style={{ overflowWrap: "anywhere" }}><bdi dir="ltr">{(profile && profile.email) || ""}</bdi></span></div>
         <div className="row"><span className="k">{t(lang, "city")}</span><span className="v">{cityName(city, lang)}</span></div>
         <div className="row">
           <span className="k">{t(lang, "language")}</span>
@@ -322,14 +314,13 @@ export default function App() {
   const [path, go] = usePath();
   const [lang, setLangState] = useState(() => store.get("bm_lang", "ku"));
   const [city, setCityState] = useState(() => store.get("bm_city", ""));
-  const [phone, setPhone] = useState(() => { try { return sessionStorage.getItem("bm_phone") || ""; } catch { return ""; } });
-  const [channel, setChannel] = useState(OTP_CHANNEL);
+  const [email, setEmail] = useState(() => { try { return sessionStorage.getItem("bm_email") || ""; } catch { return ""; } });
   const [profile, setProfile] = useState(null);
   const [booting, setBooting] = useState(true);
 
   const setLang = (l) => { setLangState(l); store.set("bm_lang", l); };
   const setCity = (c) => { setCityState(c); store.set("bm_city", c); };
-  const rememberPhone = (p) => { setPhone(p); try { sessionStorage.setItem("bm_phone", p); } catch { /* ignore */ } };
+  const rememberEmail = (m) => { setEmail(m); try { sessionStorage.setItem("bm_email", m); } catch { /* ignore */ } };
 
   useEffect(() => {
     document.documentElement.lang = lang === "ku" ? "ckb" : lang;
@@ -360,7 +351,7 @@ export default function App() {
           go(p.full_name ? "/account" : "/name", true);
         } else if (!["/welcome", "/signin", "/verify"].includes(here)) {
           go(store.get("bm_city", "") ? "/signin" : "/welcome", true);
-        } else if (here === "/verify" && !phone) {
+        } else if (here === "/verify" && !email) {
           go("/signin", true);
         }
       }, wait);
@@ -382,10 +373,10 @@ export default function App() {
   };
 
   let screen;
-  if (path === "/verify" && phone) {
-    screen = <Verify lang={lang} phone={phone} channel={channel} onVerified={afterVerify} onChangeNumber={() => go("/signin")} />;
+  if (path === "/verify" && email) {
+    screen = <Verify lang={lang} email={email} onVerified={afterVerify} onChangeEmail={() => go("/signin")} />;
   } else if (path === "/signin") {
-    screen = <SignIn lang={lang} phone={phone} setPhone={rememberPhone} onSent={(ch) => { setChannel(ch); go("/verify"); }} onBack={() => go("/welcome")} />;
+    screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/welcome")} />;
   } else if (path === "/name" && profile) {
     screen = <NameStep lang={lang} profile={profile} onSaved={(row) => { if (row) setProfile(row); go("/account", true); }} />;
   } else if (path === "/account" && profile) {
