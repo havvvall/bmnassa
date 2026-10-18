@@ -32,9 +32,15 @@ function usePath() {
 function errorKey(e) {
   const c = String((e && e.code) || "");
   if (c === "network") return "send_failed";
-  if (e && e.status === 429 || /rate_limit/.test(c)) return "too_many";
-  if (/provider|sms_send_failed|phone_provider_disabled|unsupported/i.test(c + " " + (e && e.message))) return "not_ready";
+  if ((e && e.status === 429) || /rate_limit/.test(c)) return "too_many";
+  if (/phone_provider_disabled|unsupported phone provider/i.test(c + " " + (e && e.message))) return "not_ready";
   return "send_failed";
+}
+
+// While testing, show the technical reason under the message so problems can be fixed quickly.
+function errorDetail(e) {
+  if (!e) return "";
+  return [e.status, e.code, e.message].filter(Boolean).join(" · ");
 }
 
 const Back = ({ onClick, lang }) => (
@@ -98,17 +104,19 @@ function SignIn({ lang, phone, setPhone, onSent, onBack }) {
   const [value, setValue] = useState(phone ? prettyPhone(phone).replace("+964 ", "0") : "");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [detail, setDetail] = useState("");
   const submit = async (e) => {
     e.preventDefault();
     const p = normalisePhone(value);
     if (!p) { setErr("phone_invalid"); return; }
-    setBusy(true); setErr("");
+    setBusy(true); setErr(""); setDetail("");
     try {
       await sendCode(p, OTP_CHANNEL);
       setPhone(p);
       onSent(OTP_CHANNEL);
     } catch (ex) {
       setErr(errorKey(ex));
+      setDetail(errorDetail(ex));
     } finally {
       setBusy(false);
     }
@@ -128,6 +136,7 @@ function SignIn({ lang, phone, setPhone, onSent, onBack }) {
             value={value} onChange={(e) => { setValue(e.target.value); setErr(""); }} aria-invalid={err === "phone_invalid"} aria-describedby="phone-err" />
         </div>
         <div id="phone-err" className="err" role="alert">{err ? t(lang, err) : ""}</div>
+        {detail ? <div className="note ltr" style={{ fontSize: 11 }}>{detail}</div> : null}
       </div>
       <span className="spacer" />
       <p className="note">{t(lang, "privacy")}</p>
