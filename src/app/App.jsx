@@ -4,6 +4,7 @@ import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
   getSession, getMyProfile, updateMyProfile, getCities,
+  normalisePhone, prettyPhone, getCategories, getPlaces, getMyBusinesses, createBusiness,
 } from "./api.js";
 
 // ---------- small helpers ----------
@@ -260,7 +261,208 @@ function NameStep({ lang, profile, onSaved }) {
   );
 }
 
-function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSignedOut }) {
+// ---------- slice 2: list your business ----------
+
+const DRAFT_KEY = "bm_list_draft";
+const emptyDraft = { name: "", category_id: "", city_id: "", district_id: "", subdistrict_id: "", phone: "", description: "" };
+
+function bizName(b, lang) {
+  return (b && (b["name_" + lang] || b.name_en || b.name_ku || b.name_ar)) || "";
+}
+
+const Chevron = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+);
+
+function Pick({ id, label, value, onChange, placeholder, options, lang, disabled, invalid }) {
+  return (
+    <div className="stack" style={{ gap: 6 }}>
+      <label className="label" htmlFor={id}>{label}</label>
+      <div className={"field pick" + (invalid ? " invalid" : "") + (disabled ? " off" : "")}>
+        <select id={id} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} aria-invalid={invalid || undefined}>
+          <option value="" disabled>{placeholder}</option>
+          {options.map((o) => <option key={o.id} value={o.id}>{cityName(o, lang)}</option>)}
+        </select>
+        <Chevron />
+      </div>
+    </div>
+  );
+}
+
+function ListBusiness({ lang, profile, onSent, onBack }) {
+  const [d, setD] = useState(() => {
+    try { return { ...emptyDraft, city_id: (profile && profile.city_id) || "", ...JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}") }; }
+    catch { return { ...emptyDraft, city_id: (profile && profile.city_id) || "" }; }
+  });
+  const [lists, setLists] = useState(null);
+  const [loadErr, setLoadErr] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [detail, setDetail] = useState("");
+  const [tried, setTried] = useState(false);
+
+  const load = () => {
+    setLoadErr(false);
+    Promise.all([getCategories(), getCities(), getPlaces()])
+      .then(([cats, cities, places]) => setLists({ cats: cats || [], cities: (cities && cities.length ? cities : FALLBACK_CITIES), ...places }))
+      .catch(() => setLoadErr(true));
+  };
+  useEffect(load, []);
+  useEffect(() => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch { /* ignore */ } }, [d]);
+
+  const set = (k, v) => {
+    setErr("");
+    setD((old) => {
+      const n = { ...old, [k]: v };
+      if (k === "city_id") { n.district_id = ""; n.subdistrict_id = ""; }
+      if (k === "district_id") {
+        n.subdistrict_id = "";
+        const subs = lists ? lists.subdistricts.filter((x) => x.district_id === v) : [];
+        if (subs.length === 1) n.subdistrict_id = subs[0].id;
+      }
+      return n;
+    });
+  };
+
+  const districts = lists ? lists.districts.filter((x) => x.city_id === d.city_id) : [];
+  const subdistricts = lists ? lists.subdistricts.filter((x) => x.district_id === d.district_id) : [];
+  const phone = normalisePhone(d.phone);
+  const missing = {
+    name: !d.name.trim(),
+    category_id: !d.category_id, city_id: !d.city_id, district_id: !d.district_id, subdistrict_id: !d.subdistrict_id,
+    phone: !phone,
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setTried(true);
+    if (missing.name) { setErr("name_required"); return; }
+    if (missing.category_id || missing.city_id || missing.district_id || missing.subdistrict_id) { setErr("pick_required"); return; }
+    if (missing.phone) { setErr("biz_phone_invalid"); return; }
+    setBusy(true); setErr(""); setDetail("");
+    try {
+      const row = await createBusiness({
+        name: d.name.trim(), description: d.description.trim(), lang,
+        category_id: d.category_id, city_id: d.city_id, district_id: d.district_id, subdistrict_id: d.subdistrict_id,
+        phone,
+      });
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+      onSent(row || { name_en: d.name.trim() });
+    } catch (ex) {
+      setErr("send_biz_failed");
+      setDetail(errorDetail(ex));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} style={{ display: "contents" }} noValidate>
+      <div className="top"><Back lang={lang} onClick={onBack} /><span className="grow" /><TestTag lang={lang} /></div>
+      <div className="stack">
+        <h1>{t(lang, "list_title")}</h1>
+        <p className="sub">{t(lang, "list_sub")}</p>
+      </div>
+
+      {loadErr ? (
+        <div className="panel" style={{ padding: 16 }}>
+          <div className="err">{t(lang, "places_failed")}</div>
+          <button type="button" className="link" onClick={load}>{t(lang, "try_again")}</button>
+        </div>
+      ) : !lists ? (
+        <p className="note">{t(lang, "loading")}</p>
+      ) : (
+        <>
+          <div className="stack" style={{ gap: 6 }}>
+            <label className="label" htmlFor="bname">{t(lang, "biz_name")}</label>
+            <div className={"field" + (tried && missing.name ? " invalid" : "")}>
+              <input id="bname" value={d.name} maxLength={80} autoComplete="organization" placeholder={t(lang, "biz_name_ph")}
+                onChange={(e) => set("name", e.target.value)} />
+            </div>
+          </div>
+          <Pick id="bcat" label={t(lang, "category")} value={d.category_id} onChange={(v) => set("category_id", v)}
+            placeholder={t(lang, "choose_category")} options={lists.cats} lang={lang} invalid={tried && missing.category_id} />
+          <Pick id="bcity" label={t(lang, "city")} value={d.city_id} onChange={(v) => set("city_id", v)}
+            placeholder={t(lang, "choose_city_first")} options={lists.cities} lang={lang} invalid={tried && missing.city_id} />
+          <div className="pair">
+            <Pick id="bdist" label={t(lang, "district")} value={d.district_id} onChange={(v) => set("district_id", v)}
+              placeholder={t(lang, "choose_district")} options={districts} lang={lang} disabled={!d.city_id} invalid={tried && missing.district_id} />
+            <Pick id="bsub" label={t(lang, "subdistrict")} value={d.subdistrict_id} onChange={(v) => set("subdistrict_id", v)}
+              placeholder={t(lang, "choose_subdistrict")} options={subdistricts} lang={lang} disabled={!d.district_id} invalid={tried && missing.subdistrict_id} />
+          </div>
+          <div className="stack" style={{ gap: 6 }}>
+            <label className="label" htmlFor="bphone">{t(lang, "biz_phone")}</label>
+            <div className={"field ltr" + (tried && missing.phone ? " invalid" : "")}>
+              <span className="prefix">+964</span>
+              <input id="bphone" type="tel" inputMode="tel" autoComplete="tel-national" placeholder="0770 123 4567"
+                value={d.phone} onChange={(e) => set("phone", e.target.value)} />
+            </div>
+          </div>
+          <div className="stack" style={{ gap: 6 }}>
+            <label className="label" htmlFor="bdesc">{t(lang, "description")} <span className="opt">· {t(lang, "optional")}</span></label>
+            <div className="field area">
+              <textarea id="bdesc" rows={3} maxLength={300} placeholder={t(lang, "desc_ph")}
+                value={d.description} onChange={(e) => set("description", e.target.value)} />
+            </div>
+            <p className="note">{t(lang, "other_langs")}</p>
+          </div>
+          <div className="err" role="alert">{err ? t(lang, err) : ""}</div>
+          {detail ? <div className="note ltr" style={{ fontSize: 11 }}>{detail}</div> : null}
+          <span className="spacer" />
+          <p className="note">{t(lang, "review_note")}</p>
+          <button type="submit" className="btn" disabled={busy}>{busy ? t(lang, "loading") : t(lang, "send_review")}</button>
+        </>
+      )}
+    </form>
+  );
+}
+
+function Sent({ lang, business, onDone }) {
+  return (
+    <>
+      <div className="top"><img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /><span className="grow" /><TestTag lang={lang} /></div>
+      <div className="sent-mark" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+      </div>
+      <div className="stack">
+        <h1>{t(lang, "sent_title")}</h1>
+        <p className="sub">{t(lang, "sent_sub", { name: bizName(business, lang) })}</p>
+      </div>
+      <div className="panel">
+        <div className="row"><span className="v">{bizName(business, lang)}</span><span className="status pending">{t(lang, "st_pending")}</span></div>
+      </div>
+      <p className="note">{t(lang, "sent_next")}</p>
+      <span className="spacer" />
+      <button type="button" className="btn" onClick={onDone}>{t(lang, "to_account")}</button>
+    </>
+  );
+}
+
+function MyBusinesses({ lang, onList }) {
+  const [list, setList] = useState(null);
+  useEffect(() => { getMyBusinesses().then((r) => setList(r || [])).catch(() => setList([])); }, []);
+  if (list === null) return null;
+  return (
+    <div className="stack">
+      <span className="label">{t(lang, "my_business")}</span>
+      <div className="panel">
+        {list.map((b) => (
+          <div className="row" key={b.id}>
+            <div className="avatar sm" aria-hidden="true">{bizName(b, lang).trim().charAt(0).toUpperCase() || "B"}</div>
+            <span className="v">{bizName(b, lang)}</span>
+            <span className={"status " + (b.status || "pending")}>{t(lang, "st_" + (b.status || "pending"))}</span>
+          </div>
+        ))}
+        <button type="button" className="row rowbtn" onClick={onList}>
+          <span className="v">{t(lang, list.length ? "list_another" : "list_free")}</span>
+          <svg className="flip" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSignedOut, onList }) {
   const [cities, setCities] = useState(FALLBACK_CITIES);
   const [saved, setSaved] = useState(false);
   useEffect(() => { getCities().then((r) => r && r.length && setCities(r)).catch(() => {}); }, []);
@@ -301,6 +503,7 @@ function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSig
         </div>
       </div>
       <div className="ok" role="status">{saved ? t(lang, "saved") : ""}</div>
+      <MyBusinesses lang={lang} onList={onList} />
       <p className="note">{t(lang, "next_slices")}</p>
       <span className="spacer" />
       <button type="button" className="btn quiet" onClick={async () => { await signOut(); onSignedOut(); }}>{t(lang, "sign_out")}</button>
@@ -317,6 +520,7 @@ export default function App() {
   const [email, setEmail] = useState(() => { try { return sessionStorage.getItem("bm_email") || ""; } catch { return ""; } });
   const [profile, setProfile] = useState(null);
   const [booting, setBooting] = useState(true);
+  const [sentBiz, setSentBiz] = useState(null);
 
   const setLang = (l) => { setLangState(l); store.set("bm_lang", l); };
   const setCity = (c) => { setCityState(c); store.set("bm_city", c); };
@@ -348,8 +552,11 @@ export default function App() {
         const here = window.location.pathname;
         if (p) {
           if (p.language && p.language !== store.get("bm_lang", "")) setLang(p.language);
-          go(p.full_name ? "/account" : "/name", true);
+          if (!p.full_name) go("/name", true);
+          else if (!["/list", "/account"].includes(here)) go("/account", true);
         } else if (!["/welcome", "/signin", "/verify"].includes(here)) {
+          // Someone opened "List your business" before signing in: come back to it afterwards
+          if (here === "/list") { try { sessionStorage.setItem("bm_after", "/list"); } catch { /* ignore */ } }
           go(store.get("bm_city", "") ? "/signin" : "/welcome", true);
         } else if (here === "/verify" && !email) {
           go("/signin", true);
@@ -369,7 +576,10 @@ export default function App() {
     if (p && Object.keys(fields).length) {
       try { const row = await updateMyProfile(fields); if (row) setProfile(row); } catch { /* not critical */ }
     }
-    go(p && p.full_name ? "/account" : "/name", true);
+    let after = "/account";
+    try { after = sessionStorage.getItem("bm_after") || "/account"; sessionStorage.removeItem("bm_after"); } catch { /* ignore */ }
+    if (p && !p.full_name) { try { sessionStorage.setItem("bm_after", after); } catch { /* ignore */ } }
+    go(p && p.full_name ? after : "/name", true);
   };
 
   let screen;
@@ -378,11 +588,21 @@ export default function App() {
   } else if (path === "/signin") {
     screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/welcome")} />;
   } else if (path === "/name" && profile) {
-    screen = <NameStep lang={lang} profile={profile} onSaved={(row) => { if (row) setProfile(row); go("/account", true); }} />;
-  } else if (path === "/account" && profile) {
+    screen = <NameStep lang={lang} profile={profile} onSaved={(row) => {
+      if (row) setProfile(row);
+      let after = "/account";
+      try { after = sessionStorage.getItem("bm_after") || "/account"; sessionStorage.removeItem("bm_after"); } catch { /* ignore */ }
+      go(after, true);
+    }} />;
+  } else if (path === "/list" && profile) {
+    screen = <ListBusiness lang={lang} profile={profile} onBack={() => go("/account")} onSent={(b) => { setSentBiz(b); go("/list/sent", true); }} />;
+  } else if (path === "/list/sent" && profile && sentBiz) {
+    screen = <Sent lang={lang} business={sentBiz} onDone={() => go("/account", true)} />;
+  } else if ((path === "/account" || path.startsWith("/list")) && profile) {
     screen = (
       <Account lang={lang} setLang={setLang} profile={profile} setProfile={setProfile} cityId={city}
-        onEditName={() => go("/name")} onSignedOut={() => { setProfile(null); go("/signin", true); }} />
+        onEditName={() => go("/name")} onSignedOut={() => { setProfile(null); go("/signin", true); }}
+        onList={() => go("/list")} />
     );
   } else {
     screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go(profile ? "/account" : "/signin")} />;

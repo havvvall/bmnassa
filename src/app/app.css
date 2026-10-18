@@ -29,7 +29,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 [dir="rtl"] body, body[dir="rtl"], .app[dir="rtl"] { font-family: var(--font-rtl); }
-button, input { font: inherit; color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
 a { color: var(--accent-text); }
 
 .app {
@@ -142,3 +142,27 @@ h1 { font-size: 26px; line-height: 32px; font-weight: 800; letter-spacing: -0.01
 .splash .foot { position: absolute; bottom: max(28px, env(safe-area-inset-bottom)); font-size: 12px; color: #8d9196; letter-spacing: 0.08em; }
 @keyframes pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .splash .dots span { animation: none; opacity: 0.7; } }
+
+/* Slice 2: list your business */
+.field.pick { position: relative; padding: 0; }
+.field.pick select {
+  appearance: none; -webkit-appearance: none; border: 0; outline: 0; background: transparent; width: 100%; height: 100%;
+  padding-inline: 16px 40px; font-size: 16px; font-weight: 700; color: var(--text); cursor: pointer; border-radius: 18px;
+}
+.field.pick select:invalid, .field.pick select option[value=""] { color: var(--muted); }
+.field.pick svg { position: absolute; inset-inline-end: 14px; pointer-events: none; color: var(--muted); }
+.field.pick.off { opacity: 0.55; }
+.field.pick.off select { cursor: default; }
+.field.area { height: auto; padding: 12px 16px; align-items: flex-start; }
+.field textarea { border: 0; outline: 0; background: transparent; width: 100%; resize: none; font-size: 16px; font-weight: 600; line-height: 24px; }
+.label .opt { font-weight: 600; letter-spacing: 0; text-transform: none; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 340px) { .pair { grid-template-columns: 1fr; } }
+.status { font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; white-space: nowrap; flex: none; }
+.status.pending { background: #f6e7bd; color: var(--accent-text); }
+.status.approved { background: var(--success-soft); color: var(--success); }
+.status.rejected, .status.hidden { background: #f4dcd9; color: var(--danger); }
+.avatar.sm { width: 36px; height: 36px; border-radius: 18px; font-size: 15px; box-shadow: 0 0 0 1.5px var(--accent); }
+.rowbtn { width: 100%; background: none; border: 0; border-top: 1px solid var(--line); cursor: pointer; text-align: start; color: var(--accent-text); }
+.rowbtn:first-child { border-top: 0; }
+.sent-mark { width: 64px; height: 64px; border-radius: 32px; background: var(--night); color: var(--accent); display: grid; place-items: center; box-shadow: 0 0 0 2px var(--accent); }

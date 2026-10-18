@@ -113,6 +113,26 @@ export async function verifyCode(email, token) {
   return keepSession(data);
 }
 
+// ---------- phone numbers (for the business phone) ----------
+
+// "0770 121 8832", "770 121 8832" or "+964 770…" -> "+9647701218832"; null if it is not an Iraqi mobile.
+export function normalisePhone(input) {
+  let d = String(input || "")
+    .replace(/[٠-٩]/g, (c) => "٠١٢٣٤٥٦٧٨٩".indexOf(c))
+    .replace(/[۰-۹]/g, (c) => "۰۱۲۳۴۵۶۷۸۹".indexOf(c))
+    .replace(/[^\d+]/g, "");
+  if (d.startsWith("+")) d = d.slice(1);
+  if (d.startsWith("00")) d = d.slice(2);
+  if (d.startsWith("964")) d = d.slice(3);
+  if (d.startsWith("0")) d = d.slice(1);
+  return /^7\d{9}$/.test(d) ? "+964" + d : null;
+}
+
+export function prettyPhone(e164) {
+  const d = String(e164 || "").replace(/\D/g, "").replace(/^964/, "");
+  return d.length === 10 ? `+964 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}` : e164 || "";
+}
+
 export async function signOut() {
   try {
     await call("/auth/v1/logout", { method: "POST", auth: true });
@@ -146,4 +166,45 @@ export async function updateMyProfile(fields) {
 
 export async function getCities() {
   return call("/rest/v1/cities?select=id,name_en,name_ku,name_ar,live,sort_order&order=sort_order");
+}
+
+export async function getCategories() {
+  return call("/rest/v1/categories?select=id,name_en,name_ku,name_ar,icon,sort_order&order=sort_order");
+}
+
+// All districts and subdistricts at once (about 180 short rows), so the dropdowns change instantly.
+export async function getPlaces() {
+  const [districts, subdistricts] = await Promise.all([
+    call("/rest/v1/districts?select=id,city_id,name_en,name_ku,name_ar,sort_order&order=sort_order"),
+    call("/rest/v1/subdistricts?select=id,district_id,name_en,name_ku,name_ar,sort_order&order=sort_order"),
+  ]);
+  return { districts: districts || [], subdistricts: subdistricts || [] };
+}
+
+const BIZ_FIELDS =
+  "id,name_en,name_ku,name_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,description_en,description_ku,description_ar,status,created_at";
+
+export async function getMyBusinesses() {
+  const s = await freshSession();
+  if (!s) return [];
+  return call(`/rest/v1/businesses?owner_id=eq.${s.user.id}&select=${BIZ_FIELDS}&order=created_at.desc`, { auth: true });
+}
+
+// The owner types the name and description in the language they use; the team fills the others at approval.
+export async function createBusiness({ name, description, lang, category_id, city_id, district_id, subdistrict_id, phone }) {
+  const s = await freshSession();
+  if (!s) throw new ApiError("Not signed in", "no_session", 401);
+  const body = {
+    owner_id: s.user.id,
+    status: "pending",
+    category_id, city_id, district_id, subdistrict_id,
+    phone, whatsapp: phone,
+    sent_in_language: lang,
+    ["name_" + lang]: name,
+  };
+  if (description) body["description_" + lang] = description;
+  const rows = await call(`/rest/v1/businesses?select=${BIZ_FIELDS}`, {
+    method: "POST", auth: true, body, headers: { Prefer: "return=representation" },
+  });
+  return rows && rows[0];
 }
