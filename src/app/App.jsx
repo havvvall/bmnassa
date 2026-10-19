@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./app.css";
 import Team from "./team/Team.jsx";
+import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -9,6 +10,17 @@ import {
 } from "./api.js";
 
 // ---------- small helpers ----------
+
+// Words used by the app itself; any other single word is a business page name (bmnassa.com/azad-cooling)
+const APP_WORDS = new Set(["", "home", "welcome", "signin", "verify", "name", "account", "list", "team", "search", "c",
+  "admin", "register", "stand", "invitation", "brand", "wallet", "scan"]);
+
+function businessPath(path) {
+  const m = /^\/([a-z0-9][a-z0-9-]{0,60})(\/card)?\/?$/i.exec(path || "");
+  if (!m || APP_WORDS.has(m[1].toLowerCase())) return null;
+  return { handle: m[1].toLowerCase(), card: !!m[2] };
+}
+const isBusinessPath = (p) => !!businessPath(p);
 
 const store = {
   get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
@@ -464,7 +476,7 @@ function MyBusinesses({ lang, onList }) {
   );
 }
 
-function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSignedOut, onList }) {
+function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSignedOut, onList, go }) {
   const [cities, setCities] = useState(FALLBACK_CITIES);
   const [saved, setSaved] = useState(false);
   useEffect(() => { getCities().then((r) => r && r.length && setCities(r)).catch(() => {}); }, []);
@@ -509,6 +521,8 @@ function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSig
       <p className="note">{t(lang, "next_slices")}</p>
       <span className="spacer" />
       <button type="button" className="btn quiet" onClick={async () => { await signOut(); onSignedOut(); }}>{t(lang, "sign_out")}</button>
+      <div className="b-navspace" />
+      <BottomNav lang={lang} active="user" go={go} signedIn />
     </>
   );
 }
@@ -552,16 +566,24 @@ export default function App() {
       setTimeout(() => {
         setBooting(false);
         const here = window.location.pathname;
-        if (p) {
+        const hasCity = !!store.get("bm_city", "");
+        if (isBusinessPath(here)) {
+          // A shared card or page link (NFC tap, QR code): open it straight away
+          if (p && p.language && p.language !== store.get("bm_lang", "")) setLang(p.language);
+        } else if (p) {
           if (p.language && p.language !== store.get("bm_lang", "")) setLang(p.language);
           if (!p.full_name) go("/name", true);
-          else if (!["/list", "/account", "/team"].includes(here)) go("/account", true);
-        } else if (!["/welcome", "/signin", "/verify"].includes(here)) {
-          // Someone opened "List your business" before signing in: come back to it afterwards
+          else if (["/", "/welcome", "/signin", "/verify"].includes(here)) go("/home", true);
+        } else if (["/list", "/team", "/account", "/name", "/list/sent"].includes(here)) {
+          // Pages that need an account: sign in first, then come back
           if (here === "/list" || here === "/team") { try { sessionStorage.setItem("bm_after", here); } catch { /* ignore */ } }
-          go(store.get("bm_city", "") ? "/signin" : "/welcome", true);
+          go(hasCity ? "/signin" : "/welcome", true);
         } else if (here === "/verify" && !email) {
           go("/signin", true);
+        } else if (!hasCity && here !== "/welcome" && here !== "/signin") {
+          go("/welcome", true);
+        } else if (here === "/") {
+          go("/home", true);
         }
       }, wait);
     })();
@@ -588,11 +610,26 @@ export default function App() {
     return <Team profile={profile} onOpenApp={() => go("/account")} onSignOut={async () => { await signOut(); setProfile(null); go("/signin", true); }} />;
   }
 
+  const back = () => window.history.back();
+  const signedIn = !!profile;
+  const handleMatch = businessPath(path);
+  const query = new URLSearchParams(window.location.search);
+
   let screen;
-  if (path === "/verify" && email) {
+  if (handleMatch) {
+    screen = handleMatch.card
+      ? <Card key={path} lang={lang} handle={handleMatch.handle} go={go} back={back} />
+      : <BizPage key={path} lang={lang} handle={handleMatch.handle} go={go} back={back} signedIn={signedIn} />;
+  } else if (path === "/home" || path === "/") {
+    screen = <Home lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} signedIn={signedIn} />;
+  } else if (path === "/search") {
+    screen = <Results key="search" lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} search={query.get("q") || ""} />;
+  } else if (path.startsWith("/c/")) {
+    screen = <Results key={path} lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} categoryId={decodeURIComponent(path.slice(3))} />;
+  } else if (path === "/verify" && email) {
     screen = <Verify lang={lang} email={email} onVerified={afterVerify} onChangeEmail={() => go("/signin")} />;
   } else if (path === "/signin") {
-    screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/welcome")} />;
+    screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
   } else if (path === "/name" && profile) {
     screen = <NameStep lang={lang} profile={profile} onSaved={(row) => {
       if (row) setProfile(row);
@@ -601,17 +638,19 @@ export default function App() {
       go(after, true);
     }} />;
   } else if (path === "/list" && profile) {
-    screen = <ListBusiness lang={lang} profile={profile} onBack={() => go("/account")} onSent={(b) => { setSentBiz(b); go("/list/sent", true); }} />;
+    screen = <ListBusiness lang={lang} profile={profile} onBack={() => (window.history.length > 1 ? back() : go("/account"))} onSent={(b) => { setSentBiz(b); go("/list/sent", true); }} />;
   } else if (path === "/list/sent" && profile && sentBiz) {
     screen = <Sent lang={lang} business={sentBiz} onDone={() => go("/account", true)} />;
   } else if ((path === "/account" || path.startsWith("/list")) && profile) {
     screen = (
       <Account lang={lang} setLang={setLang} profile={profile} setProfile={setProfile} cityId={city}
-        onEditName={() => go("/name")} onSignedOut={() => { setProfile(null); go("/signin", true); }}
-        onList={() => go("/list")} />
+        onEditName={() => go("/name")} onSignedOut={() => { setProfile(null); go("/home", true); }}
+        onList={() => go("/list")} go={go} />
     );
+  } else if ((path === "/list" || path === "/account") && !profile) {
+    screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
   } else {
-    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go(profile ? "/account" : "/signin")} />;
+    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/home")} />;
   }
 
   return <main className="app" dir={dirOf(lang)} lang={lang === "ku" ? "ckb" : lang}>{screen}</main>;

@@ -243,3 +243,20 @@ export async function teamUpdateBusiness(id, fields) {
   if (!rows || !rows.length) throw new ApiError("Not allowed", "not_allowed", 403);
   return rows[0];
 }
+
+// ---------- listing (anyone, no account needed; the database only returns live businesses) ----------
+
+const LIST_FIELDS =
+  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at";
+
+export async function listBusinesses(cityId) {
+  const city = cityId ? `city_id=eq.${encodeURIComponent(cityId)}&` : "";
+  return call(`/rest/v1/businesses?${city}status=eq.approved&select=${LIST_FIELDS}&order=created_at.desc.nullslast&limit=1000`);
+}
+
+export async function businessByHandle(handle) {
+  const h = String(handle || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+  if (!h) return null;
+  const rows = await call(`/rest/v1/businesses?handle=ilike.${h}&status=eq.approved&select=${LIST_FIELDS}&limit=1`);
+  return rows && rows[0] ? rows[0] : null;
+}

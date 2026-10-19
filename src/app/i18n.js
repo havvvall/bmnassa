@@ -95,6 +95,62 @@ const T = {
   st_approved: ["Live", "بڵاوکراوەتەوە", "منشور"],
   st_rejected: ["Not approved", "پەسەند نەکرا", "لم تتم الموافقة"],
   reason: ["Reason:", "هۆکار:", "السبب:"],
+
+  // slice 4 · listing (signed-off screen text, from the language check)
+  home_title: ["Find a trusted service", "خزمەتگوزارییەک بدۆزەرەوە", "ابحث عن خدمة"],
+  home_sub: ["Plumbers, pharmacies, engineers and more near you", "بۆڕیچی، دەرمانخانە، ئەندازیار و زیاتر لە نزیکت", "سبّاكون، صيدليات، مهندسون والمزيد بالقرب منك"],
+  search_ph: ["Search a service, e.g. AC repair", "بگەڕێ، بۆ نموونە چاککردنەوەی سپلیت", "ابحث، مثلاً تصليح سبلت"],
+  categories: ["Categories", "پۆلەکان", "الفئات"],
+  own_biz: ["Own a business?", "خاوەنی کار و بزنسێکی ؟", "هل تملك عملاً تجارياً؟"],
+  own_biz_sub: ["List it free in about one minute", "بە خێرایی و خۆڕایی تۆماری بکە", "سجّله بسرعة ومجاناً"],
+  list_it_free: ["List it free", "تۆمارکردنی خۆڕایی", "تسجيل مجاني"],
+  nav_home: ["Home", "سەرەکی", "الرئيسية"],
+  nav_wallet: ["Wallet", "جزدان", "المحفظة"],
+  nav_scan: ["Scan card", "سکانی کارت", "مسح بطاقة"],
+  nav_account: ["Account", "هەژمار", "الحساب"],
+  filters: ["Filters", "فلتەر", "تصفية"],
+  top_rated: ["Top rated", "باشترین هەڵسەنگاندن", "الأعلى تقييماً"],
+  latest: ["Latest added", "نوێترین", "الأحدث"],
+  new_badge: ["New", "نوێ", "جديد"],
+  empty_text: ["Bmnassa only lists real, checked businesses. New ones join every week.", "بمناسە تەنها بزنسی ڕاستەقینە و پشکنراو پیشان دەدات. هەموو هەفتەیەک بزنسی نوێ زیاد دەبن.", "بمناسة تعرض فقط أنشطة حقيقية وموثّقة. تنضم أنشطة جديدة كل أسبوع."],
+  ask_find: ["Ask Bmnassa to find one", "لە بمناسە بپرسە بۆت بدۆزێتەوە", "اسأل بمناسة لتجد لك واحداً"],
+  other_cats: ["See other categories", "بینینی پۆلەکانی تر", "تصفّح فئات أخرى"],
+  other_city: ["Try another city", "شارێکی تر تاقی بکەرەوە", "جرّب مدينة أخرى"],
+  list_your_free: ["List your business free", "بە خۆڕایی تۆماری بکە", "سجّل نشاطك مجاناً"],
+  call: ["Call", "پەیوەندی", "اتصال"],
+  whatsapp: ["WhatsApp", "واتسئاپ", "واتساب"],
+  send_message: ["Send a message", "نامە بنێرە", "أرسل رسالة"],
+  save_contact: ["Save contact", "هەڵگرتنی ژمارە", "حفظ جهة الاتصال"],
+  swipe_hint: ["Swipe sideways to flip · down to go back", "بۆ لاکان وەریبگێڕە · بۆ خوارەوە بگەڕێرەوە", "اسحب جانباً للقلب · للأسفل للرجوع"],
+  powered_by: ["Powered by", "بە پشتگیریی", "مدعوم من"],
+  more_info: ["Prices, reviews and location", "نرخ، هەڵسەنگاندن و شوێن", "الأسعار والتقييمات والموقع"],
+  scan_save: ["Scan to save this card", "سکانی بکە بۆ هەڵگرتنی ئەم کارتە", "امسح لحفظ هذه البطاقة"],
+  or_link: ["Or open the link", "یان لینکەکە بکەرەوە", "أو افتح الرابط"],
+  share_card: ["Share this card", "ئەم کارتە هاوبەش بکە", "شارك هذه البطاقة"],
+  about: ["About", "دەربارە", "نبذة"],
+
+  // new (slice 4)
+  view_4: ["Large tiles", "خانەی گەورە", "مربعات كبيرة"],
+  view_3: ["Small tiles", "خانەی بچووک", "مربعات صغيرة"],
+  view_list: ["List", "لیست", "قائمة"],
+  choose_city_title: ["Choose your city", "شارەکەت هەڵبژێرە", "اختر مدينتك"],
+  close: ["Close", "داخستن", "إغلاق"],
+  search_title: ["Search", "گەڕان", "بحث"],
+  search_none: ["Nothing found for “{q}” in {city}.", "هیچ شتێک بۆ «{q}» لە {city} نەدۆزرایەوە.", "لا نتائج لـ«{q}» في {city}."],
+  search_hint: ["Type a business name, a service or a phone number.", "ناوی بزنس، خزمەتگوزاری یان ژمارەی مۆبایل بنووسە.", "اكتب اسم نشاط أو خدمة أو رقم هاتف."],
+  all_areas: ["All areas", "هەموو ناوچەکان", "كل المناطق"],
+  location: ["Location", "شوێن", "الموقع"],
+  new_on: ["New on Bmnassa", "نوێیە لە بمناسە", "جديد على بمناسة"],
+  reviews_n: ["{n} reviews", "{n} هەڵسەنگاندن", "{n} تقييماً"],
+  share: ["Share", "هاوبەشکردن", "مشاركة"],
+  copied: ["Link copied", "لینکەکە کۆپی کرا", "تم نسخ الرابط"],
+  not_found_title: ["Business not found", "بزنسەکە نەدۆزرایەوە", "النشاط غير موجود"],
+  not_found_sub: ["This link may be old, or the business is not live on Bmnassa yet.", "لەوانەیە ئەم لینکە کۆن بێت، یان بزنسەکە هێشتا لە بمناسە بڵاو نەکراوەتەوە.", "قد يكون الرابط قديماً، أو أن النشاط لم يُنشر على بمناسة بعد."],
+  go_home: ["Go to Bmnassa", "بڕۆ بۆ بمناسە", "اذهب إلى بمناسة"],
+  soon_feature: ["Coming in a later update", "لە نوێکردنەوەیەکی داهاتوودا دێت", "قادم في تحديث لاحق"],
+  load_failed: ["Couldn't load. Check your connection and try again.", "بار نەبوو. ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەرەوە.", "تعذّر التحميل. تحقق من اتصالك وحاول مرة أخرى."],
+  no_biz_yet: ["No {cat} here yet", "هێشتا هیچ بزنسێکی {cat} لێرە نییە", "لا يوجد {cat} هنا بعد"],
+  ask_msg: ["Hello Bmnassa, I'm looking for: {cat} in {city}.", "سڵاو بمناسە، بەدوای ئەمەدا دەگەڕێم: {cat} لە {city}.", "مرحباً بمناسة، أبحث عن: {cat} في {city}."],
   st_hidden: ["Hidden", "شاراوە", "مخفي"],
   loading: ["Loading…", "چاوەڕێ بکە…", "جارٍ التحميل…"],
 };
@@ -122,4 +178,23 @@ export const FALLBACK_CITIES = [
 
 export function cityName(c, lang) {
   return (c && (c["name_" + lang] || c.name_en)) || "";
+}
+
+// "18 businesses" in each language (Arabic changes the word with the number)
+export function bizCount(lang, n) {
+  if (lang === "ku") return `${n} بزنس`;
+  if (lang === "ar") {
+    if (n === 0) return "0 نتيجة";
+    if (n === 1) return "نشاط واحد";
+    if (n === 2) return "نشاطان";
+    if (n <= 10) return `${n} أنشطة`;
+    return `${n} نشاطاً`;
+  }
+  return n === 1 ? "1 business" : `${n} businesses`;
+}
+
+// The text of a business field in the person's language, falling back to the languages that are filled
+export function pick(row, field, lang) {
+  if (!row) return "";
+  return row[field + "_" + lang] || row[field + "_en"] || row[field + "_ku"] || row[field + "_ar"] || "";
 }

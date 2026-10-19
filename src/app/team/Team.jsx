@@ -263,6 +263,7 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
     name_en: b.name_en || "", name_ku: b.name_ku || "", name_ar: b.name_ar || "",
     description_en: b.description_en || "", description_ku: b.description_ku || "", description_ar: b.description_ar || "",
     category_id: b.category_id || "",
+    contact_name: b.contact_name || "",
   }));
   const firstMissing = missingLangs(b)[0];
   const [tab, setTab] = useState(firstMissing || b.sent_in_language || "en");
@@ -341,6 +342,11 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
                 {lists.cats.map((c) => <option key={c.id} value={c.id}>{c.name_en}</option>)}
               </select>
             </dd>
+          </div>
+          <div>
+            <dt>Name on the card</dt>
+            <dd><input className="bo-select" value={f.contact_name} placeholder={owner && owner.full_name ? owner.full_name : "Person's name"}
+              onChange={(e) => setF({ ...f, contact_name: e.target.value })} maxLength={60} /></dd>
           </div>
           <div><dt>City · District · Subdistrict</dt><dd>{[enName(city) || b.city_id, enName(dist), enName(sub)].filter(Boolean).join(" · ") || "—"}</dd></div>
           <div><dt>Phone · WhatsApp</dt><dd className="bo-num">{b.phone ? prettyPhone(b.phone) : "—"}</dd></div>
