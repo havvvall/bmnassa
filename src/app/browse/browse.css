@@ -142,3 +142,5 @@
 .b-ok { color: var(--success); font-weight: 700; }
 a.b-chip { text-decoration: none; }
 .b-sheet-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.b-minicard { border: 0; padding: 0; background: none; width: 100%; cursor: pointer; display: block; text-align: start; }

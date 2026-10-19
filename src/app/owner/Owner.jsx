@@ -66,7 +66,7 @@ export function Dashboard({ lang, id, go }) {
     ["ck_location", !!(b.lat && b.lng), "location"],
     ["ck_hours", hasHours(b.hours), "hours"],
     ["ck_prices", !!((prices && prices.length) || b.instagram || b.facebook || b.tiktok || b.email || b.website), "prices"],
-    ["ck_card", false, "card"],
+    ["ck_card", !!b.card, "card"],
   ];
   const done = steps.filter((s) => s[1]).length;
   const soon = () => setToast(t(lang, "soon_feature"));
@@ -114,9 +114,9 @@ export function Dashboard({ lang, id, go }) {
         <div className="o-bar"><span style={{ width: `${(done / 6) * 100}%` }} /></div>
         {steps.map(([key, ok, part]) => (
           <button key={key} type="button" className={"o-step" + (ok ? " ok" : "")} disabled={ok || !part}
-            onClick={() => (part === "card" ? soon() : go(`/my/${b.id}/edit#${part}`))}>
+            onClick={() => (part === "card" ? go(`/my/${b.id}/card`) : go(`/my/${b.id}/edit#${part}`))}>
             <span className="o-check">{ok ? <Icon name="check" size={13} stroke={3} /> : null}</span>
-            <span className="grow">{t(lang, key)}{part === "card" ? <em className="o-soon">{t(lang, "soon_short")}</em> : null}</span>
+            <span className="grow">{t(lang, key)}</span>
             {!ok && part ? <Icon name="chevron" size={16} className="flip" /> : null}
           </button>
         ))}
@@ -124,7 +124,7 @@ export function Dashboard({ lang, id, go }) {
 
       <div className="o-tiles">
         <button type="button" onClick={() => go(`/my/${b.id}/edit`)}><span className="o-tic"><Icon name="rows" size={18} /></span>{t(lang, "edit_page")}</button>
-        <button type="button" onClick={soon}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "card_studio")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
+        <button type="button" onClick={() => go(`/my/${b.id}/card`)}><span className="o-tic"><Icon name="palette" size={18} /></span>{t(lang, "card_studio")}</button>
         <button type="button" onClick={soon}><span className="o-tic"><Icon name="spark" size={18} /></span>{t(lang, "order_nfc")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
         <button type="button" onClick={soon}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
       </div>
@@ -470,7 +470,7 @@ export function EditPage({ lang, id, go }) {
 
       <div className="seg" role="tablist">
         <button type="button" aria-pressed="true">{t(lang, "content")}</button>
-        <button type="button" aria-pressed="false" onClick={() => setToast(t(lang, "soon_feature"))}>{t(lang, "style")} · {t(lang, "soon_short")}</button>
+        <button type="button" aria-pressed="false" onClick={() => go(`/my/${b.id}/card`)}>{t(lang, "style")}</button>
       </div>
 
       {photos ? <Photos lang={lang} bid={b.id} photos={photos} setPhotos={setPhotos} setToast={setToast} /> : null}

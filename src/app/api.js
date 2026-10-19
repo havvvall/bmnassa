@@ -247,7 +247,7 @@ export async function teamUpdateBusiness(id, fields) {
 // ---------- listing (anyone, no account needed; the database only returns live businesses) ----------
 
 const LIST_FIELDS =
-  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address";
+  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card";
 
 export async function listBusinesses(cityId) {
   const city = cityId ? `city_id=eq.${encodeURIComponent(cityId)}&` : "";
@@ -264,7 +264,7 @@ export async function businessByHandle(handle) {
 // ---------- slice 5: owner pages ----------
 
 const OWN_FIELDS =
-  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,email,website,hours,lat,lng,address,rating,reviews,verified,created_at";
+  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,email,website,hours,lat,lng,address,rating,reviews,verified,created_at,card";
 
 export async function getMyBusiness(id) {
   const rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, { auth: true });
@@ -300,10 +300,11 @@ export async function getPhotos(bid, auth) {
 }
 
 // Uploads one photo (already made small by the app) and records it on the business
-export async function addPhoto(bid, blob, sortOrder) {
+// Puts one image file in the business's photo folder and returns its path
+export async function uploadImage(bid, blob, prefix = "") {
   const s = await freshSession();
   if (!s) throw new ApiError("Not signed in", "no_session", 401);
-  const path = `${Number(bid)}/${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}.jpg`;
+  const path = `${Number(bid)}/${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}.jpg`;
   let res;
   try {
     res = await fetch(`${SB_URL}/storage/v1/object/business-photos/${path}`, {
@@ -319,6 +320,11 @@ export async function addPhoto(bid, blob, sortOrder) {
     try { const j = await res.json(); msg = j.message || j.error || msg; } catch { /* ignore */ }
     throw new ApiError(msg, "upload_" + res.status, res.status);
   }
+  return path;
+}
+
+export async function addPhoto(bid, blob, sortOrder) {
+  const path = await uploadImage(bid, blob);
   const rows = await call(`/rest/v1/business_photos?select=id,path,sort_order`, {
     method: "POST", auth: true, headers: { Prefer: "return=representation" },
     body: { business_id: Number(bid), path, sort_order: sortOrder || 0 },

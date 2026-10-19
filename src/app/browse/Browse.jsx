@@ -5,6 +5,7 @@ import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track } from "../api.js";
 import { hoursLines, openState } from "../hours.js";
+import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
 
@@ -489,10 +490,13 @@ export function Card({ lang, handle, go, back }) {
   const [flipped, setFlipped] = useState(false);
   const [toast, setToast] = useToast();
   const touch = useRef(null);
+  const st = b ? cardSettings(b) : null;
 
   useEffect(() => {
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#121212");
-  }, []);
+    const colour = !st || st.style === "classic" ? "#121212" : st.style === "minimal" ? "#f4f1ea" : st.style === "bold" && !flipped ? st.color : "#d9dce0";
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", colour);
+    return () => document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#121212");
+  }, [st && st.style, st && st.color, flipped]);
   useEffect(() => { if (b && b.id) track(b.id, "view"); }, [b && b.id]);
 
   if (b === null) return <NotFound lang={lang} go={go} />;
@@ -502,10 +506,15 @@ export function Card({ lang, handle, go, back }) {
   }
 
   const cat = lists && byId(lists.cats)[b.category_id];
+  const city = lists && byId(lists.cities)[b.city_id];
   const person = b.contact_name || pick(b, "name", lang);
   const url = `${window.location.origin}/${b.handle}/card`;
-  const shortUrl = `${pageHost()}/${b.handle}`;
   const exit = () => (window.history.length > 1 ? back() : go("/home"));
+  const share = () => shareOrCopy(url, person, setToast, lang);
+  const copy = () => {
+    const done = () => setToast(t(lang, "copied"));
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, done); else share();
+  };
 
   const onStart = (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY }; };
   const onEnd = (e) => {
@@ -514,65 +523,23 @@ export function Card({ lang, handle, go, back }) {
     const dx = p.clientX - touch.current.x, dy = p.clientY - touch.current.y;
     touch.current = null;
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) setFlipped((f) => !f);
-    else if (dy > 90 && Math.abs(dy) > Math.abs(dx)) exit();
+    else if (dy > 90 && Math.abs(dy) > Math.abs(dx) && window.scrollY <= 0) exit();
   };
+  const boldBar = st.style === "bold" && !flipped;
 
   return (
-    <div className="b-card-screen" onTouchStart={onStart} onTouchEnd={onEnd}>
-      <div className="b-card-bar">
+    <div className={"b-card-screen cs-" + st.style + (flipped ? " flipped" : "")} style={{ "--card": st.color }} onTouchStart={onStart} onTouchEnd={onEnd}>
+      <div className={"b-card-bar" + (boldBar ? " cf-surface " + (st.background === "solid" ? "solid" : "carbon") : "")}>
         <button type="button" className="b-dbtn" aria-label={t(lang, "back")} onClick={exit}><Icon name="down" size={20} /></button>
         <span className="grow" />
-        <button type="button" className="b-dbtn" aria-label="Flip" onClick={() => setFlipped(!flipped)}><Icon name="flip" size={19} /></button>
-        <button type="button" className="b-dbtn" aria-label={t(lang, "share")} onClick={() => shareOrCopy(url, person, setToast, lang)}><Icon name="share" size={19} /></button>
+        <button type="button" className="b-dbtn" aria-label={t(lang, "flip")} onClick={() => setFlipped(!flipped)}><Icon name="flip" size={19} /></button>
+        <button type="button" className="b-dbtn" aria-label={t(lang, "share")} onClick={share}><Icon name="share" size={19} /></button>
       </div>
 
       <div className="b-card-body">
-        {!flipped ? (
-          <div className="b-face">
-            <div className="b-ring"><span>{initial(person)}</span></div>
-            <h1 className="b-person"><bdi>{person}</bdi></h1>
-            <div className="b-role">{subtitle(b, cat, lang)}</div>
-            <div className="b-links">
-              {b.phone ? (
-                <a className="b-link" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")}>
-                  <span className="b-lic call"><Icon name="phone" size={18} /></span>
-                  <span className="grow"><b>{t(lang, "call")}</b><small className="ltr">{prettyPhone(b.phone)}</small></span>
-                  <Icon name="chevron" size={16} className="flip" />
-                </a>
-              ) : null}
-              {b.whatsapp || b.phone ? (
-                <a className="b-link" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer" onClick={() => track(b.id, "whatsapp")}>
-                  <span className="b-lic wa"><Icon name="whatsapp" size={18} /></span>
-                  <span className="grow"><b>{t(lang, "whatsapp")}</b><small>{t(lang, "send_message")}</small></span>
-                  <Icon name="chevron" size={16} className="flip" />
-                </a>
-              ) : null}
-              {socialLinks(b).map(([icon, cls, label, text, href]) => (
-                <a key={icon} className="b-link" href={href} target="_blank" rel="noreferrer">
-                  <span className={"b-lic " + cls}><Icon name={icon} size={18} /></span>
-                  <span className="grow"><b>{label}</b><small className="ltr">{text}</small></span>
-                  <Icon name="chevron" size={16} className="flip" />
-                </a>
-              ))}
-            </div>
-            <span className="grow" />
-            <button type="button" className="b-goldbtn" onClick={() => downloadContact(b, lang)}><Icon name="contact" size={18} /> {t(lang, "save_contact")}</button>
-          </div>
-        ) : (
-          <div className="b-face back">
-            <h1 className="b-person"><bdi>{person}</bdi></h1>
-            <div className="b-role">{subtitle(b, cat, lang)}</div>
-            <div className="b-qr"><QR text={url} /></div>
-            <b className="b-scan">{t(lang, "scan_save")}</b>
-            <small className="b-muted-d">{t(lang, "or_link")}</small>
-            <button type="button" className="b-urlbox" onClick={() => shareOrCopy(url, person, setToast, lang)}>
-              <span className="ltr">{pageHost()}/<em>{b.handle}</em></span>
-              <Icon name="copy" size={17} />
-            </button>
-            <span className="grow" />
-            <button type="button" className="b-goldbtn" onClick={() => shareOrCopy(url, person, setToast, lang)}><Icon name="share" size={18} /> {t(lang, "share_card")}</button>
-          </div>
-        )}
+        {!flipped
+          ? <CardFront b={b} s={st} lang={lang} cat={cat} city={city} onSaveContact={() => downloadContact(b, lang)} />
+          : <CardBack b={b} s={st} lang={lang} cat={cat} url={url} onShare={share} onCopy={copy} />}
         <p className="b-hint">{t(lang, "swipe_hint")}</p>
         <p className="b-powered">{t(lang, "powered_by")} <img src="/brand/logo-silver.svg" alt="Bmnassa" /></p>
       </div>
@@ -584,7 +551,6 @@ export function Card({ lang, handle, go, back }) {
         <button type="button" className="b-darkbtn" onClick={() => go("/" + b.handle)}><Icon name="up" size={16} /> {t(lang, "more_info")}</button>
       </div>
       <Toast text={toast} />
-      <span hidden>{shortUrl}</span>
     </div>
   );
 }
@@ -634,19 +600,8 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
         <button type="button" className="rbtn" aria-label={t(lang, "share")} onClick={() => shareOrCopy(url, pick(b, "name", lang), setToast, lang)}><Icon name="share" size={18} /></button>
       </div>
 
-      <button type="button" className="b-mini" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
-        <span className="b-mini-top">
-          <span className="b-ring sm"><span>{initial(person)}</span></span>
-          <span className="grow"><b><bdi>{person}</bdi></b><small>{subtitle(b, cat, lang)}</small></span>
-          <span className="b-mini-flip"><Icon name="flip" size={15} /></span>
-        </span>
-        <span className="b-mini-bottom">
-          {b.phone ? <span className="b-lic call sm"><Icon name="phone" size={15} /></span> : null}
-          {b.phone ? <span className="b-lic wa sm"><Icon name="whatsapp" size={15} /></span> : null}
-          {links.slice(0, 3).map(([icon, cls]) => <span key={icon} className={"b-lic sm " + cls}><Icon name={icon} size={15} /></span>)}
-          <span className="grow" />
-          <img src="/brand/logo-silver.svg" alt="" />
-        </span>
+      <button type="button" className="b-minicard" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
+        <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cat} small linksOnly />
       </button>
 
       <div className="b-head">

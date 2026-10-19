@@ -3,6 +3,7 @@ import "./app.css";
 import Team from "./team/Team.jsx";
 import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { Dashboard, EditPage } from "./owner/Owner.jsx";
+import Studio from "./card/Studio.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -642,6 +643,8 @@ export default function App() {
     screen = <Results key="search" lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} search={query.get("q") || ""} />;
   } else if (path.startsWith("/c/")) {
     screen = <Results key={path} lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} categoryId={decodeURIComponent(path.slice(3))} />;
+  } else if (/^\/my\/\d+\/card$/.test(path) && profile) {
+    screen = <Studio key={path} lang={lang} id={path.split("/")[2]} go={go} />;
   } else if (/^\/my\/\d+\/edit$/.test(path) && profile) {
     screen = <EditPage key={path} lang={lang} id={path.split("/")[2]} go={go} />;
   } else if (/^\/my\/\d+$/.test(path) && profile) {
