@@ -166,3 +166,5 @@ h1 { font-size: 26px; line-height: 32px; font-weight: 800; letter-spacing: -0.01
 .rowbtn { width: 100%; background: none; border: 0; border-top: 1px solid var(--line); cursor: pointer; text-align: start; color: var(--accent-text); }
 .rowbtn:first-child { border-top: 0; }
 .sent-mark { width: 64px; height: 64px; border-radius: 32px; background: var(--night); color: var(--accent); display: grid; place-items: center; box-shadow: 0 0 0 2px var(--accent); }
+.row:has(.reason) { flex-wrap: wrap; }
+.reason { flex-basis: 100%; margin: 0 0 4px; padding-inline-start: 48px; font-size: 13px; line-height: 19px; color: var(--danger); }

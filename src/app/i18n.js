@@ -94,6 +94,7 @@ const T = {
   st_pending: ["Waiting for review", "چاوەڕێی پێداچوونەوە", "بانتظار المراجعة"],
   st_approved: ["Live", "بڵاوکراوەتەوە", "منشور"],
   st_rejected: ["Not approved", "پەسەند نەکرا", "لم تتم الموافقة"],
+  reason: ["Reason:", "هۆکار:", "السبب:"],
   st_hidden: ["Hidden", "شاراوە", "مخفي"],
   loading: ["Loading…", "چاوەڕێ بکە…", "جارٍ التحميل…"],
 };

@@ -182,12 +182,18 @@ export async function getPlaces() {
 }
 
 const BIZ_FIELDS =
-  "id,name_en,name_ku,name_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,description_en,description_ku,description_ar,status,created_at";
+  "id,name_en,name_ku,name_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,description_en,description_ku,description_ar,status,rejection_reason,handle,created_at";
 
 export async function getMyBusinesses() {
   const s = await freshSession();
   if (!s) return [];
-  return call(`/rest/v1/businesses?owner_id=eq.${s.user.id}&select=${BIZ_FIELDS}&order=created_at.desc`, { auth: true });
+  try {
+    return await call(`/rest/v1/businesses?owner_id=eq.${s.user.id}&select=${BIZ_FIELDS}&order=created_at.desc`, { auth: true });
+  } catch {
+    // Before 004_approvals.sql has run, the review columns do not exist yet
+    const older = BIZ_FIELDS.replace(",rejection_reason,handle", "");
+    return call(`/rest/v1/businesses?owner_id=eq.${s.user.id}&select=${older}&order=created_at.desc`, { auth: true });
+  }
 }
 
 // The owner types the name and description in the language they use; the team fills the others at approval.
@@ -207,4 +213,33 @@ export async function createBusiness({ name, description, lang, category_id, cit
     method: "POST", auth: true, body, headers: { Prefer: "return=representation" },
   });
   return rows && rows[0];
+}
+
+// ---------- back office (team only; the database checks the role on every call) ----------
+
+export async function amIStaff() {
+  try {
+    return (await call("/rest/v1/rpc/bmnassa_is_staff", { method: "POST", auth: true, body: {} })) === true;
+  } catch {
+    return false;
+  }
+}
+
+export async function teamBusinesses(status) {
+  const q = status ? `status=eq.${status}&` : "";
+  return call(`/rest/v1/businesses?${q}select=*&order=created_at.desc.nullslast&limit=500`, { auth: true });
+}
+
+export async function teamProfiles(ids) {
+  const list = Array.from(new Set(ids.filter(Boolean)));
+  if (!list.length) return [];
+  return call(`/rest/v1/profiles?id=in.(${list.join(",")})&select=id,full_name,email,phone,role`, { auth: true });
+}
+
+export async function teamUpdateBusiness(id, fields) {
+  const rows = await call(`/rest/v1/businesses?id=eq.${id}&select=*`, {
+    method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" },
+  });
+  if (!rows || !rows.length) throw new ApiError("Not allowed", "not_allowed", 403);
+  return rows[0];
 }

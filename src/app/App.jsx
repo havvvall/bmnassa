@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./app.css";
+import Team from "./team/Team.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -451,6 +452,7 @@ function MyBusinesses({ lang, onList }) {
             <div className="avatar sm" aria-hidden="true">{bizName(b, lang).trim().charAt(0).toUpperCase() || "B"}</div>
             <span className="v">{bizName(b, lang)}</span>
             <span className={"status " + (b.status || "pending")}>{t(lang, "st_" + (b.status || "pending"))}</span>
+            {b.status === "rejected" && b.rejection_reason ? <p className="reason">{t(lang, "reason")} {b.rejection_reason}</p> : null}
           </div>
         ))}
         <button type="button" className="row rowbtn" onClick={onList}>
@@ -553,10 +555,10 @@ export default function App() {
         if (p) {
           if (p.language && p.language !== store.get("bm_lang", "")) setLang(p.language);
           if (!p.full_name) go("/name", true);
-          else if (!["/list", "/account"].includes(here)) go("/account", true);
+          else if (!["/list", "/account", "/team"].includes(here)) go("/account", true);
         } else if (!["/welcome", "/signin", "/verify"].includes(here)) {
           // Someone opened "List your business" before signing in: come back to it afterwards
-          if (here === "/list") { try { sessionStorage.setItem("bm_after", "/list"); } catch { /* ignore */ } }
+          if (here === "/list" || here === "/team") { try { sessionStorage.setItem("bm_after", here); } catch { /* ignore */ } }
           go(store.get("bm_city", "") ? "/signin" : "/welcome", true);
         } else if (here === "/verify" && !email) {
           go("/signin", true);
@@ -581,6 +583,10 @@ export default function App() {
     if (p && !p.full_name) { try { sessionStorage.setItem("bm_after", after); } catch { /* ignore */ } }
     go(p && p.full_name ? after : "/name", true);
   };
+
+  if (path === "/team" && profile && profile.full_name) {
+    return <Team profile={profile} onOpenApp={() => go("/account")} onSignOut={async () => { await signOut(); setProfile(null); go("/signin", true); }} />;
+  }
 
   let screen;
   if (path === "/verify" && email) {
