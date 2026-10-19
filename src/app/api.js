@@ -249,15 +249,29 @@ export async function teamUpdateBusiness(id, fields) {
 const LIST_FIELDS =
   "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card";
 
+// The fields every version of the database has; used when a newer column is not there yet
+const BASE_LIST_FIELDS =
+  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,rating,reviews,verified,created_at";
+
+// Ask with all fields; if the database is missing a newer column (its update not run yet), ask again with the basic ones
+async function withFallback(build) {
+  try {
+    return await call(build(LIST_FIELDS));
+  } catch (e) {
+    if (e.status === 400 || /column/i.test(e.message || "")) return call(build(BASE_LIST_FIELDS));
+    throw e;
+  }
+}
+
 export async function listBusinesses(cityId) {
   const city = cityId ? `city_id=eq.${encodeURIComponent(cityId)}&` : "";
-  return call(`/rest/v1/businesses?${city}status=eq.approved&select=${LIST_FIELDS}&order=created_at.desc.nullslast&limit=1000`);
+  return withFallback((f) => `/rest/v1/businesses?${city}status=eq.approved&select=${f}&order=created_at.desc.nullslast&limit=1000`);
 }
 
 export async function businessByHandle(handle) {
   const h = String(handle || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
   if (!h) return null;
-  const rows = await call(`/rest/v1/businesses?handle=ilike.${h}&status=eq.approved&select=${LIST_FIELDS}&limit=1`);
+  const rows = await withFallback((f) => `/rest/v1/businesses?handle=ilike.${h}&status=eq.approved&select=${f}&limit=1`);
   return rows && rows[0] ? rows[0] : null;
 }
 
