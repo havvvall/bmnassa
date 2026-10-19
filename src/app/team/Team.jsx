@@ -61,6 +61,12 @@ function missingLangs(b) {
   return LANGS.filter((l) => !(b["name_" + l.id] || "").trim() || (anyDesc && !(b["description_" + l.id] || "").trim())).map((l) => l.id);
 }
 
+function cameFrom(b) {
+  if (b.source === "hitex26") return "HITEX26";
+  if (b.owner_id) return "Sign-up form";
+  return "Back office";
+}
+
 function waLink(phone) {
   const d = String(phone || "").replace(/\D/g, "");
   return d ? `https://wa.me/${d}` : null;
@@ -224,7 +230,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
                     <td>{enName(look.cat[b.category_id]) || b.category_id || "—"}</td>
                     <td>{placeText(look.city[b.city_id], look.dist[b.district_id]) || b.city_id || "—"}</td>
                     <td className="bo-num">{b.phone ? prettyPhone(b.phone).replace("+964 ", "0") : "—"}</td>
-                    <td>{b.owner_id ? "Sign-up form" : "Back office"}</td>
+                    <td>{cameFrom(b)}</td>
                     <td>
                       {view === "pending"
                         ? <span className={"bo-pill " + (miss.length ? "amber" : "green")}>{miss.length ? `${miss.length} missing` : "All 3"}</span>
@@ -264,6 +270,9 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
     description_en: b.description_en || "", description_ku: b.description_ku || "", description_ar: b.description_ar || "",
     category_id: b.category_id || "",
     contact_name: b.contact_name || "",
+    city_id: b.city_id || "",
+    district_id: b.district_id || "",
+    subdistrict_id: b.subdistrict_id || "",
   }));
   const firstMissing = missingLangs(b)[0];
   const [tab, setTab] = useState(firstMissing || b.sent_in_language || "en");
@@ -332,8 +341,9 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
           </div>
         ) : null}
 
+        {b.team_note ? <div className="bo-note">{b.team_note}</div> : null}
         <dl className="bo-facts">
-          <div><dt>Owner</dt><dd>{owner ? <>{owner.full_name || "—"}<small>{owner.email || prettyPhone(owner.phone)}</small></> : (b.owner || (b.owner_id ? "—" : "Added by the team"))}</dd></div>
+          <div><dt>Owner</dt><dd>{owner ? <>{owner.full_name || "—"}<small>{owner.email || prettyPhone(owner.phone)}</small></> : (b.owner_id ? "—" : b.source === "hitex26" ? "No Bmnassa account yet" : "Added by the team")}</dd></div>
           <div>
             <dt>Category</dt>
             <dd>
@@ -348,7 +358,47 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
             <dd><input className="bo-select" value={f.contact_name} placeholder={owner && owner.full_name ? owner.full_name : "Person's name"}
               onChange={(e) => setF({ ...f, contact_name: e.target.value })} maxLength={60} /></dd>
           </div>
-          <div><dt>City · District · Subdistrict</dt><dd>{[enName(city) || b.city_id, enName(dist), enName(sub)].filter(Boolean).join(" · ") || "—"}</dd></div>
+          <div>
+            <dt>City</dt>
+            <dd>
+              <select className="bo-select" value={f.city_id} onChange={(e) => setF({ ...f, city_id: e.target.value, district_id: "", subdistrict_id: "" })}>
+                {!f.city_id ? <option value="">Choose…</option> : null}
+                {lists.cities.map((c) => <option key={c.id} value={c.id}>{c.name_en}</option>)}
+              </select>
+            </dd>
+          </div>
+          <div>
+            <dt>District</dt>
+            <dd>
+              <select className="bo-select" value={f.district_id} disabled={!f.city_id}
+                onChange={(e) => {
+                  const subs = lists.subdistricts.filter((x) => x.district_id === e.target.value);
+                  setF({ ...f, district_id: e.target.value, subdistrict_id: subs.length === 1 ? subs[0].id : "" });
+                }}>
+                <option value="">Choose…</option>
+                {lists.districts.filter((x) => x.city_id === f.city_id).map((x) => <option key={x.id} value={x.id}>{x.name_en}</option>)}
+              </select>
+            </dd>
+          </div>
+          <div>
+            <dt>Subdistrict</dt>
+            <dd>
+              <select className="bo-select" value={f.subdistrict_id} disabled={!f.district_id} onChange={(e) => setF({ ...f, subdistrict_id: e.target.value })}>
+                <option value="">Choose…</option>
+                {lists.subdistricts.filter((x) => x.district_id === f.district_id).map((x) => <option key={x.id} value={x.id}>{x.name_en}</option>)}
+              </select>
+            </dd>
+          </div>
+          {b.address || b.lat || b.map_link ? (
+            <div>
+              <dt>Address they gave</dt>
+              <dd>
+                {b.address || "—"}
+                {b.lat && b.lng ? <small><a href={`https://www.google.com/maps?q=${b.lat},${b.lng}`} target="_blank" rel="noreferrer">Open map pin ↗</a></small>
+                  : b.map_link ? <small><a href={b.map_link} target="_blank" rel="noreferrer">Open map link ↗</a></small> : null}
+              </dd>
+            </div>
+          ) : null}
           <div><dt>Phone · WhatsApp</dt><dd className="bo-num">{b.phone ? prettyPhone(b.phone) : "—"}</dd></div>
         </dl>
 
@@ -423,12 +473,16 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
             <>
               <div className="bo-row">
                 <button className="bo-btn ghost danger" onClick={() => setRejecting(true)}>Reject with reason</button>
-                <button className="bo-btn gold" disabled={!!busy || miss.length > 0 || !allChecked || !f.category_id} onClick={approve}
+                <button className="bo-btn gold" disabled={!!busy || miss.length > 0 || !allChecked || !f.category_id || !f.city_id || !f.district_id || !f.subdistrict_id} onClick={approve}
                   title={miss.length ? "Fill in the missing languages first" : !allChecked ? "Tick every line of the checklist first" : ""}>
                   {busy === "approve" ? "Approving…" : "Approve and publish"}
                 </button>
               </div>
-              {miss.length || !allChecked ? <p className="bo-hint center">{miss.length ? "Add the missing languages" : "Tick the checklist"} to approve.</p> : null}
+              {miss.length || !allChecked || !f.category_id || !f.district_id || !f.subdistrict_id ? (
+                <p className="bo-hint center">
+                  {!f.category_id ? "Choose a category" : !f.district_id || !f.subdistrict_id ? "Choose the district and subdistrict" : miss.length ? "Add the missing languages" : "Tick the checklist"} to approve.
+                </p>
+              ) : null}
               {dirty ? <button className="bo-link" disabled={!!busy} onClick={() => save({}, "Saved", "save")}>{busy === "save" ? "Saving…" : "Save changes without approving"}</button> : null}
             </>
           )
