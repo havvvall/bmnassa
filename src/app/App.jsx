@@ -2,18 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import "./app.css";
 import Team from "./team/Team.jsx";
 import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
+import { Dashboard, EditPage } from "./owner/Owner.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
   getSession, getMyProfile, updateMyProfile, getCities,
-  normalisePhone, prettyPhone, getCategories, getPlaces, getMyBusinesses, createBusiness,
+  normalisePhone, prettyPhone, getCategories, getPlaces, getMyBusinesses, createBusiness, getStats,
 } from "./api.js";
 
 // ---------- small helpers ----------
 
 // Words used by the app itself; any other single word is a business page name (bmnassa.com/azad-cooling)
 const APP_WORDS = new Set(["", "home", "welcome", "signin", "verify", "name", "account", "list", "team", "search", "c",
-  "admin", "register", "stand", "invitation", "brand", "wallet", "scan"]);
+  "admin", "register", "stand", "invitation", "brand", "wallet", "scan", "my"]);
 
 function businessPath(path) {
   const m = /^\/([a-z0-9][a-z0-9-]{0,60})(\/card)?\/?$/i.exec(path || "");
@@ -451,21 +452,35 @@ function Sent({ lang, business, onDone }) {
   );
 }
 
-function MyBusinesses({ lang, onList }) {
+function MyBusinesses({ lang, onList, go }) {
   const [list, setList] = useState(null);
-  useEffect(() => { getMyBusinesses().then((r) => setList(r || [])).catch(() => setList([])); }, []);
+  const [views, setViews] = useState({});
+  useEffect(() => {
+    getMyBusinesses().then((r) => {
+      setList(r || []);
+      (r || []).filter((b) => b.status === "approved").forEach((b) => {
+        getStats(b.id).then((s) => setViews((v) => ({ ...v, [b.id]: s.views }))).catch(() => {});
+      });
+    }).catch(() => setList([]));
+  }, []);
   if (list === null) return null;
   return (
     <div className="stack">
       <span className="label">{t(lang, "my_business")}</span>
       <div className="panel">
         {list.map((b) => (
-          <div className="row" key={b.id}>
+          <button type="button" className="row rowbtn biz" key={b.id} onClick={() => go("/my/" + b.id)}>
             <div className="avatar sm" aria-hidden="true">{bizName(b, lang).trim().charAt(0).toUpperCase() || "B"}</div>
-            <span className="v">{bizName(b, lang)}</span>
-            <span className={"status " + (b.status || "pending")}>{t(lang, "st_" + (b.status || "pending"))}</span>
+            <span className="v">
+              <bdi>{bizName(b, lang)}</bdi>
+              {b.status === "approved"
+                ? <small className="okline">{t(lang, "live_views", { n: views[b.id] == null ? "…" : views[b.id] })}</small>
+                : null}
+            </span>
+            {b.status !== "approved" ? <span className={"status " + (b.status || "pending")}>{t(lang, "st_" + (b.status || "pending"))}</span> : null}
+            <svg className="flip" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
             {b.status === "rejected" && b.rejection_reason ? <p className="reason">{t(lang, "reason")} {b.rejection_reason}</p> : null}
-          </div>
+          </button>
         ))}
         <button type="button" className="row rowbtn" onClick={onList}>
           <span className="v">{t(lang, list.length ? "list_another" : "list_free")}</span>
@@ -517,7 +532,7 @@ function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSig
         </div>
       </div>
       <div className="ok" role="status">{saved ? t(lang, "saved") : ""}</div>
-      <MyBusinesses lang={lang} onList={onList} />
+      <MyBusinesses lang={lang} onList={onList} go={go} />
       <p className="note">{t(lang, "next_slices")}</p>
       <span className="spacer" />
       <button type="button" className="btn quiet" onClick={async () => { await signOut(); onSignedOut(); }}>{t(lang, "sign_out")}</button>
@@ -574,9 +589,9 @@ export default function App() {
           if (p.language && p.language !== store.get("bm_lang", "")) setLang(p.language);
           if (!p.full_name) go("/name", true);
           else if (["/", "/welcome", "/signin", "/verify"].includes(here)) go("/home", true);
-        } else if (["/list", "/team", "/account", "/name", "/list/sent"].includes(here)) {
+        } else if (["/list", "/team", "/account", "/name", "/list/sent"].includes(here) || here.startsWith("/my/")) {
           // Pages that need an account: sign in first, then come back
-          if (here === "/list" || here === "/team") { try { sessionStorage.setItem("bm_after", here); } catch { /* ignore */ } }
+          if (here === "/list" || here === "/team" || here.startsWith("/my/")) { try { sessionStorage.setItem("bm_after", here); } catch { /* ignore */ } }
           go(hasCity ? "/signin" : "/welcome", true);
         } else if (here === "/verify" && !email) {
           go("/signin", true);
@@ -626,6 +641,12 @@ export default function App() {
     screen = <Results key="search" lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} search={query.get("q") || ""} />;
   } else if (path.startsWith("/c/")) {
     screen = <Results key={path} lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} categoryId={decodeURIComponent(path.slice(3))} />;
+  } else if (/^\/my\/\d+\/edit$/.test(path) && profile) {
+    screen = <EditPage key={path} lang={lang} id={path.split("/")[2]} go={go} />;
+  } else if (/^\/my\/\d+$/.test(path) && profile) {
+    screen = <Dashboard key={path} lang={lang} id={path.split("/")[2]} go={go} />;
+  } else if (path.startsWith("/my/") && !profile) {
+    screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
   } else if (path === "/verify" && email) {
     screen = <Verify lang={lang} email={email} onVerified={afterVerify} onChangeEmail={() => go("/signin")} />;
   } else if (path === "/signin") {

@@ -168,3 +168,7 @@ h1 { font-size: 26px; line-height: 32px; font-weight: 800; letter-spacing: -0.01
 .sent-mark { width: 64px; height: 64px; border-radius: 32px; background: var(--night); color: var(--accent); display: grid; place-items: center; box-shadow: 0 0 0 2px var(--accent); }
 .row:has(.reason) { flex-wrap: wrap; }
 .reason { flex-basis: 100%; margin: 0 0 4px; padding-inline-start: 48px; font-size: 13px; line-height: 19px; color: var(--danger); }
+
+.rowbtn.biz { color: var(--text); }
+.rowbtn.biz .v small { display: block; font-size: 12px; font-weight: 700; }
+.okline { color: var(--success); }

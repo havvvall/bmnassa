@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
-import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone } from "../api.js";
+import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track } from "../api.js";
+import { hoursLines, openState } from "../hours.js";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
 
@@ -45,6 +46,20 @@ const initial = (s) => (String(s || "").trim().charAt(0) || "B").toUpperCase();
 const digits = (s) => String(s || "").replace(/\D/g, "");
 const waLink = (phone, text) => `https://wa.me/${digits(phone)}${text ? "?text=" + encodeURIComponent(text) : ""}`;
 const pageHost = () => window.location.host.replace(/^www\./, "");
+
+// Turns what an owner typed ("@azad", "instagram.com/azad", "azad.com") into a link and a short label
+function socialLinks(b) {
+  const clean = (v) => String(v || "").trim();
+  const handle = (v) => clean(v).replace(/^https?:\/\/(www\.)?[^/]+\//i, "").replace(/^@/, "").replace(/\/$/, "");
+  const out = [];
+  if (clean(b.instagram)) out.push(["instagram", "ig", "Instagram", "@" + handle(b.instagram), /^https?:/i.test(b.instagram) ? clean(b.instagram) : `https://instagram.com/${handle(b.instagram)}`]);
+  if (clean(b.facebook)) out.push(["facebook", "fb", "Facebook", handle(b.facebook), /^https?:/i.test(b.facebook) ? clean(b.facebook) : `https://facebook.com/${handle(b.facebook)}`]);
+  if (clean(b.tiktok)) out.push(["tiktok", "tt", "TikTok", "@" + handle(b.tiktok), /^https?:/i.test(b.tiktok) ? clean(b.tiktok) : `https://www.tiktok.com/@${handle(b.tiktok)}`]);
+  if (clean(b.email)) out.push(["mail", "em", "Email", clean(b.email), `mailto:${clean(b.email)}`]);
+  if (clean(b.website)) out.push(["globe", "web", "Website", clean(b.website).replace(/^https?:\/\//i, "").replace(/\/$/, ""), /^https?:/i.test(b.website) ? clean(b.website) : `https://${clean(b.website)}`]);
+  return out;
+}
+const directionsUrl = (b) => (b.lat && b.lng ? `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}` : null);
 
 function sortRows(rows, sort) {
   const r = rows.slice();
@@ -234,9 +249,10 @@ function ResultRow({ b, lang, look, onOpen }) {
       <span className="grow">
         <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
         <small><Rating b={b} lang={lang} compact /> {dist ? <span className="b-muted">· {cityName(dist, lang)}</span> : null}</small>
+        {openState(b.hours, lang) ? <small className={openState(b.hours, lang).open ? "b-ok" : "b-muted"}>{openState(b.hours, lang).text}</small> : null}
       </span>
       {b.phone ? (
-        <a className="b-callbtn" href={`tel:${b.phone}`} onClick={(e) => e.stopPropagation()} aria-label={t(lang, "call")}>
+        <a className="b-callbtn" href={`tel:${b.phone}`} onClick={(e) => { e.stopPropagation(); track(b.id, "call"); }} aria-label={t(lang, "call")}>
           <Icon name="phone" size={18} />
         </a>
       ) : null}
@@ -477,6 +493,7 @@ export function Card({ lang, handle, go, back }) {
   useEffect(() => {
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#121212");
   }, []);
+  useEffect(() => { if (b && b.id) track(b.id, "view"); }, [b && b.id]);
 
   if (b === null) return <NotFound lang={lang} go={go} />;
   if (b === undefined) {
@@ -517,19 +534,26 @@ export function Card({ lang, handle, go, back }) {
             <div className="b-role">{subtitle(b, cat, lang)}</div>
             <div className="b-links">
               {b.phone ? (
-                <a className="b-link" href={`tel:${b.phone}`}>
+                <a className="b-link" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")}>
                   <span className="b-lic call"><Icon name="phone" size={18} /></span>
                   <span className="grow"><b>{t(lang, "call")}</b><small className="ltr">{prettyPhone(b.phone)}</small></span>
                   <Icon name="chevron" size={16} className="flip" />
                 </a>
               ) : null}
               {b.whatsapp || b.phone ? (
-                <a className="b-link" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer">
+                <a className="b-link" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer" onClick={() => track(b.id, "whatsapp")}>
                   <span className="b-lic wa"><Icon name="whatsapp" size={18} /></span>
                   <span className="grow"><b>{t(lang, "whatsapp")}</b><small>{t(lang, "send_message")}</small></span>
                   <Icon name="chevron" size={16} className="flip" />
                 </a>
               ) : null}
+              {socialLinks(b).map(([icon, cls, label, text, href]) => (
+                <a key={icon} className="b-link" href={href} target="_blank" rel="noreferrer">
+                  <span className={"b-lic " + cls}><Icon name={icon} size={18} /></span>
+                  <span className="grow"><b>{label}</b><small className="ltr">{text}</small></span>
+                  <Icon name="chevron" size={16} className="flip" />
+                </a>
+              ))}
             </div>
             <span className="grow" />
             <button type="button" className="b-goldbtn" onClick={() => downloadContact(b, lang)}><Icon name="contact" size={18} /> {t(lang, "save_contact")}</button>
@@ -556,7 +580,7 @@ export function Card({ lang, handle, go, back }) {
       <div className="b-card-sheet">
         <span className="b-grab" />
         <div className="b-sheet-name"><b><bdi>{pick(b, "name", lang)}</bdi></b>{b.verified ? <Tick /> : null}</div>
-        <div className="b-sheet-meta"><Rating b={b} lang={lang} /></div>
+        <div className="b-sheet-meta"><Rating b={b} lang={lang} />{openState(b.hours, lang) ? <span className={"b-open " + (openState(b.hours, lang).open ? "yes" : "no")}>{openState(b.hours, lang).text}</span> : null}</div>
         <button type="button" className="b-darkbtn" onClick={() => go("/" + b.handle)}><Icon name="up" size={16} /> {t(lang, "more_info")}</button>
       </div>
       <Toast text={toast} />
@@ -569,6 +593,14 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const [b, err, reload] = useBusiness(handle);
   const [lists] = useLists();
   const [toast, setToast] = useToast();
+  const [photos, setPhotos] = useState([]);
+  const [prices, setPrices] = useState([]);
+  useEffect(() => {
+    if (!b || !b.id) return;
+    track(b.id, "view");
+    getPhotos(b.id).then((r) => setPhotos(r || [])).catch(() => {});
+    getPrices(b.id).then((r) => setPrices(r || [])).catch(() => {});
+  }, [b && b.id]);
 
   if (b === null) return <NotFound lang={lang} go={go} />;
   if (b === undefined) {
@@ -587,6 +619,11 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
     .filter((x, i, a) => x && a.indexOf(x) === i);
   const about = pick(b, "description", lang);
   const url = `${window.location.origin}/${b.handle}`;
+  const open = openState(b.hours, lang);
+  const lines = hoursLines(b.hours, lang);
+  const links = socialLinks(b);
+  const dir = directionsUrl(b);
+  const priceText = (r) => (r.price_iqd == null ? "" : `${Number(r.price_iqd).toLocaleString("en-US")} ${t(lang, "iqd")}`);
   const exit = () => (window.history.length > 1 ? back() : go("/home"));
 
   return (
@@ -606,6 +643,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
         <span className="b-mini-bottom">
           {b.phone ? <span className="b-lic call sm"><Icon name="phone" size={15} /></span> : null}
           {b.phone ? <span className="b-lic wa sm"><Icon name="whatsapp" size={15} /></span> : null}
+          {links.slice(0, 3).map(([icon, cls]) => <span key={icon} className={"b-lic sm " + cls}><Icon name={icon} size={15} /></span>)}
           <span className="grow" />
           <img src="/brand/logo-silver.svg" alt="" />
         </span>
@@ -614,14 +652,19 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
       <div className="b-head">
         <h1><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</h1>
         <p className="sub">{[cityName(cat, lang), place.slice(-2).join(lang === "en" ? ", " : "، ")].filter(Boolean).join(" · ")}</p>
-        <Rating b={b} lang={lang} />
+        <div className="b-row-c"><Rating b={b} lang={lang} />{open ? <span className={"b-open " + (open.open ? "yes" : "no")}>{open.text}</span> : null}</div>
       </div>
 
+      {photos.length ? (
+        <div className="b-photos">{photos.map((p) => <img key={p.id} src={photoUrl(p.path)} alt="" loading="lazy" />)}</div>
+      ) : null}
+
       <div className="b-actions">
-        {b.phone ? <a className="b-act gold" href={`tel:${b.phone}`}><Icon name="phone" size={18} /> {t(lang, "call")}</a> : null}
-        {b.whatsapp || b.phone ? <a className="b-act green" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer"><Icon name="whatsapp" size={18} /> {t(lang, "whatsapp")}</a> : null}
+        {b.phone ? <a className="b-act gold" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")}><Icon name="phone" size={18} /> {t(lang, "call")}</a> : null}
+        {b.whatsapp || b.phone ? <a className="b-act green" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer" onClick={() => track(b.id, "whatsapp")}><Icon name="whatsapp" size={18} /> {t(lang, "whatsapp")}</a> : null}
       </div>
       <div className="b-chips">
+        {dir ? <a className="b-chip" href={dir} target="_blank" rel="noreferrer"><Icon name="route" size={15} /> {t(lang, "directions")}</a> : null}
         <button type="button" className="b-chip" onClick={() => go("/" + b.handle + "/card")}><Icon name="flip" size={15} /> {t(lang, "share_card")}</button>
         <button type="button" className="b-chip" onClick={() => downloadContact(b, lang)}><Icon name="contact" size={15} /> {t(lang, "save_contact")}</button>
       </div>
@@ -633,10 +676,38 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
             <p dir="auto">{about}</p>
           </section>
         ) : null}
+        {prices.length ? (
+          <section>
+            <span className="label">{t(lang, "prices")}</span>
+            <div style={{ marginTop: 6 }}>
+              {prices.map((r) => (
+                <div key={r.id} className="b-price"><span dir="auto">{pick(r, "item", lang)}</span><b className="ltr">{priceText(r)}</b></div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+        {lines.length ? (
+          <section>
+            <span className="label">{t(lang, "hours_title")}</span>
+            <div style={{ marginTop: 6 }}>{lines.map((l) => <p key={l} style={{ margin: 0 }}>{l}</p>)}</div>
+          </section>
+        ) : null}
         <section>
           <span className="label">{t(lang, "location")}</span>
           <p>{place.join(lang === "en" ? ", " : "، ")}</p>
+          {b.address ? <p className="b-muted" dir="auto" style={{ marginTop: 2 }}>{b.address}</p> : null}
+          {dir ? <a className="link" href={dir} target="_blank" rel="noreferrer">{t(lang, "directions")} ↗</a> : null}
         </section>
+        {links.length ? (
+          <section>
+            <span className="label">{t(lang, "links")}</span>
+            <div className="b-chips wrap" style={{ marginTop: 8 }}>
+              {links.map(([icon, cls, label, text, href]) => (
+                <a key={icon} className="b-chip" href={href} target="_blank" rel="noreferrer"><Icon name={icon} size={15} /> {label}</a>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
 
       <div className="b-navspace" />

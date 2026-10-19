@@ -270,6 +270,7 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
     description_en: b.description_en || "", description_ku: b.description_ku || "", description_ar: b.description_ar || "",
     category_id: b.category_id || "",
     contact_name: b.contact_name || "",
+    owner_email: b.owner_email || "",
     city_id: b.city_id || "",
     district_id: b.district_id || "",
     subdistrict_id: b.subdistrict_id || "",
@@ -353,6 +354,13 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
               </select>
             </dd>
           </div>
+          {!b.owner_id || b.owner_email ? (
+            <div>
+              <dt>Owner's email<small className="bo-dt-help">Their account gets this business when they sign in with it</small></dt>
+              <dd><input className="bo-select" type="email" value={f.owner_email} placeholder="name@gmail.com" autoCapitalize="none" spellCheck={false}
+                onChange={(e) => setF({ ...f, owner_email: e.target.value })} maxLength={120} /></dd>
+            </div>
+          ) : null}
           <div>
             <dt>Name on the card</dt>
             <dd><input className="bo-select" value={f.contact_name} placeholder={owner && owner.full_name ? owner.full_name : "Person's name"}

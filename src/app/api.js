@@ -247,7 +247,7 @@ export async function teamUpdateBusiness(id, fields) {
 // ---------- listing (anyone, no account needed; the database only returns live businesses) ----------
 
 const LIST_FIELDS =
-  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at";
+  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address";
 
 export async function listBusinesses(cityId) {
   const city = cityId ? `city_id=eq.${encodeURIComponent(cityId)}&` : "";
@@ -259,4 +259,99 @@ export async function businessByHandle(handle) {
   if (!h) return null;
   const rows = await call(`/rest/v1/businesses?handle=ilike.${h}&status=eq.approved&select=${LIST_FIELDS}&limit=1`);
   return rows && rows[0] ? rows[0] : null;
+}
+
+// ---------- slice 5: owner pages ----------
+
+const OWN_FIELDS =
+  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,email,website,hours,lat,lng,address,rating,reviews,verified,created_at";
+
+export async function getMyBusiness(id) {
+  const rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, { auth: true });
+  return rows && rows[0] ? rows[0] : null;
+}
+
+export async function updateMyBusiness(id, fields) {
+  const rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, {
+    method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" },
+  });
+  if (!rows || !rows.length) throw new ApiError("Not allowed", "not_allowed", 403);
+  return rows[0];
+}
+
+export async function getPrices(bid, auth) {
+  return call(`/rest/v1/business_prices?business_id=eq.${Number(bid)}&select=id,item_en,item_ku,item_ar,price_iqd,sort_order&order=sort_order`, { auth: !!auth });
+}
+
+// Replaces the whole price list with the rows given
+export async function savePrices(bid, rows) {
+  await call(`/rest/v1/business_prices?business_id=eq.${Number(bid)}`, { method: "DELETE", auth: true });
+  if (!rows.length) return [];
+  return call(`/rest/v1/business_prices?select=id,item_en,item_ku,item_ar,price_iqd,sort_order`, {
+    method: "POST", auth: true, headers: { Prefer: "return=representation" },
+    body: rows.map((r, i) => ({ business_id: Number(bid), item_en: r.item_en || null, item_ku: r.item_ku || null, item_ar: r.item_ar || null, price_iqd: r.price_iqd, sort_order: i })),
+  });
+}
+
+export const photoUrl = (path) => `${SB_URL}/storage/v1/object/public/business-photos/${path}`;
+
+export async function getPhotos(bid, auth) {
+  return call(`/rest/v1/business_photos?business_id=eq.${Number(bid)}&select=id,path,sort_order&order=sort_order,id`, { auth: !!auth });
+}
+
+// Uploads one photo (already made small by the app) and records it on the business
+export async function addPhoto(bid, blob, sortOrder) {
+  const s = await freshSession();
+  if (!s) throw new ApiError("Not signed in", "no_session", 401);
+  const path = `${Number(bid)}/${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}.jpg`;
+  let res;
+  try {
+    res = await fetch(`${SB_URL}/storage/v1/object/business-photos/${path}`, {
+      method: "POST",
+      headers: { apikey: SB_KEY, Authorization: "Bearer " + s.access_token, "Content-Type": "image/jpeg", "x-upsert": "false" },
+      body: blob,
+    });
+  } catch {
+    throw new ApiError("Network error", "network", 0);
+  }
+  if (!res.ok) {
+    let msg = res.statusText;
+    try { const j = await res.json(); msg = j.message || j.error || msg; } catch { /* ignore */ }
+    throw new ApiError(msg, "upload_" + res.status, res.status);
+  }
+  const rows = await call(`/rest/v1/business_photos?select=id,path,sort_order`, {
+    method: "POST", auth: true, headers: { Prefer: "return=representation" },
+    body: { business_id: Number(bid), path, sort_order: sortOrder || 0 },
+  });
+  return rows && rows[0];
+}
+
+export async function removePhoto(photo) {
+  await call(`/rest/v1/business_photos?id=eq.${Number(photo.id)}`, { method: "DELETE", auth: true });
+  const s = await freshSession();
+  try {
+    await fetch(`${SB_URL}/storage/v1/object/business-photos/${photo.path}`, {
+      method: "DELETE", headers: { apikey: SB_KEY, Authorization: "Bearer " + (s && s.access_token) },
+    });
+  } catch { /* the record is gone; a leftover file does no harm */ }
+}
+
+export async function getStats(bid, days = 7) {
+  const from = new Date(Date.now() - (days - 1) * 86400000).toISOString().slice(0, 10);
+  const rows = await call(`/rest/v1/page_stats?business_id=eq.${Number(bid)}&day=gte.${from}&select=day,views,calls,whatsapp`, { auth: true });
+  return (rows || []).reduce((a, r) => ({ views: a.views + r.views, calls: a.calls + r.calls, whatsapp: a.whatsapp + r.whatsapp }), { views: 0, calls: 0, whatsapp: 0 });
+}
+
+// Counts a page view or a tap; never gets in the way if it fails
+const tracked = new Set();
+export function track(bid, kind) {
+  if (!bid) return;
+  if (kind === "view") {
+    const key = "v" + bid;
+    try { if (sessionStorage.getItem("bm_" + key)) return; sessionStorage.setItem("bm_" + key, "1"); } catch { if (tracked.has(key)) return; tracked.add(key); }
+  }
+  fetch(`${SB_URL}/rest/v1/rpc/bmnassa_track`, {
+    method: "POST", headers: { apikey: SB_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ bid: Number(bid), kind }), keepalive: true,
+  }).catch(() => {});
 }

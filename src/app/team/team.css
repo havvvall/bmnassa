@@ -157,3 +157,4 @@
 .bo-note { background: #fff7e0; color: var(--bo-amber); border-radius: 12px; padding: 9px 12px; font-size: 13px; font-weight: 700; line-height: 1.45; margin-bottom: 6px; }
 .bo-facts dd a { color: var(--bo-gold-ink); font-weight: 800; }
 .bo-select[disabled] { opacity: 0.5; }
+.bo-dt-help { display: block; font-size: 11px; color: var(--bo-muted); font-weight: 600; max-width: 150px; line-height: 1.3; margin-top: 2px; }
