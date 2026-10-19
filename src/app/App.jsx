@@ -36,9 +36,10 @@ function usePath() {
     return () => window.removeEventListener("popstate", on);
   }, []);
   const go = (p, replace) => {
-    if (p === window.location.pathname) return;
+    if (p === window.location.pathname + window.location.search + window.location.hash) return;
     window.history[replace ? "replaceState" : "pushState"]({}, "", p);
-    setPath(p);
+    // The screen is chosen by the path alone; "?q=…" and "#hours" are read by the screen itself
+    setPath(window.location.pathname);
     window.scrollTo(0, 0);
   };
   return [path, go];
