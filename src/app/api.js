@@ -247,7 +247,7 @@ export async function teamUpdateBusiness(id, fields) {
 // ---------- listing (anyone, no account needed; the database only returns live businesses) ----------
 
 const LIST_FIELDS =
-  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card";
+  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card,page_style";
 
 // The fields every version of the database has; used when a newer column is not there yet
 const BASE_LIST_FIELDS =
@@ -278,17 +278,31 @@ export async function businessByHandle(handle) {
 // ---------- slice 5: owner pages ----------
 
 const OWN_FIELDS =
-  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,email,website,hours,lat,lng,address,rating,reviews,verified,created_at,card";
+  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,email,website,hours,lat,lng,address,rating,reviews,verified,created_at,card,page_style";
 
 export async function getMyBusiness(id) {
-  const rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, { auth: true });
+  let rows;
+  try {
+    rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, { auth: true });
+  } catch (e) {
+    // A newer column (card design, page style) may not exist until its database update has run
+    if (e.status !== 400) throw e;
+    rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS.replace(",card,page_style", "")}`, { auth: true });
+  }
   return rows && rows[0] ? rows[0] : null;
 }
 
 export async function updateMyBusiness(id, fields) {
-  const rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, {
+  const send = (sel) => call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${sel}`, {
     method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" },
   });
+  let rows;
+  try {
+    rows = await send(OWN_FIELDS);
+  } catch (e) {
+    if (e.status !== 400 || "card" in fields || "page_style" in fields) throw e;
+    rows = await send(OWN_FIELDS.replace(",card,page_style", ""));
+  }
   if (!rows || !rows.length) throw new ApiError("Not allowed", "not_allowed", 403);
   return rows[0];
 }

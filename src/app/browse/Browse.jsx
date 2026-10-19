@@ -6,6 +6,7 @@ import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track } from "../api.js";
 import { hoursLines, openState } from "../hours.js";
 import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
+import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
 
@@ -590,19 +591,26 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const links = socialLinks(b);
   const dir = directionsUrl(b);
   const priceText = (r) => (r.price_iqd == null ? "" : `${Number(r.price_iqd).toLocaleString("en-US")} ${t(lang, "iqd")}`);
+  const ps = pageSettings(b);
+  const pgLook = pageLook(ps, cardSettings(b).color);
+  const grid = ps.layout === "grid" && photos.length > 0;
   const exit = () => (window.history.length > 1 ? back() : go("/home"));
 
   return (
-    <div className="b-page">
+    <div className={"b-page " + pgLook.cls} style={pgLook.style}>
+      <div className="pg-backdrop" style={{ backgroundColor: ps.bg || undefined, backgroundImage: pgLook.bgImage || undefined }} aria-hidden="true" />
       <div className="b-top">
         <button type="button" className="rbtn" aria-label={t(lang, "back")} onClick={exit}><Icon name="down" size={18} /></button>
         <span className="grow" />
         <button type="button" className="rbtn" aria-label={t(lang, "share")} onClick={() => shareOrCopy(url, pick(b, "name", lang), setToast, lang)}><Icon name="share" size={18} /></button>
       </div>
 
-      <button type="button" className="b-minicard" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
+      {grid ? (
+        <div className="pg-grid">{photos.slice(0, 5).map((p, i) => <img key={p.id} className={i === 0 ? "first" : ""} src={photoUrl(p.path)} alt="" loading="lazy" />)}</div>
+      ) : null}
+      {grid ? null : <button type="button" className="b-minicard" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
         <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cat} small linksOnly />
-      </button>
+      </button>}
 
       <div className="b-head">
         <h1><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</h1>
@@ -610,7 +618,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
         <div className="b-row-c"><Rating b={b} lang={lang} />{open ? <span className={"b-open " + (open.open ? "yes" : "no")}>{open.text}</span> : null}</div>
       </div>
 
-      {photos.length ? (
+      {photos.length && !grid ? (
         <div className="b-photos">{photos.map((p) => <img key={p.id} src={photoUrl(p.path)} alt="" loading="lazy" />)}</div>
       ) : null}
 

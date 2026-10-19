@@ -144,3 +144,50 @@ a.b-chip { text-decoration: none; }
 .b-sheet-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .b-minicard { border: 0; padding: 0; background: none; width: 100%; cursor: pointer; display: block; text-align: start; }
+
+/* business page style chosen by the owner (Edit my page → Style) */
+.pg-backdrop { position: fixed; inset: 0; z-index: -1; background-color: var(--bg); background-size: cover; background-position: center; }
+.pg .b-act.gold { background: var(--pg-main); color: var(--pg-on-main); }
+.pg .b-act, .pg .b-chip, .pg .b-pill { border-radius: var(--pg-radius); }
+.pg .b-chip { box-shadow: inset 0 0 0 1.5px var(--pg-main); }
+.pg .b-info .link, .pg .b-rate { color: var(--pg-main); }
+.pg .b-tick { background: var(--pg-main); color: var(--pg-on-main); }
+.pg-dark .b-head h1, .pg-dark .b-head .sub, .pg-dark .b-chip { color: #fff; }
+.pg-dark .b-chip { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6); }
+.pg-dark .rbtn { background: rgba(255, 255, 255, 0.92); }
+.pg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border-radius: 22px; overflow: hidden; }
+.pg-grid img { width: 100%; aspect-ratio: 1.3; object-fit: cover; display: block; background: var(--surface-2); }
+.pg-grid img.first { grid-column: 1 / -1; aspect-ratio: 1.9; }
+.pgl-grid .b-head { align-items: flex-start; text-align: start; }
+.pgl-grid .b-head h1 { justify-content: flex-start; }
+.pgl-grid .b-row-c { justify-content: flex-start; }
+
+/* the Style editor */
+.ps-thumb { width: 100%; height: 120px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 12px; overflow: hidden; }
+.ps-thumb i { display: block; border-radius: 4px; flex: none; }
+.ps-thumb .logo { width: 28px; height: 28px; border-radius: 8px; background: #1b2a4a; }
+.ps-thumb .logo.sm { width: 16px; height: 16px; border-radius: 5px; }
+.ps-thumb .l { height: 6px; background: rgba(20, 22, 26, 0.18); }
+.ps-thumb .w60 { width: 60%; } .ps-thumb .w40 { width: 40%; } .ps-thumb .w70 { width: 70%; }
+.ps-thumb .btns { display: flex; gap: 6px; width: 100%; margin-top: auto; }
+.ps-thumb .btns i { flex: 1; height: 12px; border-radius: 6px; background: var(--pg-main); }
+.ps-thumb .btns i.green { background: #25d366; }
+.ps-thumb.grid { align-items: stretch; }
+.ps-thumb .head { display: flex; align-items: center; gap: 6px; }
+.ps-thumb .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.ps-thumb .tiles i { height: 22px; background: rgba(20, 22, 26, 0.12); }
+.ps-thumb .bar { height: 12px; border-radius: 6px; background: var(--pg-main); margin-top: auto; }
+.st-sw.lightsw { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18); }
+.ps-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 800; min-height: 44px; }
+.ps-toggle input { appearance: none; -webkit-appearance: none; width: 46px; height: 28px; border-radius: 14px; background: var(--surface-2); position: relative; cursor: pointer; flex: none; transition: background 0.15s; }
+.ps-toggle input::after { content: ""; position: absolute; top: 3px; inset-inline-start: 3px; width: 22px; height: 22px; border-radius: 11px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); transition: inset-inline-start 0.15s; }
+.ps-toggle input:checked { background: var(--accent); }
+.ps-toggle input:checked::after { inset-inline-start: 21px; }
+.ps-preview { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); background-size: cover; background-position: center; }
+.ps-preview .grow { flex: 1; min-width: 0; }
+.ps-preview b { display: block; }
+.ps-preview small { color: var(--muted); font-size: 12px; }
+.ps-preview.pg-dark b, .ps-preview.pg-dark small { color: #fff; }
+.ps-av { width: 42px; height: 42px; border-radius: 12px; background: var(--pg-main); color: var(--pg-on-main); display: grid; place-items: center; font-weight: 800; flex: none; }
+.ps-call { padding: 8px 16px; border-radius: var(--pg-radius); background: var(--pg-main); color: var(--pg-on-main); font-weight: 800; font-size: 14px; }
+.pg-dark .b-head .b-muted, .pg-dark .b-head .b-new { color: rgba(255, 255, 255, 0.8); }

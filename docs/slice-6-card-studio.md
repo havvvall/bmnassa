@@ -20,3 +20,12 @@ Supabase → SQL Editor (the full editor) → paste `supabase/migrations/008_car
 Add to wallet (slice 7). Styling the business page itself (layout, page colours, button shapes from the "Edit my page, style" screen) comes later.
 
 New Kurdish and Arabic lines in `src/app/i18n.js` marked "new (slice 6)" need a native-speaker check.
+
+## Page style (Edit my page → Style)
+
+The Style tab in Edit my page styles the business page itself (the signed-off "Edit my page, style" screen):
+layout (Centred logo, or Photo grid with the first photos at the top), main colour (buttons, links, badges),
+background (any colour, or a photo), button shape (Rounded, Square, Pill), and "Use the same colour as my card".
+It goes live on Save, no approval needed.
+
+Turn it on once: Supabase → SQL Editor → paste `supabase/migrations/009_page_style.sql` → Run.

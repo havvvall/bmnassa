@@ -10,6 +10,7 @@ import {
 import { useLists } from "../browse/Browse.jsx";
 import { Icon } from "../browse/icons.jsx";
 import { DAYS, dayName, hoursLines, hasHours } from "../hours.js";
+import PageStyle from "./PageStyle.jsx";
 
 const initial = (s) => (String(s || "").trim().charAt(0) || "B").toUpperCase();
 const byId = (arr) => Object.fromEntries((arr || []).map((x) => [x.id, x]));
@@ -380,6 +381,7 @@ export function EditPage({ lang, id, go }) {
   const [editingHours, setEditingHours] = useState(false);
   const [openLinks, setOpenLinks] = useState([]);
   const [busy, setBusy] = useState(false);
+  const [view, setView] = useState(() => (window.location.hash === "#style" ? "style" : "content"));
   const [msg, setMsg] = useState("");
   const [toast, setToast] = useToast();
   const original = useRef({ prices: "[]", hours: "null" });
@@ -469,9 +471,11 @@ export function EditPage({ lang, id, go }) {
       </div>
 
       <div className="seg" role="tablist">
-        <button type="button" aria-pressed="true">{t(lang, "content")}</button>
-        <button type="button" aria-pressed="false" onClick={() => go(`/my/${b.id}/card`)}>{t(lang, "style")}</button>
+        <button type="button" role="tab" aria-pressed={view === "content"} onClick={() => setView("content")}>{t(lang, "content")}</button>
+        <button type="button" role="tab" aria-pressed={view === "style"} onClick={() => setView("style")}>{t(lang, "style")}</button>
       </div>
+
+      {view === "style" ? <PageStyle lang={lang} b={b} setB={setB} setToast={setToast} /> : <>
 
       {photos ? <Photos lang={lang} bid={b.id} photos={photos} setPhotos={setPhotos} setToast={setToast} /> : null}
 
@@ -560,6 +564,7 @@ export function EditPage({ lang, id, go }) {
       <div className="o-savebar">
         <button type="button" className="btn" disabled={busy} onClick={save}>{busy ? t(lang, "loading") : t(lang, "save")}</button>
       </div>
+      </>}
 
       {editingHours ? <HoursEditor lang={lang} hours={hours} onClose={() => setEditingHours(false)} onDone={(h) => { setHours(h); setEditingHours(false); }} /> : null}
       {toast ? <div className="b-toast" role="status">{toast}</div> : null}
