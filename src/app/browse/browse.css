@@ -85,7 +85,10 @@
 .b-card-bar { display: flex; gap: 10px; padding: max(16px, env(safe-area-inset-top)) 18px 6px; }
 .b-card-bar .grow { flex: 1; }
 .b-dbtn { width: 42px; height: 42px; border-radius: 21px; border: 0; background: #2a2b2e; color: #fff; display: grid; place-items: center; cursor: pointer; }
-.b-card-body { flex: 1; display: flex; flex-direction: column; padding: 4px 18px 10px; }
+.b-card-body { flex: 1; display: flex; flex-direction: column; padding: 4px 18px 10px; position: relative; transform-origin: 50% 40%; backface-visibility: hidden; will-change: transform; }
+.b-card-screen { perspective: 1400px; }
+.b-flip-shine { position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: 0; transform: translateX(-120%);
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.28) 52%, transparent 70%); mix-blend-mode: soft-light; }
 .b-face { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
 .b-face .grow { flex: 1; min-height: 16px; }
 .b-ring { width: 104px; height: 104px; border-radius: 52px; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(201, 162, 74, 0.35); margin: 10px 0 6px; }
