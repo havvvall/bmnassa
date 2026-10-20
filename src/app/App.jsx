@@ -1,5 +1,8 @@
+import { THEMES, getThemeChoice, setThemeChoice, applyTheme } from "./theme.js";
 import React, { useEffect, useRef, useState } from "react";
 import "./app.css";
+
+applyTheme();
 import Team from "./team/Team.jsx";
 import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { Dashboard, EditPage } from "./owner/Owner.jsx";
@@ -500,6 +503,8 @@ function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSig
   const city = cities.find((c) => c.id === ((profile && profile.city_id) || cityId));
   const name = (profile && profile.full_name) || "";
   const role = (profile && profile.role) || "customer";
+  const [theme, setTheme] = useState(getThemeChoice);
+  const pickTheme = (v) => { setTheme(v); setThemeChoice(v); };
 
   const pickLang = async (l) => {
     setLang(l);
@@ -532,6 +537,15 @@ function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSig
             ))}
           </div>
         </div>
+        <div className="row theme-row">
+          <span className="k">{t(lang, "theme")}</span>
+          <div className="seg" role="group" aria-label={t(lang, "theme")}>
+            {THEMES.map((v) => (
+              <button key={v} type="button" aria-pressed={theme === v} onClick={() => pickTheme(v)}>{t(lang, "theme_" + v)}</button>
+            ))}
+          </div>
+        </div>
+        {theme === "auto" ? <p className="note theme-note">{t(lang, "theme_auto_note")}</p> : null}
       </div>
       <div className="ok" role="status">{saved ? t(lang, "saved") : ""}</div>
       <MyBusinesses lang={lang} onList={onList} go={go} />
@@ -554,6 +568,13 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [booting, setBooting] = useState(true);
   const [sentBiz, setSentBiz] = useState(null);
+  // the back office stays Silver for now; everything else follows the chosen theme
+  const inTeam = path.startsWith("/team");
+  useEffect(() => {
+    if (!inTeam) return undefined;
+    document.documentElement.setAttribute("data-theme", "bmnassa");
+    return () => { applyTheme(); };
+  }, [inTeam]);
 
   const setLang = (l) => { setLangState(l); store.set("bm_lang", l); };
   const setCity = (c) => { setCityState(c); store.set("bm_city", c); };

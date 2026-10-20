@@ -48,6 +48,13 @@ const T = {
   role_owner: ["Business owner", "خاوەن بزنس", "صاحب نشاط"],
   role_team: ["Bmnassa team", "تیمی بمناسە", "فريق بمناسة"],
   language: ["Language", "زمان", "اللغة"],
+  // new · theme
+  theme: ["Look", "ڕووکار", "المظهر"],
+  theme_auto: ["Auto", "خۆکار", "تلقائي"],
+  theme_bmnassa: ["Silver", "زیوی", "فضي"],
+  theme_light: ["Light", "ڕووناک", "فاتح"],
+  theme_dark: ["Dark", "تاریک", "داكن"],
+  theme_auto_note: ["Auto follows your phone: Silver by day, Dark when your phone is in dark mode.", "خۆکار شوێن مۆبایلەکەت دەکەوێت: زیوی لە ڕۆژدا، تاریک کاتێک مۆبایلەکەت لە دۆخی تاریکدایە.", "التلقائي يتبع هاتفك: فضي نهاراً، وداكن عندما يكون هاتفك في الوضع الداكن."],
   city: ["City", "شار", "المدينة"],
   email: ["Email", "ئیمەیڵ", "البريد الإلكتروني"],
   phone: ["Phone", "ژمارەی مۆبایل", "رقم الهاتف"],

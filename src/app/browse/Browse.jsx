@@ -1,5 +1,6 @@
 // Slice 4 · listing: home, results, search, business card and business page.
 // Anyone can browse without an account; only live (approved) businesses come back from the database.
+import { themeBar } from "../theme.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
@@ -495,8 +496,12 @@ export function Card({ lang, handle, go, back }) {
 
   useEffect(() => {
     const colour = !st || st.style === "classic" ? "#121212" : st.style === "minimal" ? "#f4f1ea" : st.style === "bold" && !flipped ? st.color : "#d9dce0";
+    document.documentElement.setAttribute("data-bar-locked", "");
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", colour);
-    return () => document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#121212");
+    return () => {
+      document.documentElement.removeAttribute("data-bar-locked");
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeBar());
+    };
   }, [st && st.style, st && st.color, flipped]);
   useEffect(() => { if (b && b.id) track(b.id, "view"); }, [b && b.id]);
 

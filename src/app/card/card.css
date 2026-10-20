@@ -41,8 +41,8 @@
 .cf-rows.dark .cf-row { background: #1d1e21; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); color: #fff; }
 .cf-rows.dark small { color: #a5a9ae; }
 .cf-rows.light { gap: 0; }
-.cf-rows.light .cf-row { border-radius: 0; border-top: 1px solid rgba(20, 22, 26, 0.12); color: var(--text); padding: 12px 2px; }
-.cf-rows.light .cf-row:last-child { border-bottom: 1px solid rgba(20, 22, 26, 0.12); }
+.cf-rows.light .cf-row { border-radius: 0; border-top: 1px solid var(--line); color: var(--text); padding: 12px 2px; }
+.cf-rows.light .cf-row:last-child { border-bottom: 1px solid var(--line); }
 .cf-rows.light .cf-ic { border-radius: 17px; }
 .cf-rows.light small { color: var(--muted); }
 
@@ -51,7 +51,7 @@
 .cf-save.gold { background: #c9a24a; color: #121212; }
 .cf-save.dark { background: #121212; color: #fff; }
 .cf-save.colour { background: var(--card); color: #fff; }
-.cf-save.light { background: #fff; color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.cf-save.light { background: var(--field); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
 
 /* Minimal */
 .cf-minimal { align-items: flex-start; text-align: start; color: var(--text); }
@@ -65,7 +65,7 @@
 .cf-bold-head { width: calc(100% + 36px); margin: -8px -18px 0; padding: 18px 18px 34px; border-radius: 0 0 36px 36px; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #fff; }
 .cf-bold-head .cf-person { color: #fff; }
 .cf-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin-top: 18px; }
-.cf-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px; border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; color: var(--text); font-size: 13px; min-width: 0; }
+.cf-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px; border-radius: 20px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; color: var(--text); font-size: 13px; min-width: 0; }
 .cf-tile b { overflow-wrap: anywhere; }
 .cf-bold.back .cf-person { color: var(--text); margin-top: 14px; }
 
@@ -113,7 +113,7 @@
 .cf-inforow b.ok { color: var(--success); }
 .cf-inforow small { color: var(--muted); font-size: 12px; }
 .cf-ii { width: 34px; height: 34px; border-radius: 10px; background: var(--surface-2); display: grid; place-items: center; flex: none; }
-.cf-nfcbubble { width: 54px; height: 54px; border-radius: 27px; background: #fff; display: grid; place-items: center; color: var(--accent-text); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1); margin-top: 12px; }
+.cf-nfcbubble { width: 54px; height: 54px; border-radius: 27px; background: var(--surface-raised); display: grid; place-items: center; color: var(--accent-text); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1); margin-top: 12px; }
 .cf-tap { margin: 4px 0 0; font-size: 20px; }
 .cf-tapsub { margin: 0; color: var(--muted); line-height: 22px; max-width: 320px; }
 
@@ -123,7 +123,7 @@
 .cf-scan { font-size: 17px; }
 .cf-muted { color: var(--muted); font-size: 12px; }
 .cf-classic .cf-muted { color: #8d9196; }
-.cf-urlbox { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 52px; padding: 0 16px; border-radius: 16px; border: 0; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 6px; background: #fff; color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.cf-urlbox { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 52px; padding: 0 16px; border-radius: 16px; border: 0; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 6px; background: var(--field); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
 .cf-urlbox em { font-style: normal; color: var(--accent-text); }
 .cf-classic .cf-urlbox { background: #1d1e21; color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
 .cf-classic .cf-urlbox em { color: var(--gold-soft); }
@@ -132,7 +132,7 @@
 /* the card screen takes the style's background */
 .b-card-screen.cs-minimal { background: #f4f1ea; color: var(--text); }
 .b-card-screen.cs-bold, .b-card-screen.cs-wallet { background: var(--bg); color: var(--text); }
-.b-card-screen:not(.cs-classic) .b-dbtn { background: #fff; color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.b-card-screen:not(.cs-classic) .b-dbtn { background: var(--surface-raised); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
 .b-card-screen:not(.cs-classic) .b-hint, .b-card-screen:not(.cs-classic) .b-powered { color: var(--muted); }
 .b-card-screen:not(.cs-classic) .b-powered img { filter: invert(1) brightness(0.3); }
 .b-card-screen.cs-bold .b-card-bar { position: relative; z-index: 1; }
@@ -141,5 +141,12 @@
 .b-card-screen.cs-bold { --bar-bg: var(--card); }
 .b-card-screen.cs-bold .b-card-bar { background-color: var(--card); }
 .b-card-screen.cs-bold.flipped .b-card-bar { background: transparent; }
-.b-card-screen.cs-bold.flipped .b-card-bar .b-dbtn { background: #fff; color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.b-card-screen.cs-bold.flipped .b-card-bar .b-dbtn { background: var(--surface-raised); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
 .b-card-screen.cs-bold .cf-bold-head { margin-top: 0; }
+
+/* The Minimal card is light paper in every theme: it brings its own palette */
+.cf-minimal, .b-card-screen.cs-minimal, .st-frame.cs-minimal, .st-thumb.minimal {
+  --text: #15171a; --muted: #4d5258; --line: rgba(20, 22, 26, 0.14); --accent-text: #7a5600;
+  --field: #ffffff; --surface-raised: #ffffff; --surface-2: #c6cacf;
+  color: var(--text);
+}

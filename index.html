@@ -3,7 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#121212" />
+    <meta name="theme-color" content="#d9dce0" />
+    <script>
+      // set the theme before the first paint so dark mode never flashes silver
+      (function () {
+        try {
+          var c = localStorage.getItem("bm_theme") || "auto";
+          var d = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var th = c === "auto" ? (d ? "dark" : "bmnassa") : c;
+          document.documentElement.setAttribute("data-theme", th);
+          document.querySelector('meta[name="theme-color"]').setAttribute("content", th === "dark" ? "#000000" : th === "light" ? "#f2f2f7" : "#d9dce0");
+        } catch (e) {}
+      })();
+    </script>
     <title>Bmnassa</title>
     <meta name="description" content="Find trusted services in Kurdistan, in Kurdish, Arabic or English." />
     <link rel="icon" href="/brand/mark-ink.svg" type="image/svg+xml" />
