@@ -82,3 +82,27 @@
 .w-stacklabel b { font-size: 15px; line-height: 20px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .w-photostack { padding: 10px 12px; }
 .w-photostack .w-badge.paper { background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); font-size: 10px; padding: 3px 8px; }
+
+/* the card wheel: scroll up and down; the card in the middle is full size and on top */
+.w-wheel { --step: 96px; position: relative; height: max(380px, calc(100dvh - 300px)); overflow-y: auto; overscroll-behavior: contain; scroll-snap-type: y mandatory;
+  margin: 0 -20px; padding: 0 20px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(transparent, #000 9%, #000 91%, transparent); }
+.w-wheel::-webkit-scrollbar { display: none; }
+.w-wheelpad { height: calc(50% - var(--step) / 2); }
+.w-witem { height: var(--step); position: relative; scroll-snap-align: center; }
+.w-wcard { position: absolute; left: 0; right: 0; top: 50%; margin-top: calc(-0.315 * min(440px, 100vw - 40px)); border: 0; padding: 0; background: none; font: inherit; color: inherit; text-align: start; cursor: pointer;
+  transform-origin: 50% 50%; will-change: transform; display: block; }
+.w-wcard::after { content: ""; position: absolute; inset: 0; border-radius: 22px; background: #15171a; opacity: var(--dim, 0); pointer-events: none; transition: opacity var(--duration-quick) linear; }
+.w-wcard .cf-nfc, .w-wcard .w-photocard, .w-wcard .w-papercard { box-shadow: 0 10px 26px rgba(18, 18, 18, 0.28); }
+.w-wcard .w-skelcard { display: block; width: 100%; }
+
+/* details: the chosen card, big, in a sheet that slides up */
+.w-detailwrap { align-items: flex-end; }
+.w-detail { width: min(480px, 100vw); max-height: 92dvh; overflow-y: auto; background: #e9b52a; border-radius: 28px 28px 0 0; padding: 8px 18px max(22px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; color: #15171a;
+  animation: w-up var(--duration-sheet) var(--ease-emphasized); }
+[data-theme="light"] .w-detail, [data-theme="dark"] .w-detail { background: #f7cf55; }
+.w-detailhead { display: flex; align-items: center; justify-content: center; position: relative; min-height: 34px; }
+.w-detailhead .link { position: absolute; inset-inline-end: 0; color: #15171a; }
+.w-detailhead .b-grab { background: rgba(21, 23, 26, 0.3); }
+@keyframes w-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .w-detail { animation: none; } .w-wcard::after { transition: none; } }
