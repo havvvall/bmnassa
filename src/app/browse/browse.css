@@ -243,7 +243,7 @@ a.b-chip { text-decoration: none; }
 [dir="rtl"] .bz-week { display: flex; flex-wrap: wrap; }
 [dir="rtl"] .bz-week span { flex: 1 0 auto; padding: 8px 10px; font-size: 12px; }
 .bz-week span.off { background: none; color: var(--muted); }
-.bz-week span.today { background: var(--accent); color: var(--on-accent); box-shadow: 0 6px 14px rgba(184, 134, 11, 0.3); }
+.bz-week span.today { background: var(--accent); color: var(--on-accent); }
 .bz-today { margin: 14px 0 2px; font-size: 15px; }
 .bz-lines p { margin: 0; color: var(--muted); font-size: 14px; line-height: 22px; }
 .bz-where { padding: 0; overflow: hidden; }
