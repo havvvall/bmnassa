@@ -2,9 +2,10 @@
 import { flipCard } from "../motion.js";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./studio.css";
+import { SkelPage } from "../Skeleton.jsx";
 import { t, pick } from "../i18n.js";
 import { getMyBusiness, updateMyBusiness, uploadImage, photoUrl } from "../api.js";
-import { useLists } from "../browse/Browse.jsx";
+import { useLists, Toast, ok } from "../browse/Browse.jsx";
 import { Icon } from "../browse/icons.jsx";
 import { CardFront, CardBack, cardSettings, cardLinks, CARD_COLOURS, STYLES, LINK_KEYS } from "./CardFaces.jsx";
 
@@ -90,7 +91,7 @@ export default function Studio({ lang, id, go }) {
     return (
       <div className="o-page">
         <div className="b-top"><button type="button" className="rbtn" onClick={() => go(`/my/${id}`)} aria-label={t(lang, "back")}><Icon name="back" size={18} className="flip" /></button></div>
-        <p className="note">{err ? `${t(lang, "load_failed")} ${err}` : t(lang, "loading")}</p>
+        {err ? <p className="note">{`${t(lang, "load_failed")} ${err}`}</p> : <SkelPage />}
       </div>
     );
   }
@@ -132,7 +133,7 @@ export default function Studio({ lang, id, go }) {
       const card = { ...s, links: s.links ? shown : null };
       const row = await updateMyBusiness(b.id, { card, contact_name: name.trim() || null });
       setB(row);
-      setToast(t(lang, "published"));
+      setToast(ok(t(lang, "published")));
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);
     } finally {
@@ -275,7 +276,7 @@ export default function Studio({ lang, id, go }) {
       {b.status === "approved" && b.handle ? (
         <button type="button" className="link" style={{ alignSelf: "center" }} onClick={() => go(`/${b.handle}/card`)}>{t(lang, "open_card")}</button>
       ) : null}
-      {toast ? <div className="b-toast" role="status">{toast}</div> : null}
+      <Toast text={toast} />
     </div>
   );
 }

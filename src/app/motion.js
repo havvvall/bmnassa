@@ -5,6 +5,12 @@ const token = (name) => getComputedStyle(document.documentElement).getPropertyVa
 export const ms = (name, fallback) => parseFloat(token(name)) || fallback;
 export const ease = (name) => token(name) || "ease";
 
+// A short vibration on Android (iPhones don't allow it from a web page): 10 ms for a tap, 20 ms for a save
+export function haptic(ms = 10) {
+  if (calm() || !navigator.vibrate) return;
+  try { navigator.vibrate(ms); } catch { /* not allowed */ }
+}
+
 // Turn an element over like a card: rotate to edge-on, swap the face, rotate back in.
 // swap() changes what is shown; done() runs when the turn ends.
 export function flipCard(el, { dir = 1, shine, swap, done }) {

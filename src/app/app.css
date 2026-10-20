@@ -276,3 +276,63 @@ h1 { font-size: 26px; line-height: 32px; font-weight: 800; letter-spacing: -0.01
 .rowbtn.biz { color: var(--text); }
 .rowbtn.biz .v small { display: block; font-size: 12px; font-weight: 700; }
 .okline { color: var(--success); }
+
+/* ---------- motion polish (design system: Motion) ---------- */
+
+/* 1. Loading shapes */
+.bm-skelwrap { animation: bm-skel-in 1ms linear 150ms both; }
+@keyframes bm-skel-in { from { visibility: hidden; } to { visibility: visible; } }
+.bm-skel { display: block; flex: none; background: var(--skeleton); position: relative; overflow: hidden; }
+.bm-skel::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent); animation: bm-shine var(--duration-shine) linear infinite; }
+[dir="rtl"] .bm-skel::after { animation-name: bm-shine-rtl; }
+@keyframes bm-shine { to { transform: translateX(100%); } }
+@keyframes bm-shine-rtl { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+.bm-skelrow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.bm-skelrow:first-child { border-top: 0; }
+
+/* 2. Touch: buttons, rows and tiles press in when a finger lands, and spring back */
+:where(.btn, .b-chip, .rbtn, .choice, .b-act, .w-act, .w-round, .w-scan, .st-opt, .st-style, .b-dbtn, .b-darkbtn, .o-tiles button, .o-step,
+  .b-nav button, .nf-step, .nf-payopt, .b-pill, .b-tile, .b-catrow, .b-row, .o-rowbtn, .b-callbtn, .w-pill button, .b-minicard, .rv-pick button) {
+  transition: scale var(--duration-quick) var(--ease-spring);
+}
+:where(.btn, .b-chip, .rbtn, .choice, .b-act, .w-act, .w-round, .w-scan, .st-opt, .st-style, .b-dbtn, .b-darkbtn, .o-tiles button, .o-step,
+  .b-nav button, .nf-step, .nf-payopt, .b-pill, .b-tile, .b-catrow, .b-row, .o-rowbtn, .b-callbtn, .w-pill button, .b-minicard):active:not([disabled]) {
+  scale: 0.97; transition-duration: var(--duration-instant); transition-timing-function: var(--ease-standard);
+}
+
+/* 3. Saved: a check that draws itself in a gold circle */
+.b-toast { animation: bm-toast-in var(--duration-base) var(--ease-emphasized); }
+@keyframes bm-toast-in { from { opacity: 0; translate: 0 10px; } }
+.b-toast.ok { display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; }
+[dir="rtl"] .b-toast.ok { padding: 8px 8px 8px 16px; }
+.bm-check { width: 28px; height: 28px; border-radius: 14px; background: var(--accent); display: grid; place-items: center; flex: none; animation: bm-pop var(--duration-slow) var(--ease-spring); }
+.bm-check svg { width: 18px; height: 18px; fill: none; stroke: var(--on-accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.bm-check path { stroke-dasharray: 22; stroke-dashoffset: 22; animation: bm-draw var(--duration-slow) var(--ease-standard) 120ms forwards; }
+@keyframes bm-draw { to { stroke-dashoffset: 0; } }
+@keyframes bm-pop { from { scale: 0.6; } }
+
+/* 4. Lists arriving: rows and tiles fade up one after another (first 8 only) */
+.bm-arrive { animation: bm-arrive var(--duration-base) var(--ease-emphasized) both; animation-delay: calc(min(var(--i, 0), 8) * 30ms); }
+@keyframes bm-arrive { from { opacity: 0; translate: 0 8px; } }
+
+/* 5. Moving between screens (browsers with View Transitions; others simply switch) */
+::view-transition-old(root) { animation: bm-vt-out var(--duration-base) var(--ease-exit) both; }
+::view-transition-new(root) { animation: bm-vt-in var(--duration-base) var(--ease-emphasized) both; }
+@keyframes bm-vt-out { to { opacity: 0; } }
+@keyframes bm-vt-in { from { opacity: 0; translate: 0 10px; } }
+[data-nav="back"]::view-transition-new(root) { animation-name: bm-vt-in-back; }
+@keyframes bm-vt-in-back { from { opacity: 0; translate: 0 -10px; } }
+.b-nav { view-transition-name: bm-nav; }
+::view-transition-group(bm-nav) { animation-duration: 0s; }
+
+/* 6. Reduce motion: nothing slides, grows, flips or springs; loading shapes stay still */
+@media (prefers-reduced-motion: reduce) {
+  .bm-skel::after { animation: none; display: none; }
+  .bm-arrive, .b-toast, .bm-check { animation: none; }
+  .bm-check path { animation: none; stroke-dashoffset: 0; }
+  :where(.btn, .b-chip, .rbtn, .choice, .b-act, .w-act, .w-round, .w-scan, .st-opt, .st-style, .b-dbtn, .b-darkbtn, .o-tiles button, .o-step,
+    .b-nav button, .nf-step, .nf-payopt, .b-pill, .b-tile, .b-catrow, .b-row, .o-rowbtn, .b-callbtn, .w-pill button, .b-minicard):active { scale: 1; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--duration-instant); animation-name: bm-vt-fade; }
+}
+@keyframes bm-vt-fade { from { opacity: 0; } }

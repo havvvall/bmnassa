@@ -193,3 +193,4 @@ a.b-chip { text-decoration: none; }
 .ps-av { width: 42px; height: 42px; border-radius: 12px; background: var(--pg-main); color: var(--pg-on-main); display: grid; place-items: center; font-weight: 800; flex: none; }
 .ps-call { padding: 8px 16px; border-radius: var(--pg-radius); background: var(--pg-main); color: var(--pg-on-main); font-weight: 800; font-size: 14px; }
 .pg-dark .b-head .b-muted, .pg-dark .b-head .b-new { color: rgba(255, 255, 255, 0.8); }
+.b-card-skel { display: flex; flex-direction: column; gap: 14px; padding: 70px 18px 20px; width: 100%; max-width: 480px; margin: 0 auto; }

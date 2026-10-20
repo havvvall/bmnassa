@@ -3,12 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { t, pick, ago } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
-import { useBusiness, useToast, Toast, NotFound, waLink } from "../browse/Browse.jsx";
+import { useBusiness, useToast, Toast, ok, NotFound, waLink } from "../browse/Browse.jsx";
 import {
   getReviews, getMyReview, getMyContact, saveReview, deleteReview, replyToReview,
   myUserId, track, REVIEW_TAGS,
 } from "../api.js";
 import "./reviews.css";
+import { SkelRows } from "../Skeleton.jsx";
 
 export function Stars({ value, size = 14 }) {
   const v = Math.round(Number(value) || 0);
@@ -31,7 +32,7 @@ function ReviewItem({ r, lang, canReply, onReplied, setToast }) {
       const row = await replyToReview(r.id, text.trim());
       onReplied(row || { ...r, owner_reply: text.trim() || null });
       setOpen(false);
-      setToast(t(lang, "reply_sent"));
+      setToast(ok(t(lang, "reply_sent")));
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);
     } finally {
@@ -118,7 +119,7 @@ function Top({ lang, title, onBack }) {
 function Wait({ lang, err, reload }) {
   return (
     <div className="b-page">
-      <p className="note">{err ? t(lang, "load_failed") : t(lang, "loading")}</p>
+      {err ? <p className="note">{t(lang, "load_failed")}</p> : <SkelRows n={4} />}
       {err ? <button type="button" className="link" onClick={reload}>{t(lang, "try_again")}</button> : null}
     </div>
   );
@@ -164,7 +165,7 @@ export function ReviewsPage({ lang, handle, go, back }) {
         <div className="rv-tagsum">{tagCounts.map(([x, c]) => <span key={x}>{t(lang, "tag_" + x)} <b>{c}</b></span>)}</div>
       ) : null}
 
-      {rows === null ? <p className="note">{t(lang, "loading")}</p> : null}
+      {rows === null ? <SkelRows n={3} /> : null}
       {rows && !n ? <p className="note">{t(lang, "no_reviews_yet", { name: pick(b, "name", lang) })}</p> : null}
       <div className="rv-list">
         {list.map((r) => (
@@ -271,7 +272,7 @@ export function RatePage({ lang, handle, go, back, signedIn }) {
     setBusy("send");
     try {
       await saveReview(b.id, { rating, tags, body: body.trim() }, existing && existing.id);
-      setToast(t(lang, "review_sent"));
+      setToast(ok(t(lang, "review_sent")));
       setTimeout(() => go(`/${b.handle}/reviews`, true), 700);
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);

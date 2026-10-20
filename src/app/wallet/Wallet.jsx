@@ -3,7 +3,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { t, pick } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
-import { useLists, useToast, Toast, BottomNav } from "../browse/Browse.jsx";
+import { useLists, useToast, Toast, ok, BottomNav } from "../browse/Browse.jsx";
 import { NfcCard, cardSettings, surface, surfaceClass } from "../card/CardFaces.jsx";
 import { getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone, scanImageUrl, removeScanPhotos } from "../api.js";
 import { calm, ms, ease, flipCard } from "../motion.js";
@@ -32,8 +32,7 @@ export function SaveToWallet({ b, lang, go, setToast, className = "b-chip", dark
     try {
       const nid = await saveToWallet(b.id);
       setId(nid || true);
-      setToast(t(lang, "saved_wallet"));
-      if (navigator.vibrate && !calm()) navigator.vibrate(20);
+      setToast(ok(t(lang, "saved_wallet")));
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);
     } finally {

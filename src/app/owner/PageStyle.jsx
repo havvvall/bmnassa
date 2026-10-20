@@ -1,6 +1,7 @@
 // Edit my page → Style: how the business page looks. Goes live on Save, no approval needed.
 import React, { useRef, useState } from "react";
 import { t, pick } from "../i18n.js";
+import { ok } from "../browse/Browse.jsx";
 import { updateMyBusiness, uploadImage } from "../api.js";
 import { Icon } from "../browse/icons.jsx";
 import { cardSettings } from "../card/CardFaces.jsx";
@@ -66,7 +67,7 @@ export default function PageStyle({ lang, b, setB, setToast }) {
     try {
       const row = await updateMyBusiness(b.id, { page_style: ps });
       setB(row);
-      setToast(t(lang, "saved_page"));
+      setToast(ok(t(lang, "saved_page")));
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);
     } finally {

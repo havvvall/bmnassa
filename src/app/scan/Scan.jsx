@@ -3,13 +3,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
-import { useToast, Toast } from "../browse/Browse.jsx";
+import { useToast, Toast, ok } from "../browse/Browse.jsx";
 import {
   scanCard, uploadScan, addScannedCard, updateScannedCard, getWalletItem, scanImageUrl, normalisePhone, forgetWallet,
 } from "../api.js";
 import { toCanvas, fileToCanvas, toBlob, toBase64, cleanCard, detectCorners, FULL } from "./image.js";
 import { calm } from "../motion.js";
 import "./scan.css";
+import { SkelPage } from "../Skeleton.jsx";
 
 // Reading the details with Claude (the scan-card function). Off until Anthropic billing is set up:
 // people type the details themselves. Turn on by changing this to true.
@@ -325,7 +326,7 @@ export function ScanPage({ lang, go, back, signedIn }) {
       const row = await addScannedCard({ ...data, ...(backPath ? { back_path: backPath } : {}) }, frontPath);
       forgetWallet();
       try { sessionStorage.setItem("bm_wallet_front", String(row && row.id)); } catch { /* ignore */ }
-      setToast(t(lang, "scan_saved"));
+      setToast(ok(t(lang, "scan_saved")));
       setTimeout(() => go("/wallet", true), 500);
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);
@@ -354,14 +355,14 @@ export function EditScanPage({ lang, id, go, back }) {
       if (r) setImgs({ front: await scanImageUrl(r.image_path), back: await scanImageUrl(r.data && r.data.back_path) });
     }).catch(() => setItem(null));
   }, [id]);
-  if (item === undefined) return <div className="sc-page"><p className="note">{t(lang, "loading")}</p></div>;
+  if (item === undefined) return <div className="sc-page"><SkelPage card={false} /></div>;
   if (!item || item.kind !== "scanned") { go("/wallet", true); return null; }
   const exit = () => (window.history.length > 1 ? back() : go("/wallet"));
   const save = async (data) => {
     setBusy(true);
     try {
       await updateScannedCard(item.id, { ...data, ...(item.data && item.data.back_path ? { back_path: item.data.back_path } : {}) });
-      setToast(t(lang, "saved"));
+      setToast(ok(t(lang, "saved")));
       setTimeout(exit, 400);
     } catch (e) {
       setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);

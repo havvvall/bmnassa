@@ -1,7 +1,8 @@
 // Slice 4 · listing: home, results, search, business card and business page.
 // Anyone can browse without an account; only live (approved) businesses come back from the database.
 import { themeBar } from "../theme.js";
-import { calm, ms, ease, flipCard } from "../motion.js";
+import { calm, ms, ease, flipCard, haptic } from "../motion.js";
+import { SkelTiles, SkelRows, SkelPage, Skel } from "../Skeleton.jsx";
 import { ReviewsSummary } from "../reviews/Reviews.jsx";
 import { SaveToWallet } from "../wallet/Wallet.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -88,8 +89,19 @@ function Rating({ b, lang, compact }) {
 
 const Tick = () => <span className="b-tick" aria-label="Checked by Bmnassa"><Icon name="check" size={11} stroke={3} /></span>;
 
+// A message at the bottom. ok(text) shows it with a check that draws itself, and a short vibration on Android.
+export const ok = (text) => ({ text, ok: true });
 export function Toast({ text }) {
-  return text ? <div className="b-toast" role="status">{text}</div> : null;
+  const good = !!text && typeof text === "object";
+  const msg = good ? text.text : text;
+  useEffect(() => { if (good) haptic(20); }, [text]);
+  if (!msg) return null;
+  return (
+    <div className={"b-toast" + (good ? " ok" : "")} role="status" key={msg}>
+      {good ? <span className="bm-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span> : null}
+      <span>{msg}</span>
+    </div>
+  );
 }
 
 export function useToast() {
@@ -198,7 +210,7 @@ export function Home({ lang, city, setCity, go, signedIn }) {
           <button type="button" className="link" onClick={reloadLists}>{t(lang, "try_again")}</button>
         </div>
       ) : !lists ? (
-        <p className="note">{t(lang, "loading")}</p>
+        view === "list" ? <SkelRows n={8} /> : <SkelTiles n={view === "3" ? 9 : 12} cols={view === "3" ? 3 : 4} />
       ) : view === "list" ? (
         <div className="panel">
           {cats.map((c) => (
@@ -211,8 +223,8 @@ export function Home({ lang, city, setCity, go, signedIn }) {
         </div>
       ) : (
         <div className={"b-tiles cols" + view}>
-          {cats.map((c) => (
-            <button key={c.id} type="button" className="b-tile" onClick={() => go("/c/" + c.id)}>
+          {cats.map((c, i) => (
+            <button key={c.id} type="button" className="b-tile bm-arrive" style={{ "--i": i }} onClick={() => go("/c/" + c.id)}>
               <span className="b-ic"><Icon name={categoryIcon(c)} size={view === "3" ? 30 : 24} /></span>
               <span className="b-tile-name">{cityName(c, lang)}</span>
             </button>
@@ -369,7 +381,7 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
           <button type="button" className="link" onClick={reload}>{t(lang, "try_again")}</button>
         </div>
       ) : !rows ? (
-        <p className="note">{t(lang, "loading")}</p>
+        <SkelRows n={6} />
       ) : isSearch && !q.trim() ? (
         <p className="note">{t(lang, "search_hint")}</p>
       ) : empty && isSearch ? (
@@ -394,9 +406,9 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
           </div>
         </>
       ) : view === "grid" ? (
-        <div className="b-rgrid">{list.map((b) => <ResultTile key={b.id} b={b} lang={lang} look={look} onOpen={() => open(b)} />)}</div>
+        <div className="b-rgrid">{list.map((b, i) => <div key={b.id} className="bm-arrive" style={{ "--i": i }}><ResultTile b={b} lang={lang} look={look} onOpen={() => open(b)} /></div>)}</div>
       ) : (
-        <div className="b-results">{list.map((b) => <ResultRow key={b.id} b={b} lang={lang} look={look} onOpen={() => open(b)} />)}</div>
+        <div className="b-results">{list.map((b, i) => <div key={b.id} className="bm-arrive" style={{ "--i": i }}><ResultRow b={b} lang={lang} look={look} onOpen={() => open(b)} /></div>)}</div>
       )}
 
       <div className="b-navspace" />
@@ -523,7 +535,7 @@ export function Card({ lang, handle, go, back }) {
 
   if (b === null) return <NotFound lang={lang} go={go} />;
   if (b === undefined) {
-    return <div className="b-card-screen"><p className="b-card-wait">{err ? t(lang, "load_failed") : t(lang, "loading")}</p>
+    return <div className="b-card-screen">{err ? <p className="b-card-wait">{t(lang, "load_failed")}</p> : <div className="b-card-skel bm-skelwrap"><Skel h={0} r={22} style={{ aspectRatio: "1.586", height: "auto", background: "#2a2b2e" }} /><Skel w="60%" h={22} style={{ background: "#2a2b2e" }} /><Skel h={58} r={18} style={{ background: "#2a2b2e" }} /><Skel h={58} r={18} style={{ background: "#2a2b2e" }} /></div>}
       {err ? <button type="button" className="link" onClick={reload}>{t(lang, "try_again")}</button> : null}</div>;
   }
 
@@ -613,7 +625,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   if (b === undefined) {
     return (
       <div className="b-page">
-        <p className="note">{err ? t(lang, "load_failed") : t(lang, "loading")}</p>
+        {err ? <p className="note">{t(lang, "load_failed")}</p> : <SkelPage />}
         {err ? <button type="button" className="link" onClick={reload}>{t(lang, "try_again")}</button> : null}
       </div>
     );

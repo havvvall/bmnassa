@@ -8,7 +8,8 @@ import {
   getMyBusiness, updateMyBusiness, getPrices, savePrices, getPhotos, addPhoto, removePhoto, photoUrl, getStats,
   normalisePhone, prettyPhone,
 } from "../api.js";
-import { useLists } from "../browse/Browse.jsx";
+import { useLists, Toast, ok } from "../browse/Browse.jsx";
+import { SkelPage } from "../Skeleton.jsx";
 import { Icon } from "../browse/icons.jsx";
 import { DAYS, dayName, hoursLines, hasHours } from "../hours.js";
 import PageStyle from "./PageStyle.jsx";
@@ -136,7 +137,7 @@ export function Dashboard({ lang, id, go }) {
         <button type="button" onClick={() => go(`/my/${b.id}/nfc`)}><span className="o-tic"><Icon name="nfc" size={18} /></span>{t(lang, "order_nfc")}</button>
         <button type="button" onClick={() => go("/wallet")}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}</button>
       </div>
-      {toast ? <div className="b-toast" role="status">{toast}</div> : null}
+      <Toast text={toast} />
     </div>
   );
 }
@@ -151,7 +152,7 @@ export function Loading({ lang, err, reload, go }) {
           <div className="note ltr" style={{ fontSize: 11 }}>{err}</div>
           <button type="button" className="link" onClick={reload}>{t(lang, "try_again")}</button>
         </div>
-      ) : <p className="note">{t(lang, "loading")}</p>}
+      ) : <SkelPage card={false} />}
     </div>
   );
 }
@@ -456,7 +457,7 @@ export function EditPage({ lang, id, go }) {
       }
       const wentBack = b.status === "approved" && row.status === "pending";
       setB(row);
-      setToast(t(lang, wentBack ? "saved_review" : "saved_page"));
+      setToast(ok(t(lang, wentBack ? "saved_review" : "saved_page")));
     } catch (e) {
       setMsg(`${t(lang, "save_failed")} (${[e.status, e.message].filter(Boolean).join(" · ")})`);
     } finally {
@@ -574,7 +575,7 @@ export function EditPage({ lang, id, go }) {
       </>}
 
       {editingHours ? <HoursEditor lang={lang} hours={hours} onClose={() => setEditingHours(false)} onDone={(h) => { setHours(h); setEditingHours(false); }} /> : null}
-      {toast ? <div className="b-toast" role="status">{toast}</div> : null}
+      <Toast text={toast} />
     </div>
   );
 }

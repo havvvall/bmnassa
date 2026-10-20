@@ -1,8 +1,17 @@
 import { THEMES, getThemeChoice, setThemeChoice, applyTheme } from "./theme.js";
 import React, { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import { haptic } from "./motion.js";
 import "./app.css";
+import { SkelRows } from "./Skeleton.jsx";
 
 applyTheme();
+
+// Android: a short vibration when a main button is pressed (iPhones only show the press)
+document.addEventListener("pointerdown", (e) => {
+  const el = e.target && e.target.closest && e.target.closest(".btn:not(.ghost):not([disabled]), .b-act, .sc-shutter, .b-nav button");
+  if (el) haptic(10);
+}, { passive: true });
 import Team from "./team/Team.jsx";
 import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { Dashboard, EditPage } from "./owner/Owner.jsx";
@@ -37,19 +46,40 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* ignore */ } },
 };
 
+// Screens cross-fade and rise a little when they change (View Transitions, where the browser has them).
+// The card screen has its own slide-up, the camera opens straight away, and Reduce motion keeps it to a quick fade.
+function transition(from, to, dir, apply) {
+  const own = (p) => /\/card$/.test(p) || p === "/scan" || p.startsWith("/team");
+  if (!document.startViewTransition || from === to || own(from) || own(to) || document.hidden) { apply(); return; }
+  document.documentElement.dataset.nav = dir;
+  try {
+    document.startViewTransition(() => flushSync(apply));
+  } catch {
+    apply();
+  }
+}
+
 function usePath() {
   const [path, setPath] = useState(window.location.pathname);
   useEffect(() => {
-    const on = () => setPath(window.location.pathname);
+    let shown = window.location.pathname;
+    const on = () => {
+      const to = window.location.pathname;
+      transition(shown, to, "back", () => setPath(to));
+      shown = to;
+    };
     window.addEventListener("popstate", on);
     return () => window.removeEventListener("popstate", on);
   }, []);
   const go = (p, replace) => {
     if (p === window.location.pathname + window.location.search + window.location.hash) return;
-    window.history[replace ? "replaceState" : "pushState"]({}, "", p);
-    // The screen is chosen by the path alone; "?q=…" and "#hours" are read by the screen itself
-    setPath(window.location.pathname);
-    window.scrollTo(0, 0);
+    const from = window.location.pathname;
+    transition(from, p.split(/[?#]/)[0], "forward", () => {
+      window.history[replace ? "replaceState" : "pushState"]({}, "", p);
+      // The screen is chosen by the path alone; "?q=…" and "#hours" are read by the screen itself
+      setPath(window.location.pathname);
+      window.scrollTo(0, 0);
+    });
   };
   return [path, go];
 }
@@ -394,7 +424,7 @@ function ListBusiness({ lang, profile, onSent, onBack }) {
           <button type="button" className="link" onClick={load}>{t(lang, "try_again")}</button>
         </div>
       ) : !lists ? (
-        <p className="note">{t(lang, "loading")}</p>
+        <SkelRows n={4} avatar={false} />
       ) : (
         <>
           <div className="stack" style={{ gap: 6 }}>
