@@ -141,6 +141,7 @@ export async function signOut() {
   }
   session = null;
   writeSession(null);
+  walletIds = null;
 }
 
 // ---------- data ----------
@@ -450,3 +451,51 @@ export async function teamSetReview(id, fields) {
   const rows = await call(`/rest/v1/reviews?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" } });
   return rows && rows[0];
 }
+
+// ---------- wallet (slice 7) ----------
+// Saved business ids for this session, so "Save to wallet" buttons know their state at once
+let walletIds = null;
+const WALLET_SELECT = (fields) => `id,kind,business_id,data,image_path,created_at,businesses(${fields})`;
+
+export async function getWallet() {
+  const q = (f) => `/rest/v1/wallet_items?select=${WALLET_SELECT(f)}&order=created_at.desc&limit=500`;
+  let rows;
+  try { rows = await call(q(LIST_FIELDS), { auth: true }); } catch (e) {
+    if (e.status === 400) rows = await call(q(BASE_LIST_FIELDS), { auth: true }); else throw e;
+  }
+  walletIds = new Map((rows || []).filter((r) => r.business_id).map((r) => [r.business_id, r.id]));
+  return rows || [];
+}
+
+// The wallet item id if this business is saved, null if not, undefined if unknown (not signed in)
+export async function walletItemFor(bid) {
+  if (!session) return undefined;
+  if (!walletIds) {
+    const rows = await call(`/rest/v1/wallet_items?select=id,business_id&business_id=not.is.null&limit=500`, { auth: true });
+    walletIds = new Map((rows || []).map((r) => [r.business_id, r.id]));
+  }
+  return walletIds.get(Number(bid)) || null;
+}
+
+export async function saveToWallet(bid) {
+  try {
+    const rows = await call("/rest/v1/wallet_items", { method: "POST", auth: true, body: { kind: "business", business_id: Number(bid) }, headers: { Prefer: "return=representation" } });
+    const id = rows && rows[0] && rows[0].id;
+    if (walletIds) walletIds.set(Number(bid), id);
+    return id;
+  } catch (e) {
+    if (e.status === 409 || e.code === "23505") { walletIds = null; return walletItemFor(bid); }
+    throw e;
+  }
+}
+
+export async function removeFromWallet(id, bid) {
+  await call(`/rest/v1/wallet_items?id=eq.${Number(id)}`, { method: "DELETE", auth: true });
+  if (walletIds && bid) walletIds.delete(Number(bid));
+}
+
+export async function walletSaves(bid) {
+  try { return await call("/rest/v1/rpc/bmnassa_wallet_saves", { method: "POST", auth: true, body: { bid: Number(bid) } }); } catch { return null; }
+}
+
+export function forgetWallet() { walletIds = null; }

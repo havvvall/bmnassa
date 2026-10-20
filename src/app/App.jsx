@@ -8,6 +8,7 @@ import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { Dashboard, EditPage } from "./owner/Owner.jsx";
 import Studio from "./card/Studio.jsx";
 import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
+import { WalletPage } from "./wallet/Wallet.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -664,6 +665,8 @@ export default function App() {
       : <BizPage {...hp} />;
   } else if (path === "/home" || path === "/") {
     screen = <Home lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} signedIn={signedIn} />;
+  } else if (path === "/wallet") {
+    screen = <WalletPage key="wallet" lang={lang} go={go} signedIn={signedIn} />;
   } else if (path === "/search") {
     screen = <Results key="search" lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} search={query.get("q") || ""} />;
   } else if (path.startsWith("/c/")) {

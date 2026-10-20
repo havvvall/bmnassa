@@ -3,6 +3,7 @@
 import { themeBar } from "../theme.js";
 import { calm, ms, ease, flipCard } from "../motion.js";
 import { ReviewsSummary } from "../reviews/Reviews.jsx";
+import { SaveToWallet } from "../wallet/Wallet.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
@@ -103,7 +104,7 @@ export function BottomNav({ lang, active, go, signedIn }) {
   const [toast, setToast] = useToast();
   const items = [
     ["home", "nav_home", () => go("/home")],
-    ["wallet", "nav_wallet", () => setToast(t(lang, "soon_feature"))],
+    ["wallet", "nav_wallet", () => go("/wallet")],
     ["scan", "nav_scan", () => setToast(t(lang, "soon_feature"))],
     ["user", "nav_account", () => go(signedIn ? "/account" : "/signin")],
   ];
@@ -588,6 +589,7 @@ export function Card({ lang, handle, go, back }) {
         <div className="b-sheet-name"><b><bdi>{pick(b, "name", lang)}</bdi></b>{b.verified ? <Tick /> : null}</div>
         <div className="b-sheet-meta"><Rating b={b} lang={lang} />{openState(b.hours, lang) ? <span className={"b-open " + (openState(b.hours, lang).open ? "yes" : "no")}>{openState(b.hours, lang).text}</span> : null}</div>
         <button type="button" className="b-darkbtn" onClick={() => go("/" + b.handle)}><Icon name="up" size={16} /> {t(lang, "more_info")}</button>
+        <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} className="b-darkbtn" />
       </div>
       <Toast text={toast} />
     </div>
@@ -667,6 +669,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
       <div className="b-chips">
         {dir ? <a className="b-chip" href={dir} target="_blank" rel="noreferrer"><Icon name="route" size={15} /> {t(lang, "directions")}</a> : null}
         <button type="button" className="b-chip" onClick={() => go("/" + b.handle + "/card")}><Icon name="flip" size={15} /> {t(lang, "share_card")}</button>
+        <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} />
         <button type="button" className="b-chip" onClick={() => downloadContact(b, lang)}><Icon name="contact" size={15} /> {t(lang, "save_contact")}</button>
       </div>
 

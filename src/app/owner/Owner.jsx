@@ -2,6 +2,7 @@
 // The database decides what an owner may change; this page only shows and sends it.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./owner.css";
+import { walletSaves } from "../api.js";
 import { t, cityName, pick, LANGS } from "../i18n.js";
 import {
   getMyBusiness, updateMyBusiness, getPrices, savePrices, getPhotos, addPhoto, removePhoto, photoUrl, getStats,
@@ -48,12 +49,14 @@ export function Dashboard({ lang, id, go }) {
   const [stats, setStats] = useState(null);
   const [photos, setPhotos] = useState(null);
   const [prices, setPrices] = useState(null);
+  const [saves, setSaves] = useState(null);
   const [toast, setToast] = useToast();
 
   useEffect(() => {
     getStats(id).then(setStats).catch(() => setStats({ views: 0, calls: 0, whatsapp: 0 }));
     getPhotos(id, true).then((r) => setPhotos(r || [])).catch(() => setPhotos([]));
     getPrices(id, true).then((r) => setPrices(r || [])).catch(() => setPrices([]));
+    walletSaves(id).then(setSaves);
   }, [id]);
 
   if (b === null) return <Missing lang={lang} go={go} />;
@@ -107,7 +110,7 @@ export function Dashboard({ lang, id, go }) {
             <div key={k} className="o-stat"><b>{stats ? stats[k] : "…"}</b><small>{t(lang, label)}</small></div>
           ))}
         </div>
-        <p className="note" style={{ margin: "6px 4px 0" }}>{t(lang, "last_7_days")}</p>
+        <p className="note" style={{ margin: "6px 4px 0" }}>{t(lang, "last_7_days")}{saves ? " · " + t(lang, "wallet_saves", { n: saves }) : ""}</p>
       </div>
 
       <div className="panel o-steps">
@@ -131,7 +134,7 @@ export function Dashboard({ lang, id, go }) {
             <em className="o-soon">{Number(b.reviews) ? `★ ${Number(b.rating || 0).toFixed(1)} · ${b.reviews}` : t(lang, "reviews_tile_sub")}</em></button>
         ) : null}
         <button type="button" onClick={soon}><span className="o-tic"><Icon name="spark" size={18} /></span>{t(lang, "order_nfc")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
-        <button type="button" onClick={soon}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
+        <button type="button" onClick={() => go("/wallet")}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}</button>
       </div>
       {toast ? <div className="b-toast" role="status">{toast}</div> : null}
     </div>

@@ -68,11 +68,11 @@ function Avatar({ s, person, className }) {
     : <span className={className}><span>{(String(person || "").trim().charAt(0) || "B").toUpperCase()}</span></span>;
 }
 
-const surface = (s) => ({
+export const surface = (s) => ({
   "--card": s.color,
   backgroundImage: s.background === "photo" && s.bg_path ? `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.55)), url(${photoUrl(s.bg_path)})` : undefined,
 });
-const surfaceClass = (s) => "cf-surface " + (s.background === "photo" && s.bg_path ? "photo" : s.background === "solid" ? "solid" : "carbon");
+export const surfaceClass = (s) => "cf-surface " + (s.background === "photo" && s.bg_path ? "photo" : s.background === "solid" ? "solid" : "carbon");
 
 // The NFC card itself, as it looks in a wallet (Wallet card style, the business page and Card Studio)
 export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
