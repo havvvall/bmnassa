@@ -247,11 +247,11 @@ export async function teamUpdateBusiness(id, fields) {
 // ---------- listing (anyone, no account needed; the database only returns live businesses) ----------
 
 const LIST_FIELDS =
-  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card,page_style";
+  "id,handle,owner_id,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card,page_style";
 
 // The fields every version of the database has; used when a newer column is not there yet
 const BASE_LIST_FIELDS =
-  "id,handle,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,rating,reviews,verified,created_at";
+  "id,handle,owner_id,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,rating,reviews,verified,created_at";
 
 // Ask with all fields; if the database is missing a newer column (its update not run yet), ask again with the basic ones
 async function withFallback(build) {
@@ -384,8 +384,69 @@ export function track(bid, kind) {
     const key = "v" + bid;
     try { if (sessionStorage.getItem("bm_" + key)) return; sessionStorage.setItem("bm_" + key, "1"); } catch { if (tracked.has(key)) return; tracked.add(key); }
   }
-  fetch(`${SB_URL}/rest/v1/rpc/bmnassa_track`, {
-    method: "POST", headers: { apikey: SB_KEY, "Content-Type": "application/json" },
+  const send = (s) => fetch(`${SB_URL}/rest/v1/rpc/bmnassa_track`, {
+    method: "POST",
+    headers: { apikey: SB_KEY, "Content-Type": "application/json", ...(s ? { Authorization: "Bearer " + s.access_token } : {}) },
     body: JSON.stringify({ bid: Number(bid), kind }), keepalive: true,
   }).catch(() => {});
+  // Signed in: a Call or WhatsApp tap is remembered, so the person can rate the business later
+  if (kind !== "view" && session) {
+    if (session.expires_at - Math.floor(Date.now() / 1000) > 60) send(session);
+    else freshSession().then((s) => send(s)).catch(() => send(null));
+  } else send(null);
+}
+
+// ---------- reviews (slice 7) ----------
+const REVIEW_FIELDS = "id,business_id,rating,tags,body,first_name,contact_kind,contacted_at,owner_reply,owner_reply_at,created_at,updated_at,status";
+export const REVIEW_TAGS = ["on_time", "fair_price", "clean_work", "friendly", "fast_reply"];
+
+export function myUserId() {
+  return (session && session.user && session.user.id) || null;
+}
+
+// Live reviews of a business, newest first. Signed-in owners also see hidden ones of their own business.
+export async function getReviews(bid) {
+  const rows = await call(`/rest/v1/reviews?business_id=eq.${Number(bid)}&select=${REVIEW_FIELDS}&order=created_at.desc&limit=200`);
+  return (rows || []).filter((r) => r.status === "live");
+}
+
+export async function getMyReview(bid) {
+  const me = myUserId();
+  if (!me) return null;
+  const rows = await call(`/rest/v1/reviews?business_id=eq.${Number(bid)}&user_id=eq.${me}&select=${REVIEW_FIELDS}`, { auth: true });
+  return (rows && rows[0]) || null;
+}
+
+// The person's latest Call or WhatsApp tap on this business (needed to rate it).
+export async function getMyContact(bid) {
+  const me = myUserId();
+  if (!me) return null;
+  const rows = await call(`/rest/v1/business_contacts?business_id=eq.${Number(bid)}&user_id=eq.${me}&select=kind,at`, { auth: true });
+  return (rows && rows[0]) || null;
+}
+
+export async function saveReview(bid, { rating, tags, body }, id) {
+  const fields = { rating, tags, body };
+  const rows = id
+    ? await call(`/rest/v1/reviews?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" } })
+    : await call("/rest/v1/reviews", { method: "POST", auth: true, body: { business_id: Number(bid), ...fields }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+export async function deleteReview(id) {
+  await call(`/rest/v1/reviews?id=eq.${Number(id)}`, { method: "DELETE", auth: true });
+}
+
+export async function replyToReview(id, text) {
+  const rows = await call(`/rest/v1/reviews?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: { owner_reply: text }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+export async function teamReviews() {
+  return call(`/rest/v1/reviews?select=${REVIEW_FIELDS},businesses(name_en,name_ku,handle)&order=created_at.desc&limit=200`, { auth: true });
+}
+
+export async function teamSetReview(id, fields) {
+  const rows = await call(`/rest/v1/reviews?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
 }

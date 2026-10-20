@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./team.css";
 import {
-  amIStaff, teamBusinesses, teamProfiles, teamUpdateBusiness,
+  amIStaff, teamBusinesses, teamProfiles, teamUpdateBusiness, teamReviews, teamSetReview,
   getCategories, getCities, getPlaces, prettyPhone,
 } from "../api.js";
 import { FALLBACK_CITIES } from "../i18n.js";
@@ -36,7 +36,7 @@ const STATUS = {
   hidden: ["Hidden", "grey"],
 };
 
-const SOON = ["Unfinished sign-ups", "Card builder", "NFC orders", "Wallet leads", "Reviews", "Users and owners", "Ask Bmnassa fact sheet"];
+const SOON = ["Unfinished sign-ups", "NFC orders", "Wallet leads", "Users and owners", "Ask Bmnassa fact sheet"];
 
 function when(iso) {
   if (!iso) return "—";
@@ -162,6 +162,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
           <button className={"bo-nav" + (view === "all" ? " on" : "")} onClick={() => { setView("all"); setOpenId(null); }}>
             Businesses {rows ? <span className="bo-count soft">{rows.length}</span> : null}
           </button>
+          <button className={"bo-nav" + (view === "reviews" ? " on" : "")} onClick={() => { setView("reviews"); setOpenId(null); }}>Reviews</button>
           <div className="bo-soon-h">Coming in later updates</div>
           {SOON.map((s) => <span key={s} className="bo-nav soon">{s}</span>)}
           <a className="bo-nav old" href="/admin">Categories, cities, admins<small>Old back office ↗</small></a>
@@ -176,6 +177,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
         </div>
       </aside>
 
+      {view === "reviews" ? <TeamReviews /> : (
       <main className="bo-main">
         <header className="bo-head">
           <div>
@@ -243,6 +245,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
           </table>
         </div>
       </main>
+      )}
 
       {open ? (
         <Review key={open.id} b={open} owner={owners[open.owner_id]} look={look} lists={lists}
@@ -502,5 +505,74 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
         )}
       </div>
     </aside>
+  );
+}
+
+// ---------- reviews (slice 7): every review, newest first; hide one that breaks the rules ----------
+function TeamReviews() {
+  const [rows, setRows] = useState(null);
+  const [err, setErr] = useState("");
+  const [filter, setFilter] = useState("");
+  const [busy, setBusy] = useState(0);
+  const load = () => { setErr(""); teamReviews().then((r) => setRows(r || [])).catch((e) => setErr(e.message || String(e.status))); };
+  useEffect(load, []);
+  const set = async (r, status) => {
+    let reason = null;
+    if (status === "hidden") {
+      reason = window.prompt("Why hide this review? (kept for the team only)", "Rude or not about the service");
+      if (reason === null) return;
+    }
+    setBusy(r.id);
+    try {
+      const row = await teamSetReview(r.id, { status, hidden_reason: reason });
+      setRows((x) => x.map((y) => (y.id === r.id ? { ...y, ...row } : y)));
+    } catch (e) {
+      alert("Could not save: " + (e.message || e.status));
+    } finally {
+      setBusy(0);
+    }
+  };
+  const list = (rows || []).filter((r) => !filter || r.status === filter);
+  const stars = (n) => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
+  return (
+    <main className="bo-main">
+      <header className="bo-head">
+        <div>
+          <h1>Reviews</h1>
+          <p>Reviews go live straight away. Hide one that is rude, fake or not about the service; the business rating updates by itself.</p>
+        </div>
+      </header>
+      <div className="bo-chips">
+        <button className={"bo-chip" + (!filter ? " on" : "")} onClick={() => setFilter("")}>All · {(rows || []).length}</button>
+        <button className={"bo-chip" + (filter === "live" ? " on" : "")} onClick={() => setFilter("live")}>Live · {(rows || []).filter((r) => r.status === "live").length}</button>
+        <button className={"bo-chip" + (filter === "hidden" ? " on" : "")} onClick={() => setFilter("hidden")}>Hidden · {(rows || []).filter((r) => r.status === "hidden").length}</button>
+        <button className="bo-chip ghost" onClick={load}>Refresh</button>
+      </div>
+      {err ? <div className="bo-alert">Could not load reviews: {err}. If this mentions a missing table, run <code>010_reviews.sql</code> in Supabase.</div> : null}
+      <div className="bo-table">
+        <table>
+          <thead><tr><th>Written</th><th>Business</th><th>Rating</th><th>Review</th><th>By</th><th>Status</th><th /></tr></thead>
+          <tbody>
+            {rows === null ? <tr><td colSpan={7} className="bo-empty">Loading…</td></tr> : null}
+            {rows && !list.length ? <tr><td colSpan={7} className="bo-empty">No reviews yet.</td></tr> : null}
+            {list.map((r) => (
+              <tr key={r.id}>
+                <td>{new Date(r.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</td>
+                <td>{r.businesses ? <a href={"/" + r.businesses.handle + "/reviews"} target="_blank" rel="noreferrer">{r.businesses.name_en || r.businesses.name_ku}</a> : r.business_id}</td>
+                <td style={{ color: "#b07d00", whiteSpace: "nowrap" }}>{stars(r.rating)}</td>
+                <td style={{ maxWidth: 360 }}><span dir="auto">{r.body || <i style={{ color: "#888" }}>No text</i>}</span>
+                  {r.owner_reply ? <div style={{ color: "#666", marginTop: 4 }}>Owner: <span dir="auto">{r.owner_reply}</span></div> : null}
+                  {r.status === "hidden" && r.hidden_reason ? <div style={{ color: "#b42318", marginTop: 4 }}>Hidden: {r.hidden_reason}</div> : null}</td>
+                <td>{r.first_name}<div style={{ color: "#888", fontSize: 12 }}>{r.contact_kind === "whatsapp" ? "WhatsApp" : "Call"}</div></td>
+                <td><span className={"bo-pill " + (r.status === "live" ? "green" : "grey")}>{r.status === "live" ? "Live" : "Hidden"}</span></td>
+                <td>{r.status === "live"
+                  ? <button className="bo-chip" disabled={busy === r.id} onClick={() => set(r, "hidden")}>Hide</button>
+                  : <button className="bo-chip" disabled={busy === r.id} onClick={() => set(r, "live")}>Show again</button>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </main>
   );
 }

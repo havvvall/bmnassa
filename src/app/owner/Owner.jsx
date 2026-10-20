@@ -126,6 +126,10 @@ export function Dashboard({ lang, id, go }) {
       <div className="o-tiles">
         <button type="button" onClick={() => go(`/my/${b.id}/edit`)}><span className="o-tic"><Icon name="rows" size={18} /></span>{t(lang, "edit_page")}</button>
         <button type="button" onClick={() => go(`/my/${b.id}/card`)}><span className="o-tic"><Icon name="palette" size={18} /></span>{t(lang, "card_studio")}</button>
+        {b.status === "approved" && b.handle ? (
+          <button type="button" onClick={() => go(`/${b.handle}/reviews`)}><span className="o-tic"><Icon name="star" size={18} /></span>{t(lang, "reviews_short")}
+            <em className="o-soon">{Number(b.reviews) ? `★ ${Number(b.rating || 0).toFixed(1)} · ${b.reviews}` : t(lang, "reviews_tile_sub")}</em></button>
+        ) : null}
         <button type="button" onClick={soon}><span className="o-tic"><Icon name="spark" size={18} /></span>{t(lang, "order_nfc")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
         <button type="button" onClick={soon}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
       </div>

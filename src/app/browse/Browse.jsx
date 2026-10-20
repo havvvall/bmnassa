@@ -2,6 +2,7 @@
 // Anyone can browse without an account; only live (approved) businesses come back from the database.
 import { themeBar } from "../theme.js";
 import { calm, ms, ease, flipCard } from "../motion.js";
+import { ReviewsSummary } from "../reviews/Reviews.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
@@ -48,7 +49,7 @@ function useBusinesses(city) {
 const byId = (arr) => Object.fromEntries((arr || []).map((x) => [x.id, x]));
 const initial = (s) => (String(s || "").trim().charAt(0) || "B").toUpperCase();
 const digits = (s) => String(s || "").replace(/\D/g, "");
-const waLink = (phone, text) => `https://wa.me/${digits(phone)}${text ? "?text=" + encodeURIComponent(text) : ""}`;
+export const waLink = (phone, text) => `https://wa.me/${digits(phone)}${text ? "?text=" + encodeURIComponent(text) : ""}`;
 const pageHost = () => window.location.host.replace(/^www\./, "");
 
 // Turns what an owner typed ("@azad", "instagram.com/azad", "azad.com") into a link and a short label
@@ -86,11 +87,11 @@ function Rating({ b, lang, compact }) {
 
 const Tick = () => <span className="b-tick" aria-label="Checked by Bmnassa"><Icon name="check" size={11} stroke={3} /></span>;
 
-function Toast({ text }) {
+export function Toast({ text }) {
   return text ? <div className="b-toast" role="status">{text}</div> : null;
 }
 
-function useToast() {
+export function useToast() {
   const [text, setText] = useState("");
   useEffect(() => { if (!text) return; const id = setTimeout(() => setText(""), 2400); return () => clearTimeout(id); }, [text]);
   return [text, setText];
@@ -406,7 +407,7 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
 
 // ---------- one business: digital card and business page ----------
 
-function useBusiness(handle) {
+export function useBusiness(handle) {
   const [b, setB] = useState(undefined);
   const [err, setErr] = useState(false);
   const load = () => {
@@ -467,7 +468,7 @@ function QR({ text, size = 220 }) {
   );
 }
 
-function NotFound({ lang, go }) {
+export function NotFound({ lang, go }) {
   return (
     <div className="b-page">
       <div className="b-top"><img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /></div>
@@ -676,6 +677,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
             <p dir="auto">{about}</p>
           </section>
         ) : null}
+        <ReviewsSummary b={b} lang={lang} go={go} />
         {prices.length ? (
           <section>
             <span className="label">{t(lang, "prices")}</span>

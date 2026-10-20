@@ -292,6 +292,57 @@ const T = {
   ask_msg: ["Hello Bmnassa, I'm looking for: {cat} in {city}.", "سڵاو بمناسە، بەدوای ئەمەدا دەگەڕێم: {cat} لە {city}.", "مرحباً بمناسة، أبحث عن: {cat} في {city}."],
   st_hidden: ["Hidden", "شاراوە", "مخفي"],
   loading: ["Loading…", "چاوەڕێ بکە…", "جارٍ التحميل…"],
+  // slice 7 · reviews (new, needs a native-speaker check)
+  reviews_title: ["Ratings and reviews", "هەڵسەنگاندن و بۆچوونەکان", "التقييمات والمراجعات"],
+  reviews_short: ["Reviews", "هەڵسەنگاندنەکان", "التقييمات"],
+  rate_this: ["Rate this business", "ئەم بزنسە هەڵبسەنگێنە", "قيّم هذا النشاط"],
+  edit_my_review: ["Edit my review", "دەستکاریی هەڵسەنگاندنەکەم", "تعديل تقييمي"],
+  see_all_reviews: ["See all {n} reviews", "هەموو {n} هەڵسەنگاندنەکە ببینە", "عرض كل التقييمات ({n})"],
+  no_reviews_yet: ["No reviews yet. People who call or WhatsApp {name} through Bmnassa can rate it.", "هێشتا هیچ هەڵسەنگاندنێک نییە. ئەوانەی لە ڕێگەی بمناسەوە پەیوەندی بە {name}ـەوە دەکەن دەتوانن هەڵیبسەنگێنن.", "لا توجد تقييمات بعد. يمكن لمن يتواصل مع {name} عبر بمناسة أن يقيّمه."],
+  reviews_rule: ["Only people who contacted the business can rate · one review per account · our team removes unfair reviews", "تەنها ئەوانەی پەیوەندییان کردووە دەتوانن هەڵبسەنگێنن · یەک هەڵسەنگاندن بۆ هەر هەژمارێک · تیمەکەمان هەڵسەنگاندنی نادادپەروەرانە لادەبات", "يقيّم فقط من تواصل مع النشاط · تقييم واحد لكل حساب · يزيل فريقنا التقييمات غير المنصفة"],
+  contacted_call: ["contacted by call", "بە تەلەفۆن پەیوەندی کردووە", "تواصل عبر الاتصال"],
+  contacted_whatsapp: ["contacted on WhatsApp", "لە واتسئاپ پەیوەندی کردووە", "تواصل عبر واتساب"],
+  owner_reply: ["Owner reply:", "وەڵامی خاوەن کار:", "رد صاحب النشاط:"],
+  reply: ["Reply", "وەڵامدانەوە", "رد"],
+  edit_reply: ["Edit reply", "دەستکاریی وەڵام", "تعديل الرد"],
+  send_reply: ["Send reply", "ناردنی وەڵام", "إرسال الرد"],
+  reply_ph: ["Thank the customer or answer their point", "سوپاسی کڕیار بکە یان وەڵامی خاڵەکەی بدەرەوە", "اشكر الزبون أو أجب عن ملاحظته"],
+  reply_sent: ["Your reply is live.", "وەڵامەکەت بڵاو کرایەوە.", "تم نشر ردك."],
+  cancel: ["Cancel", "هەڵوەشاندنەوە", "إلغاء"],
+  write_review: ["Write a review", "هەڵسەنگاندن بنووسە", "اكتب تقييماً"],
+  rate_name: ["Rate {name}", "{name} هەڵبسەنگێنە", "قيّم {name}"],
+  you_called: ["You called them {when}", "{when} پەیوەندیت پێوە کردن", "اتصلت بهم {when}"],
+  you_whatsapped: ["You messaged them on WhatsApp {when}", "{when} لە واتسئاپ نامەت بۆ ناردن", "راسلتهم على واتساب {when}"],
+  how_was_it: ["How was it?", "چۆن بوو؟", "كيف كانت التجربة؟"],
+  star_1: ["Poor", "خراپ", "سيئ"],
+  star_2: ["Fair", "لاواز", "ضعيف"],
+  star_3: ["OK", "ئاسایی", "مقبول"],
+  star_4: ["Good", "باش", "جيد"],
+  star_5: ["Excellent", "نایاب", "ممتاز"],
+  went_well: ["What went well?", "چی باش بوو؟", "ما الذي كان جيداً؟"],
+  tag_on_time: ["On time", "لە کاتی خۆیدا", "في الموعد"],
+  tag_fair_price: ["Fair price", "نرخی گونجاو", "سعر عادل"],
+  tag_clean_work: ["Clean work", "کاری پاک", "عمل نظيف"],
+  tag_friendly: ["Friendly", "ڕووخۆش", "ودود"],
+  tag_fast_reply: ["Fast reply", "وەڵامی خێرا", "رد سريع"],
+  review_ph: ["Tell others what they did and how it went.", "بە ئەوانی تر بڵێ چییان کرد و چۆن بوو.", "أخبر الآخرين بما قاموا به وكيف سارت الأمور."],
+  rv_note: ["Your review shows with your first name only. Our team can remove reviews that break the rules.", "هەڵسەنگاندنەکەت تەنها بە ناوی یەکەمت دەردەکەوێت. تیمەکەمان دەتوانێت ئەو هەڵسەنگاندنانە لاببات کە یاساکان دەشکێنن.", "يظهر تقييمك باسمك الأول فقط. يمكن لفريقنا إزالة التقييمات المخالفة للقواعد."],
+  rv_send: ["Send review", "ناردنی هەڵسەنگاندن", "إرسال التقييم"],
+  update_review: ["Update review", "نوێکردنەوەی هەڵسەنگاندن", "تحديث التقييم"],
+  delete_review: ["Delete my review", "سڕینەوەی هەڵسەنگاندنەکەم", "حذف تقييمي"],
+  review_sent: ["Thank you! Your review is live.", "سوپاس! هەڵسەنگاندنەکەت بڵاو کرایەوە.", "شكراً! تم نشر تقييمك."],
+  review_deleted: ["Your review was deleted.", "هەڵسەنگاندنەکەت سڕایەوە.", "تم حذف تقييمك."],
+  contact_first_title: ["Contact them first", "سەرەتا پەیوەندییان پێوە بکە", "تواصل معهم أولاً"],
+  contact_first: ["To keep reviews honest, only people who called or messaged {name} through Bmnassa can rate it. Call or WhatsApp them below, then come back.", "بۆ ئەوەی هەڵسەنگاندنەکان ڕاستگۆ بن، تەنها ئەوانەی لە ڕێگەی بمناسەوە پەیوەندییان بە {name}ـەوە کردووە دەتوانن هەڵیبسەنگێنن. لە خوارەوە پەیوەندی بکە یان واتسئاپ بنێرە، پاشان بگەڕێوە.", "حتى تبقى التقييمات صادقة، يمكن فقط لمن اتصل بـ{name} أو راسله عبر بمناسة أن يقيّمه. اتصل أو راسلهم على واتساب من الأسفل ثم عد إلى هنا."],
+  pick_stars: ["Tap the stars to rate.", "ئەستێرەکان دابگرە بۆ هەڵسەنگاندن.", "اضغط على النجوم للتقييم."],
+  own_business_no: ["You can't rate your own business. Customers' reviews show here, and you can reply to them.", "ناتوانیت بزنسی خۆت هەڵبسەنگێنیت. هەڵسەنگاندنی کڕیاران لێرە دەردەکەون و دەتوانیت وەڵامیان بدەیتەوە.", "لا يمكنك تقييم نشاطك. تظهر تقييمات الزبائن هنا ويمكنك الرد عليها."],
+  sign_in_to_rate: ["Sign in to rate", "بۆ هەڵسەنگاندن بچۆ ژوورەوە", "سجّل الدخول للتقييم"],
+  ago_today: ["today", "ئەمڕۆ", "اليوم"],
+  ago_yesterday: ["yesterday", "دوێنێ", "أمس"],
+  ago_days: ["{n} days ago", "{n} ڕۆژ لەمەوبەر", "قبل {n} أيام"],
+  ago_weeks: ["{n} weeks ago", "{n} هەفتە لەمەوبەر", "قبل {n} أسابيع"],
+  ago_months: ["{n} months ago", "{n} مانگ لەمەوبەر", "قبل {n} أشهر"],
+  reviews_tile_sub: ["Read and reply", "بخوێنەوە و وەڵام بدەرەوە", "اقرأ ورد"],
 };
 
 const IDX = { en: 0, ku: 1, ar: 2 };
@@ -336,4 +387,14 @@ export function bizCount(lang, n) {
 export function pick(row, field, lang) {
   if (!row) return "";
   return row[field + "_" + lang] || row[field + "_en"] || row[field + "_ku"] || row[field + "_ar"] || "";
+}
+
+// "2 days ago" in each language
+export function ago(lang, when) {
+  const d = Math.floor((Date.now() - new Date(when).getTime()) / 86400000);
+  if (!(d >= 0) || d < 1) return t(lang, "ago_today");
+  if (d < 2) return t(lang, "ago_yesterday");
+  if (d < 14) return t(lang, "ago_days", { n: d });
+  if (d < 60) return t(lang, "ago_weeks", { n: Math.floor(d / 7) });
+  return t(lang, "ago_months", { n: Math.floor(d / 30) });
 }

@@ -7,6 +7,7 @@ import Team from "./team/Team.jsx";
 import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { Dashboard, EditPage } from "./owner/Owner.jsx";
 import Studio from "./card/Studio.jsx";
+import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -21,9 +22,10 @@ const APP_WORDS = new Set(["", "home", "welcome", "signin", "verify", "name", "a
   "admin", "register", "stand", "invitation", "brand", "wallet", "scan", "my"]);
 
 function businessPath(path) {
-  const m = /^\/([a-z0-9][a-z0-9-]{0,60})(\/card)?\/?$/i.exec(path || "");
+  const m = /^\/([a-z0-9][a-z0-9-]{0,60})(\/card|\/reviews|\/rate)?\/?$/i.exec(path || "");
   if (!m || APP_WORDS.has(m[1].toLowerCase())) return null;
-  return { handle: m[1].toLowerCase(), card: !!m[2] };
+  const part = (m[2] || "").slice(1);
+  return { handle: m[1].toLowerCase(), card: part === "card", part };
 }
 const isBusinessPath = (p) => !!businessPath(p);
 
@@ -655,9 +657,11 @@ export default function App() {
 
   let screen;
   if (handleMatch) {
-    screen = handleMatch.card
-      ? <Card key={path} lang={lang} handle={handleMatch.handle} go={go} back={back} />
-      : <BizPage key={path} lang={lang} handle={handleMatch.handle} go={go} back={back} signedIn={signedIn} />;
+    const hp = { key: path, lang, handle: handleMatch.handle, go, back, signedIn };
+    screen = handleMatch.part === "card" ? <Card {...hp} />
+      : handleMatch.part === "reviews" ? <ReviewsPage {...hp} />
+      : handleMatch.part === "rate" ? <RatePage {...hp} />
+      : <BizPage {...hp} />;
   } else if (path === "/home" || path === "/") {
     screen = <Home lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} signedIn={signedIn} />;
   } else if (path === "/search") {
