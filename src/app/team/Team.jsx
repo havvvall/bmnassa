@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./team.css";
 import {
-  amIStaff, teamBusinesses, teamProfiles, teamUpdateBusiness, teamReviews, teamSetReview,
+  amIStaff, teamBusinesses, teamProfiles, teamUpdateBusiness, teamReviews, teamSetReview, teamOrders, teamUpdateOrder,
   getCategories, getCities, getPlaces, prettyPhone,
 } from "../api.js";
 import { FALLBACK_CITIES } from "../i18n.js";
@@ -36,7 +36,7 @@ const STATUS = {
   hidden: ["Hidden", "grey"],
 };
 
-const SOON = ["Unfinished sign-ups", "NFC orders", "Wallet leads", "Users and owners", "Ask Bmnassa fact sheet"];
+const SOON = ["Unfinished sign-ups", "Wallet leads", "Users and owners", "Ask Bmnassa fact sheet"];
 
 function when(iso) {
   if (!iso) return "—";
@@ -163,6 +163,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
             Businesses {rows ? <span className="bo-count soft">{rows.length}</span> : null}
           </button>
           <button className={"bo-nav" + (view === "reviews" ? " on" : "")} onClick={() => { setView("reviews"); setOpenId(null); }}>Reviews</button>
+          <button className={"bo-nav" + (view === "orders" ? " on" : "")} onClick={() => { setView("orders"); setOpenId(null); }}>NFC orders</button>
           <div className="bo-soon-h">Coming in later updates</div>
           {SOON.map((s) => <span key={s} className="bo-nav soon">{s}</span>)}
           <a className="bo-nav old" href="/admin">Categories, cities, admins<small>Old back office ↗</small></a>
@@ -177,7 +178,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
         </div>
       </aside>
 
-      {view === "reviews" ? <TeamReviews /> : (
+      {view === "orders" ? <TeamOrders /> : view === "reviews" ? <TeamReviews /> : (
       <main className="bo-main">
         <header className="bo-head">
           <div>
@@ -568,6 +569,70 @@ function TeamReviews() {
                 <td>{r.status === "live"
                   ? <button className="bo-chip" disabled={busy === r.id} onClick={() => set(r, "hidden")}>Hide</button>
                   : <button className="bo-chip" disabled={busy === r.id} onClick={() => set(r, "live")}>Show again</button>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  );
+}
+
+// ---------- NFC card orders (slice 7): call the owner, confirm, take payment, print, send ----------
+const ORDER_STATUS = [["new", "New · call them", "amber"], ["confirmed", "Confirmed", "green"], ["printing", "Printing", "green"], ["sent", "Sent", "green"], ["delivered", "Delivered", "green"], ["cancelled", "Cancelled", "grey"]];
+const PAY_LABEL = { cash: "Cash on delivery", fib: "FIB", fastpay: "FastPay", asiapay: "AsiaPay", zaincash: "ZainCash" };
+
+function TeamOrders() {
+  const [rows, setRows] = useState(null);
+  const [err, setErr] = useState("");
+  const [filter, setFilter] = useState("open");
+  const load = () => { setErr(""); teamOrders().then((r) => setRows(r || [])).catch((e) => setErr(e.message || String(e.status))); };
+  useEffect(load, []);
+  const save = async (o, fields) => {
+    try {
+      const row = await teamUpdateOrder(o.id, fields);
+      setRows((x) => x.map((y) => (y.id === o.id ? { ...y, ...row } : y)));
+    } catch (e) {
+      alert("Could not save: " + (e.message || e.status));
+    }
+  };
+  const open = (o) => !["delivered", "cancelled"].includes(o.status);
+  const list = (rows || []).filter((o) => (filter === "open" ? open(o) : filter === "all" ? true : o.status === filter));
+  return (
+    <main className="bo-main">
+      <header className="bo-head">
+        <div>
+          <h1>NFC orders</h1>
+          <p>Call the owner to confirm the name, address and payment, then move the order along. Price: $15 per card.</p>
+        </div>
+      </header>
+      <div className="bo-chips">
+        <button className={"bo-chip" + (filter === "open" ? " on" : "")} onClick={() => setFilter("open")}>Open · {(rows || []).filter(open).length}</button>
+        <button className={"bo-chip" + (filter === "new" ? " on" : "")} onClick={() => setFilter("new")}>New · {(rows || []).filter((o) => o.status === "new").length}</button>
+        <button className={"bo-chip" + (filter === "all" ? " on" : "")} onClick={() => setFilter("all")}>All · {(rows || []).length}</button>
+        <button className="bo-chip ghost" onClick={load}>Refresh</button>
+      </div>
+      {err ? <div className="bo-alert">Could not load orders: {err}. If this mentions a missing table, run <code>013_nfc_orders.sql</code> in Supabase.</div> : null}
+      <div className="bo-table">
+        <table>
+          <thead><tr><th>Ordered</th><th>Business</th><th>On the card</th><th>Cards</th><th>Deliver to</th><th>Pays with</th><th>Status</th><th>Team note</th></tr></thead>
+          <tbody>
+            {rows === null ? <tr><td colSpan={8} className="bo-empty">Loading…</td></tr> : null}
+            {rows && !list.length ? <tr><td colSpan={8} className="bo-empty">No orders here.</td></tr> : null}
+            {list.map((o) => (
+              <tr key={o.id}>
+                <td>{new Date(o.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</td>
+                <td>{o.businesses ? <a href={"/" + o.businesses.handle} target="_blank" rel="noreferrer">{o.businesses.name_en || o.businesses.name_ku}</a> : o.business_id}</td>
+                <td><b dir="auto">{o.name_on_card}</b><div style={{ color: "#666", fontSize: 12 }} dir="auto">{o.title_on_card}</div></td>
+                <td>{o.quantity} · ${Number(o.quantity * o.unit_price_usd)}</td>
+                <td style={{ maxWidth: 220 }}><span dir="auto">{o.delivery_address}</span><div><a href={"tel:" + o.phone}>{prettyPhone(o.phone) || o.phone}</a></div></td>
+                <td>{PAY_LABEL[o.payment] || o.payment}</td>
+                <td>
+                  <select value={o.status} onChange={(e) => save(o, { status: e.target.value })}>
+                    {ORDER_STATUS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+                  </select>
+                </td>
+                <td><input defaultValue={o.team_note || ""} placeholder="e.g. paid FIB, called 12:30" onBlur={(e) => { if ((e.target.value || "") !== (o.team_note || "")) save(o, { team_note: e.target.value || null }); }} style={{ width: 170 }} /></td>
               </tr>
             ))}
           </tbody>

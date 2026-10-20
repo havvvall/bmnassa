@@ -7,6 +7,7 @@ import Team from "./team/Team.jsx";
 import { Home, Results, Card, BizPage, BottomNav } from "./browse/Browse.jsx";
 import { Dashboard, EditPage } from "./owner/Owner.jsx";
 import Studio from "./card/Studio.jsx";
+import OrderNfc from "./owner/OrderNfc.jsx";
 import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
@@ -676,6 +677,8 @@ export default function App() {
     screen = <Results key="search" lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} search={query.get("q") || ""} />;
   } else if (path.startsWith("/c/")) {
     screen = <Results key={path} lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} back={back} signedIn={signedIn} categoryId={decodeURIComponent(path.slice(3))} />;
+  } else if (/^\/my\/\d+\/nfc$/.test(path) && profile) {
+    screen = <OrderNfc key={path} lang={lang} id={path.split("/")[2]} go={go} />;
   } else if (/^\/my\/\d+\/card$/.test(path) && profile) {
     screen = <Studio key={path} lang={lang} id={path.split("/")[2]} go={go} />;
   } else if (/^\/my\/\d+\/edit$/.test(path) && profile) {

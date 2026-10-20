@@ -98,3 +98,39 @@
 .o-pin span { position: absolute; left: 3px; top: 0; width: 24px; height: 24px; border-radius: 50% 50% 50% 0; background: var(--accent); transform: rotate(-45deg); box-shadow: 0 0 0 2px #121212, 0 4px 10px rgba(0, 0, 0, 0.35); }
 .o-pin span::after { content: ""; position: absolute; left: 8px; top: 8px; width: 8px; height: 8px; border-radius: 4px; background: #121212; }
 @media (max-width: 380px) { .o-times input { width: 104px; font-size: 13px; padding: 0 4px; } .o-dtog { min-width: 60px; padding: 0 8px; } }
+
+/* slice 7 · ordering NFC cards */
+.nf-preview { max-width: 360px; width: 100%; align-self: center; }
+.nf-qty { display: flex; align-items: center; gap: 12px; }
+.nf-qty .grow { display: flex; flex-direction: column; }
+.nf-qty b { font-size: 17px; }
+.nf-qty small { color: var(--muted); font-weight: 600; font-size: 13px; }
+.nf-step { width: 44px; height: 44px; border-radius: 22px; border: 0; background: var(--field); box-shadow: inset 0 0 0 1px var(--line); color: var(--text); font-size: 22px; font-weight: 700; cursor: pointer; }
+.nf-step[disabled] { opacity: 0.4; cursor: default; }
+.nf-n { min-width: 28px; text-align: center; font-size: 19px; }
+.nf-pay { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.nf-payopt { height: 50px; border-radius: 14px; border: 0; background: var(--field); box-shadow: inset 0 0 0 1px var(--line); color: var(--text); font: inherit; font-weight: 700; display: flex; align-items: center; gap: 10px; padding: 0 14px; cursor: pointer; }
+.nf-payopt.wide { grid-column: 1 / -1; }
+.nf-payopt.on { box-shadow: inset 0 0 0 2px var(--accent); }
+.nf-radio { width: 20px; height: 20px; border-radius: 10px; box-shadow: inset 0 0 0 2px var(--muted); flex: none; }
+.nf-payopt.on .nf-radio { box-shadow: inset 0 0 0 2px var(--accent), inset 0 0 0 6px var(--field); background: var(--text); }
+.nf-bar { background: linear-gradient(transparent, var(--bg) 22%); padding-top: 18px; margin-top: 4px; }
+.nf-total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-weight: 700; }
+.nf-total b { font-size: 20px; }
+.nf-orders { padding: 4px 14px; }
+.nf-order { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.nf-order:first-child { border-top: 0; }
+.nf-order .grow { display: flex; flex-direction: column; min-width: 0; }
+.nf-order small { color: var(--muted); font-size: 12px; font-weight: 600; }
+.nf-status { font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); }
+.nf-status.new { background: var(--warn-soft); color: var(--warn-ink); }
+.nf-status.confirmed, .nf-status.printing, .nf-status.sent { background: var(--accent-soft); color: var(--accent-text); }
+.nf-status.delivered { background: var(--success-soft); color: var(--success); }
+.nf-status.cancelled { color: var(--muted); }
+.nf-done { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 18px 8px 6px; }
+.nf-done b { font-size: 21px; }
+.nf-done p { margin: 0; color: var(--muted); line-height: 23px; }
+.nf-check { width: 76px; height: 76px; border-radius: 38px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; margin-bottom: 6px; animation: nf-pop var(--duration-slow) var(--ease-spring); }
+@keyframes nf-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .nf-check { animation: none; } }
+.nf-cancel { flex-basis: 100%; text-align: start; padding: 0; }

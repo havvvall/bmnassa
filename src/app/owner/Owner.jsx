@@ -16,7 +16,7 @@ import PageStyle from "./PageStyle.jsx";
 const initial = (s) => (String(s || "").trim().charAt(0) || "B").toUpperCase();
 const byId = (arr) => Object.fromEntries((arr || []).map((x) => [x.id, x]));
 
-function Back({ lang, onClick }) {
+export function Back({ lang, onClick }) {
   return (
     <button type="button" className="rbtn" aria-label={t(lang, "back")} onClick={onClick}>
       <Icon name="back" size={18} className="flip" />
@@ -30,7 +30,7 @@ function useToast() {
   return [text, setText];
 }
 
-function useMine(id) {
+export function useMine(id) {
   const [b, setB] = useState(undefined);
   const [err, setErr] = useState("");
   const load = () => {
@@ -133,7 +133,7 @@ export function Dashboard({ lang, id, go }) {
           <button type="button" onClick={() => go(`/${b.handle}/reviews`)}><span className="o-tic"><Icon name="star" size={18} /></span>{t(lang, "reviews_short")}
             <em className="o-soon">{Number(b.reviews) ? `★ ${Number(b.rating || 0).toFixed(1)} · ${b.reviews}` : t(lang, "reviews_tile_sub")}</em></button>
         ) : null}
-        <button type="button" onClick={soon}><span className="o-tic"><Icon name="spark" size={18} /></span>{t(lang, "order_nfc")}<em className="o-soon">{t(lang, "soon_short")}</em></button>
+        <button type="button" onClick={() => go(`/my/${b.id}/nfc`)}><span className="o-tic"><Icon name="nfc" size={18} /></span>{t(lang, "order_nfc")}</button>
         <button type="button" onClick={() => go("/wallet")}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}</button>
       </div>
       {toast ? <div className="b-toast" role="status">{toast}</div> : null}
@@ -141,7 +141,7 @@ export function Dashboard({ lang, id, go }) {
   );
 }
 
-function Loading({ lang, err, reload, go }) {
+export function Loading({ lang, err, reload, go }) {
   return (
     <div className="o-page">
       <div className="o-head"><Back lang={lang} onClick={() => go("/account")} /></div>
@@ -156,7 +156,7 @@ function Loading({ lang, err, reload, go }) {
   );
 }
 
-function Missing({ lang, go }) {
+export function Missing({ lang, go }) {
   return (
     <div className="o-page">
       <div className="o-head"><Back lang={lang} onClick={() => go("/account")} /></div>

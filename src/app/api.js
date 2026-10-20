@@ -583,3 +583,31 @@ export async function getWalletItem(id) {
   const rows = await call(`/rest/v1/wallet_items?id=eq.${Number(id)}&select=id,kind,data,image_path,created_at`, { auth: true });
   return rows && rows[0];
 }
+
+// ---------- NFC card orders (slice 7) ----------
+export const NFC_PRICE_USD = 15;
+export const PAYMENTS = ["cash", "fib", "fastpay", "asiapay", "zaincash"];
+const ORDER_FIELDS = "id,business_id,name_on_card,title_on_card,quantity,unit_price_usd,delivery_address,phone,payment,status,created_at";
+
+export async function getMyOrders(bid) {
+  return call(`/rest/v1/nfc_orders?business_id=eq.${Number(bid)}&select=${ORDER_FIELDS}&order=created_at.desc&limit=20`, { auth: true });
+}
+
+export async function placeOrder(bid, o) {
+  const rows = await call("/rest/v1/nfc_orders", { method: "POST", auth: true, body: { business_id: Number(bid), ...o }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+export async function cancelOrder(id) {
+  const rows = await call(`/rest/v1/nfc_orders?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: { status: "cancelled" }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+export async function teamOrders() {
+  return call(`/rest/v1/nfc_orders?select=${ORDER_FIELDS},team_note,businesses(name_en,name_ku,handle,city_id)&order=created_at.desc&limit=300`, { auth: true });
+}
+
+export async function teamUpdateOrder(id, fields) {
+  const rows = await call(`/rest/v1/nfc_orders?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
