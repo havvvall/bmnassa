@@ -7,9 +7,13 @@ import { useToast, Toast } from "../browse/Browse.jsx";
 import {
   scanCard, uploadScan, addScannedCard, updateScannedCard, getWalletItem, scanImageUrl, normalisePhone, forgetWallet,
 } from "../api.js";
-import { toCanvas, fileToCanvas, toBlob, toBase64, cleanCard } from "./image.js";
+import { toCanvas, fileToCanvas, toBlob, toBase64, cleanCard, detectCorners, FULL } from "./image.js";
 import { calm } from "../motion.js";
 import "./scan.css";
+
+// Reading the details with Claude (the scan-card function). Off until Anthropic billing is set up:
+// people type the details themselves. Turn on by changing this to true.
+export const READ_WITH_AI = false;
 
 const FIELDS = [
   ["name", "f_name", "text"], ["company", "f_company", "text"], ["title", "f_job", "text"],
@@ -96,37 +100,104 @@ function Camera({ lang, side, onShot, onSkip, onClose }) {
   );
 }
 
-// ---------- 2. cleanup + reading ----------
+// ---------- 2. cleanup (+ reading, when AI is on) ----------
+
+// Drag the four gold handles onto the card's corners
+function Corners({ lang, shot, corners, onDone, onCancel }) {
+  const [pts, setPts] = useState(corners || FULL);
+  const box = useRef(null);
+  const drag = useRef(-1);
+  const url = useRef(shot.toDataURL("image/jpeg", 0.8));
+  const move = (e) => {
+    if (drag.current < 0 || !box.current) return;
+    const r = box.current.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    const x = Math.min(1, Math.max(0, (p.clientX - r.left) / r.width));
+    const y = Math.min(1, Math.max(0, (p.clientY - r.top) / r.height));
+    setPts((v) => v.map((q, i) => (i === drag.current ? [x, y] : q)));
+    if (e.cancelable) e.preventDefault();
+  };
+  const up = () => { drag.current = -1; };
+  return (
+    <div className="sc-page">
+      <div className="b-top">
+        <button type="button" className="rbtn" aria-label={t(lang, "back")} onClick={onCancel}><Icon name="back" size={18} className="flip" /></button>
+        <div className="grow"><h1 className="sc-h1">{t(lang, "adjust_corners")}</h1><p className="sc-sub">{t(lang, "adjust_sub")}</p></div>
+      </div>
+      <div className="sc-adjust" ref={box} style={{ aspectRatio: `${shot.width} / ${shot.height}` }}
+        onPointerMove={move} onPointerUp={up} onPointerLeave={up} onTouchMove={move} onTouchEnd={up}>
+        <img src={url.current} alt="" draggable={false} />
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <polygon points={pts.map(([x, y]) => `${x * 100},${y * 100}`).join(" ")} />
+        </svg>
+        {pts.map(([x, y], i) => (
+          <span key={i} className="sc-handle" style={{ left: `${x * 100}%`, top: `${y * 100}%` }}
+            onPointerDown={(e) => { drag.current = i; e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId); }}
+            onTouchStart={() => { drag.current = i; }} />
+        ))}
+      </div>
+      <div className="sc-two">
+        <button type="button" className="btn ghost" onClick={() => setPts(FULL)}>{t(lang, "reset")}</button>
+        <button type="button" className="btn" onClick={() => onDone(pts)}>{t(lang, "done")}</button>
+      </div>
+    </div>
+  );
+}
+
 function Enhance({ lang, shots, onDone, onBack }) {
   const [step, setStep] = useState(0);
   const [result, setResult] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [corners, setCorners] = useState(null); // { front, back }
+  const [adjust, setAdjust] = useState(""); // "front" | "back" while dragging corners
+  const ai = useRef(null);
   const ran = useRef(false);
+  const steps = READ_WITH_AI ? 4 : 3;
+
+  const build = (c, aiRes, err) => {
+    const front = cleanCard(shots.front, c.front);
+    const back = shots.back ? cleanCard(shots.back, c.back) : null;
+    setResult({
+      ai: aiRes, err, front: front.canvas, back: back && back.canvas,
+      after: front.canvas.toDataURL("image/jpeg", 0.8), afterBack: back && back.canvas.toDataURL("image/jpeg", 0.8),
+    });
+  };
 
   useEffect(() => {
     if (ran.current) return;
     ran.current = true;
-    const tick = setInterval(() => setStep((s) => Math.min(3, s + 1)), 650);
+    const tick = setInterval(() => setStep((s) => Math.min(steps - 1, s + 1)), 550);
     (async () => {
-      let ai = null, err = "";
-      try {
-        ai = await scanCard(toBase64(shots.front), shots.back ? toBase64(shots.back) : null);
-      } catch (e) {
-        err = e.code === "limit" ? "scan_limit" : e.code === "no_key" || e.status === 404 ? "scan_not_ready" : "scan_read_failed";
+      let aiRes = null, err = "";
+      if (READ_WITH_AI) {
+        try {
+          aiRes = await scanCard(toBase64(shots.front), shots.back ? toBase64(shots.back) : null);
+        } catch (e) {
+          err = e.code === "limit" ? "scan_limit" : e.code === "no_key" || e.status === 404 ? "scan_not_ready" : "scan_read_failed";
+        }
       }
-      // let the photo work show, even when reading was quick
-      await new Promise((r) => setTimeout(r, 300));
-      const front = cleanCard(shots.front, ai && ai.front_corners);
-      const back = shots.back ? cleanCard(shots.back, ai && ai.back_corners) : null;
+      await new Promise((r) => setTimeout(r, READ_WITH_AI ? 300 : 1400));
+      const c = {
+        front: (aiRes && aiRes.front_corners) || detectCorners(shots.front),
+        back: shots.back ? (aiRes && aiRes.back_corners) || detectCorners(shots.back) : null,
+      };
+      ai.current = { aiRes, err };
       clearInterval(tick);
-      setStep(4);
-      setPreview({ before: shots.front.toDataURL("image/jpeg", 0.7), after: front.canvas.toDataURL("image/jpeg", 0.8) });
-      setResult({ ai, err, front: front.canvas, back: back && back.canvas });
+      setStep(steps);
+      setCorners(c);
+      build(c, aiRes, err);
     })();
     return () => clearInterval(tick);
   }, []);
 
-  const what = [["enh_1", "enh_1s"], ["enh_2", "enh_2s"], ["enh_3", "enh_3s"], ["enh_4", "enh_4s"]];
+  if (adjust) {
+    return (
+      <Corners lang={lang} shot={shots[adjust]} corners={corners && corners[adjust]} onCancel={() => setAdjust("")}
+        onDone={(pts) => { const c = { ...corners, [adjust]: pts }; setCorners(c); setAdjust(""); build(c, ai.current.aiRes, ai.current.err); }} />
+    );
+  }
+
+  const what = [["enh_1", "enh_1s"], ["enh_2", "enh_2s"], ["enh_3", "enh_3s"], ...(READ_WITH_AI ? [["enh_4", "enh_4s"]] : [])];
+  const before = (c) => <canvas ref={(el) => { if (el && c && !el.dataset.done) { el.width = c.width; el.height = c.height; el.getContext("2d").drawImage(c, 0, 0); el.dataset.done = "1"; } }} />;
   return (
     <div className="sc-page">
       <div className="b-top">
@@ -134,10 +205,16 @@ function Enhance({ lang, shots, onDone, onBack }) {
         <div className="grow"><h1 className="sc-h1">{t(lang, "enh_title")}</h1><p className="sc-sub">{t(lang, "enh_sub")}</p></div>
       </div>
       <div className="sc-ba">
-        <figure><div className="sc-bimg">{preview ? <img src={preview.before} alt="" /> : <canvas ref={(c) => { if (c && shots.front) { c.width = shots.front.width; c.height = shots.front.height; c.getContext("2d").drawImage(shots.front, 0, 0); } }} />}</div><figcaption>{t(lang, "your_photo")}</figcaption></figure>
+        <figure><div className="sc-bimg">{before(shots.front)}</div><figcaption>{t(lang, "your_photo")}</figcaption></figure>
         <span className="sc-arrow">›</span>
-        <figure><div className="sc-bimg after">{preview ? <img src={preview.after} alt="" /> : <span className="sc-skel" />}</div><figcaption className="gold"><Icon name="spark" size={13} /> {t(lang, "after_clean")}</figcaption></figure>
+        <figure><div className="sc-bimg after">{result ? <img src={result.after} alt="" /> : <span className="sc-skel" />}</div><figcaption className="gold"><Icon name="spark" size={13} /> {t(lang, "after_clean")}</figcaption></figure>
       </div>
+      {result ? (
+        <div className="sc-adjrow">
+          <button type="button" className="b-chip" onClick={() => setAdjust("front")}><Icon name="rows" size={15} /> {t(lang, shots.back ? "adjust_front" : "adjust_corners")}</button>
+          {shots.back ? <button type="button" className="b-chip" onClick={() => setAdjust("back")}><Icon name="rows" size={15} /> {t(lang, "adjust_back")}</button> : null}
+        </div>
+      ) : null}
       <div className="panel sc-what">
         <b className="sc-whath">{t(lang, "enh_what")}</b>
         {what.map(([k, sub], i) => (
@@ -150,7 +227,7 @@ function Enhance({ lang, shots, onDone, onBack }) {
       <p className="sc-note">{t(lang, "enh_note")}</p>
       <div className="sc-two">
         <button type="button" className="btn ghost" disabled={!result} onClick={() => onDone({ ...result, front: shots.front, back: shots.back })}>{t(lang, "use_original")}</button>
-        <button type="button" className="btn" disabled={!result} onClick={() => onDone(result)}>{result ? t(lang, "looks_good") : t(lang, "reading")}</button>
+        <button type="button" className="btn" disabled={!result} onClick={() => onDone(result)}>{result ? t(lang, "looks_good") : t(lang, READ_WITH_AI ? "reading" : "loading")}</button>
       </div>
     </div>
   );
@@ -259,7 +336,7 @@ export function ScanPage({ lang, go, back, signedIn }) {
     <>
       <Check lang={lang} title={t(lang, "check_title")} sub={res && res.ai ? t(lang, "check_sub") : t(lang, "check_sub_manual")}
         front={res && res.front.toDataURL("image/jpeg", 0.7)} back={res && res.back && res.back.toDataURL("image/jpeg", 0.7)}
-        initial={initial} aiFilled={aiFilled} warn={res && res.err} busy={busy}
+        initial={initial} aiFilled={aiFilled} warn={READ_WITH_AI ? res && res.err : ""} busy={busy}
         onBack={() => setStep("enhance")} onSave={save} />
       <Toast text={toast} />
     </>

@@ -1,6 +1,12 @@
 # Slice 7, part 3: scanning paper cards
 
-## Set-up (once)
+## For now: no AI
+Reading with Claude is switched off (`READ_WITH_AI = false` in `src/app/scan/Scan.jsx`) until Anthropic billing is set up.
+People type the details themselves. The card is found in the photo on the phone (the background colour is taken from the photo's edges,
+the biggest area that differs from it is the card), and "Adjust front" / "Adjust back" let people drag the four gold corners if it is off.
+To turn AI on later: do the set-up below, change the line to `true`, push.
+
+## Set-up for AI reading (later)
 1. **Database:** run `supabase/migrations/012_scan_cards.sql` in Supabase → SQL Editor (after 010 and 011).
 2. **Claude key:** on console.anthropic.com create an API key (add billing first). Copy it.
 3. **Secret:** Supabase → Edge Functions → Secrets → add `ANTHROPIC_API_KEY` with that key. Never paste the key in chat or in the code.

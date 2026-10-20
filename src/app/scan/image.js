@@ -173,3 +173,87 @@ export function cleanCard(src, corners) {
   const flat = straighten(src, corners);
   return { canvas: enhance(flat || src), straightened: !!flat };
 }
+
+// ---- find the card in the photo, on the phone (no AI) ----
+// The background colour is taken from the photo's edges; pixels that differ from it form the card.
+// The biggest such area gives four corners: top-left is the smallest x+y, bottom-right the largest, and so on.
+export function detectCorners(src) {
+  const small = toCanvas(src, 320);
+  const W = small.width, H = small.height;
+  const d = small.getContext("2d").getImageData(0, 0, W, H).data;
+  // background: average of a 4-pixel border
+  let br = 0, bg = 0, bb = 0, bn = 0;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      if (x > 3 && y > 3 && x < W - 4 && y < H - 4) continue;
+      const i = (y * W + x) * 4; br += d[i]; bg += d[i + 1]; bb += d[i + 2]; bn++;
+    }
+  }
+  br /= bn; bg /= bn; bb /= bn;
+  const dist = new Float32Array(W * H);
+  const hist = new Uint32Array(256);
+  for (let p = 0; p < W * H; p++) {
+    const i = p * 4;
+    const v = Math.min(255, Math.hypot(d[i] - br, d[i + 1] - bg, d[i + 2] - bb));
+    dist[p] = v; hist[v | 0]++;
+  }
+  // Otsu threshold: the split that best separates "background" from "card"
+  const total = W * H;
+  let sum = 0;
+  for (let v = 0; v < 256; v++) sum += v * hist[v];
+  let sumB = 0, wB = 0, best = 0, th = 40;
+  for (let v = 0; v < 256; v++) {
+    wB += hist[v]; if (!wB) continue;
+    const wF = total - wB; if (!wF) break;
+    sumB += v * hist[v];
+    const mB = sumB / wB, mF = (sum - sumB) / wF;
+    const between = wB * wF * (mB - mF) * (mB - mF);
+    if (between > best) { best = between; th = v; }
+  }
+  th = Math.max(th, 22);
+  const mask = new Uint8Array(W * H);
+  for (let p = 0; p < W * H; p++) mask[p] = dist[p] > th ? 1 : 0;
+  // keep the biggest connected area (ignores crumbs, text on the table, small objects)
+  const label = new Int32Array(W * H);
+  let bestLabel = 0, bestSize = 0, cur = 0;
+  const stack = new Int32Array(W * H);
+  for (let p = 0; p < W * H; p++) {
+    if (!mask[p] || label[p]) continue;
+    cur++; let sp = 0, size = 0;
+    stack[sp++] = p; label[p] = cur;
+    while (sp) {
+      const q = stack[--sp]; size++;
+      const x = q % W, y = (q / W) | 0;
+      if (x > 0 && mask[q - 1] && !label[q - 1]) { label[q - 1] = cur; stack[sp++] = q - 1; }
+      if (x < W - 1 && mask[q + 1] && !label[q + 1]) { label[q + 1] = cur; stack[sp++] = q + 1; }
+      if (y > 0 && mask[q - W] && !label[q - W]) { label[q - W] = cur; stack[sp++] = q - W; }
+      if (y < H - 1 && mask[q + W] && !label[q + W]) { label[q + W] = cur; stack[sp++] = q + W; }
+    }
+    if (size > bestSize) { bestSize = size; bestLabel = cur; }
+  }
+  if (bestSize < total * 0.12 || bestSize > total * 0.97) return null;
+  let tl = [0, 0, Infinity], tr = [0, 0, -Infinity], brc = [0, 0, -Infinity], bl = [0, 0, Infinity];
+  for (let p = 0; p < W * H; p++) {
+    if (label[p] !== bestLabel) continue;
+    const x = p % W, y = (p / W) | 0;
+    if (x + y < tl[2]) tl = [x, y, x + y];
+    if (x + y > brc[2]) brc = [x, y, x + y];
+    if (x - y > tr[2]) tr = [x, y, x - y];
+    if (x - y < bl[2]) bl = [x, y, x - y];
+  }
+  const n = (c) => [c[0] / (W - 1), c[1] / (H - 1)];
+  const corners = [n(tl), n(tr), n(brc), n(bl)];
+  // a card that is turned close to 45° confuses this method: reject very thin shapes
+  const area = Math.abs(polyArea(corners));
+  if (area < 0.1) return null;
+  return corners;
+}
+
+function polyArea(p) {
+  let a = 0;
+  for (let i = 0; i < p.length; i++) { const [x1, y1] = p[i], [x2, y2] = p[(i + 1) % p.length]; a += x1 * y2 - x2 * y1; }
+  return a / 2;
+}
+
+// The whole photo, as corners (used when nothing is found, so people can drag them in)
+export const FULL = [[0.06, 0.08], [0.94, 0.08], [0.94, 0.92], [0.06, 0.92]];

@@ -372,6 +372,11 @@ const T = {
   wallet_saves: ["Saved in {n} wallets", "لە {n} جزداندا پاشەکەوت کراوە", "محفوظة في {n} محفظة"],
   scan_soon: ["Scanning paper cards arrives in the next update.", "سکانکردنی کارتی کاغەزی لە نوێکردنەوەی داهاتوودا دێت.", "مسح البطاقات الورقية يصل في التحديث القادم."],
   // slice 7 · scanning paper cards (new, needs a native-speaker check)
+  adjust_corners: ["Adjust the corners", "گۆشەکان ڕێکبخە", "اضبط الزوايا"],
+  adjust_front: ["Adjust front", "ڕێکخستنی پێشەوە", "اضبط الأمام"],
+  adjust_back: ["Adjust back", "ڕێکخستنی پشتەوە", "اضبط الخلف"],
+  adjust_sub: ["Drag the gold dots onto the card's four corners.", "خاڵە زێڕینەکان ڕابکێشە بۆ سەر چوار گۆشەی کارتەکە.", "اسحب النقاط الذهبية إلى زوايا البطاقة الأربع."],
+  reset: ["Reset", "سەرلەنوێ", "إعادة"],
   scan_title: ["Scan a paper card", "سکانکردنی کارتی کاغەزی", "مسح بطاقة ورقية"],
   scan_front: ["Front side · 1 of 2", "ڕووی پێشەوە · 1 لە 2", "الوجه الأمامي · 1 من 2"],
   scan_back: ["Back side · 2 of 2", "ڕووی پشتەوە · 2 لە 2", "الوجه الخلفي · 2 من 2"],
