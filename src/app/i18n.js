@@ -292,6 +292,9 @@ const T = {
   ask_msg: ["Hello Bmnassa, I'm looking for: {cat} in {city}.", "سڵاو بمناسە، بەدوای ئەمەدا دەگەڕێم: {cat} لە {city}.", "مرحباً بمناسة، أبحث عن: {cat} في {city}."],
   st_hidden: ["Hidden", "شاراوە", "مخفي"],
   loading: ["Loading…", "چاوەڕێ بکە…", "جارٍ التحميل…"],
+  // business page, card first (new, needs a native-speaker check)
+  bz_card_hint: ["Tap the card to open it · scan to save", "کارتەکە دابگرە بۆ کردنەوە · سکانی بکە بۆ پاشەکەوت", "اضغط على البطاقة لفتحها · امسحها للحفظ"],
+  today_is: ["Today {h}", "ئەمڕۆ {h}", "اليوم {h}"],
   // slice 7 · reviews (new, needs a native-speaker check)
   reviews_title: ["Ratings and reviews", "هەڵسەنگاندن و بۆچوونەکان", "التقييمات والمراجعات"],
   reviews_short: ["Reviews", "هەڵسەنگاندنەکان", "التقييمات"],

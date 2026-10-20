@@ -66,3 +66,18 @@ export function openState(hours, lang) {
   }
   return { open: false, text: W.closedToday };
 }
+
+// Which day it is in Baghdad (0 = Saturday … 6 = Friday)
+export function todayIndex() {
+  return baghdadNow().day;
+}
+
+// "9:00 to 18:00" for today, or "Closed today"; null when no hours were given
+export function todayHours(hours, lang) {
+  if (!hasHours(hours)) return null;
+  const W = w(lang);
+  const h = hours[DAYS[baghdadNow().day]];
+  if (!h) return W.closedToday;
+  if (h[0] === "00:00" && h[1] === "24:00") return W.allDay;
+  return `${short(h[0])} ${W.to} ${short(h[1])}`;
+}

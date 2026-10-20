@@ -9,7 +9,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track } from "../api.js";
-import { hoursLines, openState } from "../hours.js";
+import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
 import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
@@ -608,18 +608,52 @@ export function Card({ lang, handle, go, back }) {
   );
 }
 
+// A small street map around the business (OpenStreetMap tiles), with a gold pin in the middle
+function MiniMap({ lat, lng }) {
+  const z = 16;
+  const n = 2 ** z;
+  const fx = ((lng + 180) / 360) * n;
+  const r = (lat * Math.PI) / 180;
+  const fy = ((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2) * n;
+  const tx = Math.floor(fx), ty = Math.floor(fy);
+  const tiles = [];
+  for (let dx = -2; dx <= 2; dx++) for (let dy = -1; dy <= 1; dy++) tiles.push([tx + dx, ty + dy]);
+  return (
+    <div className="bz-map" aria-hidden="true">
+      {tiles.map(([x, y]) => (
+        <img key={x + "-" + y} src={`https://tile.openstreetmap.org/${z}/${x}/${y}.png`} alt="" loading="lazy"
+          style={{ left: `calc(50% + ${(x - fx) * 256}px)`, top: `calc(50% + ${(y - fy) * 256}px)` }} />
+      ))}
+      <span className="bz-pin" />
+      <small className="bz-osm">© OpenStreetMap</small>
+    </div>
+  );
+}
+
 export function BizPage({ lang, handle, go, back, signedIn }) {
   const [b, err, reload] = useBusiness(handle);
   const [lists] = useLists();
   const [toast, setToast] = useToast();
   const [photos, setPhotos] = useState([]);
   const [prices, setPrices] = useState([]);
+  const [tab, setTab] = useState("about");
+  const refs = useRef({});
   useEffect(() => {
     if (!b || !b.id) return;
     track(b.id, "view");
     getPhotos(b.id).then((r) => setPhotos(r || [])).catch(() => {});
     getPrices(b.id).then((r) => setPrices(r || [])).catch(() => {});
   }, [b && b.id]);
+  // the tab of the section in view lights up while scrolling
+  useEffect(() => {
+    if (!b || !window.IntersectionObserver) return undefined;
+    const io = new IntersectionObserver((entries) => {
+      const seen = entries.filter((e) => e.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
+      if (seen) setTab(seen.target.dataset.sec);
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    Object.values(refs.current).forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, [b && b.id, prices.length, photos.length]);
 
   if (b === null) return <NotFound lang={lang} go={go} />;
   if (b === undefined) {
@@ -633,102 +667,146 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
 
   const look = { cat: byId(lists && lists.cats), city: byId(lists && lists.cities), dist: byId(lists && lists.districts), sub: byId(lists && lists.subdistricts) };
   const cat = look.cat[b.category_id];
-  const person = b.contact_name || pick(b, "name", lang);
   const place = [cityName(look.sub[b.subdistrict_id], lang), cityName(look.dist[b.district_id], lang), cityName(look.city[b.city_id], lang)]
     .filter((x, i, a) => x && a.indexOf(x) === i);
+  const sep = lang === "en" ? ", " : "، ";
   const about = pick(b, "description", lang);
   const url = `${window.location.origin}/${b.handle}`;
   const open = openState(b.hours, lang);
+  const today = todayHours(b.hours, lang);
   const lines = hoursLines(b.hours, lang);
+  const day = todayIndex();
   const links = socialLinks(b);
   const dir = directionsUrl(b);
-  const priceText = (r) => (r.price_iqd == null ? "" : `${Number(r.price_iqd).toLocaleString("en-US")} ${t(lang, "iqd")}`);
+  const n = Number(b.reviews) || 0;
+  const cs = cardSettings(b);
   const ps = pageSettings(b);
-  const pgLook = pageLook(ps, cardSettings(b).color);
-  const grid = ps.layout === "grid" && photos.length > 0;
+  const pgLook = pageLook(ps, cs.color);
+  const bigPhotos = ps.layout === "grid";
   const exit = () => (window.history.length > 1 ? back() : go("/home"));
+  const sections = [
+    ["about", t(lang, "about"), !!(about || photos.length)],
+    ["prices", t(lang, "prices"), prices.length > 0],
+    ["hours", t(lang, "hours_title"), lines.length > 0],
+    ["reviews", t(lang, "reviews_short"), true],
+  ].filter((x) => x[2]);
+  const jump = (k) => {
+    setTab(k);
+    const el = refs.current[k];
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 76, behavior: calm() ? "auto" : "smooth" });
+  };
+  const sec = (k) => ({ ref: (el) => { refs.current[k] = el; }, "data-sec": k, id: "bz-" + k });
+  const shown = photos.slice(0, bigPhotos ? 6 : 3);
+  const more = photos.length - shown.length;
 
   return (
-    <div className={"b-page " + pgLook.cls} style={pgLook.style}>
+    <div className={"b-page bz " + pgLook.cls} style={{ ...pgLook.style, "--bz-card": cs.color }}>
       <div className="pg-backdrop" style={{ backgroundColor: ps.bg || undefined, backgroundImage: pgLook.bgImage || undefined }} aria-hidden="true" />
-      <div className="b-top">
-        <button type="button" className="rbtn" aria-label={t(lang, "back")} onClick={exit}><Icon name="down" size={18} /></button>
+      <div className="bz-band" aria-hidden="true" />
+
+      <div className="bz-top">
+        <button type="button" className="bz-glass" aria-label={t(lang, "back")} onClick={exit}><Icon name="down" size={20} /></button>
         <span className="grow" />
-        <button type="button" className="rbtn" aria-label={t(lang, "share")} onClick={() => shareOrCopy(url, pick(b, "name", lang), setToast, lang)}><Icon name="share" size={18} /></button>
+        <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} className="bz-glass" iconOnly />
+        <button type="button" className="bz-glass" aria-label={t(lang, "share")} onClick={() => shareOrCopy(url, pick(b, "name", lang), setToast, lang)}><Icon name="share" size={19} /></button>
       </div>
 
-      {grid ? (
-        <div className="pg-grid">{photos.slice(0, 5).map((p, i) => <img key={p.id} className={i === 0 ? "first" : ""} src={photoUrl(p.path)} alt="" loading="lazy" />)}</div>
-      ) : null}
-      {grid ? null : <button type="button" className="b-minicard" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
-        <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cat} small linksOnly />
-      </button>}
+      <button type="button" className="bz-cover" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
+        <NfcCard b={b} s={cs} lang={lang} cat={cat} linksOnly />
+      </button>
+      <p className="bz-hint">{t(lang, "bz_card_hint")}</p>
 
-      <div className="b-head">
+      <div className="bz-head">
         <h1><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</h1>
-        <p className="sub">{[cityName(cat, lang), place.slice(-2).join(lang === "en" ? ", " : "، ")].filter(Boolean).join(" · ")}</p>
-        <div className="b-row-c"><Rating b={b} lang={lang} />{open ? <span className={"b-open " + (open.open ? "yes" : "no")}>{open.text}</span> : null}</div>
+        <p className="bz-sub">{[cityName(cat, lang), place.slice(0, 2).join(sep)].filter(Boolean).join(" · ")}</p>
+        <div className="bz-chips">
+          {n ? (
+            <button type="button" className="bz-chip" onClick={() => jump("reviews")}><span className="bz-star">★</span> {Number(b.rating || 0).toFixed(1)} <span className="bz-dim">({n})</span></button>
+          ) : <span className="bz-chip">{t(lang, "new_on")}</span>}
+          {open ? <span className={"bz-chip " + (open.open ? "open" : "shut")}><i />{open.text}</span> : null}
+        </div>
       </div>
 
-      {photos.length && !grid ? (
-        <div className="b-photos">{photos.map((p) => <img key={p.id} src={photoUrl(p.path)} alt="" loading="lazy" />)}</div>
+      {sections.length > 1 ? (
+        <nav className="bz-tabs" aria-label={t(lang, "about")}>
+          {sections.map(([k, label]) => (
+            <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "true" : undefined} onClick={() => jump(k)}>{label}</button>
+          ))}
+        </nav>
       ) : null}
 
-      <div className="b-actions">
-        {b.phone ? <a className="b-act gold" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")}><Icon name="phone" size={18} /> {t(lang, "call")}</a> : null}
-        {b.whatsapp || b.phone ? <a className="b-act green" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer" onClick={() => track(b.id, "whatsapp")}><Icon name="whatsapp" size={18} /> {t(lang, "whatsapp")}</a> : null}
-      </div>
-      <div className="b-chips">
-        {dir ? <a className="b-chip" href={dir} target="_blank" rel="noreferrer"><Icon name="route" size={15} /> {t(lang, "directions")}</a> : null}
-        <button type="button" className="b-chip" onClick={() => go("/" + b.handle + "/card")}><Icon name="flip" size={15} /> {t(lang, "share_card")}</button>
-        <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} />
-        <button type="button" className="b-chip" onClick={() => downloadContact(b, lang)}><Icon name="contact" size={15} /> {t(lang, "save_contact")}</button>
-      </div>
-
-      <div className="panel b-info">
-        {about ? (
-          <section>
-            <span className="label">{t(lang, "about")}</span>
-            <p dir="auto">{about}</p>
+      <div className="bz-secs">
+        {about || photos.length ? (
+          <section className="bz-sec" {...sec("about")}>
+            <span className="bz-label">{t(lang, "about")}</span>
+            {about ? <p className="bz-about" dir="auto">{about}</p> : null}
+            {shown.length ? (
+              <div className={"bz-photos" + (bigPhotos ? " big" : "")}>
+                {shown.map((p, i) => (
+                  <span key={p.id} className="bz-photo">
+                    <img src={photoUrl(p.path)} alt="" loading="lazy" />
+                    {i === shown.length - 1 && more > 0 ? <b>+{more}</b> : null}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            {links.length ? (
+              <div className="bz-links">
+                {links.map(([icon, cls, label, text, href]) => (
+                  <a key={icon} className="bz-link" href={href} target="_blank" rel="noreferrer"><span className={"b-lic " + cls}><Icon name={icon} size={16} /></span>{label}</a>
+                ))}
+              </div>
+            ) : null}
           </section>
         ) : null}
-        <ReviewsSummary b={b} lang={lang} go={go} />
+
         {prices.length ? (
-          <section>
-            <span className="label">{t(lang, "prices")}</span>
-            <div style={{ marginTop: 6 }}>
-              {prices.map((r) => (
-                <div key={r.id} className="b-price"><span dir="auto">{pick(r, "item", lang)}</span><b className="ltr">{priceText(r)}</b></div>
-              ))}
-            </div>
+          <section className="bz-sec" {...sec("prices")}>
+            <span className="bz-label">{t(lang, "prices")}</span>
+            {prices.map((r) => (
+              <div key={r.id} className="bz-price">
+                <span dir="auto">{pick(r, "item", lang)}</span>
+                {r.price_iqd == null ? null : <span className="ltr"><b>{Number(r.price_iqd).toLocaleString("en-US")}</b> <small>{t(lang, "iqd")}</small></span>}
+              </div>
+            ))}
           </section>
         ) : null}
+
         {lines.length ? (
-          <section>
-            <span className="label">{t(lang, "hours_title")}</span>
-            <div style={{ marginTop: 6 }}>{lines.map((l) => <p key={l} style={{ margin: 0 }}>{l}</p>)}</div>
-          </section>
-        ) : null}
-        <section>
-          <span className="label">{t(lang, "location")}</span>
-          <p>{place.join(lang === "en" ? ", " : "، ")}</p>
-          {b.address ? <p className="b-muted" dir="auto" style={{ marginTop: 2 }}>{b.address}</p> : null}
-          {dir ? <a className="link" href={dir} target="_blank" rel="noreferrer">{t(lang, "directions")} ↗</a> : null}
-        </section>
-        {links.length ? (
-          <section>
-            <span className="label">{t(lang, "links")}</span>
-            <div className="b-chips wrap" style={{ marginTop: 8 }}>
-              {links.map(([icon, cls, label, text, href]) => (
-                <a key={icon} className="b-chip" href={href} target="_blank" rel="noreferrer"><Icon name={icon} size={15} /> {label}</a>
+          <section className="bz-sec" {...sec("hours")}>
+            <span className="bz-label">{t(lang, "hours_title")}</span>
+            <div className="bz-week">
+              {DAYS.map((d, i) => (
+                <span key={d} className={(i === day ? "today " : "") + (b.hours && b.hours[d] ? "" : "off")}>{dayName(lang, i)}</span>
               ))}
             </div>
+            {today ? <p className="bz-today"><b>{t(lang, "today_is", { h: today })}</b></p> : null}
+            <div className="bz-lines">{lines.map((l) => <p key={l}>{l}</p>)}</div>
           </section>
         ) : null}
+
+        <section className="bz-sec bz-where">
+          {b.lat && b.lng ? <MiniMap lat={Number(b.lat)} lng={Number(b.lng)} /> : null}
+          <div className="bz-whererow">
+            <span className="grow">
+              <b dir="auto">{b.address || place.join(sep)}</b>
+              {b.address ? <small>{place.slice(0, 2).join(sep)}</small> : null}
+            </span>
+            {dir ? <a className="bz-go" href={dir} target="_blank" rel="noreferrer"><Icon name="route" size={16} /> {t(lang, "directions")}</a> : null}
+          </div>
+          <button type="button" className="bz-plain" onClick={() => downloadContact(b, lang)}><Icon name="contact" size={16} /> {t(lang, "save_contact")}</button>
+        </section>
+
+        <section className="bz-sec" {...sec("reviews")}>
+          <ReviewsSummary b={b} lang={lang} go={go} />
+        </section>
       </div>
 
-      <div className="b-navspace" />
-      <BottomNav lang={lang} active="home" go={go} signedIn={signedIn} />
+      <div className="bz-barspace" />
+      <div className="bz-bar">
+        {b.phone ? <a className="b-act gold" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")}><Icon name="phone" size={19} /> {t(lang, "call")}</a> : null}
+        {b.whatsapp || b.phone ? <a className="b-act bz-wa" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer" onClick={() => track(b.id, "whatsapp")}><Icon name="whatsapp" size={19} /> {t(lang, "whatsapp")}</a> : null}
+      </div>
       <Toast text={toast} />
     </div>
   );

@@ -16,7 +16,7 @@ const store = {
 };
 
 // "Save to wallet" for a business page or card. Not signed in: sign in first, then come back here.
-export function SaveToWallet({ b, lang, go, setToast, className = "b-chip", dark }) {
+export function SaveToWallet({ b, lang, go, setToast, className = "b-chip", dark, iconOnly }) {
   const [id, setId] = useState(undefined);
   const [busy, setBusy] = useState(false);
   useEffect(() => { if (b && b.id) walletItemFor(b.id).then(setId).catch(() => setId(null)); }, [b && b.id]);
@@ -40,8 +40,9 @@ export function SaveToWallet({ b, lang, go, setToast, className = "b-chip", dark
     }
   };
   return (
-    <button type="button" className={className + (id ? " saved" : "") + (dark ? " dark" : "")} disabled={busy} onClick={tap}>
-      <Icon name={id ? "check" : "wallet"} size={15} stroke={id ? 3 : 2} /> {t(lang, id ? "in_wallet" : "save_wallet")}
+    <button type="button" className={className + (id ? " saved" : "") + (dark ? " dark" : "")} disabled={busy} onClick={tap}
+      aria-label={iconOnly ? t(lang, id ? "in_wallet" : "save_wallet") : undefined}>
+      <Icon name={id ? "check" : "wallet"} size={iconOnly ? 19 : 15} stroke={id ? 3 : 2} />{iconOnly ? null : " " + t(lang, id ? "in_wallet" : "save_wallet")}
     </button>
   );
 }
