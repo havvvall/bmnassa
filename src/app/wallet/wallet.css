@@ -56,3 +56,23 @@
 .b-chip.saved { background: var(--accent-soft); }
 .b-darkbtn.saved { color: var(--accent); }
 .w-act.icon.flipbtn { color: #15171a; }
+
+/* scanned paper cards: the cleaned photo is the card */
+.w-photocard { width: 100%; aspect-ratio: 1.586; border-radius: 22px; overflow: hidden; background: #f1ebde; box-shadow: 0 -6px 18px rgba(18, 18, 18, 0.16), 0 18px 34px rgba(18, 18, 18, 0.28); display: grid; }
+.w-photocard img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.w-photocard .w-skelcard { width: 100%; height: 100%; border-radius: 0; }
+.w-plinks { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 14px; border-radius: 22px; background: rgba(255, 255, 255, 0.92); }
+.w-pname { display: flex; flex-direction: column; padding: 0 4px 4px; }
+.w-pname b { font-size: 18px; }
+.w-pname small { color: #4d5258; font-weight: 700; font-size: 13px; }
+.w-plink { display: flex; align-items: center; gap: 12px; padding: 8px 6px; border-radius: 14px; color: #15171a; text-decoration: none; }
+.w-plink:active { background: rgba(20, 22, 26, 0.06); }
+.w-plink .grow { display: flex; flex-direction: column; min-width: 0; }
+.w-plink b { font-size: 15px; }
+.w-plink small { color: #4d5258; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.w-plic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: #fff; flex: none; }
+.w-plic.call { background: #34c759; }
+.w-plic.wa { background: #25d366; }
+.w-plic.mail { background: #1e88e5; }
+.w-plic.web { background: #5f6368; }
+.w-plic.ig { background: linear-gradient(45deg, #f9a825, #e91e63 55%, #7b1fa2); }

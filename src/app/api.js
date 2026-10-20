@@ -499,3 +499,87 @@ export async function walletSaves(bid) {
 }
 
 export function forgetWallet() { walletIds = null; }
+
+// ---------- scanned paper cards (slice 7) ----------
+// Reads a card with the scan-card function (Claude). front/back: base64 JPEG without the data: prefix.
+export async function scanCard(front, back) {
+  const s = await freshSession();
+  if (!s) throw new ApiError("Not signed in", "no_session", 401);
+  let res;
+  try {
+    res = await fetch(`${SB_URL}/functions/v1/scan-card`, {
+      method: "POST",
+      headers: { apikey: SB_KEY, Authorization: "Bearer " + s.access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ front, ...(back ? { back } : {}) }),
+    });
+  } catch {
+    throw new ApiError("Network error", "network", 0);
+  }
+  let data = null;
+  try { data = await res.json(); } catch { /* not JSON */ }
+  if (!res.ok) throw new ApiError((data && (data.detail || data.error)) || res.statusText, (data && data.error) || "http_" + res.status, res.status);
+  return data;
+}
+
+// Private photos of scanned cards, in the person's own folder
+export async function uploadScan(blob, side) {
+  const s = await freshSession();
+  if (!s) throw new ApiError("Not signed in", "no_session", 401);
+  const path = `${s.user.id}/${side}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}.jpg`;
+  let res;
+  try {
+    res = await fetch(`${SB_URL}/storage/v1/object/wallet-scans/${path}`, {
+      method: "POST",
+      headers: { apikey: SB_KEY, Authorization: "Bearer " + s.access_token, "Content-Type": "image/jpeg", "x-upsert": "false" },
+      body: blob,
+    });
+  } catch {
+    throw new ApiError("Network error", "network", 0);
+  }
+  if (!res.ok) {
+    let msg = res.statusText;
+    try { const j = await res.json(); msg = j.message || j.error || msg; } catch { /* ignore */ }
+    throw new ApiError(msg, "upload_" + res.status, res.status);
+  }
+  return path;
+}
+
+const scanUrls = new Map();
+// A private photo as a temporary link this page can show
+export async function scanImageUrl(path) {
+  if (!path) return null;
+  if (scanUrls.has(path)) return scanUrls.get(path);
+  const s = await freshSession();
+  if (!s) return null;
+  const res = await fetch(`${SB_URL}/storage/v1/object/authenticated/wallet-scans/${path}`, { headers: { apikey: SB_KEY, Authorization: "Bearer " + s.access_token } });
+  if (!res.ok) return null;
+  const url = URL.createObjectURL(await res.blob());
+  scanUrls.set(path, url);
+  return url;
+}
+
+export async function removeScanPhotos(paths) {
+  const s = await freshSession();
+  const list = (paths || []).filter(Boolean);
+  if (!s || !list.length) return;
+  await fetch(`${SB_URL}/storage/v1/object/wallet-scans`, {
+    method: "DELETE",
+    headers: { apikey: SB_KEY, Authorization: "Bearer " + s.access_token, "Content-Type": "application/json" },
+    body: JSON.stringify({ prefixes: list }),
+  }).catch(() => {});
+}
+
+export async function addScannedCard(data, imagePath) {
+  const rows = await call("/rest/v1/wallet_items", { method: "POST", auth: true, body: { kind: "scanned", data, image_path: imagePath || null }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+export async function updateScannedCard(id, data) {
+  const rows = await call(`/rest/v1/wallet_items?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: { data }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+export async function getWalletItem(id) {
+  const rows = await call(`/rest/v1/wallet_items?id=eq.${Number(id)}&select=id,kind,data,image_path,created_at`, { auth: true });
+  return rows && rows[0];
+}

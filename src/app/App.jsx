@@ -9,6 +9,7 @@ import { Dashboard, EditPage } from "./owner/Owner.jsx";
 import Studio from "./card/Studio.jsx";
 import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
+import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -665,6 +666,10 @@ export default function App() {
       : <BizPage {...hp} />;
   } else if (path === "/home" || path === "/") {
     screen = <Home lang={lang} city={city || "sulaymaniyah"} setCity={setCity} go={go} signedIn={signedIn} />;
+  } else if (path === "/scan") {
+    screen = <ScanPage key="scan" lang={lang} go={go} back={back} signedIn={signedIn} />;
+  } else if (/^\/scan\/edit\/\d+$/.test(path) && profile) {
+    screen = <EditScanPage key={path} lang={lang} id={path.split("/")[3]} go={go} back={back} />;
   } else if (path === "/wallet") {
     screen = <WalletPage key="wallet" lang={lang} go={go} signedIn={signedIn} />;
   } else if (path === "/search") {

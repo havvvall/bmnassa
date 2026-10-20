@@ -5,7 +5,7 @@ import { t, pick } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
 import { useLists, useToast, Toast, BottomNav } from "../browse/Browse.jsx";
 import { NfcCard, cardSettings, surface, surfaceClass } from "../card/CardFaces.jsx";
-import { getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone } from "../api.js";
+import { getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone, scanImageUrl, removeScanPhotos } from "../api.js";
 import { calm, ms, ease, flipCard } from "../motion.js";
 import "./wallet.css";
 
@@ -78,17 +78,50 @@ function StackCard({ it, lang, onTap, refFn }) {
   );
 }
 
-function PaperCard({ it, lang }) {
+function useScanPhoto(path) {
+  const [url, setUrl] = useState(null);
+  useEffect(() => { let on = true; setUrl(null); if (path) scanImageUrl(path).then((u) => on && setUrl(u)); return () => { on = false; }; }, [path]);
+  return url;
+}
+
+// A scanned paper card: its cleaned photo (front or back); text only if there is no photo
+function PaperCard({ it, lang, back }) {
   const d = it.data || {};
+  const front = useScanPhoto(it.image_path);
+  const rear = useScanPhoto(d.back_path);
+  const src = back ? rear : front;
+  if ((back ? d.back_path : it.image_path)) {
+    return <div className="w-photocard">{src ? <img src={src} alt={d.name || d.company || ""} /> : <span className="w-skelcard" />}</div>;
+  }
   return (
     <div className="w-papercard">
       <div className="w-paper-top"><span className="w-badge paper">{t(lang, "scanned_tag")}</span></div>
       <b dir="auto">{d.name || d.company}</b>
       {d.title || d.company ? <small dir="auto">{[d.title, d.name ? d.company : ""].filter(Boolean).join(" · ")}</small> : null}
-      <div className="w-paper-links">
-        {d.phone ? <a href={`tel:${d.phone}`} className="ltr"><Icon name="phone" size={14} /> {prettyPhone(d.phone) || d.phone}</a> : null}
-        {d.email ? <a href={`mailto:${d.email}`} className="ltr"><Icon name="mail" size={14} /> {d.email}</a> : null}
-      </div>
+    </div>
+  );
+}
+
+// Call, WhatsApp, email and website for a scanned card
+function PaperLinks({ it, lang }) {
+  const d = it.data || {};
+  const digits = (p) => String(p || "").replace(/[^\d]/g, "");
+  const rows = [
+    d.phone && ["phone", "call", t(lang, "call"), prettyPhone(d.phone) || d.phone, `tel:${d.phone}`],
+    (d.whatsapp || d.phone) && ["whatsapp", "wa", t(lang, "whatsapp"), t(lang, "send_message"), `https://wa.me/${digits(d.whatsapp || d.phone)}`],
+    d.email && ["mail", "mail", t(lang, "f_email"), d.email, `mailto:${d.email}`],
+    d.website && ["globe", "web", t(lang, "f_website"), d.website, /^https?:/i.test(d.website) ? d.website : `https://${d.website}`],
+    d.instagram && ["instagram", "ig", "Instagram", "@" + d.instagram, `https://instagram.com/${d.instagram}`],
+  ].filter(Boolean);
+  return (
+    <div className="w-plinks">
+      <div className="w-pname"><b dir="auto">{d.name || d.company}</b>{d.name && (d.title || d.company) ? <small dir="auto">{[d.title, d.company].filter(Boolean).join(" · ")}</small> : null}</div>
+      {rows.map(([icon, cls, label, text, href]) => (
+        <a key={icon} className="w-plink" href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+          <span className={"w-plic " + cls}><Icon name={icon} size={16} /></span>
+          <span className="grow"><b>{label}</b><small className={icon === "phone" || icon === "mail" || icon === "globe" ? "ltr" : ""}>{text}</small></span>
+        </a>
+      ))}
     </div>
   );
 }
@@ -100,9 +133,11 @@ function FrontCard({ it, lang, cats, go, onRemove, refFn }) {
   const touch = useRef(null);
   const turning = useRef(false);
   const b = it.businesses;
+  const scanned = it.kind === "scanned";
+  const canFlip = !!b || (scanned && !!(it.data && it.data.back_path));
   useEffect(() => setBack(false), [it.id]);
   const flip = (dir = 1) => {
-    if (turning.current || !b) return;
+    if (turning.current || !canFlip) return;
     turning.current = true;
     flipCard(face.current, { dir, swap: () => setBack((x) => !x), done: () => { turning.current = false; } });
   };
@@ -117,17 +152,19 @@ function FrontCard({ it, lang, cats, go, onRemove, refFn }) {
   return (
     <div className="w-front" ref={refFn}>
       <div className="w-face" ref={face} onTouchStart={onStart} onTouchEnd={onEnd}>
-        {it.kind === "scanned" ? <PaperCard it={it} lang={lang} />
+        {scanned ? <PaperCard it={it} lang={lang} back={back} />
           : b ? <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} back={back} url={`${window.location.origin}/${b.handle}/card`} />
           : <div className="w-papercard w-gonecard"><b>{t(lang, "no_longer_listed")}</b></div>}
       </div>
-      {b ? <p className="w-hint">‹ {t(lang, "swipe_flip_short")} ›</p> : null}
+      {canFlip ? <p className="w-hint">‹ {t(lang, "swipe_flip_short")} ›</p> : null}
       <div className="w-actions">
         {b ? <button type="button" className="w-act" onClick={() => go(`/${b.handle}/card`)}><Icon name="up" size={15} /> {t(lang, "w_open_card")}</button> : null}
-        {b ? <button type="button" className="w-act icon flipbtn" aria-label={t(lang, "flip")} onClick={() => flip(1)}><Icon name="flip" size={16} /></button> : null}
+        {scanned ? <button type="button" className="w-act" onClick={() => go(`/scan/edit/${it.id}`)}><Icon name="rows" size={15} /> {t(lang, "edit_details")}</button> : null}
+        {canFlip ? <button type="button" className="w-act icon flipbtn" aria-label={t(lang, "flip")} onClick={() => flip(1)}><Icon name="flip" size={16} /></button> : null}
         <span className="grow" />
         <button type="button" className="w-act icon" aria-label={t(lang, "remove_wallet")} onClick={onRemove}><Icon name="trash" size={16} /></button>
       </div>
+      {scanned ? <PaperLinks it={it} lang={lang} /> : null}
     </div>
   );
 }
@@ -157,7 +194,13 @@ export function WalletPage({ lang, go, signedIn }) {
   const before = useRef(null);
   const frontEl = useRef(null);
 
-  const load = () => { setErr(false); getWallet().then((r) => setRows(r)).catch(() => setErr(true)); };
+  const load = () => {
+    setErr(false);
+    getWallet().then((r) => {
+      setRows(r);
+      try { const f = sessionStorage.getItem("bm_wallet_front"); if (f) { setFrontId(Number(f)); sessionStorage.removeItem("bm_wallet_front"); } } catch { /* ignore */ }
+    }).catch(() => setErr(true));
+  };
   useEffect(() => { if (signedIn) load(); }, [signedIn]);
 
   const cats = useMemo(() => byId(lists && lists.cats), [lists]);
@@ -208,6 +251,7 @@ export function WalletPage({ lang, go, signedIn }) {
   const remove = async (it) => {
     try {
       await removeFromWallet(it.id, it.business_id);
+      if (it.kind === "scanned") removeScanPhotos([it.image_path, it.data && it.data.back_path]);
       setRows((x) => x.filter((y) => y.id !== it.id));
       setFrontId(null);
       setToast(t(lang, "removed_wallet"));
@@ -278,13 +322,13 @@ export function WalletPage({ lang, go, signedIn }) {
       {rows && n ? (
         <div className="w-foot">
           <span className="w-count">{n === 1 ? t(lang, "wallet_one") : t(lang, "wallet_cards", { n })}</span>
-          <button type="button" className="w-scan" onClick={() => setToast(t(lang, "scan_soon"))}><Icon name="scan" size={16} /> {t(lang, "scan_paper")}</button>
+          <button type="button" className="w-scan" onClick={() => go("/scan")}><Icon name="scan" size={16} /> {t(lang, "scan_paper")}</button>
         </div>
       ) : null}
 
       {sheet === "add" ? (
         <Sheet lang={lang} title={t(lang, "add_card")} onClose={() => setSheet("")}>
-          <button type="button" className="choice" onClick={() => { setSheet(""); setToast(t(lang, "scan_soon")); }}><span><Icon name="scan" size={17} /> {t(lang, "scan_paper")}</span><span className="soon">{t(lang, "coming_soon")}</span></button>
+          <button type="button" className="choice" onClick={() => go("/scan")}><span><Icon name="scan" size={17} /> {t(lang, "scan_paper")}</span></button>
           <button type="button" className="choice" onClick={() => go("/home")}><span><Icon name="search" size={17} /> {t(lang, "find_business")}</span></button>
         </Sheet>
       ) : null}
