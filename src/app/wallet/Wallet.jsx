@@ -53,16 +53,22 @@ function itemName(it, lang) {
   return b ? b.contact_name || pick(b, "name", lang) : "";
 }
 
+// A scanned card in the stack shows the top of its own photo, like the real card peeking out
+function ScannedStack({ it, lang, onTap, refFn }) {
+  const photo = useScanPhoto(it.image_path);
+  return (
+    <button type="button" ref={refFn} className={"w-stack w-paper" + (photo ? " w-photostack" : "")} onClick={onTap}
+      style={photo ? { backgroundImage: `url("${photo}")` } : undefined} aria-label={itemName(it, lang)}>
+      {photo ? <span /> : <b dir="auto">{itemName(it, lang)}</b>}
+      <span className="w-badge paper">{t(lang, "scanned_tag")}</span>
+    </button>
+  );
+}
+
 // The thin header of a card in the stack
 function StackCard({ it, lang, onTap, refFn }) {
   const b = it.businesses;
-  if (it.kind === "scanned") {
-    return (
-      <button type="button" ref={refFn} className="w-stack w-paper" onClick={onTap}>
-        <b dir="auto">{itemName(it, lang)}</b><span className="w-badge paper">{t(lang, "scanned_tag")}</span>
-      </button>
-    );
-  }
+  if (it.kind === "scanned") return <ScannedStack it={it} lang={lang} onTap={onTap} refFn={refFn} />;
   if (!b) {
     return (
       <button type="button" ref={refFn} className="w-stack w-gone" onClick={onTap}>
