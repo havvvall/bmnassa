@@ -1,4 +1,5 @@
 // Slice 6 · Card Studio: the owner designs their digital card. Changes go live straight away on Publish.
+import { flipCard } from "../motion.js";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./studio.css";
 import { t, pick } from "../i18n.js";
@@ -149,7 +150,7 @@ export default function Studio({ lang, id, go }) {
       <div className="b-top">
         <button type="button" className="rbtn" aria-label={t(lang, "back")} onClick={() => go(`/my/${b.id}`)}><Icon name="back" size={18} className="flip" /></button>
         <h1 className="grow" style={{ fontSize: 22 }}>{t(lang, "card_studio")}</h1>
-        <button type="button" className="b-pill" onClick={() => setFlipped(!flipped)}><Icon name="flip" size={15} /> {t(lang, "flip")}</button>
+        <button type="button" className="b-pill" onClick={() => flipCard(document.querySelector(".st-frame"), { swap: () => setFlipped((f) => !f) })}><Icon name="flip" size={15} /> {t(lang, "flip")}</button>
       </div>
 
       <Preview b={live} s={s} lang={lang} cat={cat} city={city} flipped={flipped} />

@@ -1,6 +1,7 @@
 // Slice 4 · listing: home, results, search, business card and business page.
 // Anyone can browse without an account; only live (approved) businesses come back from the database.
 import { themeBar } from "../theme.js";
+import { calm, ms, ease, flipCard } from "../motion.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
@@ -486,12 +487,6 @@ function subtitle(b, cat, lang) {
   return parts.filter(Boolean).join(" · ");
 }
 
-// motion helpers: read timings from the theme tokens, and respect "Reduce motion"
-const calm = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-const token = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-const ms = (name, fallback) => parseFloat(token(name)) || fallback;
-const ease = (name) => token(name) || "ease";
-
 export function Card({ lang, handle, go, back }) {
   const [b, err, reload] = useBusiness(handle);
   const [lists] = useLists();
@@ -548,34 +543,9 @@ export function Card({ lang, handle, go, back }) {
   };
   // the card turns over in 3D, with a band of light passing across it
   const flip = (dir = 1) => {
-    const el = body.current;
     if (turning.current) return;
-    if (!el || !el.animate) { setFlipped((f) => !f); return; }
     turning.current = true;
-    const half = ms("--duration-slow", 420) / 2;
-    if (calm()) {
-      const out = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 80, fill: "forwards" });
-      out.onfinish = () => {
-        setFlipped((f) => !f);
-        requestAnimationFrame(() => { out.cancel(); el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 80 }); turning.current = false; });
-      };
-      return;
-    }
-    const sign = (document.documentElement.dir === "rtl" ? -1 : 1) * dir;
-    const out = el.animate(
-      [{ transform: "rotateY(0deg)", filter: "drop-shadow(0 0 0 transparent)" }, { transform: `rotateY(${90 * sign}deg) scale(0.96)`, filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.35))" }],
-      { duration: half, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" });
-    if (shine.current) shine.current.animate([{ transform: "translateX(-120%)", opacity: 0 }, { opacity: 0.9, offset: 0.5 }, { transform: "translateX(120%)", opacity: 0 }], { duration: half * 2, easing: "linear" });
-    out.onfinish = () => {
-      setFlipped((f) => !f);
-      requestAnimationFrame(() => {
-        out.cancel();
-        const back2 = el.animate(
-          [{ transform: `rotateY(${-90 * sign}deg) scale(0.96)`, filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.35))" }, { transform: "rotateY(0deg) scale(1)", filter: "drop-shadow(0 0 0 transparent)" }],
-          { duration: half, easing: "cubic-bezier(0, 0, 0.2, 1)" });
-        back2.onfinish = back2.oncancel = () => { turning.current = false; };
-      });
-    };
+    flipCard(body.current, { dir, shine: shine.current, swap: () => setFlipped((f) => !f), done: () => { turning.current = false; } });
   };
   const share = () => shareOrCopy(url, person, setToast, lang);
   const copy = () => {
@@ -661,49 +631,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const ps = pageSettings(b);
   const pgLook = pageLook(ps, cardSettings(b).color);
   const grid = ps.layout === "grid" && photos.length > 0;
-  const leave = () => (window.history.length > 1 ? back() : go("/home"));
-  // and slides back down when it closes
-  const exit = () => {
-    const el = screen.current;
-    if (leaving.current) return;
-    if (!el || !el.animate) return leave();
-    leaving.current = true;
-    const a = calm()
-      ? el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: ms("--duration-instant", 80), fill: "forwards" })
-      : el.animate([{ transform: "translateY(0)" }, { transform: "translateY(100%)" }], { duration: ms("--duration-base", 240), easing: ease("--ease-exit"), fill: "forwards" });
-    a.onfinish = leave;
-  };
-  // the card turns over in 3D, with a band of light passing across it
-  const flip = (dir = 1) => {
-    const el = body.current;
-    if (turning.current) return;
-    if (!el || !el.animate) { setFlipped((f) => !f); return; }
-    turning.current = true;
-    const half = ms("--duration-slow", 420) / 2;
-    if (calm()) {
-      const out = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 80, fill: "forwards" });
-      out.onfinish = () => {
-        setFlipped((f) => !f);
-        requestAnimationFrame(() => { out.cancel(); el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 80 }); turning.current = false; });
-      };
-      return;
-    }
-    const sign = (document.documentElement.dir === "rtl" ? -1 : 1) * dir;
-    const out = el.animate(
-      [{ transform: "rotateY(0deg)", filter: "drop-shadow(0 0 0 transparent)" }, { transform: `rotateY(${90 * sign}deg) scale(0.96)`, filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.35))" }],
-      { duration: half, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" });
-    if (shine.current) shine.current.animate([{ transform: "translateX(-120%)", opacity: 0 }, { opacity: 0.9, offset: 0.5 }, { transform: "translateX(120%)", opacity: 0 }], { duration: half * 2, easing: "linear" });
-    out.onfinish = () => {
-      setFlipped((f) => !f);
-      requestAnimationFrame(() => {
-        out.cancel();
-        const back2 = el.animate(
-          [{ transform: `rotateY(${-90 * sign}deg) scale(0.96)`, filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.35))" }, { transform: "rotateY(0deg) scale(1)", filter: "drop-shadow(0 0 0 transparent)" }],
-          { duration: half, easing: "cubic-bezier(0, 0, 0.2, 1)" });
-        back2.onfinish = back2.oncancel = () => { turning.current = false; };
-      });
-    };
-  };
+  const exit = () => (window.history.length > 1 ? back() : go("/home"));
 
   return (
     <div className={"b-page " + pgLook.cls} style={pgLook.style}>
