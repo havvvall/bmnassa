@@ -1,0 +1,1355 @@
+{
+ "version": "2026-10-15 draft",
+ "cities": [
+  {
+   "id": "sulaymaniyah",
+   "en": "Sulaymaniyah",
+   "ku": "سلێمانی",
+   "ar": "السليمانية",
+   "districts": [
+    {
+     "id": "sulaymaniyah/sulaymaniyah",
+     "en": "Sulaymaniyah",
+     "ku": "سلێمانی",
+     "ar": "السليمانية",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/sulaymaniyah/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/sulaymaniyah/tanjaro",
+       "en": "Tanjaro",
+       "ku": "تانجەرۆ",
+       "ar": "تانجرو",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/sulaymaniyah/bakrajo",
+       "en": "Bakrajo",
+       "ku": "بەکرەجۆ",
+       "ar": "بكرجو",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/chamchamal",
+     "en": "Chamchamal",
+     "ku": "چەمچەماڵ",
+     "ar": "جمجمال",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/chamchamal/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/chamchamal/bazyan",
+       "en": "Bazyan",
+       "ku": "بازیان",
+       "ar": "بازيان",
+       "check": true
+      },
+      {
+       "id": "sulaymaniyah/chamchamal/shwan",
+       "en": "Shwan",
+       "ku": "شوان",
+       "ar": "شوان",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/chamchamal/aghjalar",
+       "en": "Aghjalar",
+       "ku": "ئاغجەلەر",
+       "ar": "آغجلر",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/chamchamal/takiya",
+       "en": "Takiya",
+       "ku": "تەکیە",
+       "ar": "تكية",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/chamchamal/sangaw",
+       "en": "Sangaw",
+       "ku": "سەنگاو",
+       "ar": "سنكاو",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/chamchamal/qadir-karam",
+       "en": "Qadir Karam",
+       "ku": "قادرکەرەم",
+       "ar": "قادر كرم",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/dukan",
+     "en": "Dukan",
+     "ku": "دوکان",
+     "ar": "دوكان",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/dukan/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/dukan/surdash",
+       "en": "Surdash",
+       "ku": "سورداش",
+       "ar": "سورداش",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/dukan/chinaran",
+       "en": "Chinaran",
+       "ku": "چناران",
+       "ar": "جناران",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/dukan/bingird",
+       "en": "Bingird",
+       "ku": "بنگرد",
+       "ar": "بنكرد",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/dukan/khidran",
+       "en": "Khidran",
+       "ku": "خدران",
+       "ar": "خدران",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/dukan/piramagrun",
+       "en": "Piramagrun",
+       "ku": "پیرەمەگرون",
+       "ar": "بيرمكرون",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/darbandikhan",
+     "en": "Darbandikhan",
+     "ku": "دەربەندیخان",
+     "ar": "دربندخان",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/darbandikhan/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/darbandikhan/bawa-khoshin",
+       "en": "Bawa Khoshin",
+       "ku": "باوەخۆشێن",
+       "ar": "باوه خوشين",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/kalar",
+     "en": "Kalar",
+     "ku": "کەلار",
+     "ar": "كلار",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/kalar/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/kalar/pebaz",
+       "en": "Pebaz",
+       "ku": "پێباز",
+       "ar": "بيباز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/kalar/sheikh-tawil",
+       "en": "Sheikh Tawil",
+       "ku": "شێخ تەویل",
+       "ar": "شيخ طويل",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/kalar/rizgari",
+       "en": "Rizgari",
+       "ku": "ڕزگاری",
+       "ar": "رزكاري",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/kifri",
+     "en": "Kifri",
+     "ku": "کفری",
+     "ar": "كفري",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/kifri/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "sulaymaniyah/kifri/sarqala",
+       "en": "Sarqala",
+       "ku": "سەرقەڵا",
+       "ar": "سرقلعة",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/mawat",
+     "en": "Mawat",
+     "ku": "ماوەت",
+     "ar": "ماوت",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/mawat/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/penjwen",
+     "en": "Penjwen",
+     "ku": "پێنجوێن",
+     "ar": "بنجوين",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/penjwen/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/penjwen/garmik",
+       "en": "Garmik",
+       "ku": "گەرمک",
+       "ar": "كرمك",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/penjwen/nalparez",
+       "en": "Nalparez",
+       "ku": "ناڵپارێز",
+       "ar": "نالباريز",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/pshdar",
+     "en": "Pshdar",
+     "ku": "پشدەر",
+     "ar": "بشدر",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/pshdar/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/pshdar/hero",
+       "en": "Hero",
+       "ku": "هێرۆ",
+       "ar": "هيرو",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/pshdar/nawdasht",
+       "en": "Nawdasht",
+       "ku": "ناودەشت",
+       "ar": "ناودشت",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/pshdar/halsho",
+       "en": "Halsho",
+       "ku": "هەڵشۆ",
+       "ar": "هلشو",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/pshdar/zharawa",
+       "en": "Zharawa",
+       "ku": "ژاراوە",
+       "ar": "زاراوة",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/pshdar/isewe",
+       "en": "Isewe",
+       "ku": "ئیسێوێ",
+       "ar": "ئيسيوي",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/qaradagh",
+     "en": "Qaradagh",
+     "ku": "قەرەداغ",
+     "ar": "قرداغ",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/qaradagh/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/ranya",
+     "en": "Ranya",
+     "ku": "ڕانیە",
+     "ar": "رانية",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/ranya/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/ranya/chwarqurna",
+       "en": "Chwarqurna",
+       "ku": "چوارقوڕنە",
+       "ar": "جوارقورنة",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/ranya/betwata",
+       "en": "Betwata",
+       "ku": "بێتواتە",
+       "ar": "بيتواتة",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/ranya/hajiawa",
+       "en": "Hajiawa",
+       "ku": "حاجیاوا",
+       "ar": "حاجياوة",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/ranya/sarkapkan",
+       "en": "Sarkapkan",
+       "ku": "سەرکەپکان",
+       "ar": "سركبكان",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/said-sadiq",
+     "en": "Said Sadiq",
+     "ku": "سەیدسادق",
+     "ar": "سيد صادق",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/said-sadiq/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/said-sadiq/saruchik",
+       "en": "Saruchik",
+       "ku": "سەروچک",
+       "ar": "سروجك",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/said-sadiq/barzinja",
+       "en": "Barzinja",
+       "ku": "بەرزنجە",
+       "ar": "برزنجة",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/sharazur",
+     "en": "Sharazur",
+     "ku": "شارەزوور",
+     "ar": "شهرزور",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/sharazur/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "sulaymaniyah/sharbazher",
+     "en": "Sharbazher",
+     "ku": "شارباژێڕ",
+     "ar": "شاربازير",
+     "subdistricts": [
+      {
+       "id": "sulaymaniyah/sharbazher/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/sharbazher/zalan",
+       "en": "Zalan",
+       "ku": "زەڵان",
+       "ar": "زلان",
+       "check": true
+      },
+      {
+       "id": "sulaymaniyah/sharbazher/zhazhla",
+       "en": "Zhazhla",
+       "ku": "ژاژڵە",
+       "ar": "زاژلة",
+       "check": true
+      },
+      {
+       "id": "sulaymaniyah/sharbazher/siwail",
+       "en": "Siwail",
+       "ku": "سیوەیل",
+       "ar": "سيويل",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/sharbazher/sitak",
+       "en": "Sitak",
+       "ku": "سیتەک",
+       "ar": "سيتك",
+       "check": false
+      },
+      {
+       "id": "sulaymaniyah/sharbazher/gapilon",
+       "en": "Gapilon",
+       "ku": "گاپیلۆن",
+       "ar": "كابيلون",
+       "check": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "erbil",
+   "en": "Erbil",
+   "ku": "هەولێر",
+   "ar": "أربيل",
+   "districts": [
+    {
+     "id": "erbil/erbil-centre",
+     "en": "Erbil Centre",
+     "ku": "ناوەندی هەولێر",
+     "ar": "مركز أربيل",
+     "subdistricts": [
+      {
+       "id": "erbil/erbil-centre/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/erbil-centre/ainkawa",
+       "en": "Ainkawa",
+       "ku": "عەینکاوە",
+       "ar": "عينكاوة",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "erbil/dashti-hawler",
+     "en": "Dashti Hawler",
+     "ku": "دەشتی هەولێر",
+     "ar": "دشت أربيل",
+     "subdistricts": [
+      {
+       "id": "erbil/dashti-hawler/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "erbil/dashti-hawler/bahirka",
+       "en": "Bahirka",
+       "ku": "بەحرکە",
+       "ar": "بحركة",
+       "check": true
+      },
+      {
+       "id": "erbil/dashti-hawler/kasnazan",
+       "en": "Kasnazan",
+       "ku": "کەسنەزان",
+       "ar": "كسنزان",
+       "check": true
+      },
+      {
+       "id": "erbil/dashti-hawler/qushtapa",
+       "en": "Qushtapa",
+       "ku": "قوشتەپە",
+       "ar": "قوشتبة",
+       "check": true
+      },
+      {
+       "id": "erbil/dashti-hawler/shamamk",
+       "en": "Shamamk",
+       "ku": "شەمامک",
+       "ar": "شمامك",
+       "check": true
+      },
+      {
+       "id": "erbil/dashti-hawler/daratu",
+       "en": "Daratu",
+       "ku": "داراتوو",
+       "ar": "داراتو",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/khabat",
+     "en": "Khabat",
+     "ku": "خەبات",
+     "ar": "خبات",
+     "subdistricts": [
+      {
+       "id": "erbil/khabat/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/khabat/darashakran",
+       "en": "Darashakran",
+       "ku": "دارەشەکران",
+       "ar": "دارشكران",
+       "check": true
+      },
+      {
+       "id": "erbil/khabat/rizgari",
+       "en": "Rizgari",
+       "ku": "ڕزگاری",
+       "ar": "رزكاري",
+       "check": true
+      },
+      {
+       "id": "erbil/khabat/kawergosk",
+       "en": "Kawergosk",
+       "ku": "کەورگۆسک",
+       "ar": "كوركوسك",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/koya",
+     "en": "Koya",
+     "ku": "کۆیە",
+     "ar": "كويسنجق",
+     "subdistricts": [
+      {
+       "id": "erbil/koya/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/koya/shorsh",
+       "en": "Shorsh",
+       "ku": "شۆڕش",
+       "ar": "شورش",
+       "check": false
+      },
+      {
+       "id": "erbil/koya/segrdkan",
+       "en": "Segrdkan",
+       "ku": "سێگردکان",
+       "ar": "سيكردكان",
+       "check": false
+      },
+      {
+       "id": "erbil/koya/taqtaq",
+       "en": "Taqtaq",
+       "ku": "تەقتەق",
+       "ar": "طق طق",
+       "check": false
+      },
+      {
+       "id": "erbil/koya/ashti",
+       "en": "Ashti",
+       "ku": "ئاشتی",
+       "ar": "آشتي",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/shaqlawa",
+     "en": "Shaqlawa",
+     "ku": "شەقڵاوە",
+     "ar": "شقلاوة",
+     "subdistricts": [
+      {
+       "id": "erbil/shaqlawa/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/shaqlawa/harir",
+       "en": "Harir",
+       "ku": "حەریر",
+       "ar": "حرير",
+       "check": false
+      },
+      {
+       "id": "erbil/shaqlawa/salahaddin",
+       "en": "Salahaddin",
+       "ku": "سەڵاحەدین",
+       "ar": "صلاح الدين",
+       "check": false
+      },
+      {
+       "id": "erbil/shaqlawa/basirma",
+       "en": "Basirma",
+       "ku": "باسرمە",
+       "ar": "باسرمة",
+       "check": true
+      },
+      {
+       "id": "erbil/shaqlawa/heran",
+       "en": "Heran",
+       "ku": "هیران",
+       "ar": "هيران",
+       "check": true
+      },
+      {
+       "id": "erbil/shaqlawa/balisan",
+       "en": "Balisan",
+       "ku": "باڵیسان",
+       "ar": "باليسان",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/soran",
+     "en": "Soran",
+     "ku": "سۆران",
+     "ar": "سوران",
+     "subdistricts": [
+      {
+       "id": "erbil/soran/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/soran/diana",
+       "en": "Diana",
+       "ku": "دیانا",
+       "ar": "ديانا",
+       "check": false
+      },
+      {
+       "id": "erbil/soran/khalifan",
+       "en": "Khalifan",
+       "ku": "خەلیفان",
+       "ar": "خليفان",
+       "check": false
+      },
+      {
+       "id": "erbil/soran/sidakan",
+       "en": "Sidakan",
+       "ku": "سیدەکان",
+       "ar": "سيدكان",
+       "check": true
+      },
+      {
+       "id": "erbil/soran/sktan",
+       "en": "Sktan",
+       "ku": "سکتان",
+       "ar": "سكتان",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/rawanduz",
+     "en": "Rawanduz",
+     "ku": "ڕەواندز",
+     "ar": "راوندوز",
+     "subdistricts": [
+      {
+       "id": "erbil/rawanduz/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/rawanduz/warte",
+       "en": "Warte",
+       "ku": "وەرتێ",
+       "ar": "وارتي",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/choman",
+     "en": "Choman",
+     "ku": "چۆمان",
+     "ar": "جومان",
+     "subdistricts": [
+      {
+       "id": "erbil/choman/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/choman/galala",
+       "en": "Galala",
+       "ku": "گەڵاڵە",
+       "ar": "كلالة",
+       "check": false
+      },
+      {
+       "id": "erbil/choman/qasre",
+       "en": "Qasre",
+       "ku": "قەسرێ",
+       "ar": "قصري",
+       "check": false
+      },
+      {
+       "id": "erbil/choman/haji-omaran",
+       "en": "Haji Omaran",
+       "ku": "حاجی ئۆمەران",
+       "ar": "حاج عمران",
+       "check": false
+      },
+      {
+       "id": "erbil/choman/smilan",
+       "en": "Smilan",
+       "ku": "سمیلان",
+       "ar": "سميلان",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/mergasor",
+     "en": "Mergasor",
+     "ku": "مێرگەسۆر",
+     "ar": "ميركسور",
+     "subdistricts": [
+      {
+       "id": "erbil/mergasor/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "erbil/mergasor/barzan",
+       "en": "Barzan",
+       "ku": "بارزان",
+       "ar": "بارزان",
+       "check": false
+      },
+      {
+       "id": "erbil/mergasor/goretu",
+       "en": "Goretu",
+       "ku": "گۆرەتوو",
+       "ar": "كوره تو",
+       "check": false
+      },
+      {
+       "id": "erbil/mergasor/sherwan-mazn",
+       "en": "Sherwan Mazn",
+       "ku": "شێروان مەزن",
+       "ar": "شيروان مزن",
+       "check": false
+      },
+      {
+       "id": "erbil/mergasor/mazne",
+       "en": "Mazne",
+       "ku": "مەزنێ",
+       "ar": "مزنة",
+       "check": true
+      },
+      {
+       "id": "erbil/mergasor/piran",
+       "en": "Piran",
+       "ku": "پیران",
+       "ar": "بيران",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "erbil/makhmur",
+     "en": "Makhmur",
+     "ku": "مەخموور",
+     "ar": "مخمور",
+     "subdistricts": [
+      {
+       "id": "erbil/makhmur/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "erbil/makhmur/qaraj",
+       "en": "Qaraj",
+       "ku": "قەراج",
+       "ar": "قراج",
+       "check": false
+      },
+      {
+       "id": "erbil/makhmur/gwer",
+       "en": "Gwer",
+       "ku": "گوێر",
+       "ar": "كوير",
+       "check": false
+      },
+      {
+       "id": "erbil/makhmur/dibaga",
+       "en": "Dibaga",
+       "ku": "دیبەگە",
+       "ar": "ديبكة",
+       "check": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "duhok",
+   "en": "Duhok",
+   "ku": "دهۆک",
+   "ar": "دهوك",
+   "districts": [
+    {
+     "id": "duhok/duhok",
+     "en": "Duhok",
+     "ku": "دهۆک",
+     "ar": "دهوك",
+     "subdistricts": [
+      {
+       "id": "duhok/duhok/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "duhok/duhok/zawita",
+       "en": "Zawita",
+       "ku": "زاویتە",
+       "ar": "زاويتة",
+       "check": false
+      },
+      {
+       "id": "duhok/duhok/mangesh",
+       "en": "Mangesh",
+       "ku": "مانگێش",
+       "ar": "مانكيش",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "duhok/sumel",
+     "en": "Sumel",
+     "ku": "سێمێل",
+     "ar": "سميل",
+     "subdistricts": [
+      {
+       "id": "duhok/sumel/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "duhok/sumel/fayda",
+       "en": "Fayda",
+       "ku": "فایدە",
+       "ar": "فايدة",
+       "check": false
+      },
+      {
+       "id": "duhok/sumel/batel",
+       "en": "Batel",
+       "ku": "باتێل",
+       "ar": "باتيل",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "duhok/zakho",
+     "en": "Zakho",
+     "ku": "زاخۆ",
+     "ar": "زاخو",
+     "subdistricts": [
+      {
+       "id": "duhok/zakho/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "duhok/zakho/darkar",
+       "en": "Darkar",
+       "ku": "دەرکار",
+       "ar": "دركار",
+       "check": false
+      },
+      {
+       "id": "duhok/zakho/batifa",
+       "en": "Batifa",
+       "ku": "باتیفا",
+       "ar": "باتيفا",
+       "check": false
+      },
+      {
+       "id": "duhok/zakho/ibrahim-khalil",
+       "en": "Ibrahim Khalil",
+       "ku": "ئیبراهیم خەلیل",
+       "ar": "إبراهيم الخليل",
+       "check": true
+      },
+      {
+       "id": "duhok/zakho/sindi",
+       "en": "Sindi",
+       "ku": "سندی",
+       "ar": "السندي",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "duhok/amedi",
+     "en": "Amedi",
+     "ku": "ئامێدی",
+     "ar": "العمادية",
+     "subdistricts": [
+      {
+       "id": "duhok/amedi/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "duhok/amedi/sarsink",
+       "en": "Sarsink",
+       "ku": "سەرسنگ",
+       "ar": "سرسنك",
+       "check": false
+      },
+      {
+       "id": "duhok/amedi/bamarni",
+       "en": "Bamarni",
+       "ku": "بامەڕنێ",
+       "ar": "بامرني",
+       "check": false
+      },
+      {
+       "id": "duhok/amedi/kani-masi",
+       "en": "Kani Masi",
+       "ku": "کانی ماسێ",
+       "ar": "كاني ماسي",
+       "check": false
+      },
+      {
+       "id": "duhok/amedi/chamanke",
+       "en": "Chamanke",
+       "ku": "چەمانکێ",
+       "ar": "جمانكي",
+       "check": false
+      },
+      {
+       "id": "duhok/amedi/deralok",
+       "en": "Deralok",
+       "ku": "دێرەلووک",
+       "ar": "ديرلوك",
+       "check": false
+      },
+      {
+       "id": "duhok/amedi/barwari-bala",
+       "en": "Barwari Bala",
+       "ku": "بەرواری باڵا",
+       "ar": "برواري بالا",
+       "check": true
+      },
+      {
+       "id": "duhok/amedi/nerwa-and-rekan",
+       "en": "Nerwa and Rekan",
+       "ku": "نێروە و ڕێکان",
+       "ar": "نيروة وريكان",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "duhok/bardarash",
+     "en": "Bardarash",
+     "ku": "بەردەڕەش",
+     "ar": "بردرش",
+     "subdistricts": [
+      {
+       "id": "duhok/bardarash/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "duhok/bardarash/darato",
+       "en": "Darato",
+       "ku": "داراتوو",
+       "ar": "دارتو",
+       "check": true
+      },
+      {
+       "id": "duhok/bardarash/rovia",
+       "en": "Rovia",
+       "ku": "ڕۆڤیا",
+       "ar": "روفيا",
+       "check": false
+      },
+      {
+       "id": "duhok/bardarash/kalak",
+       "en": "Kalak",
+       "ku": "کەلەک",
+       "ar": "الكلك",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "duhok/akre",
+     "en": "Akre",
+     "ku": "ئاکرێ",
+     "ar": "عقرة",
+     "subdistricts": [
+      {
+       "id": "duhok/akre/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "duhok/akre/dinarta",
+       "en": "Dinarta",
+       "ku": "دینارتە",
+       "ar": "دينارتة",
+       "check": false
+      },
+      {
+       "id": "duhok/akre/bijil",
+       "en": "Bijil",
+       "ku": "بجیل",
+       "ar": "بجيل",
+       "check": false
+      },
+      {
+       "id": "duhok/akre/kurdasin",
+       "en": "Kurdasin",
+       "ku": "کوردەسین",
+       "ar": "كردسين",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "duhok/shekhan",
+     "en": "Shekhan",
+     "ku": "شێخان",
+     "ar": "الشيخان",
+     "subdistricts": [
+      {
+       "id": "duhok/shekhan/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "duhok/shekhan/qasrok",
+       "en": "Qasrok",
+       "ku": "قەسرۆک",
+       "ar": "قصروك",
+       "check": false
+      },
+      {
+       "id": "duhok/shekhan/atrush",
+       "en": "Atrush",
+       "ku": "ئەتروش",
+       "ar": "أتروش",
+       "check": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "halabja",
+   "en": "Halabja",
+   "ku": "هەڵەبجە",
+   "ar": "حلبجة",
+   "districts": [
+    {
+     "id": "halabja/halabja",
+     "en": "Halabja",
+     "ku": "هەڵەبجە",
+     "ar": "حلبجة",
+     "subdistricts": [
+      {
+       "id": "halabja/halabja/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": true
+      },
+      {
+       "id": "halabja/halabja/khurmal",
+       "en": "Khurmal",
+       "ku": "خورماڵ",
+       "ar": "خورمال",
+       "check": false
+      },
+      {
+       "id": "halabja/halabja/sirwan",
+       "en": "Sirwan",
+       "ku": "سیروان",
+       "ar": "سيروان",
+       "check": false
+      },
+      {
+       "id": "halabja/halabja/biyara",
+       "en": "Biyara",
+       "ku": "بیارە",
+       "ar": "بيارة",
+       "check": false
+      },
+      {
+       "id": "halabja/halabja/bamo",
+       "en": "Bamo",
+       "ku": "بەمۆ",
+       "ar": "بمو",
+       "check": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "kirkuk",
+   "en": "Kirkuk",
+   "ku": "کەرکووک",
+   "ar": "كركوك",
+   "districts": [
+    {
+     "id": "kirkuk/kirkuk",
+     "en": "Kirkuk",
+     "ku": "کەرکووک",
+     "ar": "كركوك",
+     "subdistricts": [
+      {
+       "id": "kirkuk/kirkuk/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "kirkuk/kirkuk/taza-khurmatu",
+       "en": "Taza Khurmatu",
+       "ku": "تازە خورماتوو",
+       "ar": "تازة خورماتو",
+       "check": false
+      },
+      {
+       "id": "kirkuk/kirkuk/laylan",
+       "en": "Laylan",
+       "ku": "لەیلان",
+       "ar": "ليلان",
+       "check": false
+      },
+      {
+       "id": "kirkuk/kirkuk/qara-hanjir",
+       "en": "Qara Hanjir",
+       "ku": "قەرەهەنجیر",
+       "ar": "قره هنجير",
+       "check": false
+      },
+      {
+       "id": "kirkuk/kirkuk/shwan",
+       "en": "Shwan",
+       "ku": "شوان",
+       "ar": "شوان",
+       "check": false
+      },
+      {
+       "id": "kirkuk/kirkuk/yayji",
+       "en": "Yayji",
+       "ku": "یایجی",
+       "ar": "يايجي",
+       "check": false
+      },
+      {
+       "id": "kirkuk/kirkuk/multaqa",
+       "en": "Multaqa",
+       "ku": "مولتەقا",
+       "ar": "الملتقى",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "kirkuk/hawija",
+     "en": "Hawija",
+     "ku": "حەویجە",
+     "ar": "الحويجة",
+     "subdistricts": [
+      {
+       "id": "kirkuk/hawija/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "kirkuk/hawija/abbasi",
+       "en": "Abbasi",
+       "ku": "عەباسی",
+       "ar": "العباسي",
+       "check": false
+      },
+      {
+       "id": "kirkuk/hawija/riyadh",
+       "en": "Riyadh",
+       "ku": "ڕیاز",
+       "ar": "الرياض",
+       "check": false
+      },
+      {
+       "id": "kirkuk/hawija/zab",
+       "en": "Zab",
+       "ku": "زاب",
+       "ar": "الزاب",
+       "check": false
+      },
+      {
+       "id": "kirkuk/hawija/rashad",
+       "en": "Rashad",
+       "ku": "ڕەشاد",
+       "ar": "الرشاد",
+       "check": true
+      }
+     ]
+    },
+    {
+     "id": "kirkuk/daquq",
+     "en": "Daquq",
+     "ku": "داقووق",
+     "ar": "داقوق",
+     "subdistricts": [
+      {
+       "id": "kirkuk/daquq/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      }
+     ]
+    },
+    {
+     "id": "kirkuk/dibis",
+     "en": "Dibis",
+     "ku": "دبس",
+     "ar": "الدبس",
+     "subdistricts": [
+      {
+       "id": "kirkuk/dibis/centre",
+       "en": "Centre",
+       "ku": "ناوەند",
+       "ar": "المركز",
+       "check": false
+      },
+      {
+       "id": "kirkuk/dibis/sargaran",
+       "en": "Sargaran",
+       "ku": "سەرگەڕان",
+       "ar": "سركران",
+       "check": false
+      },
+      {
+       "id": "kirkuk/dibis/altun-kupri-prde",
+       "en": "Altun Kupri (Prde)",
+       "ku": "پردێ",
+       "ar": "التون كوبري",
+       "check": false
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

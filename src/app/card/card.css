@@ -1,0 +1,152 @@
+/* Slice 6 · the four card styles, from the signed-off screens (Classic, Minimal, Bold, Wallet card) */
+.cf-face { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; width: 100%; }
+.cf-grow { flex: 1; min-width: 0; min-height: 14px; }
+.cf-face .cf-grow { flex: 1 1 auto; }
+.cf-face > *:not(.cf-grow) { flex-shrink: 0; }
+.cf-person { font-size: 26px; line-height: 32px; margin: 0; }
+.cf-role { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.cf-role.gold { color: var(--gold-soft); }
+.cf-role.light { color: rgba(255, 255, 255, 0.78); }
+[dir="rtl"] .cf-role { letter-spacing: 0; text-transform: none; font-size: 13px; }
+
+/* avatars */
+.cf-ring { width: 104px; height: 104px; border-radius: 52px; display: grid; place-items: center; margin: 10px 0 6px; flex: none; }
+.cf-ring > span { width: 88px; height: 88px; border-radius: 44px; display: grid; place-items: center; font-size: 34px; font-weight: 800; }
+.cf-ring.gold { box-shadow: 0 0 0 1px rgba(201, 162, 74, 0.35); }
+.cf-ring.gold > span { box-shadow: inset 0 0 0 2px var(--gold-soft); color: var(--gold-soft); }
+.cf-ring.white > span { box-shadow: inset 0 0 0 3px #fff; color: #fff; }
+.cf-ring.has-img img, .cf-square.has-img img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+.cf-ring.has-img { width: 96px; height: 96px; border-radius: 48px; box-shadow: 0 0 0 3px var(--gold-soft); overflow: hidden; }
+.cf-ring.white.has-img { box-shadow: 0 0 0 3px #fff; }
+.cf-square { width: 76px; height: 76px; border-radius: 20px; background: #121212; color: var(--gold-soft); display: grid; place-items: center; font-size: 30px; font-weight: 800; overflow: hidden; flex: none; }
+
+/* link icons */
+.cf-ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: #fff; flex: none; }
+.cf-ic.big { width: 46px; height: 46px; border-radius: 23px; }
+.cf-ic.call { background: #2fbf55; }
+.cf-ic.wa { background: #25d366; }
+.cf-ic.ig { background: linear-gradient(45deg, #f9a825, #e1306c 55%, #833ab4); }
+.cf-ic.fb { background: #1877f2; }
+.cf-ic.tt { background: #111; box-shadow: inset 0 0 0 1px #444; }
+.cf-ic.em { background: #1e88e5; }
+.cf-ic.web { background: #5f6368; }
+.cf-ic.dir { background: #e5483b; }
+.cf-ic.match { background: var(--card); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* link rows */
+.cf-rows { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.cf-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 16px; text-decoration: none; text-align: start; }
+.cf-row b { display: block; font-size: 15px; }
+.cf-row small { font-size: 12px; }
+.cf-rows.dark .cf-row { background: #1d1e21; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); color: #fff; }
+.cf-rows.dark small { color: #a5a9ae; }
+.cf-rows.light { gap: 0; }
+.cf-rows.light .cf-row { border-radius: 0; border-top: 1px solid var(--line); color: var(--text); padding: 12px 2px; }
+.cf-rows.light .cf-row:last-child { border-bottom: 1px solid var(--line); }
+.cf-rows.light .cf-ic { border-radius: 17px; }
+.cf-rows.light small { color: var(--muted); }
+
+/* the big buttons at the bottom */
+.cf-save { width: 100%; height: 52px; border-radius: 999px; border: 0; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.cf-save.gold { background: #c9a24a; color: #121212; }
+.cf-save.dark { background: #121212; color: #fff; }
+.cf-save.colour { background: var(--card); color: #fff; }
+.cf-save.light { background: var(--field); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+
+/* Minimal */
+.cf-minimal { align-items: flex-start; text-align: start; color: var(--text); }
+.cf-bigname { font-size: 34px; line-height: 38px; margin: 18px 0 2px; letter-spacing: -0.02em; }
+.cf-minimal .cf-role { color: var(--accent-text); }
+.cf-sub { color: var(--muted); font-size: 14px; }
+.cf-minimal.back { align-items: center; text-align: center; }
+
+/* Bold */
+.cf-bold { color: var(--text); }
+.cf-bold-head { width: calc(100% + 36px); margin: -8px -18px 0; padding: 18px 18px 34px; border-radius: 0 0 36px 36px; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #fff; }
+.cf-bold-head .cf-person { color: #fff; }
+.cf-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin-top: 18px; }
+.cf-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px; border-radius: 20px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; color: var(--text); font-size: 13px; min-width: 0; }
+.cf-tile b { overflow-wrap: anywhere; }
+.cf-bold.back .cf-person { color: var(--text); margin-top: 14px; }
+
+/* card surfaces: solid colour, carbon fibre or a photo */
+.cf-surface { background-color: var(--card); background-size: cover; background-position: center; }
+.cf-surface.carbon {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 6px);
+}
+
+/* the NFC card itself */
+.cf-nfc { width: 100%; aspect-ratio: 1.586; border-radius: 22px; padding: 18px 20px; color: #fff; display: flex; flex-direction: column; text-align: start; box-shadow: 0 14px 30px rgba(18, 18, 18, 0.28); }
+.cf-nfc-top { display: flex; align-items: center; justify-content: space-between; }
+.cf-nfc-brand { height: 18px; opacity: 0.9; }
+.cf-nfc-logo { height: 34px; width: 34px; border-radius: 9px; object-fit: cover; }
+.cf-nfc-sign { opacity: 0.85; }
+.cf-nfc-name { margin-top: auto; display: flex; flex-direction: column; gap: 2px; }
+.cf-nfc-name b { font-size: 22px; line-height: 27px; }
+.cf-nfc-name small { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.8; font-weight: 800; }
+[dir="rtl"] .cf-nfc-name small { letter-spacing: 0; text-transform: none; font-size: 12px; }
+.cf-nfc-icons { display: flex; gap: 6px; margin-top: 14px; }
+.cf-nfc-icons .cf-ic { width: 30px; height: 30px; border-radius: 9px; }
+.cf-nfc.small { padding: 14px 16px; border-radius: 18px; }
+.cf-nfc.small .cf-nfc-name b { font-size: 18px; line-height: 22px; }
+.cf-nfc.small .cf-nfc-icons .cf-ic { width: 26px; height: 26px; }
+.cf-nfc.back { flex-direction: row; align-items: center; gap: 16px; }
+.cf-nfc-qr { background: #fff; border-radius: 16px; padding: 8px; width: 46%; flex: none; line-height: 0; }
+.cf-nfc-qr svg { width: 100%; height: auto; }
+.cf-nfc-backtext { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cf-nfc-backtext small { opacity: 0.8; font-size: 12px; }
+.cf-nfc-backtext b { font-size: 15px; line-height: 20px; overflow-wrap: anywhere; }
+
+/* Wallet card style */
+.cf-wallet { color: var(--text); gap: 12px; }
+.cf-big { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
+.cf-bigbtn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 72px; border-radius: 20px; text-decoration: none; font-size: 13px; color: #fff; background: #121212; }
+.cf-bigbtn.call { background: var(--accent); color: #121212; }
+.cf-bigbtn.whatsapp { background: #25d366; }
+.cf-bigbtn.wide { grid-column: 1 / -1; order: -1; flex-direction: row; height: 54px; font-size: 15px; }
+.cf-info { width: 100%; background: var(--surface); border-radius: 22px; box-shadow: inset 0 0 0 1px var(--line); text-align: start; overflow: hidden; }
+.cf-inforow { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); color: var(--text); text-decoration: none; }
+.cf-inforow:first-child { border-top: 0; }
+.cf-inforow b { display: block; font-size: 15px; }
+.cf-inforow b.ok { color: var(--success); }
+.cf-inforow small { color: var(--muted); font-size: 12px; }
+.cf-ii { width: 34px; height: 34px; border-radius: 10px; background: var(--surface-2); display: grid; place-items: center; flex: none; }
+.cf-nfcbubble { width: 54px; height: 54px; border-radius: 27px; background: var(--surface-raised); display: grid; place-items: center; color: var(--accent-text); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1); margin-top: 12px; }
+.cf-tap { margin: 4px 0 0; font-size: 20px; }
+.cf-tapsub { margin: 0; color: var(--muted); line-height: 22px; max-width: 320px; }
+
+/* backs */
+.cf-qr { background: #fff; border-radius: 26px; padding: 12px; margin: 16px 0 10px; line-height: 0; box-shadow: 0 0 0 1px var(--line); }
+.cf-qr svg { width: min(220px, 56vw); height: auto; }
+.cf-scan { font-size: 17px; }
+.cf-muted { color: var(--muted); font-size: 12px; }
+.cf-classic .cf-muted { color: #8d9196; }
+.cf-urlbox { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 52px; padding: 0 16px; border-radius: 16px; border: 0; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 6px; background: var(--field); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.cf-urlbox em { font-style: normal; color: var(--accent-text); }
+.cf-classic .cf-urlbox { background: #1d1e21; color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.cf-classic .cf-urlbox em { color: var(--gold-soft); }
+.cf-classic { color: #fff; }
+
+/* the card screen takes the style's background */
+.b-card-screen.cs-minimal { background: #f4f1ea; color: var(--text); }
+.b-card-screen.cs-bold, .b-card-screen.cs-wallet { background: var(--bg); color: var(--text); }
+.b-card-screen:not(.cs-classic) .b-dbtn { background: var(--surface-raised); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.b-card-screen:not(.cs-classic) .b-hint, .b-card-screen:not(.cs-classic) .b-powered { color: var(--muted); }
+.b-card-screen:not(.cs-classic) .b-powered img { filter: invert(1) brightness(0.3); }
+.b-card-screen.cs-bold .b-card-bar { position: relative; z-index: 1; }
+.b-card-screen.cs-bold .b-card-body { padding-top: 0; }
+.b-card-screen.cs-bold .b-card-bar .b-dbtn { background: rgba(255, 255, 255, 0.18); color: #fff; box-shadow: none; }
+.b-card-screen.cs-bold { --bar-bg: var(--card); }
+.b-card-screen.cs-bold .b-card-bar { background-color: var(--card); }
+.b-card-screen.cs-bold.flipped .b-card-bar { background: transparent; }
+.b-card-screen.cs-bold.flipped .b-card-bar .b-dbtn { background: var(--surface-raised); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+.b-card-screen.cs-bold .cf-bold-head { margin-top: 0; }
+
+/* The Minimal card is light paper in every theme: it brings its own palette */
+.cf-minimal, .b-card-screen.cs-minimal, .st-frame.cs-minimal, .st-thumb.minimal {
+  --text: #15171a; --muted: #4d5258; --line: rgba(20, 22, 26, 0.14); --accent-text: #7a5600;
+  --field: #ffffff; --surface-raised: #ffffff; --surface-2: #c6cacf;
+  color: var(--text);
+}
