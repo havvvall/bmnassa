@@ -1,0 +1,81 @@
+/* Smooth look (Oct 2026, from the "card first, smoother" business page):
+   panels and controls float on soft shadows instead of hairline outlines, with rounder corners
+   and a calmer background. Loaded last, so it refines every screen's own styles. */
+
+:root:not([data-theme="light"]):not([data-theme="dark"]) {
+  --bg: #dfe2e6;
+  --surface: #f6f7f9;
+  --surface-raised: #f6f7f9;
+  --surface-2: #e9ebee;
+  --line: rgba(20, 22, 26, 0.09);
+  --seg-on: #ffffff;
+  --skeleton: #d3d7dc;
+  --skeleton-shine: #e6e9ec;
+  --shadow-soft: 0 8px 24px rgba(20, 22, 26, 0.07);
+  --shadow-soft-sm: 0 4px 14px rgba(20, 22, 26, 0.07);
+}
+[data-theme="light"] {
+  --surface-2: #ececf1;
+  --line: rgba(0, 0, 0, 0.08);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-soft-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+[data-theme="dark"] {
+  --line: rgba(255, 255, 255, 0.08);
+  --shadow-soft: none;
+  --shadow-soft-sm: none;
+}
+
+/* panels and cards */
+.panel, .b-own, .b-result, .o-stat, .rv-item, .st-style, .sc-thumb, .w-plinks { box-shadow: var(--shadow-soft); }
+.panel { border-radius: 28px; background: var(--surface-raised); }
+.b-own { border-radius: 28px; background: var(--surface-raised); }
+.b-result { border-radius: 24px; background: var(--surface-raised); }
+.o-stat { border-radius: 22px; background: var(--surface-raised); }
+.rv-item { border-radius: 24px; background: var(--surface-raised); }
+.st-style { border-radius: 24px; background: var(--surface-raised); }
+.st-style.on { box-shadow: inset 0 0 0 2px var(--accent), var(--shadow-soft); }
+.o-tiles { gap: 10px; }
+.o-tiles button { border-radius: 22px; background: var(--surface-raised); box-shadow: var(--shadow-soft); }
+.o-tic { border-radius: 12px; }
+
+/* choices, fields and search */
+.choice { border-radius: 20px; background: var(--surface-raised); box-shadow: var(--shadow-soft-sm); }
+.choice[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent), var(--shadow-soft-sm); background: var(--surface-raised); }
+.field, .o-rowbtn { border-radius: 20px; box-shadow: var(--shadow-soft-sm); }
+[data-theme="dark"] .field, [data-theme="dark"] .o-rowbtn { box-shadow: inset 0 0 0 1px var(--line); }
+.field:focus-within { box-shadow: inset 0 0 0 2px var(--accent), var(--shadow-soft-sm); }
+.field.invalid { box-shadow: inset 0 0 0 2px var(--danger); }
+.o-times input { box-shadow: var(--shadow-soft-sm); border-radius: 14px; }
+.b-search { box-shadow: var(--shadow-soft-sm); }
+[data-theme="dark"] .b-search { box-shadow: inset 0 0 0 1px var(--line); }
+.b-search.input:focus-within { box-shadow: inset 0 0 0 2px var(--accent), var(--shadow-soft-sm); }
+
+input.field, textarea.field, select.field { border: 0; font: inherit; font-size: 16px; font-weight: 600; color: var(--text); }
+input.field, select.field { width: 100%; box-sizing: border-box; }
+
+/* round buttons, chips and options */
+.rbtn { background: var(--surface-raised); box-shadow: var(--shadow-soft-sm); width: 44px; height: 44px; border-radius: 22px; }
+[data-theme="dark"] .rbtn { box-shadow: inset 0 0 0 1px var(--line); }
+.b-chip:not(.on), .st-opt:not(.on) { background: var(--surface-raised); box-shadow: var(--shadow-soft-sm); }
+[data-theme="dark"] .b-chip:not(.on), [data-theme="dark"] .st-opt:not(.on) { box-shadow: inset 0 0 0 1px var(--line); }
+.b-chip.saved { background: var(--accent-soft); color: var(--accent-text); }
+.btn.ghost { background: var(--surface-raised); box-shadow: var(--shadow-soft-sm); }
+.btn.quiet { background: var(--surface-raised); box-shadow: var(--shadow-soft-sm); }
+[data-theme="dark"] .btn.ghost, [data-theme="dark"] .btn.quiet { box-shadow: inset 0 0 0 1px var(--line); }
+.seg { background: var(--surface-2); }
+.seg button[aria-pressed="true"] { box-shadow: var(--shadow-soft-sm); }
+
+/* category tiles on Home */
+.b-ic { background: var(--surface-raised); box-shadow: var(--shadow-soft-sm); border-radius: 22px; }
+.b-ic.sm { border-radius: 16px; }
+[data-theme="dark"] .b-ic { box-shadow: none; background: var(--surface); }
+
+/* the bottom bar floats without an outline */
+.b-nav { box-shadow: 0 14px 34px rgba(20, 22, 26, 0.16); }
+[data-theme="dark"] .b-nav { box-shadow: inset 0 0 0 1px var(--line); }
+.b-nav button.on { background: var(--surface-2); }
+
+/* status tags and banners stay soft, rows inside panels use lighter dividers */
+.row { border-top-color: var(--line); }
+.o-banner { border-radius: 24px; }
