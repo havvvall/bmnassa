@@ -2,7 +2,8 @@
 // The database decides what an owner may change; this page only shows and sends it.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./owner.css";
-import { walletSaves } from "../api.js";
+import { walletSaves, getDailyViews } from "../api.js";
+import { NfcCard, cardSettings } from "../card/CardFaces.jsx";
 import { t, cityName, pick, LANGS } from "../i18n.js";
 import {
   getMyBusiness, updateMyBusiness, getPrices, savePrices, getPhotos, addPhoto, removePhoto, photoUrl, getStats,
@@ -12,7 +13,6 @@ import { useLists, Toast, ok } from "../browse/Browse.jsx";
 import { SkelPage } from "../Skeleton.jsx";
 import { Icon } from "../browse/icons.jsx";
 import { DAYS, dayName, hoursLines, hasHours } from "../hours.js";
-import PageStyle from "./PageStyle.jsx";
 
 const initial = (s) => (String(s || "").trim().charAt(0) || "B").toUpperCase();
 const byId = (arr) => Object.fromEntries((arr || []).map((x) => [x.id, x]));
@@ -52,8 +52,10 @@ export function Dashboard({ lang, id, go }) {
   const [prices, setPrices] = useState(null);
   const [saves, setSaves] = useState(null);
   const [toast, setToast] = useToast();
+  const [days, setDays] = useState(null);
 
   useEffect(() => {
+    getDailyViews(id).then(setDays).catch(() => setDays([]));
     getStats(id).then(setStats).catch(() => setStats({ views: 0, calls: 0, whatsapp: 0 }));
     getPhotos(id, true).then((r) => setPhotos(r || [])).catch(() => setPhotos([]));
     getPrices(id, true).then((r) => setPrices(r || [])).catch(() => setPrices([]));
@@ -74,72 +76,89 @@ export function Dashboard({ lang, id, go }) {
     ["ck_card", !!b.card, "card"],
   ];
   const done = steps.filter((s) => s[1]).length;
-  const soon = () => setToast(t(lang, "soon_feature"));
+  const next = steps.find((x) => !x[1] && x[2]);
+  const live = b.status === "approved" && b.handle;
+  const peak = days ? Math.max(1, ...days.map((d) => d.views)) : 1;
+  const openStep = (part) => (part === "card" ? go(`/my/${b.id}/card`) : go(`/my/${b.id}/edit#${part}`));
+  const share = async () => {
+    const url = `${window.location.origin}/${b.handle}`;
+    try { if (navigator.share) await navigator.share({ title: pick(b, "name", lang), url }); else { await navigator.clipboard.writeText(url); setToast(ok(t(lang, "link_copied"))); } } catch { /* cancelled */ }
+  };
 
   return (
-    <div className="o-page">
-      <div className="o-head">
+    <div className="o-page db">
+      <div className="db-head">
         <Back lang={lang} onClick={() => go("/account")} />
-        <span className="o-av">{initial(pick(b, "name", lang))}</span>
         <div className="grow">
           <b><bdi>{pick(b, "name", lang)}</bdi></b>
-          <small>{[t(lang, "my_business_sub"), cityName(cat, lang), cityName(city, lang)].filter(Boolean).join(" · ")}</small>
+          <small>{[cityName(cat, lang), cityName(city, lang)].filter(Boolean).join(" · ")}</small>
         </div>
+        <span className={"db-status " + (b.status || "pending")}>{b.status === "approved" ? t(lang, "live") : t(lang, "st_" + (b.status || "pending"))}</span>
       </div>
 
-      {b.status === "approved" ? (
-        <button type="button" className="o-banner live" onClick={() => go("/" + b.handle)}>
-          <Icon name="check" size={20} />
-          <span className="grow"><b>{t(lang, "live_banner")}</b><small className="ltr">{window.location.host}/{b.handle}</small></span>
-          <span className="o-link">{t(lang, "open_my_page")}</span>
-        </button>
-      ) : b.status === "rejected" ? (
+      {b.status === "rejected" ? (
         <div className="o-banner red">
           <Icon name="flip" size={20} />
           <span className="grow"><b>{t(lang, "not_approved_banner")}</b><small>{b.rejection_reason ? `${t(lang, "reason")} ${b.rejection_reason} · ` : ""}{t(lang, "fix_and_save")}</small></span>
         </div>
-      ) : (
+      ) : b.status !== "approved" ? (
         <div className="o-banner wait">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+          <Icon name="clock" size={20} />
           <span className="grow"><b>{t(lang, "pending_approval")}</b><small>{t(lang, "team_will_call")}</small></span>
         </div>
-      )}
+      ) : null}
 
-      <div>
-        <div className="o-stats">
-          {[["views", "page_views"], ["calls", "call_taps"], ["whatsapp", "wa_taps"]].map(([k, label]) => (
-            <div key={k} className="o-stat"><b>{stats ? stats[k] : "…"}</b><small>{t(lang, label)}</small></div>
-          ))}
-        </div>
-        <p className="note" style={{ margin: "6px 4px 0" }}>{t(lang, "last_7_days")}{saves ? " · " + t(lang, "wallet_saves", { n: saves }) : ""}</p>
-      </div>
-
-      <div className="panel o-steps">
-        <div className="o-steps-head"><b>{t(lang, "complete_page")}</b><span>{t(lang, "n_of_6", { n: done })}</span></div>
-        <div className="o-bar"><span style={{ width: `${(done / 6) * 100}%` }} /></div>
-        {steps.map(([key, ok, part]) => (
-          <button key={key} type="button" className={"o-step" + (ok ? " ok" : "")} disabled={ok || !part}
-            onClick={() => (part === "card" ? go(`/my/${b.id}/card`) : go(`/my/${b.id}/edit#${part}`))}>
-            <span className="o-check">{ok ? <Icon name="check" size={13} stroke={3} /> : null}</span>
-            <span className="grow">{t(lang, key)}</span>
-            {!ok && part ? <Icon name="chevron" size={16} className="flip" /> : null}
-          </button>
-        ))}
-      </div>
-
-      <div className="o-tiles">
-        <button type="button" onClick={() => go(`/my/${b.id}/edit`)}><span className="o-tic"><Icon name="rows" size={18} /></span>{t(lang, "edit_page")}</button>
-        <button type="button" onClick={() => go(`/my/${b.id}/card`)}><span className="o-tic"><Icon name="palette" size={18} /></span>{t(lang, "card_studio")}</button>
-        {b.status === "approved" && b.handle ? (
-          <button type="button" onClick={() => go(`/${b.handle}/reviews`)}><span className="o-tic"><Icon name="star" size={18} /></span>{t(lang, "reviews_short")}
-            <em className="o-soon">{Number(b.reviews) ? `★ ${Number(b.rating || 0).toFixed(1)} · ${b.reviews}` : t(lang, "reviews_tile_sub")}</em></button>
+      <div className="db-card">
+        <button type="button" className="db-cardbtn" onClick={() => (live ? go(`/${b.handle}/card`) : go(`/my/${b.id}/card`))} aria-label={t(lang, "open_card")}>
+          <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cat} linksOnly />
+        </button>
+        {live ? (
+          <div className="db-cardacts">
+            <button type="button" onClick={() => go("/" + b.handle)}><Icon name="globe" size={16} /> {t(lang, "open_my_page")}</button>
+            <button type="button" onClick={share}><Icon name="share" size={16} /> {t(lang, "share")}</button>
+            <button type="button" onClick={() => go(`/my/${b.id}/card`)}><Icon name="palette" size={16} /> {t(lang, "card_colours_btn")}</button>
+          </div>
         ) : null}
-        <button type="button" onClick={() => go(`/my/${b.id}/nfc`)}><span className="o-tic"><Icon name="nfc" size={18} /></span>{t(lang, "order_nfc")}</button>
-        <button type="button" onClick={() => go("/wallet")}><span className="o-tic"><Icon name="wallet" size={18} /></span>{t(lang, "my_wallet")}</button>
+      </div>
+
+      <div className="db-bento">
+        <div className="db-hero">
+          <small>{t(lang, "last_7_days")}</small>
+          <b>{stats ? t(lang, "n_views", { n: stats.views }) : "…"}</b>
+          <span className="db-bars" aria-hidden="true">{(days || Array.from({ length: 7 }, () => ({ views: 0, day: "" }))).map((d, i) => <i key={i} style={{ height: Math.max(8, (d.views / peak) * 100) + "%" }} />)}</span>
+          <span className="db-days" aria-hidden="true">{(days || []).map((d, i) => <em key={i}>{d.day ? dayLetter(d.day, lang) : ""}</em>)}</span>
+        </div>
+        <div className="db-tile"><span className="db-ic call"><Icon name="phone" size={17} /></span><b>{stats ? stats.calls : "…"}</b><small>{t(lang, "call_taps")}</small></div>
+        <div className="db-tile"><span className="db-ic wa"><Icon name="whatsapp" size={17} /></span><b>{stats ? stats.whatsapp : "…"}</b><small>{t(lang, "wa_taps")}</small></div>
+        <div className="db-tile wide">
+          <span className="db-ic"><Icon name="wallet" size={17} /></span><span className="grow"><b className="sm">{t(lang, "wallet_saves", { n: saves || 0 })}</b></span>
+          {live ? <button type="button" className="db-rate" onClick={() => go(`/${b.handle}/reviews`)}><Icon name="star" size={14} className="db-star" /> {Number(b.reviews) ? `${Number(b.rating || 0).toFixed(1)} · ${b.reviews}` : t(lang, "reviews_short")}</button> : null}
+        </div>
+      </div>
+
+      {done < 6 ? (
+        <button type="button" className="db-steps" onClick={() => next && openStep(next[2])}>
+          <span className="db-ring" style={{ "--p": done / 6 }}><b>{done}/6</b></span>
+          <span className="grow"><b>{t(lang, "complete_page")}</b><small>{next ? t(lang, "next_step") + " " + t(lang, next[0]) : ""}</small></span>
+          <Icon name="chevron" size={18} className="flip" />
+        </button>
+      ) : null}
+
+      <div className="db-actions">
+        <button type="button" onClick={() => go(`/my/${b.id}/edit`)}><span className="db-aic"><Icon name="rows" size={20} /></span><b>{t(lang, "edit_page")}</b><small>{t(lang, "edit_page_sub")}</small></button>
+        <button type="button" onClick={() => go(`/my/${b.id}/card`)}><span className="db-aic"><Icon name="palette" size={20} /></span><b>{t(lang, "card_colours_btn")}</b><small>{t(lang, "card_colours_sub")}</small></button>
+        {live ? <button type="button" onClick={() => go(`/${b.handle}/reviews`)}><span className="db-aic"><Icon name="star" size={20} /></span><b>{t(lang, "reviews_short")}</b><small>{Number(b.reviews) ? `★ ${Number(b.rating || 0).toFixed(1)} · ${b.reviews}` : t(lang, "reviews_tile_sub")}</small></button> : null}
+        <button type="button" onClick={() => go(`/my/${b.id}/nfc`)}><span className="db-aic"><Icon name="nfc" size={20} /></span><b>{t(lang, "order_nfc")}</b><small>{t(lang, "order_nfc_sub")}</small></button>
       </div>
       <Toast text={toast} />
     </div>
   );
+}
+
+// "S" "S" "M"... one letter for each day under the chart
+function dayLetter(iso, lang) {
+  const d = new Date(iso + "T12:00:00");
+  try { return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : lang === "ar" ? "ar" : "ckb", { weekday: "narrow" }).format(d); } catch { return ""; }
 }
 
 export function Loading({ lang, err, reload, go }) {
@@ -501,12 +520,7 @@ export function EditPage({ lang, id, go }) {
         ) : null}
       </div>
 
-      <div className="seg" role="tablist">
-        <button type="button" role="tab" aria-pressed={view === "content"} onClick={() => setView("content")}>{t(lang, "content")}</button>
-        <button type="button" role="tab" aria-pressed={view === "style"} onClick={() => setView("style")}>{t(lang, "style")}</button>
-      </div>
-
-      {view === "style" ? <PageStyle lang={lang} b={b} setB={setB} setToast={setToast} /> : <>
+      {<>
 
       {photos ? <Photos lang={lang} bid={b.id} photos={photos} setPhotos={setPhotos} setToast={setToast} /> : null}
 

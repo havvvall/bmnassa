@@ -7,16 +7,9 @@ const RADIUS = { rounded: "16px", square: "6px", pill: "999px" };
 
 const hex = (v, d) => (/^#[0-9a-f]{6}$/i.test(v || "") ? v : d);
 
-export function pageSettings(b) {
-  const p = (b && b.page_style) || {};
-  return {
-    layout: p.layout === "grid" ? "grid" : "centred",
-    main: hex(p.main, "#e0a614"),
-    bg: hex(p.bg, ""),
-    bg_path: p.bg_path || "",
-    buttons: RADIUS[p.buttons] ? p.buttons : "pill",
-    same: !!p.same,
-  };
+// Every business page uses the standard Bmnassa look; older saved page styles are ignored, not deleted.
+export function pageSettings() {
+  return { layout: "centred", main: "#e0a614", bg: "", bg_path: "", buttons: "pill", same: false };
 }
 
 // Is a colour dark enough to need white text on it?

@@ -13,18 +13,21 @@ export const STYLES = ["classic", "minimal", "bold", "wallet"];
 export const LINK_KEYS = ["call", "whatsapp", "instagram", "facebook", "tiktok", "email", "website", "directions"];
 
 // The owner's choices with sensible defaults, so a business that never opened Card Studio still has a good card
+export const ICON_COLOURS = ["app", "match", "white", "gold"];
+// Every card uses the one standard Bmnassa design (Wallet style, carbon finish, all links in the same order).
+// The owner chooses only the card colour and the icon colour; older saved choices are ignored, not deleted.
 export function cardSettings(b) {
   const c = (b && b.card) || {};
   return {
-    style: STYLES.includes(c.style) ? c.style : "classic",
+    style: "wallet",
     color: /^#[0-9a-f]{6}$/i.test(c.color || "") ? c.color : "#1b2a4a",
-    background: ["solid", "carbon", "photo"].includes(c.background) ? c.background : "carbon",
-    bg_path: c.bg_path || "",
-    logo_path: c.logo_path || "",
-    icons: c.icons === "match" ? "match" : "app",
-    links: Array.isArray(c.links) ? c.links.filter((k) => LINK_KEYS.includes(k)) : null,
-    wide: ["directions", "call", "whatsapp", "none"].includes(c.wide) ? c.wide : "directions",
-    title: typeof c.title === "string" ? c.title : "",
+    background: "carbon",
+    bg_path: "",
+    logo_path: "",
+    icons: ICON_COLOURS.includes(c.icons) ? c.icons : "app",
+    links: null,
+    wide: "directions",
+    title: "",
   };
 }
 
@@ -102,8 +105,8 @@ export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
       </div>
       <div className="cf-nfc-icons">
         {links.map((l) => (linksOnly
-          ? <span key={l.key} className={"cf-ic " + (s.icons === "match" ? "match" : l.cls)}><Icon name={l.icon} size={small ? 13 : 16} /></span>
-          : <A key={l.key} l={l} b={b} className={"cf-ic " + (s.icons === "match" ? "match" : l.cls)} aria-label={l.label}><Icon name={l.icon} size={16} /></A>))}
+          ? <span key={l.key} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)}><Icon name={l.icon} size={small ? 13 : 16} /></span>
+          : <A key={l.key} l={l} b={b} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)} aria-label={l.label}><Icon name={l.icon} size={16} /></A>))}
       </div>
     </div>
   );
@@ -132,7 +135,7 @@ function LinkRows({ b, links, s, theme }) {
     <div className={"cf-rows " + theme}>
       {links.map((l) => (
         <A key={l.key} l={l} b={b} className="cf-row">
-          <span className={"cf-ic " + (s.icons === "match" ? "match" : l.cls)}><Icon name={l.icon} size={18} /></span>
+          <span className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)}><Icon name={l.icon} size={18} /></span>
           <span className="cf-grow"><b>{l.label}</b><small className={l.ltr ? "ltr" : ""}>{l.text}</small></span>
           <Icon name="chevron" size={16} className="flip" />
         </A>
@@ -179,7 +182,7 @@ export function CardFront({ b, s, lang, cat, city, onSaveContact, preview }) {
         <div className="cf-tiles">
           {links.map((l) => (
             <A key={l.key} l={l} b={b} className="cf-tile">
-              <span className={"cf-ic big " + (s.icons === "match" ? "match" : l.cls)}><Icon name={l.icon} size={20} /></span>
+              <span className={"cf-ic big " + (s.icons !== "app" ? s.icons : l.cls)}><Icon name={l.icon} size={20} /></span>
               <b>{l.label}</b>
             </A>
           ))}
