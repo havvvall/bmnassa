@@ -165,6 +165,12 @@ const T = {
 
   // new (slice 4)
   view_4: ["Large tiles", "خانەی گەورە", "مربعات كبيرة"],
+  n_open_now: ["{n} open now", "{n} ئێستا کراوەیە", "{n} مفتوح الآن"],
+  open_now_chip: ["Open now", "ئێستا کراوە", "مفتوح الآن"],
+  none_open_now: ["None of these are open right now. Turn off “Open now” to see them all.", "هیچیان ئێستا کراوە نین. «ئێستا کراوە» بکوژێنەوە بۆ بینینی هەموویان.", "لا شيء مفتوح الآن. ألغِ «مفتوح الآن» لرؤية الجميع."],
+  r_look: ["Results look", "شێوازی ئەنجامەکان", "شكل النتائج"],
+  r_rows: ["Card rows", "ڕیزی کارت", "صفوف البطاقات"],
+  r_cards: ["Card gallery", "پیشانگای کارت", "معرض البطاقات"],
   view_3: ["Small tiles", "خانەی بچووک", "مربعات صغيرة"],
   view_list: ["List", "لیست", "قائمة"],
   choose_city_title: ["Choose your city", "شارەکەت هەڵبژێرە", "اختر مدينتك"],

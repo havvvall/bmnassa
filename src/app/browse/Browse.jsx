@@ -425,6 +425,59 @@ function ResultTile({ b, lang, look, onOpen }) {
   );
 }
 
+// ---------- results: two looks the visitor can choose ----------
+const TINT_BY_CAT = (cats, id) => { const i = (cats || []).findIndex((c) => c.id === id); return TINTS[(i < 0 ? 0 : i) % TINTS.length]; };
+
+function OpenPill({ b, lang }) {
+  const st = openState(b.hours, lang);
+  return st ? <span className={"r-open" + (st.open ? " on" : "")}>{st.text}</span> : null;
+}
+function CallBtns({ b, lang, column }) {
+  return (
+    <span className={"r-acts" + (column ? " col" : "")}>
+      {b.phone ? <a className="r-cb call" href={`tel:${b.phone}`} onClick={(e) => { e.stopPropagation(); track(b.id, "call"); }} aria-label={t(lang, "call")}><Icon name="phone" size={17} /></a> : null}
+      {b.whatsapp || b.phone ? <a className="r-cb wa" href={waLink(b.whatsapp || b.phone)} target="_blank" rel="noreferrer" onClick={(e) => { e.stopPropagation(); track(b.id, "whatsapp"); }} aria-label={t(lang, "whatsapp")}><Icon name="whatsapp" size={17} /></a> : null}
+    </span>
+  );
+}
+
+// A · card rows: a small picture of the business's own card, then the details and Call / WhatsApp
+function ResultCardRow({ b, lang, look, onOpen }) {
+  const dist = areaOf(b, look);
+  const c = look.cat[b.category_id];
+  return (
+    <div className="r-row" role="button" tabIndex={0} onClick={onOpen} onKeyDown={(e) => { if (e.key === "Enter") onOpen(); }}>
+      <MiniCard b={b} cats={look.cat} lang={lang} w={96} />
+      <span className="grow">
+        <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
+        <small>{[dist && cityName(dist, lang), c && cityName(c, lang)].filter(Boolean).join(" · ")}</small>
+        <span className="r-line"><Rating b={b} lang={lang} compact /><OpenPill b={b} lang={lang} /></span>
+      </span>
+      <CallBtns b={b} lang={lang} column />
+    </div>
+  );
+}
+
+// B · card gallery: the full digital card, with the details, Save and Call under it
+function ResultCardBig({ b, lang, look, onOpen, go, setToast }) {
+  const dist = areaOf(b, look);
+  return (
+    <div className="r-big">
+      <button type="button" className="r-bigcard" onClick={onOpen} aria-label={pick(b, "name", lang)}>
+        <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={look.cat[b.category_id]} linksOnly />
+      </button>
+      <div className="r-bigrow">
+        <span className="grow">
+          <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
+          <span className="r-line"><Rating b={b} lang={lang} compact />{dist ? <small>{cityName(dist, lang)}</small> : null}<OpenPill b={b} lang={lang} /></span>
+        </span>
+        <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} className="r-save" iconOnly />
+        {b.phone ? <a className="r-cb call" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")} aria-label={t(lang, "call")}><Icon name="phone" size={17} /></a> : null}
+      </div>
+    </div>
+  );
+}
+
 const RES_VIEW_KEY = "bm_results_view";
 
 export function Results({ lang, city, setCity, go, back, signedIn, categoryId, search }) {
@@ -435,7 +488,11 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
   const [showFilters, setShowFilters] = useState(false);
   const [q, setQ] = useState(search || "");
   const [picking, setPicking] = useState(false);
-  const [view, setView] = useState(() => { try { return localStorage.getItem(RES_VIEW_KEY) || "list"; } catch { return "list"; } });
+  const [view, setView] = useState(() => {
+    try { const v = localStorage.getItem(RES_VIEW_KEY); return v === "cards" || v === "grid" ? "cards" : "rows"; } catch { return "rows"; }
+  });
+  const [openOnly, setOpenOnly] = useState(false);
+  const [toast, setToast] = useToast();
   const setV = (v) => { setView(v); try { localStorage.setItem(RES_VIEW_KEY, v); } catch { /* ignore */ } };
   const inputRef = useRef(null);
   useEffect(() => { if (search !== undefined && inputRef.current) inputRef.current.focus(); }, []);
@@ -457,22 +514,26 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
   }
   const areas = Array.from(new Set(list.map((b) => b.district_id).filter(Boolean)));
   if (area) list = list.filter((b) => b.district_id === area);
+  const total = list.length;
+  const openCount = list.filter((b) => { const st = openState(b.hours, lang); return st && st.open; }).length;
+  if (openOnly) list = list.filter((b) => { const st = openState(b.hours, lang); return st && st.open; });
   list = sortRows(list, sort);
 
   const cityRow = look.city[city];
   const title = isSearch ? t(lang, "search_title") : cityName(cat, lang);
   const catLabel = cityName(cat, lang);
   const open = (b) => go("/" + b.handle + "/card");
-  const empty = rows && !list.length;
+  const empty = rows && !list.length && !openOnly;
 
   return (
     <div className="b-page">
       <div className="b-top">
         <button type="button" className="rbtn" aria-label={t(lang, "back")} onClick={back}><Icon name="back" size={18} className="flip" /></button>
+        {!isSearch && cat ? <span className="r-tic b-ic sm h-tint" style={{ "--tint": TINT_BY_CAT(lists && lists.cats, categoryId) }}><Icon name={categoryIcon(cat)} size={22} /></span> : null}
         <div className="grow b-title">
           <b>{title}</b>
           <button type="button" className="b-citylink" onClick={() => setPicking(true)}>
-            {cityName(cityRow, lang)} · {rows ? bizCount(lang, list.length) : "…"}
+            {cityName(cityRow, lang)} · {rows ? bizCount(lang, total) : "…"}{rows && openCount && !isSearch ? " · " + t(lang, "n_open_now", { n: openCount }) : ""}
           </button>
         </div>
         {!isSearch ? <button type="button" className="rbtn" aria-label={t(lang, "search_title")} onClick={() => go("/search")}><Icon name="search" size={18} /></button> : null}
@@ -486,18 +547,20 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
       ) : null}
 
       {!empty || area ? (
-        <div className="b-chips">
+        <div className="r-chiprow">
+        <div className="b-chips r-chips">
           {areas.length > 1 || area ? (
             <button type="button" className={"b-chip" + (showFilters || area ? " on2" : "")} onClick={() => setShowFilters(!showFilters)}>
               <Icon name="filter" size={15} /> {t(lang, "filters")}
             </button>
           ) : null}
           <button type="button" className={"b-chip" + (sort === "top" ? " on" : "")} onClick={() => setSort("top")}>{t(lang, "top_rated")}</button>
+          <button type="button" className={"b-chip" + (openOnly ? " on" : "")} onClick={() => setOpenOnly((x) => !x)}>{t(lang, "open_now_chip")}</button>
           <button type="button" className={"b-chip" + (sort === "latest" ? " on" : "")} onClick={() => setSort("latest")}>{t(lang, "latest")}</button>
-          <span className="grow" />
-          <div className="b-views">
-            <button type="button" aria-pressed={view === "list"} aria-label={t(lang, "view_list")} onClick={() => setV("list")}><Icon name="rows" size={17} /></button>
-            <button type="button" aria-pressed={view === "grid"} aria-label={t(lang, "view_3")} onClick={() => setV("grid")}><Icon name="tiles9" size={17} /></button>
+        </div>
+          <div className="b-views r-views" role="group" aria-label={t(lang, "r_look")}>
+            <button type="button" aria-pressed={view === "rows"} aria-label={t(lang, "r_rows")} title={t(lang, "r_rows")} onClick={() => setV("rows")}><Icon name="rows" size={17} /></button>
+            <button type="button" aria-pressed={view === "cards"} aria-label={t(lang, "r_cards")} title={t(lang, "r_cards")} onClick={() => setV("cards")}><Icon name="contact" size={17} /></button>
           </div>
         </div>
       ) : null}
@@ -541,14 +604,17 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
             <button type="button" className="b-dark" onClick={() => go("/list")}>{t(lang, "list_it_free")}</button>
           </div>
         </>
-      ) : view === "grid" ? (
-        <div className="b-rgrid">{list.map((b, i) => <div key={b.id} className="bm-arrive" style={{ "--i": i }}><ResultTile b={b} lang={lang} look={look} onOpen={() => open(b)} /></div>)}</div>
+      ) : !list.length && openOnly ? (
+        <p className="note">{t(lang, "none_open_now")}</p>
+      ) : view === "cards" ? (
+        <div className="r-gallery">{list.map((b, i) => <div key={b.id} className="bm-arrive" style={{ "--i": i }}><ResultCardBig b={b} lang={lang} look={look} onOpen={() => open(b)} go={go} setToast={setToast} /></div>)}</div>
       ) : (
-        <div className="b-results">{list.map((b, i) => <div key={b.id} className="bm-arrive" style={{ "--i": i }}><ResultRow b={b} lang={lang} look={look} onOpen={() => open(b)} /></div>)}</div>
+        <div className="r-rows">{list.map((b, i) => <div key={b.id} className="bm-arrive" style={{ "--i": i }}><ResultCardRow b={b} lang={lang} look={look} onOpen={() => open(b)} /></div>)}</div>
       )}
 
       <div className="b-navspace" />
       <BottomNav lang={lang} active="home" go={go} signedIn={signedIn} />
+      <Toast text={toast} />
       {picking ? <CitySheet lang={lang} lists={lists} city={city} onClose={() => setPicking(false)} onPick={(id) => { setCity(id); setPicking(false); }} /> : null}
     </div>
   );
