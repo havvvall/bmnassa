@@ -291,14 +291,36 @@ function MapPin({ lang, lat, lng, cityId, onChange }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // "Use my location": a quick rough fix first (Wi-Fi / mobile network), then sharpen it with GPS
+  const [geo, setGeo] = useState("");
   const useMine = () => {
-    if (!navigator.geolocation || !map.current) return;
-    navigator.geolocation.getCurrentPosition((p) => {
+    if (!window.isSecureContext || !navigator.geolocation) { setGeo("fail"); return; }
+    if (!map.current) { setGeo("busy"); setTimeout(useMine, 600); return; }
+    setGeo("busy");
+    let got = false;
+    const put = (p) => {
       const ll = [p.coords.latitude, p.coords.longitude];
       map.current.m.setView(ll, 17);
       map.current.place(ll);
-    }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
+    };
+    const fail = (e) => {
+      if (got) return;
+      setGeo(e && e.code === 1 ? "denied" : e && e.code === 2 ? "off" : "fail");
+    };
+    navigator.geolocation.getCurrentPosition((p) => {
+      got = true;
+      put(p);
+      setGeo("refine");
+      navigator.geolocation.getCurrentPosition((q) => { if (q.coords.accuracy <= p.coords.accuracy) put(q); setGeo("done"); },
+        () => setGeo("done"), { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+    }, (e) => {
+      if (e && e.code === 1) { fail(e); return; }
+      // no quick fix: wait longer for GPS
+      navigator.geolocation.getCurrentPosition((q) => { got = true; put(q); setGeo("done"); }, fail,
+        { enableHighAccuracy: true, timeout: 25000, maximumAge: 0 });
+    }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 120000 });
   };
+  const geoNote = { busy: "geo_busy", refine: "geo_refine", denied: "geo_denied", off: "geo_off", fail: "geo_fail" }[geo];
 
   if (failed) return <p className="note">{t(lang, "load_failed")}</p>;
   return (
@@ -306,8 +328,9 @@ function MapPin({ lang, lat, lng, cityId, onChange }) {
       <div className="o-map" ref={box} />
       <div className="o-maprow">
         <span className="note">{lat && lng ? t(lang, "pin_set") : t(lang, "pin_tap")}</span>
-        <button type="button" className="b-chip" onClick={useMine}><Icon name="pin" size={15} /> {t(lang, "use_my_location")}</button>
+        <button type="button" className="b-chip" onClick={useMine} disabled={geo === "busy"} aria-busy={geo === "busy"}><Icon name="pin" size={15} /> {geo === "busy" ? t(lang, "geo_busy") : t(lang, "use_my_location")}</button>
       </div>
+      {geoNote && geo !== "busy" ? <p className={"note o-geonote" + (["denied", "off", "fail"].includes(geo) ? " warn" : "")} role="status">{t(lang, geoNote)}</p> : null}
     </>
   );
 }

@@ -134,3 +134,6 @@
 @keyframes nf-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .nf-check { animation: none; } }
 .nf-cancel { flex-basis: 100%; text-align: start; padding: 0; }
+.o-geonote { margin: 6px 2px 0; font-size: 13px; line-height: 18px; }
+.o-geonote.warn { color: #b42318; }
+[data-theme="dark"] .o-geonote.warn { color: #ff8a80; }
