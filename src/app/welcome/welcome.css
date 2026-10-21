@@ -69,3 +69,21 @@
 .wl-curve { fill: var(--wl-panel); }
 [data-theme="dark"] .wl-panel, [data-theme="dark"] .wl-curve { --wl-panel: var(--bg); }
 .wl-cities button { background: var(--bg); box-shadow: none; }
+
+/* the Kurdistan skyline: Slemani · Erbil · Kirkuk · Halabja · Duhok, sliding slowly and looping */
+.wl-sky { direction: ltr; position: absolute; left: 0; right: 0; bottom: 34px; height: 210px; overflow: hidden; pointer-events: none; z-index: 0; transition: opacity 500ms ease, bottom 620ms var(--ease-emphasized, ease); }
+.wl-pan { display: flex; width: max-content; height: 100%; animation: wl-pan 90s linear infinite; }
+.wl-pan img { height: 100%; width: auto; flex: none; display: block; user-select: none; }
+@keyframes wl-pan { to { transform: translateX(-50%); } }
+.wl-sky::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0e0e0f, transparent 8%, transparent 92%, #0e0e0f); }
+.wl-card { z-index: 1; }
+.wl-card.c2 { display: none; }
+.wl-card.c0 { transform: translate(-102%, -128%) rotate(-13deg); }
+.wl-card.c1 { transform: translate(4%, -112%) rotate(10deg); }
+.wl-card { width: 214px; }
+.step-city .wl-sky { opacity: 0.55; }
+@media (prefers-reduced-motion: reduce) { .wl-pan { animation: none; } }
+/* no round logo: the wordmark leads */
+.wl-word { height: 44px; margin-top: 0; }
+.wl-brand { transform: translateY(-10%); }
+.step-city .wl-brand { transform: translateY(-40%) scale(0.85); }

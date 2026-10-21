@@ -8,11 +8,15 @@ import { haptic } from "../motion.js";
 import "./welcome.css";
 
 // Sample cards for the stage (made-up businesses, never real ones)
-const SAMPLE = [
-  { contact_name: "Karwan Ahmed", name_en: "Azad Cooling", name_ku: "ساردکەرەوەی ئازاد", name_ar: "آزاد للتبريد", color: "#1b2a4a", role: ["AC & Refrigeration", "ساردکەرەوە", "تبريد وتكييف"] },
-  { contact_name: "Lana Kamal", name_en: "Lana Interiors", name_ku: "دیزاینی لانا", name_ar: "لانا للديكور", color: "#0f5c5c", role: ["Interior Designer", "دیزاینەری ناوەوە", "مصممة ديكور"] },
-  { contact_name: "Hemn Ali", name_en: "Hemn Plumbing", name_ku: "بۆڕیچی هێمن", name_ar: "هيمن للسباكة", color: "#5a1a26", role: ["Plumber", "بۆڕیچی", "سبّاك"] },
-].map((x, i) => ({ id: -(i + 1), handle: "x", phone: "+9647500000000", whatsapp: "+9647500000000", instagram: "x", email: "a@b.c", card: { style: "wallet", color: x.color }, ...x }));
+const SAMPLE = ["#1b2a4a", "#0f5c5c", "#5a1a26"].map((color, i) => ({
+  id: -(i + 1), handle: "x", phone: "+9647500000000", whatsapp: "+9647500000000", instagram: "x", email: "a@b.c",
+  card: { style: "wallet", color },
+}));
+const PLACEHOLDER = {
+  en: ["Your Name", "Your Business", "Your Profession"],
+  ku: ["ناوی تۆ", "بزنسەکەت", "پیشەکەت"],
+  ar: ["اسمك", "عملك", "مهنتك"],
+};
 const IDX = { en: 0, ku: 1, ar: 2 };
 
 export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
@@ -24,13 +28,22 @@ export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
     <div className={"wl step-" + step}>
       <div className="wl-stage" aria-hidden="true">
         <div className="wl-glow" />
-        {SAMPLE.map((b, i) => (
-          <div key={b.id} className={"wl-card c" + i}>
-            <div className="wl-float"><NfcCard b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: b.role[0], name_ku: b.role[1], name_ar: b.role[2] }} linksOnly /></div>
+        <div className="wl-sky">
+          <div className="wl-pan">
+            <img src="/brand/kurdistan-skyline.webp" alt="" draggable="false" />
+            <img src="/brand/kurdistan-skyline.webp" alt="" draggable="false" />
           </div>
-        ))}
+        </div>
+        {SAMPLE.map((c, i) => {
+          const [name, biz, job] = PLACEHOLDER[lang] || PLACEHOLDER.en;
+          const b = { ...c, contact_name: name, name_en: biz, name_ku: biz, name_ar: biz };
+          return (
+            <div key={b.id} className={"wl-card c" + i}>
+              <div className="wl-float"><NfcCard b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} linksOnly /></div>
+            </div>
+          );
+        })}
         <div className="wl-brand">
-          <span className="wl-mark"><img src="/brand/mark-ink.svg" alt="" /></span>
           <img className="wl-word" src="/brand/logo-silver.svg" alt="" />
           <span className="wl-tag">{t(lang, "tagline")}</span>
         </div>
