@@ -152,6 +152,12 @@ function WheelFace({ it, lang, cats, back }) {
   return back ? <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} back url={`${window.location.origin}/${b.handle}/card`} />
     : <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} linksOnly />;
 }
+// "Scanned" for paper cards, "NFC" for Bmnassa digital cards
+function TypeTag({ it, lang }) {
+  if (it.kind === "scanned") return <span className="w-type paper">{t(lang, "scanned_tag")}</span>;
+  if (it.businesses) return <span className="w-type nfc"><Icon name="nfc" size={11} />NFC</span>;
+  return null;
+}
 const canFlip = (it) => !!it.businesses || (it.kind === "scanned" && !!(it.data && it.data.back_path));
 
 // Turn a card over in place (front ⇄ back), with the same 3D flip as the card screen
@@ -195,7 +201,7 @@ function CardInfo({ it, lang, cats, go, onRemove, setToast, onFlip }) {
     <div className="wi">
       <div className="wi-head">
         <span className="grow"><b dir="auto">{itemName(it, lang)}</b>{sub ? <small dir="auto">{sub}</small> : null}</span>
-        {scanned ? <span className="w-badge paper">{t(lang, "scanned_tag")}</span> : null}
+        <TypeTag it={it} lang={lang} />
       </div>
       <div className="wi-quick">
         {call ? <a className="wi-btn gold" href={call.href} onClick={() => haptic(10)}><Icon name="phone" size={18} /> {t(lang, "call")}</a> : null}
@@ -551,7 +557,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
       </div>
       {cur ? (
         <div className="wb-bar" key={cur.id}>
-          <span className="grow"><b dir="auto">{itemName(cur, lang)}</b><small>{canFlip(cur) ? t(lang, "w_tap_flip") : b ? pick(b, "name", lang) : d0.company || ""}</small></span>
+          <span className="grow"><span className="wb-namerow"><b dir="auto">{itemName(cur, lang)}</b><TypeTag it={cur} lang={lang} /></span><small>{canFlip(cur) ? t(lang, "w_tap_flip") : b ? pick(b, "name", lang) : d0.company || ""}</small></span>
           {phone ? <a className="wb-btn gold" href={`tel:${phone}`} aria-label={t(lang, "call")} onClick={() => haptic(10)}><Icon name="phone" size={19} /></a> : null}
           {wa ? <a className="wb-btn wa" href={`https://wa.me/${digits(wa)}`} target="_blank" rel="noreferrer" aria-label={t(lang, "whatsapp")}><Icon name="whatsapp" size={19} /></a> : null}
           <button type="button" className="wb-btn" aria-label={t(lang, "w_details")} onClick={() => onDetails(cur)}><Icon name="more" size={19} /></button>

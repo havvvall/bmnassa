@@ -258,3 +258,17 @@
 
 .w-witem { scroll-snap-stop: always; }
 .wb-card { touch-action: pan-y; }
+/* card type tag beside the name */
+.wb-namerow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.wb-namerow b { min-width: 0; }
+.w-type { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; line-height: 1; white-space: nowrap; }
+.w-type.nfc { background: rgba(245, 195, 59, 0.16); color: #b8860b; box-shadow: inset 0 0 0 1px rgba(245, 195, 59, 0.45); }
+.w-type.paper { background: var(--surface-2); color: var(--muted); }
+.look-bmnassa .w-type.nfc, [data-theme="dark"] .w-type.nfc { color: #f5c33b; }
+.look-bmnassa .w-type.paper { background: rgba(255, 255, 255, 0.12); color: rgba(244, 245, 247, 0.8); }
+.wb-bar { gap: 6px; padding-inline-start: 16px; }
+[dir="rtl"] .wb-bar { padding: 8px 16px 8px 8px; }
+.wb-btn { width: 42px; height: 42px; border-radius: 21px; }
+.wb-bar b { font-size: 15px; }
+.wb-namerow { gap: 6px; }
+.wb-namerow .w-type { height: 18px; padding: 0 6px; font-size: 10px; }
