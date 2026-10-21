@@ -14,8 +14,8 @@ export const LINK_KEYS = ["call", "whatsapp", "instagram", "facebook", "tiktok",
 
 // The owner's choices with sensible defaults, so a business that never opened Card Studio still has a good card
 export const ICON_COLOURS = ["app", "match", "white", "gold"];
-// Every card uses the one standard Bmnassa design (Wallet style, carbon finish, all links in the same order).
-// The owner chooses only the card colour and the icon colour; older saved choices are ignored, not deleted.
+// Every card uses the one standard Bmnassa design (Monogram: matte colour, faint Bmnassa mark, all links in the same order).
+// The owner chooses the card colour, the icon colour and the company logo; older style choices are ignored, not deleted.
 export function cardSettings(b) {
   const c = (b && b.card) || {};
   return {
@@ -23,7 +23,7 @@ export function cardSettings(b) {
     color: /^#[0-9a-f]{6}$/i.test(c.color || "") ? c.color : "#1b2a4a",
     background: "carbon",
     bg_path: "",
-    logo_path: "",
+    logo_path: c.logo_path || "",
     icons: ICON_COLOURS.includes(c.icons) ? c.icons : "app",
     links: null,
     wide: "directions",
@@ -77,39 +77,57 @@ export const surface = (s) => ({
 });
 export const surfaceClass = (s) => "cf-surface " + (s.background === "photo" && s.bg_path ? "photo" : s.background === "solid" ? "solid" : "carbon");
 
-// The NFC card itself, as it looks in a wallet (Wallet card style, the business page and Card Studio)
+// The company logo, or the first letter of the business on a gold tile when there is no logo yet
+export function CardLogo({ b, s, lang, className = "" }) {
+  const letter = (String(pick(b, "name", lang) || b.contact_name || "B").trim().charAt(0) || "B").toUpperCase();
+  return s.logo_path
+    ? <span className={"cf-logo has-img " + className}><img src={photoUrl(s.logo_path)} alt="" /></span>
+    : <span className={"cf-logo " + className} aria-hidden="true"><span>{letter}</span></span>;
+}
+
+// The standard Bmnassa card · Monogram: matte colour, a faint Bmnassa mark, logo top-left, name, round icons, wordmark
 export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
   const person = b.contact_name || pick(b, "name", lang);
   const links = cardLinks(b, lang, s).filter((l) => l.key !== "directions").slice(0, 5);
+  const shell = (cls, children) => (
+    <div className={"cf-nfc mono" + cls + (small ? " small" : "")} style={{ "--card": s.color }}>
+      <i className="cf-grain" aria-hidden="true" />
+      <img className="cf-mono-mark" src="/brand/mark-ink.svg" alt="" aria-hidden="true" />
+      {children}
+    </div>
+  );
   if (back) {
-    return (
-      <div className={surfaceClass(s) + " cf-nfc back" + (small ? " small" : "")} style={surface(s)}>
+    return shell(" back", (
+      <>
         <div className="cf-nfc-qr"><QR text={url} /></div>
         <div className="cf-nfc-backtext">
+          <CardLogo b={b} s={s} lang={lang} className="sm" />
           <small>{t(lang, "scan_or_tap")}</small>
           <b className="ltr">{window.location.host}/<br />{b.handle}</b>
-          <Icon name="nfc" size={20} />
         </div>
-      </div>
-    );
+      </>
+    ));
   }
-  return (
-    <div className={surfaceClass(s) + " cf-nfc" + (small ? " small" : "")} style={surface(s)}>
+  return shell("", (
+    <>
       <div className="cf-nfc-top">
-        {s.logo_path ? <img className="cf-nfc-logo" src={photoUrl(s.logo_path)} alt="" /> : <img className="cf-nfc-brand" src="/brand/logo-silver.svg" alt="Bmnassa" />}
-        <span className="cf-nfc-sign"><Icon name="nfc" size={18} /></span>
+        <CardLogo b={b} s={s} lang={lang} />
+        <span className="cf-nfc-sign"><Icon name="nfc" size={small ? 16 : 19} /></span>
       </div>
       <div className="cf-nfc-name">
         <b><bdi>{person}</bdi></b>
         <small>{cardRole(b, cat, lang, s)}</small>
       </div>
-      <div className="cf-nfc-icons">
-        {links.map((l) => (linksOnly
-          ? <span key={l.key} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)}><Icon name={l.icon} size={small ? 13 : 16} /></span>
-          : <A key={l.key} l={l} b={b} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)} aria-label={l.label}><Icon name={l.icon} size={16} /></A>))}
+      <div className="cf-mono-foot">
+        <img className="cf-mono-word" src="/brand/logo-silver.svg" alt="Bmnassa" />
+        <span className="cf-nfc-icons">
+          {links.slice(0, 4).map((l) => (linksOnly
+            ? <span key={l.key} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)}><Icon name={l.icon} size={small ? 13 : 15} /></span>
+            : <A key={l.key} l={l} b={b} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)} aria-label={l.label}><Icon name={l.icon} size={15} /></A>))}
+        </span>
       </div>
-    </div>
-  );
+    </>
+  ));
 }
 
 export function QR({ text }) {

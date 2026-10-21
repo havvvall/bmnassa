@@ -10,7 +10,7 @@ import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
-import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
+import { CardFront, CardBack, NfcCard, cardSettings, CardLogo } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
@@ -840,6 +840,39 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const [prices, setPrices] = useState([]);
   const [tab, setTab] = useState("about");
   const refs = useRef({});
+  // the card sits on top; scrolling tilts it away and a slim header with the logo takes over
+  const coverRef = useRef(null);
+  const faceRef = useRef(null);
+  const [mini, setMini] = useState(false);
+  const [flipped, setFlipped] = useState(false);
+  const turning = useRef(false);
+  const swipe = useRef(null);
+  useEffect(() => {
+    if (!b) return undefined;
+    let raf = 0;
+    const paint = () => {
+      const el = coverRef.current;
+      if (!el) return;
+      const y = window.scrollY;
+      const h = el.offsetHeight || 220;
+      const p = Math.min(1, Math.max(0, y / (h * 0.95)));
+      if (!calm()) {
+        el.style.transform = `translateY(${y * 0.32}px) perspective(900px) rotateX(${p * 16}deg) scale(${1 - p * 0.14})`;
+        el.style.opacity = String(Math.max(0, 1 - p * 1.3));
+      }
+      setMini(y > el.offsetTop + h * 0.72);
+    };
+    const on = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(paint); };
+    window.addEventListener("scroll", on, { passive: true });
+    paint();
+    return () => { window.removeEventListener("scroll", on); cancelAnimationFrame(raf); };
+  }, [b && b.id]);
+  const flip = (dir = 1) => {
+    if (turning.current || !faceRef.current) return;
+    turning.current = true;
+    haptic(10);
+    flipCard(faceRef.current, { dir, swap: () => setFlipped((f) => !f), done: () => { turning.current = false; } });
+  };
   useEffect(() => {
     if (!b || !b.id) return;
     track(b.id, "view");
@@ -913,10 +946,23 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
         <button type="button" className="bz-glass" aria-label={t(lang, "share")} onClick={() => shareOrCopy(url, pick(b, "name", lang), setToast, lang)}><Icon name="share" size={19} /></button>
       </div>
 
-      <button type="button" className="bz-cover" onClick={() => go("/" + b.handle + "/card")} aria-label={t(lang, "share_card")}>
-        <NfcCard b={b} s={cs} lang={lang} cat={cat} linksOnly />
-      </button>
-      <p className="bz-hint">{t(lang, "bz_card_hint")}</p>
+      <div className="bz-coverwrap" ref={coverRef}>
+        <button type="button" className="bz-cover" onClick={() => flip(1)} aria-label={t(lang, "flip")}
+          onTouchStart={(e) => { const q = e.touches[0]; swipe.current = { x: q.clientX, y: q.clientY }; }}
+          onTouchEnd={(e) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const q = e.changedTouches[0]; const dx = q.clientX - s0.x; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(q.clientY - s0.y) * 1.3) { e.preventDefault(); flip(dx > 0 ? 1 : -1); } }}>
+          <div ref={faceRef} className="bz-face">
+            <NfcCard b={b} s={cs} lang={lang} cat={cat} linksOnly back={flipped} url={url} />
+          </div>
+        </button>
+      </div>
+      <p className="bz-hint">{t(lang, "tap_to_flip")}</p>
+
+      <div className={"bz-mini" + (mini ? " on" : "")} aria-hidden={!mini}>
+        <button type="button" className="bz-mback" aria-label={t(lang, "back")} onClick={exit}><Icon name="back" size={18} className="flip" /></button>
+        <CardLogo b={b} s={cs} lang={lang} className="bz-mlogo" />
+        <span className="grow"><b><bdi>{b.contact_name || pick(b, "name", lang)}</bdi></b><small><bdi>{pick(b, "name", lang)}</bdi></small></span>
+        {b.phone ? <a className="bz-mcall" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")} aria-label={t(lang, "call")}><Icon name="phone" size={18} /></a> : null}
+      </div>
 
       <div className="bz-head">
         <h1><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</h1>

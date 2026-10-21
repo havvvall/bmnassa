@@ -130,7 +130,7 @@ export default function Studio({ lang, id, go }) {
   const publish = async () => {
     setBusy("publish");
     try {
-      const card = { ...(b.card || {}), style: "wallet", color: s.color, icons: s.icons };
+      const card = { ...(b.card || {}), style: "mono", color: s.color, icons: s.icons, logo_path: s.logo_path || "" };
       const row = await updateMyBusiness(b.id, { card, contact_name: name.trim() || null });
       setB(row);
       setToast(ok(t(lang, "published")));
@@ -159,6 +159,17 @@ export default function Studio({ lang, id, go }) {
       <p className="note st-std">{t(lang, "standard_note")}</p>
 
       <section className="o-sec">
+        <span className="label">{t(lang, "company_logo")}</span>
+        <div className="st-logo">
+          {s.logo_path ? <img src={photoUrl(s.logo_path)} alt="" /> : <span className="st-logo-empty"><Icon name="image" size={22} /></span>}
+          <button type="button" className="b-chip" disabled={busy === "logo"} onClick={() => logoInput.current && logoInput.current.click()}>
+            {busy === "logo" ? t(lang, "uploading") : s.logo_path ? t(lang, "change_photo") : t(lang, "add_logo")}
+          </button>
+          {s.logo_path ? <button type="button" className="link" onClick={() => set("logo_path", "")}>{t(lang, "remove")}</button> : null}
+          <input ref={logoInput} type="file" accept="image/*" hidden onChange={(e) => { upload(e.target.files && e.target.files[0], "logo"); e.target.value = ""; }} />
+        </div>
+        <p className="note">{t(lang, "logo_hint")}</p>
+
         <span className="label">{t(lang, "name_on_card")}</span>
         <div className="field"><input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} placeholder={pick(b, "name", lang)} /></div>
 

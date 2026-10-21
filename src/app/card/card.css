@@ -160,3 +160,32 @@
 .st-icon b { font-size: 14px; }
 .st-icprev { display: flex; gap: 5px; padding: 8px; border-radius: 12px; background: var(--card); }
 .st-icprev .cf-ic { width: 26px; height: 26px; border-radius: 8px; }
+
+/* ===== the standard card · Monogram (matte) ===== */
+.cf-nfc.mono { position: relative; overflow: hidden; isolation: isolate; padding: 20px 20px 18px;
+  background-color: var(--card);
+  background-image: linear-gradient(160deg, color-mix(in srgb, var(--card) 90%, #ffffff 7%) 0%, var(--card) 45%, color-mix(in srgb, var(--card) 74%, #000000) 100%);
+  box-shadow: 0 14px 30px rgba(18, 18, 18, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.07); }
+/* matte: fine grain, no shine */
+.cf-grain { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.32; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.cf-mono-mark { position: absolute; z-index: -1; inset-inline-end: -6%; top: -8%; height: 118%; opacity: 0.06; filter: brightness(0) invert(1); pointer-events: none; }
+[dir="rtl"] .cf-mono-mark { transform: scaleX(-1); }
+.cf-logo { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none; overflow: hidden;
+  background: linear-gradient(135deg, #f3d27a, #c9962e); color: #15171a; font-weight: 800; font-size: 19px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.2); }
+.cf-logo.has-img { background: #fff; }
+.cf-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cf-logo.sm { width: 34px; height: 34px; border-radius: 10px; font-size: 16px; }
+.cf-nfc.mono .cf-nfc-name { margin-top: auto; margin-bottom: 2px; }
+.cf-nfc.mono .cf-nfc-name b { font-size: 25px; line-height: 30px; letter-spacing: -0.02em; }
+.cf-nfc.mono .cf-nfc-name small { opacity: 0.72; }
+.cf-mono-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 12px; }
+.cf-mono-word { height: 13px; opacity: 0.55; margin-bottom: 4px; }
+.cf-nfc.mono .cf-nfc-icons { margin-top: 0; gap: 6px; }
+.cf-nfc.mono .cf-nfc-icons .cf-ic { width: 30px; height: 30px; border-radius: 15px; }
+.cf-nfc.mono.small { padding: 14px 16px; }
+.cf-nfc.mono.small .cf-logo { width: 32px; height: 32px; border-radius: 9px; font-size: 15px; }
+.cf-nfc.mono.small .cf-nfc-name b { font-size: 19px; line-height: 23px; }
+.cf-nfc.mono.small .cf-nfc-icons .cf-ic { width: 25px; height: 25px; }
+.cf-nfc.mono.small .cf-mono-word { height: 11px; }
+.cf-nfc.mono.back .cf-nfc-backtext { gap: 8px; }

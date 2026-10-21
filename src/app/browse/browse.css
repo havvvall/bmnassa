@@ -372,3 +372,20 @@ a.b-chip { text-decoration: none; }
 .b-top .b-title b { font-size: 22px; line-height: 26px; }
 .r-bigrow > .grow, .r-row > .grow { flex: 1 1 auto; }
 .r-big { width: 100%; }
+
+/* business page: the card on top tilts away while scrolling; a slim header with the logo takes over */
+.bz-coverwrap { margin-top: 20px; transform-origin: 50% 0; will-change: transform, opacity; position: relative; z-index: 0; }
+.bz-coverwrap .bz-cover { margin-top: 0; }
+.bz-face { border-radius: 22px; }
+.bz-mini { position: fixed; top: 0; left: 50%; width: min(480px, 100vw); transform: translate(-50%, -110%); z-index: 20; display: flex; align-items: center; gap: 10px;
+  padding: max(10px, env(safe-area-inset-top)) 16px 10px; background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 var(--line), 0 10px 24px rgba(20, 22, 26, 0.08); transition: transform 320ms var(--ease-emphasized), opacity 220ms ease; opacity: 0; pointer-events: none; }
+.bz-mini.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.bz-mini .grow { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.bz-mini b { font-size: 15px; line-height: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bz-mini small { font-size: 12px; color: var(--muted); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bz-mback { width: 36px; height: 36px; border-radius: 18px; border: 0; background: var(--surface-raised); color: var(--text); display: grid; place-items: center; cursor: pointer; flex: none; }
+.bz-mlogo { width: 38px; height: 38px; border-radius: 11px; font-size: 17px; }
+.bz-mcall { width: 42px; height: 42px; border-radius: 21px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; flex: none; }
+.bz-tabs { top: calc(max(10px, env(safe-area-inset-top)) + 64px); }
+@media (prefers-reduced-motion: reduce) { .bz-mini { transition: none; } }
