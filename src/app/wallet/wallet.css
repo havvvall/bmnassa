@@ -257,3 +257,4 @@
 .wb-sumbtns button { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 .w-witem { scroll-snap-stop: always; }
+.wb-card { touch-action: pan-y; }

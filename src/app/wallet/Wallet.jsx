@@ -483,7 +483,23 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
     centre(i, false);
     paint();
   }, [items.length, box.h]);
+  // swipe the front card left or right to flip it, turning the way the finger moves
+  const sw = useRef(null);
+  const swiped = useRef(false);
+  const sStart = (e) => { const p = e.touches[0]; sw.current = { x: p.clientX, y: p.clientY }; };
+  const sEnd = (it, i) => (e) => {
+    const t0 = sw.current; sw.current = null;
+    if (!t0 || i !== active || !canFlip(it)) return;
+    const p = e.changedTouches[0];
+    const dx = p.clientX - t0.x, dy = p.clientY - t0.y;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+      const rtl = document.documentElement.dir === "rtl";
+      swiped.current = true;
+      flip(faces.current[it.id], (dx > 0 ? 1 : -1) * (rtl ? -1 : 1));
+    }
+  };
   const tap = (it, i) => {
+    if (swiped.current) { swiped.current = false; return; }
     if (i !== active) { haptic(8); centre(i); return; }
     if (canFlip(it)) flip(faces.current[it.id]);
   };
@@ -519,7 +535,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
           <div style={{ height: `calc(50% - ${STEP / 2}px)` }} />
           {items.map((it, i) => (
             <div key={it.id} className="wb-item" style={{ height: STEP }} ref={(el) => { els.current[it.id] = el; }}>
-              <button type="button" className="wb-card" aria-label={itemName(it, lang)} onClick={() => tap(it, i)}>
+              <button type="button" className="wb-card" aria-label={itemName(it, lang)} onClick={() => tap(it, i)} onTouchStart={sStart} onTouchEnd={sEnd(it, i)}>
                 <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}><WheelFace it={it} lang={lang} cats={cats} back={i === active && back} /></div>
                 {it.kind !== "scanned" ? <span className="ws-name wb-name" dir="auto">{itemName(it, lang)}</span> : null}
               </button>
