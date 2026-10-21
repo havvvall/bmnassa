@@ -441,7 +441,8 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
   }, []);
   const CW = Math.min(400, box.w * 0.84);
   const H = CW / 1.586;
-  const STEP = 58;
+  const STEP = 120; // finger travel per card (slower, calmer scrolling)
+  const GAP = 58; // how far apart the cards look
   const paint = () => {
     const sc = scroller.current;
     if (!sc) return;
@@ -457,7 +458,8 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
       const card = el.firstElementChild;
       if (card) {
         // above: lean back and tuck behind; below: drop under the chosen card so each top edge shows
-        const ty = d < 0 ? -near * 14 - Math.max(0, a - 1) * 8 : near * (H * 0.5 + 46) + Math.max(0, a - 1) * 6;
+        const pull = -d * (STEP - GAP); // draw the cards closer together than the scroll distance
+        const ty = pull + (d < 0 ? -near * 14 - Math.max(0, a - 1) * 8 : near * (H * 0.5 + 46) + Math.max(0, a - 1) * 6);
         const rx = calm() ? 0 : d < 0 ? Math.min(a, 2) * 20 : -Math.min(a, 1.5) * 9;
         const sc0 = 1 + (1 - near) * 0.04 - a * 0.055;
         card.style.transform = `translateY(${ty}px) perspective(900px) translateZ(${-a * 50}px) rotateX(${rx}deg) scale(${sc0})`;
