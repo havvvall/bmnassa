@@ -350,6 +350,9 @@ const T = {
   // wallet looks (new, needs a native-speaker check)
   w_short: ["Wallet", "جزدان", "المحفظة"],
   w_flip: ["Flip card", "کارتەکە هەڵگەڕێنەوە", "اقلب البطاقة"],
+  w_bmnassa: ["Bmnassa", "بمناسە", "بمناسة"],
+  w_tap_flip: ["Tap the card to flip it", "دەست لە کارتەکە بدە بۆ هەڵگەڕاندنەوە", "انقر على البطاقة لقلبها"],
+  w_details: ["Details", "وردەکاری", "التفاصيل"],
   w_style: ["Wallet style", "شێوازی جزدان", "شكل المحفظة"],
   w_stack: ["Stack", "کۆمەڵە", "كومة"],
   w_wheel: ["Wheel", "چەرخ", "عجلة"],

@@ -417,6 +417,132 @@ function DeckLook({ items, lang, cats, go, onRemove, setToast, startId }) {
   );
 }
 
+// ---------- look · Bmnassa (default): a dark stage, the chosen card floats in a gold ring ----------
+function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
+  const stage = useRef(null);
+  const scroller = useRef(null);
+  const els = useRef({});
+  const faces = useRef({});
+  const [box, setBox] = useState({ w: 350, h: 470 });
+  const [active, setActive] = useState(0);
+  const act = useRef(-1);
+  const cur = items[Math.min(active, items.length - 1)];
+  const [back, flip] = useFlip(cur && cur.id);
+  useLayoutEffect(() => {
+    const m = () => {
+      const el = stage.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      setBox({ w: el.clientWidth, h: Math.max(380, window.innerHeight - top - 172) });
+    };
+    m();
+    window.addEventListener("resize", m);
+    return () => window.removeEventListener("resize", m);
+  }, []);
+  const CW = Math.min(400, box.w * 0.84);
+  const H = CW / 1.586;
+  const STEP = 58;
+  const paint = () => {
+    const sc = scroller.current;
+    if (!sc) return;
+    const mid = sc.getBoundingClientRect().top + sc.clientHeight / 2;
+    let best = 0, bd = Infinity;
+    items.forEach((it, i) => {
+      const el = els.current[it.id];
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const d = (r.top + r.height / 2 - mid) / STEP;
+      const a = Math.min(Math.abs(d), 4);
+      const near = Math.min(a, 1);
+      const card = el.firstElementChild;
+      if (card) {
+        // above: lean back and tuck behind; below: drop under the chosen card so each top edge shows
+        const ty = d < 0 ? -near * 14 - Math.max(0, a - 1) * 8 : near * (H * 0.5 + 46) + Math.max(0, a - 1) * 6;
+        const rx = calm() ? 0 : d < 0 ? Math.min(a, 2) * 20 : -Math.min(a, 1.5) * 9;
+        const sc0 = 1 + (1 - near) * 0.04 - a * 0.055;
+        card.style.transform = `translateY(${ty}px) perspective(900px) translateZ(${-a * 50}px) rotateX(${rx}deg) scale(${sc0})`;
+        card.style.setProperty("--dim", String(d < 0 ? Math.min(0.62, a * 0.24) : Math.min(0.4, a * 0.1)));
+        el.style.zIndex = a < 0.5 ? "200" : String(d < 0 ? 100 - Math.round(a * 10) : 60 + Math.round(a * 10));
+        card.classList.toggle("on", a < 0.5);
+      }
+      if (Math.abs(d) < bd) { bd = Math.abs(d); best = i; }
+    });
+    if (best !== act.current) { if (act.current !== -1) haptic(4); act.current = best; setActive(best); }
+  };
+  const raf = useRef(0);
+  const onScroll = () => { cancelAnimationFrame(raf.current); raf.current = requestAnimationFrame(paint); };
+  const centre = (i, smooth = true) => {
+    const sc = scroller.current, el = items[i] && els.current[items[i].id];
+    if (!sc || !el) return;
+    sc.scrollTo({ top: el.offsetTop - (sc.clientHeight - STEP) / 2, behavior: smooth && !calm() ? "smooth" : "auto" });
+  };
+  useLayoutEffect(() => {
+    const i = Math.max(0, items.findIndex((x) => x.id === startId));
+    centre(i, false);
+    paint();
+  }, [items.length, box.h]);
+  const tap = (it, i) => {
+    if (i !== active) { haptic(8); centre(i); return; }
+    if (canFlip(it)) flip(faces.current[it.id]);
+  };
+  // the chosen card's quick buttons
+  const b = cur && cur.businesses;
+  const d0 = (cur && cur.data) || {};
+  const digits = (x) => String(x || "").replace(/[^\d]/g, "");
+  const phone = b ? b.phone : d0.phone;
+  const wa = b ? b.whatsapp || b.phone : d0.whatsapp || d0.phone;
+  const n = items.length;
+  return (
+    <div className="wb">
+      <div className="wb-sum">
+        <small>{t(lang, "wallet_title")}</small>
+        <b>{n === 1 ? t(lang, "wallet_one") : t(lang, "wallet_cards", { n })}</b>
+        <div className="wb-sumbtns">
+          <button type="button" onClick={onScan}><Icon name="scan" size={15} /> {t(lang, "scan_paper")}</button>
+          <button type="button" onClick={() => go("/home")}><Icon name="search" size={15} /> {t(lang, "find_business")}</button>
+        </div>
+      </div>
+      <div className="wb-stage" ref={stage} style={{ height: box.h, "--cw": CW + "px", "--ch": H + "px" }}>
+        <div className="wb-glow" aria-hidden="true" />
+        <svg className="wb-ring" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ width: CW + 26, height: H + 30 }}>
+          <defs>
+            <linearGradient id="wbg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#f5c33b" stopOpacity="0" /><stop offset="0.35" stopColor="#f5c33b" /><stop offset="0.65" stopColor="#ffe9a8" /><stop offset="1" stopColor="#f5c33b" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="98" height="98" rx="9" ry="14" fill="none" stroke="url(#wbg)" strokeWidth="0.7" vectorEffect="non-scaling-stroke" pathLength="100" className="wb-ring-a" />
+          <rect x="1" y="1" width="98" height="98" rx="9" ry="14" fill="none" stroke="url(#wbg)" strokeWidth="0.7" vectorEffect="non-scaling-stroke" pathLength="100" className="wb-ring-b" />
+        </svg>
+        <div className="wb-scroll" ref={scroller} onScroll={onScroll}>
+          <div style={{ height: `calc(50% - ${STEP / 2}px)` }} />
+          {items.map((it, i) => (
+            <div key={it.id} className="wb-item" style={{ height: STEP }} ref={(el) => { els.current[it.id] = el; }}>
+              <button type="button" className="wb-card" aria-label={itemName(it, lang)} onClick={() => tap(it, i)}>
+                <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}><WheelFace it={it} lang={lang} cats={cats} back={i === active && back} /></div>
+                {it.kind !== "scanned" ? <span className="ws-name wb-name" dir="auto">{itemName(it, lang)}</span> : null}
+              </button>
+            </div>
+          ))}
+          <div style={{ height: `calc(50% - ${STEP / 2}px)` }} />
+        </div>
+        {n > 1 ? (
+          <div className="wb-dots" aria-hidden="true">
+            {items.slice(0, 9).map((x, i) => <i key={x.id} className={i === Math.min(active, 8) ? "on" : ""} />)}
+          </div>
+        ) : null}
+      </div>
+      {cur ? (
+        <div className="wb-bar" key={cur.id}>
+          <span className="grow"><b dir="auto">{itemName(cur, lang)}</b><small>{canFlip(cur) ? t(lang, "w_tap_flip") : b ? pick(b, "name", lang) : d0.company || ""}</small></span>
+          {phone ? <a className="wb-btn gold" href={`tel:${phone}`} aria-label={t(lang, "call")} onClick={() => haptic(10)}><Icon name="phone" size={19} /></a> : null}
+          {wa ? <a className="wb-btn wa" href={`https://wa.me/${digits(wa)}`} target="_blank" rel="noreferrer" aria-label={t(lang, "whatsapp")}><Icon name="whatsapp" size={19} /></a> : null}
+          <button type="button" className="wb-btn" aria-label={t(lang, "w_details")} onClick={() => onDetails(cur)}><Icon name="more" size={19} /></button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function Sheet({ lang, title, onClose, children }) {
   return (
     <div className="b-sheet-wrap" onClick={onClose}>
@@ -444,9 +570,9 @@ export function WalletPage({ lang, go, signedIn }) {
   const [detail, setDetail] = useState(null);
   const [look, setLookState] = useState(() => {
     const q0 = new URLSearchParams(window.location.search).get("look");
-    return ["stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look", "stack");
+    return ["bmnassa", "stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look2", "bmnassa");
   });
-  const setLook = (v) => { setLookState(v); store.set("bm_wallet_look", v); setSheet(""); };
+  const setLook = (v) => { setLookState(v); store.set("bm_wallet_look2", v); setSheet(""); };
 
   const load = () => {
     setErr(false);
@@ -559,7 +685,7 @@ export function WalletPage({ lang, go, signedIn }) {
 
   const n = (rows || []).length;
   return (
-    <div className="w-page">
+    <div className={"w-page look-" + look}>
       <div className="w-backdrop" aria-hidden="true" />
       <div className="w-head">
         <h1>{t(lang, "w_short")}</h1>
@@ -591,6 +717,7 @@ export function WalletPage({ lang, go, signedIn }) {
         </div>
       ) : null}
 
+      {items.length && look === "bmnassa" ? <BmnassaLook items={items} lang={lang} cats={cats} go={go} startId={frontId} onDetails={setDetail} onScan={() => go("/scan")} /> : null}
       {items.length && look === "stack" ? <StackLook items={items} lang={lang} cats={cats} go={go} onRemove={remove} setToast={setToast} startId={frontId} /> : null}
       {items.length && look === "deck" ? <DeckLook items={items} lang={lang} cats={cats} go={go} onRemove={remove} setToast={setToast} startId={frontId} /> : null}
       {items.length && look === "wheel" ? (
@@ -618,7 +745,8 @@ export function WalletPage({ lang, go, signedIn }) {
         <div className="b-sheet-wrap w-detailwrap" onClick={() => setDetail(null)}>
           <div className="w-detail" role="dialog" aria-label={itemName(detail, lang)} onClick={(e) => e.stopPropagation()}>
             <div className="w-detailhead"><span className="b-grab" /><button type="button" className="link" onClick={() => setDetail(null)}>{t(lang, "close")}</button></div>
-            <FrontCard it={detail} lang={lang} cats={cats} go={go} onRemove={() => remove(detail)} refFn={() => {}} />
+            {look === "bmnassa" ? <CardInfo it={detail} lang={lang} cats={cats} go={go} onRemove={() => remove(detail)} setToast={setToast} />
+              : <FrontCard it={detail} lang={lang} cats={cats} go={go} onRemove={() => remove(detail)} refFn={() => {}} />}
           </div>
         </div>
       ) : null}
@@ -635,7 +763,7 @@ export function WalletPage({ lang, go, signedIn }) {
           ))}
           <span className="label" style={{ marginTop: 8 }}>{t(lang, "w_style")}</span>
           <div className="seg" role="group" aria-label={t(lang, "w_style")}>
-            {[["stack", "w_stack"], ["wheel", "w_wheel"], ["deck", "w_deck"]].map(([k, label]) => (
+            {[["bmnassa", "w_bmnassa"], ["stack", "w_stack"], ["wheel", "w_wheel"], ["deck", "w_deck"]].map(([k, label]) => (
               <button key={k} type="button" aria-pressed={look === k} onClick={() => setLook(k)}>{t(lang, label)}</button>
             ))}
           </div>
