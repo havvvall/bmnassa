@@ -8,7 +8,7 @@ import { SaveToWallet } from "../wallet/Wallet.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
-import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet } from "../api.js";
+import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
 import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
@@ -205,12 +205,20 @@ export function Home({ lang, city, setCity, go, signedIn }) {
   const catById = useMemo(() => byId(cats), [cats]);
   const look = useMemo(() => ({ dist: byId(lists && lists.districts), city: byId(lists && lists.cities), sub: byId(lists && lists.subdistricts) }), [lists]);
 
-  // the big tile: the category with the most businesses in this city
+  // the big tile: the category people called most this week; until there are enough taps, the one with the most businesses
+  const [called, setCalled] = useState([]);
+  useEffect(() => {
+    let alive = true;
+    topCalled(city).then((r) => { if (alive) setCalled(r); });
+    return () => { alive = false; };
+  }, [city]);
+  const calledCat = called.map((r) => catById[r.category_id]).find((c) => c && counts[c.id]);
   const topCat = useMemo(() => {
+    if (calledCat) return calledCat;
     let best = null;
     cats.forEach((c) => { if ((counts[c.id] || 0) > ((best && counts[best.id]) || 0)) best = c; });
     return best;
-  }, [cats, counts]);
+  }, [cats, counts, calledCat]);
   // the list under the categories: best rated, else newest
   const rated = (rows || []).filter((b) => Number(b.rating) > 0);
   const topList = (rated.length ? rated.slice().sort((x, y) => Number(y.rating) - Number(x.rating) || (y.reviews || 0) - (x.reviews || 0))
@@ -240,7 +248,7 @@ export function Home({ lang, city, setCity, go, signedIn }) {
       <div className="h-bento">
         {topCat ? (
           <button type="button" className="h-big bm-arrive" style={{ "--i": 0 }} onClick={() => go("/c/" + topCat.id)}>
-            <small>{t(lang, "most_listed", { city: cityName(cityRow, lang) || "" })}</small>
+            <small>{calledCat ? t(lang, "most_called_week") : t(lang, "most_listed", { city: cityName(cityRow, lang) || "" })}</small>
             <b>{cityName(topCat, lang)}</b>
             <span className="h-near">{t(lang, "n_near", { n: counts[topCat.id] || 0 })} <Icon name="chevron" size={14} className="flip" /></span>
             <i aria-hidden="true"><Icon name={categoryIcon(topCat)} size={84} stroke={1.2} /></i>

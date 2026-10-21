@@ -109,6 +109,7 @@ const T = {
   hi_afternoon: ["Good afternoon", "ڕۆژت باش", "مساء الخير"],
   hi_evening: ["Good evening", "ئێوارەت باش", "مساء الخير"],
   home_ask: ["What do you need today?", "ئەمڕۆ پێویستت بە چییە؟", "ماذا تحتاج اليوم؟"],
+  most_called_week: ["Most called this week", "زۆرترین پەیوەندی ئەم هەفتەیە", "الأكثر اتصالاً هذا الأسبوع"],
   most_listed: ["Most listed in {city}", "زۆرترین لە {city}", "الأكثر في {city}"],
   n_near: ["{n} near you", "{n} لە نزیکت", "{n} بالقرب منك"],
   wallet_tile_empty: ["Save cards you like", "کارتەکان پاشەکەوت بکە", "احفظ البطاقات"],

@@ -611,3 +611,18 @@ export async function teamUpdateOrder(id, fields) {
   const rows = await call(`/rest/v1/nfc_orders?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" } });
   return rows && rows[0];
 }
+
+// Home: the categories people called most in this city over the last week (totals only).
+// Empty until migration 014 is run or there are enough taps.
+const topCalledCache = {};
+export async function topCalled(city) {
+  if (!city) return [];
+  if (topCalledCache[city]) return topCalledCache[city];
+  try {
+    const rows = await call("/rest/v1/rpc/bmnassa_top_called", { method: "POST", body: { city } });
+    topCalledCache[city] = Array.isArray(rows) ? rows : [];
+  } catch {
+    topCalledCache[city] = [];
+  }
+  return topCalledCache[city];
+}
