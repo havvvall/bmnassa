@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./team.css";
 import {
-  amIStaff, teamBusinesses, teamProfiles, teamUpdateBusiness, teamReviews, teamSetReview, teamOrders, teamUpdateOrder,
+  amIStaff, teamBusinesses, teamProfiles, teamUpdateBusiness, teamReviews, teamSetReview, teamOrders, teamUpdateOrder, teamSuggestions, teamUpdateSuggestion, scanImageUrl, businessByHandle,
   getCategories, getCities, getPlaces, prettyPhone,
 } from "../api.js";
 import { FALLBACK_CITIES } from "../i18n.js";
@@ -164,6 +164,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
           </button>
           <button className={"bo-nav" + (view === "reviews" ? " on" : "")} onClick={() => { setView("reviews"); setOpenId(null); }}>Reviews</button>
           <button className={"bo-nav" + (view === "orders" ? " on" : "")} onClick={() => { setView("orders"); setOpenId(null); }}>NFC orders</button>
+          <button className={"bo-nav" + (view === "suggestions" ? " on" : "")} onClick={() => { setView("suggestions"); setOpenId(null); }}>Suggested from scans</button>
           <div className="bo-soon-h">Coming in later updates</div>
           {SOON.map((s) => <span key={s} className="bo-nav soon">{s}</span>)}
           <a className="bo-nav old" href="/admin">Categories, cities, admins<small>Old back office ↗</small></a>
@@ -178,7 +179,7 @@ export default function Team({ profile, onSignOut, onOpenApp }) {
         </div>
       </aside>
 
-      {view === "orders" ? <TeamOrders /> : view === "reviews" ? <TeamReviews /> : (
+      {view === "suggestions" ? <TeamSuggestions /> : view === "orders" ? <TeamOrders /> : view === "reviews" ? <TeamReviews /> : (
       <main className="bo-main">
         <header className="bo-head">
           <div>
@@ -635,6 +636,103 @@ function TeamOrders() {
                 <td><input defaultValue={o.team_note || ""} placeholder="e.g. paid FIB, called 12:30" onBlur={(e) => { if ((e.target.value || "") !== (o.team_note || "")) save(o, { team_note: e.target.value || null }); }} style={{ width: 170 }} /></td>
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  );
+}
+
+// ---------- suggested from scans: paper cards people sent us; call them and offer a free listing ----------
+const SG_STATUS = [["new", "New"], ["contacted", "Contacted"], ["joined", "Joined"], ["declined", "Declined"]];
+
+function ScanThumb({ path }) {
+  const [src, setSrc] = useState(null);
+  useEffect(() => { let a = true; if (path) scanImageUrl(path).then((u) => { if (a) setSrc(u); }); return () => { a = false; }; }, [path]);
+  if (!path) return <span className="bo-sgthumb empty">No photo</span>;
+  return src ? <a href={src} target="_blank" rel="noreferrer"><img className="bo-sgthumb" src={src} alt="" /></a> : <span className="bo-sgthumb empty">…</span>;
+}
+
+function TeamSuggestions() {
+  const [rows, setRows] = useState(null);
+  const [err, setErr] = useState("");
+  const [filter, setFilter] = useState("open");
+  const [link, setLink] = useState({});
+  const load = () => { setErr(""); teamSuggestions().then((r) => setRows(r || [])).catch((e) => setErr(e.message || String(e.status))); };
+  useEffect(load, []);
+  const save = async (o, fields) => {
+    try {
+      const row = await teamUpdateSuggestion(o.id, fields);
+      setRows((x) => x.map((y) => (y.id === o.id ? { ...y, ...row } : y)));
+      return true;
+    } catch (e) {
+      alert("Could not save: " + (e.message || e.status));
+      return false;
+    }
+  };
+  const markJoined = async (o) => {
+    const h = String(link[o.id] || "").trim().replace(/^.*bmnassa\.com\//i, "").replace(/^\//, "");
+    if (!h) { alert("Type the page link of the business that joined, e.g. azad-cooling"); return; }
+    const b = await businessByHandle(h).catch(() => null);
+    if (!b) { alert("No business with the link “" + h + "”. Approve their listing first, then link it here."); return; }
+    if (await save(o, { status: "joined", business_id: b.id })) load();
+  };
+  const isOpen = (o) => o.status === "new" || o.status === "contacted";
+  const list = (rows || []).filter((o) => (filter === "open" ? isOpen(o) : filter === "all" ? true : o.status === filter));
+  return (
+    <main className="bo-main">
+      <header className="bo-head">
+        <div>
+          <h1>Suggested from scans</h1>
+          <p>People scanned these paper cards and asked us to invite the business. Call them, offer a free listing and NFC card. Mark Joined only after their listing is approved; the home screen then shows it under “Joined from paper cards”. Never tell the business who suggested them.</p>
+        </div>
+      </header>
+      <div className="bo-chips">
+        <button className={"bo-chip" + (filter === "open" ? " on" : "")} onClick={() => setFilter("open")}>To call · {(rows || []).filter(isOpen).length}</button>
+        <button className={"bo-chip" + (filter === "joined" ? " on" : "")} onClick={() => setFilter("joined")}>Joined · {(rows || []).filter((o) => o.status === "joined").length}</button>
+        <button className={"bo-chip" + (filter === "all" ? " on" : "")} onClick={() => setFilter("all")}>All · {(rows || []).length}</button>
+        <button className="bo-chip ghost" onClick={load}>Refresh</button>
+      </div>
+      {err ? <div className="bo-alert">Could not load suggestions: {err}. If this mentions a missing table, run <code>015_scan_suggestions.sql</code> in Supabase.</div> : null}
+      <div className="bo-table">
+        <table>
+          <thead><tr><th>Sent</th><th>Card</th><th>Details</th><th>City</th><th>Their note</th><th>Status</th><th>Joined as</th><th>Team note</th></tr></thead>
+          <tbody>
+            {rows === null ? <tr><td colSpan={8} className="bo-empty">Loading…</td></tr> : null}
+            {rows && !list.length ? <tr><td colSpan={8} className="bo-empty">Nothing here.</td></tr> : null}
+            {list.map((o) => {
+              const d = o.data || {};
+              const phones = [d.phone, d.phone2, d.whatsapp].filter(Boolean);
+              return (
+                <tr key={o.id}>
+                  <td>{new Date(o.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</td>
+                  <td><ScanThumb path={o.image_path} /></td>
+                  <td style={{ maxWidth: 240 }}>
+                    <b dir="auto">{d.company || d.name || "—"}</b>
+                    <div style={{ color: "#666", fontSize: 12 }} dir="auto">{[d.name && d.company ? d.name : "", d.title].filter(Boolean).join(" · ")}</div>
+                    {phones.map((p) => <div key={p}><a href={"tel:" + p}>{prettyPhone(p) || p}</a></div>)}
+                    {d.email ? <div style={{ fontSize: 12 }}>{d.email}</div> : null}
+                    {d.website ? <div style={{ fontSize: 12 }}>{d.website}</div> : null}
+                  </td>
+                  <td>{o.city_id || "—"}</td>
+                  <td style={{ maxWidth: 180 }} dir="auto">{o.note || ""}</td>
+                  <td>
+                    <select value={o.status} onChange={(e) => { if (e.target.value === "joined") { alert("Type their page link in “Joined as” and press Link."); return; } save(o, { status: e.target.value }); }}>
+                      {SG_STATUS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+                    </select>
+                  </td>
+                  <td>
+                    {o.status === "joined" && o.businesses ? <a href={"/" + o.businesses.handle} target="_blank" rel="noreferrer">{o.businesses.name_en || o.businesses.handle}</a> : (
+                      <span style={{ display: "flex", gap: 4 }}>
+                        <input placeholder="page link" value={link[o.id] || ""} onChange={(e) => setLink((x) => ({ ...x, [o.id]: e.target.value }))} style={{ width: 110 }} />
+                        <button className="bo-chip" onClick={() => markJoined(o)}>Link</button>
+                      </span>
+                    )}
+                  </td>
+                  <td><input defaultValue={o.team_note || ""} placeholder="e.g. called, call back Sunday" onBlur={(e) => { if ((e.target.value || "") !== (o.team_note || "")) save(o, { team_note: e.target.value || null }); }} style={{ width: 170 }} /></td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

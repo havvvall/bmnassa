@@ -8,7 +8,7 @@ import { SaveToWallet } from "../wallet/Wallet.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
-import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled } from "../api.js";
+import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
 import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
@@ -212,6 +212,12 @@ export function Home({ lang, city, setCity, go, signedIn }) {
     topCalled(city).then((r) => { if (alive) setCalled(r); });
     return () => { alive = false; };
   }, [city]);
+  const [scans, setScans] = useState(null);
+  const [joinedIds, setJoinedIds] = useState([]);
+  const [toast, setToast] = useToast();
+  useEffect(() => { let a = true; scanStats().then((n) => { if (a) setScans(n); }); return () => { a = false; }; }, []);
+  useEffect(() => { let a = true; joinedFromScans(city).then((r) => { if (a) setJoinedIds(r); }); return () => { a = false; }; }, [city]);
+  const joined = joinedIds.map((id) => (rows || []).find((b) => b.id === id)).filter(Boolean);
   const calledCat = called.map((r) => catById[r.category_id]).find((c) => c && counts[c.id]);
   const topCat = useMemo(() => {
     if (calledCat) return calledCat;
@@ -265,6 +271,17 @@ export function Home({ lang, city, setCity, go, signedIn }) {
           <small>{t(lang, "scan_tile_sub")}</small>
         </button>
       </div>
+
+      {scans !== null ? (
+        <button type="button" className="h-scans bm-arrive" style={{ "--i": 3 }} onClick={() => go("/scan")}>
+          <span className="h-scans-ic" aria-hidden="true"><Icon name="scan" size={20} /></span>
+          <span className="grow">
+            <b>{scans > 0 ? t(lang, scans === 1 ? "scans_one" : "scans_n", { n: scans.toLocaleString(lang === "en" ? "en-US" : lang === "ar" ? "ar-IQ" : "ckb-IQ") }) : t(lang, "scans_zero")}</b>
+            <small>{t(lang, "scans_sub")}</small>
+          </span>
+          <span className="h-scans-go">{t(lang, "scans_go")} <Icon name="chevron" size={14} className="flip" /></span>
+        </button>
+      ) : null}
 
       <div className="b-row-head">
         <span className="h-title">{t(lang, "categories")}</span>
@@ -331,6 +348,25 @@ export function Home({ lang, city, setCity, go, signedIn }) {
         </>
       ) : null}
 
+      {joined.length ? (
+        <>
+          <div className="h-headrow"><span className="h-title">{t(lang, "joined_title")}</span><small>{t(lang, "joined_sub")}</small></div>
+          <div className="h-joined">
+            {joined.map((b, i) => (
+              <div key={b.id} className="h-jc bm-arrive" style={{ "--i": i }}>
+                <button type="button" className="h-jcard" onClick={() => go("/" + b.handle)} aria-label={pick(b, "name", lang)}>
+                  <MiniCard b={b} cats={catById} lang={lang} w={210} />
+                </button>
+                <div className="h-jrow">
+                  <span className="grow"><b><bdi>{pick(b, "name", lang)}</bdi></b><small>{catById[b.category_id] ? cityName(catById[b.category_id], lang) : ""}</small></span>
+                  <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} className="h-jsave" iconOnly />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : null}
+
       <div className="b-own">
         <div className="grow">
           <b>{t(lang, "own_biz")}</b>
@@ -341,6 +377,7 @@ export function Home({ lang, city, setCity, go, signedIn }) {
 
       <div className="b-navspace" />
       <BottomNav lang={lang} active="home" go={go} signedIn={signedIn} />
+      <Toast text={toast} />
       {picking ? <CitySheet lang={lang} lists={lists} city={city} onClose={() => setPicking(false)}
         onPick={(id) => { setCity(id); setPicking(false); }} /> : null}
     </div>

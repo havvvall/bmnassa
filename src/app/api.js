@@ -626,3 +626,51 @@ export async function topCalled(city) {
   }
   return topCalledCache[city];
 }
+
+// ---------- scanned cards → suggestions (migration 015) ----------
+const SUGGEST_FIELDS = "id,wallet_item_id,city_id,data,image_path,back_path,note,status,business_id,team_note,created_at,updated_at";
+let mySuggestions = null;
+export async function getMySuggestions() {
+  if (mySuggestions) return mySuggestions;
+  try {
+    const rows = await call(`/rest/v1/business_suggestions?select=id,wallet_item_id,status&order=created_at.desc&limit=500`, { auth: true });
+    mySuggestions = new Map((rows || []).filter((r) => r.wallet_item_id).map((r) => [r.wallet_item_id, r]));
+  } catch {
+    mySuggestions = new Map();
+  }
+  return mySuggestions;
+}
+export async function suggestBusiness(walletItemId, { city_id, note }) {
+  const rows = await call("/rest/v1/business_suggestions", {
+    method: "POST", auth: true, headers: { Prefer: "return=representation" },
+    body: { wallet_item_id: Number(walletItemId), city_id: city_id || null, note: (note || "").slice(0, 300) },
+  });
+  const r = rows && rows[0];
+  if (r && mySuggestions) mySuggestions.set(r.wallet_item_id, r);
+  return r;
+}
+export async function teamSuggestions() {
+  return call(`/rest/v1/business_suggestions?select=${SUGGEST_FIELDS},businesses(name_en,handle)&order=created_at.desc&limit=300`, { auth: true });
+}
+export async function teamUpdateSuggestion(id, fields) {
+  const rows = await call(`/rest/v1/business_suggestions?id=eq.${Number(id)}`, { method: "PATCH", auth: true, body: fields, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}
+
+// Home: paper cards scanned this month (one number) and businesses that joined from suggestions
+let scanStatsCache = null;
+export async function scanStats() {
+  if (scanStatsCache !== null) return scanStatsCache;
+  try { scanStatsCache = Number(await call("/rest/v1/rpc/bmnassa_scan_stats", { method: "POST", body: {} })) || 0; } catch { scanStatsCache = 0; }
+  return scanStatsCache;
+}
+const joinedCache = {};
+export async function joinedFromScans(city) {
+  if (!city) return [];
+  if (joinedCache[city]) return joinedCache[city];
+  try {
+    const rows = await call("/rest/v1/rpc/bmnassa_joined_from_scans", { method: "POST", body: { city } });
+    joinedCache[city] = Array.isArray(rows) ? rows.map((r) => r.business_id) : [];
+  } catch { joinedCache[city] = []; }
+  return joinedCache[city];
+}

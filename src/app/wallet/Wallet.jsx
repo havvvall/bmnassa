@@ -1,11 +1,13 @@
 // Slice 7 · the wallet (/wallet): every card the person saved, as a stack. Tap a card to bring it to the front;
 // the front card turns over to its QR code, opens the full card, or is removed. Scanned paper cards arrive in part 3.
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { t, pick } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
 import { useLists, useToast, Toast, ok, BottomNav } from "../browse/Browse.jsx";
+import { cityName } from "../i18n.js";
 import { NfcCard, cardSettings, cardLinks } from "../card/CardFaces.jsx";
-import { getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone, scanImageUrl, removeScanPhotos } from "../api.js";
+import { getMySuggestions, suggestBusiness, getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone, scanImageUrl, removeScanPhotos } from "../api.js";
 import { calm, ms, ease, flipCard, haptic } from "../motion.js";
 import "./wallet.css";
 
@@ -140,6 +142,7 @@ function FrontCard({ it, lang, cats, go, onRemove, refFn }) {
         <button type="button" className="w-act icon" aria-label={t(lang, "remove_wallet")} onClick={onRemove}><Icon name="trash" size={16} /></button>
       </div>
       {scanned ? <PaperLinks it={it} lang={lang} /> : null}
+      {scanned ? <SuggestBox it={it} lang={lang} /> : null}
     </div>
   );
 }
@@ -219,12 +222,80 @@ function CardInfo({ it, lang, cats, go, onRemove, setToast, onFlip }) {
           ))}
         </div>
       ) : null}
+      <SuggestBox it={it} lang={lang} setToast={setToast} />
       <div className="wi-foot">
         {scanned ? <button type="button" className="link" onClick={() => go(`/scan/edit/${it.id}`)}>{t(lang, "edit_details")}</button>
           : b ? <button type="button" className="link" onClick={openCard}>{t(lang, "w_open_card")}</button> : <span />}
         <button type="button" className="link danger" onClick={onRemove}>{t(lang, "remove_wallet")}</button>
       </div>
     </div>
+  );
+}
+
+// ---------- "Suggest for Bmnassa": send a scanned card to the team, privately ----------
+function SuggestBox({ it, lang, setToast }) {
+  const [lists] = useLists();
+  const [state, setState] = useState(undefined); // undefined loading · null none · row
+  const [open, setOpen] = useState(false);
+  const [city, setCity] = useState(() => store.get("bm_city", ""));
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    let alive = true;
+    getMySuggestions().then((m) => { if (alive) setState(m.get(it.id) || null); });
+    return () => { alive = false; };
+  }, [it.id]);
+  if (it.kind !== "scanned" || state === undefined) return null;
+  const send = async () => {
+    setBusy(true); setErr("");
+    try {
+      const r = await suggestBusiness(it.id, { city_id: city, note });
+      setState(r || { status: "new" });
+      setOpen(false);
+      ok(t(lang, "sg_sent"));
+      haptic(20);
+    } catch (e) {
+      setErr(e && /function|relation|does not exist|404/i.test(e.message || "") ? t(lang, "sg_not_ready") : (e && e.message) || t(lang, "load_failed"));
+    } finally { setBusy(false); }
+  };
+  if (state) {
+    const key = { new: "sg_st_new", contacted: "sg_st_contacted", joined: "sg_st_joined", declined: "sg_st_declined" }[state.status] || "sg_st_new";
+    return (
+      <div className={"w-sg done " + (state.status || "new")}>
+        <span className="w-sg-ic"><Icon name={state.status === "joined" ? "check" : "clock"} size={18} /></span>
+        <span className="grow"><b>{t(lang, "sg_suggested")}</b><small>{t(lang, key)}</small></span>
+      </div>
+    );
+  }
+  return (
+    <>
+      <div className="w-sg">
+        <span className="w-sg-ic"><Icon name="sparkle" size={18} /></span>
+        <span className="grow"><b>{t(lang, "sg_q")}</b><small>{t(lang, "sg_sub")}</small></span>
+        <button type="button" className="w-sg-btn" onClick={() => setOpen(true)}>{t(lang, "sg_btn")}</button>
+      </div>
+      {open ? (
+        <Sheet lang={lang} title={t(lang, "sg_title")} onClose={() => setOpen(false)}>
+          <p className="w-sg-how">{t(lang, "sg_how")}</p>
+          <ol className="w-sg-steps">
+            <li>{t(lang, "sg_step1")}</li>
+            <li>{t(lang, "sg_step2")}</li>
+            <li>{t(lang, "sg_step3")}</li>
+          </ol>
+          <label className="label" htmlFor="sg-city">{t(lang, "sg_city")}</label>
+          <select id="sg-city" className="field" value={city} onChange={(e) => setCity(e.target.value)}>
+            <option value="">{t(lang, "choose_city")}</option>
+            {(lists ? lists.cities : []).map((c) => <option key={c.id} value={c.id}>{cityName(c, lang)}</option>)}
+          </select>
+          <label className="label" htmlFor="sg-note">{t(lang, "sg_note")}</label>
+          <textarea id="sg-note" className="field" rows={2} maxLength={300} value={note} placeholder={t(lang, "sg_note_ph")} onChange={(e) => setNote(e.target.value)} />
+          {err ? <div className="err">{err}</div> : null}
+          <button type="button" className="btn" disabled={busy} onClick={send}>{busy ? t(lang, "sending") : t(lang, "sg_send")}</button>
+          <small className="w-sg-private">{t(lang, "sg_private")}</small>
+        </Sheet>
+      ) : null}
+    </>
   );
 }
 
@@ -568,13 +639,15 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
 }
 
 function Sheet({ lang, title, onClose, children }) {
-  return (
-    <div className="b-sheet-wrap" onClick={onClose}>
+  // drawn on the page itself, so a card panel's motion never traps it
+  return createPortal(
+    <div className={"b-sheet-wrap w-portal" + (document.querySelector(".w-page.look-bmnassa") ? " look-bmnassa" : "")} onClick={onClose}>
       <div className="b-sheet" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="b-sheet-head"><b>{title}</b><button type="button" className="link" onClick={onClose}>{t(lang, "close")}</button></div>
         <div className="stack">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
