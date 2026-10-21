@@ -847,26 +847,38 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const [flipped, setFlipped] = useState(false);
   const turning = useRef(false);
   const swipe = useRef(null);
+  const bodyRef = useRef(null);
+  const bandRef = useRef(null);
+  const hintRef = useRef(null);
+  const [intro, setIntro] = useState(true);
   useEffect(() => {
     if (!b) return undefined;
     let raf = 0;
     const paint = () => {
-      const el = coverRef.current;
+      const el = coverRef.current, body = bodyRef.current;
       if (!el) return;
       const y = window.scrollY;
-      const h = el.offsetHeight || 220;
-      const p = Math.min(1, Math.max(0, y / (h * 0.95)));
+      const vh = window.innerHeight || 700;
+      const p = Math.min(1, Math.max(0, y / (vh * 0.5)));    // the card leaves
+      const q = Math.min(1, Math.max(0, y / (vh * 0.42)));   // the profile arrives
       if (!calm()) {
-        el.style.transform = `translateY(${y * 0.32}px) perspective(900px) rotateX(${p * 16}deg) scale(${1 - p * 0.14})`;
-        el.style.opacity = String(Math.max(0, 1 - p * 1.3));
+        el.style.transform = `translateY(${-y * 0.28}px) scale(${1 - p * 0.1})`;
+        if (body) body.style.transform = `translateY(${(1 - q) * 70}px)`;
       }
-      setMini(y > el.offsetTop + h * 0.72);
+      el.style.opacity = String(Math.max(0, 1 - p * 1.25));
+      if (body) body.style.opacity = String(q);
+      if (bandRef.current) bandRef.current.style.opacity = String(Math.max(0, 1 - p));
+      if (hintRef.current) hintRef.current.style.opacity = String(Math.max(0, 1 - y / 70));
+      setIntro(y < vh * 0.3);
+      setMini(y > vh * 0.55);
     };
     const on = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(paint); };
     window.addEventListener("scroll", on, { passive: true });
+    window.addEventListener("resize", on);
     paint();
-    return () => { window.removeEventListener("scroll", on); cancelAnimationFrame(raf); };
+    return () => { window.removeEventListener("scroll", on); window.removeEventListener("resize", on); cancelAnimationFrame(raf); };
   }, [b && b.id]);
+  const toProfile = () => window.scrollTo({ top: Math.round((window.innerHeight || 700) * 0.62), behavior: calm() ? "auto" : "smooth" });
   const flip = (dir = 1) => {
     if (turning.current || !faceRef.current) return;
     turning.current = true;
@@ -935,10 +947,11 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const more = photos.length - shown.length;
 
   return (
-    <div className={"b-page bz " + pgLook.cls} style={{ ...pgLook.style, "--bz-card": cs.color }}>
+    <div className={"b-page bz " + pgLook.cls + (intro ? " intro-on" : "")} style={{ ...pgLook.style, "--bz-card": cs.color }}>
       <div className="pg-backdrop" style={{ backgroundColor: ps.bg || undefined, backgroundImage: pgLook.bgImage || undefined }} aria-hidden="true" />
-      <div className="bz-band" aria-hidden="true" />
+      <div className="bz-band" ref={bandRef} aria-hidden="true" />
 
+      <section className="bz-intro">
       <div className="bz-top">
         <button type="button" className="bz-glass" aria-label={t(lang, "back")} onClick={exit}><Icon name="down" size={20} /></button>
         <span className="grow" />
@@ -955,7 +968,12 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
           </div>
         </button>
       </div>
-      <p className="bz-hint">{t(lang, "tap_to_flip")}</p>
+      <button type="button" className="bz-scrollhint" ref={hintRef} onClick={toProfile}>
+        <small>{t(lang, "tap_card_flip")}</small>
+        <b>{t(lang, "scroll_profile")}</b>
+        <span className="bz-chev"><Icon name="down" size={20} /></span>
+      </button>
+      </section>
 
       <div className={"bz-mini" + (mini ? " on" : "")} aria-hidden={!mini}>
         <button type="button" className="bz-mback" aria-label={t(lang, "back")} onClick={exit}><Icon name="back" size={18} className="flip" /></button>
@@ -964,6 +982,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
         {b.phone ? <a className="bz-mcall" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")} aria-label={t(lang, "call")}><Icon name="phone" size={18} /></a> : null}
       </div>
 
+      <div className="bz-body" ref={bodyRef}>
       <div className="bz-head">
         <h1><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</h1>
         <p className="bz-sub">{[cityName(cat, lang), place.slice(0, 2).join(sep)].filter(Boolean).join(" · ")}</p>
@@ -1048,6 +1067,8 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
         <section className="bz-sec" {...sec("reviews")}>
           <ReviewsSummary b={b} lang={lang} go={go} />
         </section>
+      </div>
+
       </div>
 
       <div className="bz-barspace" />

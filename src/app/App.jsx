@@ -768,8 +768,7 @@ export default function App() {
   let screen;
   if (handleMatch) {
     const hp = { key: path, lang, handle: handleMatch.handle, go, back, signedIn };
-    screen = handleMatch.part === "card" ? <Card {...hp} />
-      : handleMatch.part === "reviews" ? <ReviewsPage {...hp} />
+    screen = handleMatch.part === "reviews" ? <ReviewsPage {...hp} />
       : handleMatch.part === "rate" ? <RatePage {...hp} />
       : <BizPage {...hp} />;
   } else if (path === "/home" || path === "/") {

@@ -223,6 +223,8 @@ const T = {
   company_logo: ["Company logo", "لۆگۆی کۆمپانیا", "شعار الشركة"],
   add_logo: ["Add logo", "لۆگۆ زیاد بکە", "أضف شعاراً"],
   logo_hint: ["Shown top-left on your card. A square logo works best. Without one, your first letter is shown.", "لە سەرەوەی چەپی کارتەکەت پیشان دەدرێت. لۆگۆی چوارگۆشە باشترە. ئەگەر نەبێت، یەکەم پیتی ناوەکەت پیشان دەدرێت.", "يظهر أعلى يسار بطاقتك. الشعار المربع أفضل. بدونه يظهر أول حرف من اسمك."],
+  tap_card_flip: ["Tap the card to flip it", "دەست لە کارتەکە بدە بۆ هەڵگەڕاندنەوە", "انقر على البطاقة لقلبها"],
+  scroll_profile: ["Scroll for the profile", "بخلیسکێنە بۆ پرۆفایل", "مرّر لعرض الملف"],
   tap_to_flip: ["Tap the card to flip it · scroll for more", "دەست لە کارتەکە بدە بۆ هەڵگەڕاندنەوە · بۆ زیاتر بخلیسکێنە", "انقر على البطاقة لقلبها · مرّر للمزيد"],
   link_copied: ["Link copied", "بەستەرەکە کۆپی کرا", "تم نسخ الرابط"],
   next_step: ["Next:", "دواتر:", "التالي:"],
