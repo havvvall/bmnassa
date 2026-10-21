@@ -947,7 +947,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const more = photos.length - shown.length;
 
   return (
-    <div className={"b-page bz " + pgLook.cls + (intro ? " intro-on" : "")} style={{ ...pgLook.style, "--bz-card": cs.color }}>
+    <div className={"b-page bz cardtheme " + pgLook.cls + (intro ? " intro-on" : "")} style={{ ...pgLook.style, "--bz-card": cs.color }}>
       <div className="pg-backdrop" style={{ backgroundColor: ps.bg || undefined, backgroundImage: pgLook.bgImage || undefined }} aria-hidden="true" />
       <div className="bz-band" ref={bandRef} aria-hidden="true" />
 
@@ -960,13 +960,15 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
       </div>
 
       <div className="bz-coverwrap" ref={coverRef}>
-        <button type="button" className="bz-cover" onClick={() => flip(1)} aria-label={t(lang, "flip")}
+        <div className="bz-cover" role="group" aria-label={t(lang, "tap_card_flip")}
           onTouchStart={(e) => { const q = e.touches[0]; swipe.current = { x: q.clientX, y: q.clientY }; }}
           onTouchEnd={(e) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const q = e.changedTouches[0]; const dx = q.clientX - s0.x; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(q.clientY - s0.y) * 1.3) { e.preventDefault(); flip(dx > 0 ? 1 : -1); } }}>
           <div ref={faceRef} className="bz-face">
-            <NfcCard b={b} s={cs} lang={lang} cat={cat} linksOnly back={flipped} url={url} />
+            <NfcCard b={b} s={cs} lang={lang} cat={cat} back={flipped} url={url} tall />
           </div>
-        </button>
+          {/* mouse and keyboard: arrows at the sides flip the card */}
+          <button type="button" className="bz-flipbtn" aria-label={t(lang, "flip")} onClick={() => flip(1)}><Icon name="flip" size={16} /></button>
+        </div>
       </div>
       <button type="button" className="bz-scrollhint" ref={hintRef} onClick={toProfile}>
         <small>{t(lang, "tap_card_flip")}</small>

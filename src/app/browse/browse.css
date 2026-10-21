@@ -408,3 +408,31 @@ a.b-chip { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) { .bz-chev { animation: none; } .bz-bar { transition: none; } }
 .bz-body { margin-top: -26svh; position: relative; z-index: 1; }
 .bz.intro-on .bz-body { pointer-events: none; }
+
+/* the card fills the screen; the page and profile take the card's colour */
+.bz-intro .bz-coverwrap { flex: 1; display: flex; padding-bottom: 14px; margin: 14px 0 0; }
+.bz-intro .bz-cover { flex: 1; display: flex; position: relative; cursor: grab; touch-action: pan-y; }
+.bz-intro .bz-face { flex: 1; display: flex; }
+.bz-intro .bz-face > .cf-nfc { flex: 1; min-height: 420px; max-height: 640px; }
+.bz-flipbtn { position: absolute; bottom: 18px; inset-inline-end: 18px; width: 38px; height: 38px; border-radius: 19px; border: 0; background: rgba(255, 255, 255, 0.14); color: #fff; display: grid; place-items: center; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (hover: none) { .bz-flipbtn { display: none; } }
+.bz.cardtheme {
+  --bg: color-mix(in srgb, var(--bz-card) 42%, #07080a);
+  --surface: color-mix(in srgb, var(--bz-card) 55%, #0b0c0e);
+  --surface-raised: color-mix(in srgb, var(--bz-card) 62%, #15171a);
+  --surface-2: color-mix(in srgb, var(--bz-card) 50%, #2a2c30);
+  --text: #f4f5f7; --muted: rgba(244, 245, 247, 0.66);
+  --line: rgba(255, 255, 255, 0.12); --line-strong: rgba(255, 255, 255, 0.22);
+  --shadow-soft: none; --shadow-soft-sm: none;
+  color: var(--text);
+}
+.bz.cardtheme .pg-backdrop { background-color: var(--bg); background-image: radial-gradient(90% 55% at 50% 30%, color-mix(in srgb, var(--bz-card) 70%, transparent), transparent 75%); }
+.bz.cardtheme .pg-backdrop::after { content: ""; position: absolute; inset: 0; opacity: 0.25; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.bz.cardtheme .bz-band { display: none; }
+.bz.cardtheme .bz-glass { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.bz.cardtheme .bz-sec, .bz.cardtheme .bz-tabs, .bz.cardtheme .bz-chip { box-shadow: inset 0 0 0 1px var(--line); }
+.bz.cardtheme .bz-tabs button.on { background: #f4f5f7; color: #15171a; }
+.bz.cardtheme .bz-mini { background: color-mix(in srgb, var(--bg) 86%, transparent); }
+.bz.cardtheme .bz-chev { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.bz.cardtheme .bz-bar { background: color-mix(in srgb, var(--surface-raised) 90%, transparent); box-shadow: inset 0 0 0 1px var(--line), 0 14px 30px rgba(0, 0, 0, 0.4); }

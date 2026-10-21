@@ -86,11 +86,11 @@ export function CardLogo({ b, s, lang, className = "" }) {
 }
 
 // The standard Bmnassa card · Monogram: matte colour, a faint Bmnassa mark, logo top-left, name, round icons, wordmark
-export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
+export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly, tall }) {
   const person = b.contact_name || pick(b, "name", lang);
-  const links = cardLinks(b, lang, s).filter((l) => l.key !== "directions").slice(0, 5);
+  const links = cardLinks(b, lang, s).filter((l) => l.key !== "directions").slice(0, tall ? 7 : 4);
   const shell = (cls, children) => (
-    <div className={"cf-nfc mono" + cls + (small ? " small" : "")} style={{ "--card": s.color }}>
+    <div className={"cf-nfc mono" + cls + (small ? " small" : "") + (tall ? " tall" : "")} style={{ "--card": s.color }}>
       <i className="cf-grain" aria-hidden="true" />
       <img className="cf-mono-mark" src="/brand/mark-ink.svg" alt="" aria-hidden="true" />
       {children}
@@ -98,14 +98,10 @@ export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
   );
   if (back) {
     return shell(" back", (
-      <>
-        <div className="cf-nfc-qr"><QR text={url} /></div>
-        <div className="cf-nfc-backtext">
-          <CardLogo b={b} s={s} lang={lang} className="sm" />
-          <small>{t(lang, "scan_or_tap")}</small>
-          <b className="ltr">{window.location.host}/<br />{b.handle}</b>
-        </div>
-      </>
+      <div className="cf-backc">
+        <div className="cf-qr-light"><QR text={url} light /></div>
+        <b>{t(lang, "scan_find_me")}</b>
+      </div>
     ));
   }
   return shell("", (
@@ -121,7 +117,7 @@ export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
       <div className="cf-mono-foot">
         <img className="cf-mono-word" src="/brand/logo-silver.svg" alt="Bmnassa" />
         <span className="cf-nfc-icons">
-          {links.slice(0, 4).map((l) => (linksOnly
+          {links.map((l) => (linksOnly
             ? <span key={l.key} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)}><Icon name={l.icon} size={small ? 13 : 15} /></span>
             : <A key={l.key} l={l} b={b} className={"cf-ic " + (s.icons !== "app" ? s.icons : l.cls)} aria-label={l.label}><Icon name={l.icon} size={15} /></A>))}
         </span>
@@ -130,7 +126,7 @@ export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly }) {
   ));
 }
 
-export function QR({ text }) {
+export function QR({ text, light }) {
   const cells = useMemo(() => {
     const q = new QRCode(-1, QRErrorCorrectLevel.M);
     q.addData(text);
@@ -142,8 +138,8 @@ export function QR({ text }) {
   }, [text]);
   return (
     <svg viewBox={`-2 -2 ${cells.n + 4} ${cells.n + 4}`} role="img" aria-label={text} shapeRendering="crispEdges">
-      <rect x="-2" y="-2" width={cells.n + 4} height={cells.n + 4} fill="#fff" />
-      <path d={cells.d} fill="#121212" />
+      {light ? null : <rect x="-2" y="-2" width={cells.n + 4} height={cells.n + 4} fill="#fff" />}
+      <path d={cells.d} fill={light ? "#f4f5f7" : "#121212"} />
     </svg>
   );
 }
