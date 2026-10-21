@@ -1,7 +1,7 @@
 // Theme: Auto (follows the phone), Bmnassa (silver), Light or Dark.
 // Auto uses Bmnassa in daytime mode and Dark when the phone is in dark mode.
-export const THEMES = ["auto", "bmnassa", "light", "dark"];
-const BAR = { bmnassa: "#dfe2e6", light: "#f2f2f7", dark: "#000000" };
+export const THEMES = ["auto", "bmnassa", "light", "dark", "lite", "navy"];
+const BAR = { bmnassa: "#dfe2e6", light: "#f2f2f7", dark: "#000000", lite: "#ccd0cf", navy: "#06141b" };
 const media = () => (typeof window !== "undefined" && window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null);
 
 export function getThemeChoice() {

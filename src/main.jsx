@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./app/App.jsx";
 // loaded last: the smooth look refines every screen's own styles
 import "./app/smooth.css";
+import "./app/palette.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

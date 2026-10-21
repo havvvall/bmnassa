@@ -1,0 +1,105 @@
+/* Bmnassa Lite & Bmnassa Dark: the navy-to-grey palette
+   #06141B · #11212D · #253745 · #4A5C6A · #9BA8AB · #CCD0CF
+   Loaded after smooth.css, so these win over the Silver look. */
+:root[data-theme="lite"] {
+  --bg: #ccd0cf;
+  --surface: #dde0df;
+  --surface-2: #bcc3c4;
+  --surface-raised: #eef0ef;
+  --field: #f6f7f7;
+  --line: rgba(6, 20, 27, 0.12);
+  --line-strong: rgba(6, 20, 27, 0.22);
+  --text: #06141b;
+  --muted: #4a5c6a;
+  --accent: #253745;
+  --accent-text: #253745;
+  --accent-soft: rgba(37, 55, 69, 0.14);
+  --on-accent: #eef0ef;
+  --chip-on: #11212d;
+  --on-chip-on: #ccd0cf;
+  --seg-on: #eef0ef;
+  --skeleton: #bcc3c4;
+  --skeleton-shine: #d6dadb;
+  --focus: #253745;
+  --press-overlay: rgba(6, 20, 27, 0.07);
+  --scrim: rgba(6, 20, 27, 0.45);
+  --shadow-card: 0 10px 30px rgba(6, 20, 27, 0.22);
+  --shadow-lift: 0 18px 40px rgba(6, 20, 27, 0.25);
+  --shadow-float: 0 10px 28px rgba(6, 20, 27, 0.18);
+  --shadow-sheet: 0 -8px 30px rgba(6, 20, 27, 0.18);
+  --shadow-soft: 0 8px 24px rgba(6, 20, 27, 0.08);
+  --shadow-soft-sm: 0 4px 14px rgba(6, 20, 27, 0.07);
+  --night: #06141b;
+  --gold-soft: #9ba8ab;
+}
+:root[data-theme="navy"] {
+  --bg: #06141b;
+  --surface: #0c1a23;
+  --surface-2: #253745;
+  --surface-raised: #11212d;
+  --field: #11212d;
+  --line: rgba(204, 208, 207, 0.12);
+  --line-strong: rgba(204, 208, 207, 0.22);
+  --text: #ccd0cf;
+  --muted: #9ba8ab;
+  --accent: #ccd0cf;
+  --accent-text: #ccd0cf;
+  --accent-soft: rgba(155, 168, 171, 0.16);
+  --on-accent: #06141b;
+  --chip-on: #ccd0cf;
+  --on-chip-on: #06141b;
+  --seg-on: #4a5c6a;
+  --skeleton: #11212d;
+  --skeleton-shine: #1b2d3a;
+  --focus: #9ba8ab;
+  --press-overlay: rgba(204, 208, 207, 0.08);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 18px 40px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --shadow-sheet: 0 -8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-soft-sm: none;
+  --night: #06141b;
+  --gold-soft: #9ba8ab;
+}
+:root[data-theme="lite"] body, :root[data-theme="navy"] body { background: var(--bg); color: var(--text); }
+
+/* pieces that had gold written in: follow the palette instead */
+:is([data-theme="lite"], [data-theme="navy"]) .b-gold,
+:is([data-theme="lite"], [data-theme="navy"]) .btn:not(.ghost):not(.line):not(.w-dark) { background: var(--accent); color: var(--on-accent); }
+[data-theme="lite"] .h-big { background: linear-gradient(160deg, #253745, #11212d); color: #ccd0cf; }
+[data-theme="navy"] .h-big { background: linear-gradient(160deg, #4a5c6a, #253745); color: #eef0ef; }
+:is([data-theme="lite"], [data-theme="navy"]) .h-near { background: rgba(204, 208, 207, 0.16); color: inherit; }
+:is([data-theme="lite"], [data-theme="navy"]) .h-big i { opacity: 0.18; }
+:is([data-theme="lite"], [data-theme="navy"]) .h-call,
+:is([data-theme="lite"], [data-theme="navy"]) .b-callbtn,
+:is([data-theme="lite"], [data-theme="navy"]) .wi-btn.gold,
+:is([data-theme="lite"], [data-theme="navy"]) .w-sg-btn,
+:is([data-theme="lite"], [data-theme="navy"]) .w-scan { background: var(--accent); color: var(--on-accent); }
+:is([data-theme="lite"], [data-theme="navy"]) .h-sic { background: var(--accent); color: var(--on-accent); }
+[data-theme="lite"] .h-scans { background: #11212d; color: #ccd0cf; }
+[data-theme="navy"] .h-scans { background: #11212d; box-shadow: inset 0 0 0 1px var(--line); }
+:is([data-theme="lite"], [data-theme="navy"]) .h-scans-ic { background: rgba(155, 168, 171, 0.16); color: #ccd0cf; box-shadow: inset 0 0 0 1px rgba(155, 168, 171, 0.3); }
+:is([data-theme="lite"], [data-theme="navy"]) .h-scans-go { background: #ccd0cf; color: #06141b; }
+:is([data-theme="lite"], [data-theme="navy"]) .h-scans small { color: rgba(204, 208, 207, 0.65); }
+:is([data-theme="lite"], [data-theme="navy"]) .w-sg { box-shadow: inset 0 0 0 1.5px var(--accent), var(--shadow-soft-sm, none); }
+:is([data-theme="lite"], [data-theme="navy"]) .w-sg-ic { background: var(--accent-soft); color: var(--accent-text); }
+:is([data-theme="lite"], [data-theme="navy"]) .b-ic.h-tint { background: var(--surface-2); color: var(--text); }
+[data-theme="lite"] .b-ic.h-tint { background: color-mix(in srgb, var(--tint) 35%, #dde0df); }
+:is([data-theme="lite"], [data-theme="navy"]) .w-type.nfc { background: var(--accent-soft); color: var(--accent-text); box-shadow: inset 0 0 0 1px var(--line-strong); }
+:is([data-theme="lite"], [data-theme="navy"]) .b-views button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+/* welcome: navy stage, silver skyline */
+:is([data-theme="lite"], [data-theme="navy"]) .wl { background: #06141b; }
+:is([data-theme="lite"], [data-theme="navy"]) .wl-stage { background: radial-gradient(120% 90% at 50% 20%, #253745 0%, #11212d 45%, #06141b 100%); }
+:is([data-theme="lite"], [data-theme="navy"]) .wl-glow { background: radial-gradient(closest-side, rgba(155, 168, 171, 0.22), rgba(74, 92, 106, 0.1) 58%, transparent); }
+:is([data-theme="lite"], [data-theme="navy"]) .wl-sky::after { background: linear-gradient(90deg, #0b1a22, transparent 8%, transparent 92%, #0b1a22); }
+:is([data-theme="lite"], [data-theme="navy"]) .wl-pan img { filter: grayscale(1) brightness(1.25) contrast(1.05); opacity: 0.9; }
+:is([data-theme="lite"], [data-theme="navy"]) .wl-brand::before { background: radial-gradient(closest-side, rgba(6, 20, 27, 0.9), rgba(6, 20, 27, 0.45) 55%, transparent); }
+:is([data-theme="lite"], [data-theme="navy"]) .wl-tag { color: #9ba8ab; }
+[data-theme="lite"] .wl-panel, [data-theme="lite"] .wl-curve { --wl-panel: #ccd0cf; }
+[data-theme="navy"] .wl-panel, [data-theme="navy"] .wl-curve { --wl-panel: #11212d; }
+[data-theme="lite"] .wl-btn.dark { background: #11212d; color: #ccd0cf; }
+[data-theme="navy"] .wl-btn.dark { background: #ccd0cf; color: #06141b; }
+[data-theme="navy"] img[src$="logo-ink.svg"] { content: url("/brand/logo-silver.svg"); }

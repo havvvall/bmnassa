@@ -60,6 +60,8 @@ const T = {
   theme_auto: ["Auto", "خۆکار", "تلقائي"],
   theme_bmnassa: ["Silver", "زیوی", "فضي"],
   theme_light: ["Light", "ڕووناک", "فاتح"],
+  theme_lite: ["Bmnassa Lite", "بمناسە لایت", "بمناسة فاتح"],
+  theme_navy: ["Bmnassa Dark", "بمناسە تاریک", "بمناسة داكن"],
   theme_dark: ["Dark", "تاریک", "داكن"],
   theme_auto_note: ["Auto follows your phone: Silver by day, Dark when your phone is in dark mode.", "خۆکار شوێن مۆبایلەکەت دەکەوێت: زیوی لە ڕۆژدا، تاریک کاتێک مۆبایلەکەت لە دۆخی تاریکدایە.", "التلقائي يتبع هاتفك: فضي نهاراً، وداكن عندما يكون هاتفك في الوضع الداكن."],
   city: ["City", "شار", "المدينة"],
