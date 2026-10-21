@@ -7,7 +7,7 @@ import { t, pick } from "../i18n.js";
 import { getMyBusiness, updateMyBusiness, uploadImage, photoUrl } from "../api.js";
 import { useLists, Toast, ok } from "../browse/Browse.jsx";
 import { Icon } from "../browse/icons.jsx";
-import { CardFront, CardBack, cardSettings, cardLinks, CARD_COLOURS, STYLES, LINK_KEYS } from "./CardFaces.jsx";
+import { NfcCard, cardSettings, cardLinks, CARD_COLOURS, STYLES, LINK_KEYS } from "./CardFaces.jsx";
 
 const byId = (arr) => Object.fromEntries((arr || []).map((x) => [x.id, x]));
 
@@ -30,26 +30,12 @@ function shrink(file, max = 1200) {
 }
 
 // Shows the real card page, made small to fit the screen
-function Preview({ b, s, lang, cat, city, flipped }) {
-  const box = useRef(null);
-  const [k, setK] = useState(0.6);
-  useLayoutEffect(() => {
-    const el = box.current;
-    if (!el) return;
-    const fit = () => setK(Math.min(1, el.clientWidth / 390));
-    fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  const url = `${window.location.origin}/${b.handle || "your-business"}/card`;
+// The card exactly as people see it on your page: tall, matte, with your logo; Flip shows the QR back
+function Preview({ b, s, lang, cat, flipped }) {
+  const url = `${window.location.origin}/${b.handle || "your-business"}`;
   return (
-    <div className={"st-frame cs-" + s.style + (flipped ? " flipped" : "")} ref={box} style={{ "--card": s.color, height: Math.round(560 * k) }} aria-hidden="true">
-      <div className="st-inner" style={{ transform: `scale(${k})` }}>
-        {!flipped
-          ? <CardFront b={b} s={s} lang={lang} cat={cat} city={city} onSaveContact={() => {}} preview />
-          : <CardBack b={b} s={s} lang={lang} cat={cat} url={url} onShare={() => {}} />}
-      </div>
+    <div className="st-frame st-tall" aria-hidden="true">
+      <NfcCard b={b} s={s} lang={lang} cat={cat} back={flipped} url={url} tall linksOnly />
     </div>
   );
 }

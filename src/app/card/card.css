@@ -211,3 +211,6 @@
 .cf-nfc.mono.tall .cf-mono-word { height: 16px; }
 .cf-nfc.mono.tall .cf-qr-light { width: 62%; max-width: 240px; }
 .cf-nfc.mono.tall .cf-backc b { font-size: 17px; }
+/* Card colours: the preview is the real tall card */
+.st-frame.st-tall { height: auto; background: none; box-shadow: none; padding: 0 12px; overflow: visible; display: flex; justify-content: center; }
+.st-frame.st-tall .cf-nfc.mono.tall { width: min(100%, 330px); height: auto; aspect-ratio: 0.62; box-shadow: 0 22px 44px rgba(0, 0, 0, 0.3); }
