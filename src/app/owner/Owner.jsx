@@ -441,6 +441,7 @@ export function EditPage({ lang, id, go }) {
     const o = {};
     FIELDS.forEach((k) => { o[k] = b[k] == null ? "" : b[k]; });
     o.phone = b.phone ? prettyPhone(b.phone).replace("+964 ", "0") : "";
+    o.job_title = cardSettings(b).title;
     setF(o);
     setHours(b.hours || null);
     original.current.hours = JSON.stringify(b.hours || null);
@@ -482,6 +483,8 @@ export function EditPage({ lang, id, go }) {
       if (String(v) !== String(old)) body[k] = v;
     });
     if (body.phone && b.whatsapp === b.phone) body.whatsapp = body.phone;
+    const title = String(f.job_title || "").trim().slice(0, 60);
+    if (title !== cardSettings(b).title) body.card = { ...(b.card || {}), title };
     if (JSON.stringify(hours || null) !== original.current.hours) body.hours = hours || null;
     const cleanPrices = priceRows
       .map((r) => ({ ...r, price_iqd: r.price_iqd === "" || r.price_iqd == null ? null : Number(String(r.price_iqd).replace(/[^\d]/g, "")) }))
@@ -510,22 +513,47 @@ export function EditPage({ lang, id, go }) {
   const cats = lists ? lists.cats : [];
   const lines = hoursLines(hours, lang);
 
+  const cat = lists && byId(lists.cats)[f.category_id];
+  const live = { ...b, contact_name: f.contact_name || null, card: { ...(b.card || {}), title: f.job_title } };
+  const jumpTo = (k) => { const el = document.getElementById("ed-" + k); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); };
+  const Head = ({ ic, title, sub }) => (
+    <div className="ed-h"><span className="ed-ic"><Icon name={ic} size={18} /></span><span className="grow"><b>{title}</b>{sub ? <small>{sub}</small> : null}</span></div>
+  );
+
   return (
-    <div className="o-page">
-      <div className="b-top">
+    <div className="o-page ed">
+      <div className="ed-top">
         <Back lang={lang} onClick={() => go(`/my/${b.id}`)} />
-        <h1 className="grow" style={{ fontSize: 22 }}>{t(lang, "edit_page")}</h1>
+        <h1 className="grow">{t(lang, "edit_page")}</h1>
         {b.status === "approved" && b.handle ? (
-          <button type="button" className="b-pill" onClick={() => go("/" + b.handle)}><Icon name="search" size={15} /> {t(lang, "preview")}</button>
+          <button type="button" className="b-pill" onClick={() => go("/" + b.handle)}><Icon name="globe" size={15} /> {t(lang, "preview")}</button>
         ) : null}
       </div>
 
-      {<>
+      <div className="ed-card"><NfcCard b={live} s={cardSettings(live)} lang={lang} cat={cat} linksOnly /></div>
 
-      {photos ? <Photos lang={lang} bid={b.id} photos={photos} setPhotos={setPhotos} setToast={setToast} /> : null}
+      <nav className="ed-jump">
+        {[["card", "ed_card"], ["photos", "photos_title"], ["about", "name_desc"], ["contact", "ed_contact"], ["prices", "prices"], ["hours", "working_hours"], ["location", "location"], ["links", "links"]].map(([k, label]) => (
+          <button key={k} type="button" onClick={() => jumpTo(k)}>{t(lang, label)}</button>
+        ))}
+      </nav>
 
-      <section className="o-sec">
-        <span className="label">{t(lang, "name_desc")}</span>
+      <section id="ed-card" className="o-sec ed-sec">
+        <Head ic="contact" title={t(lang, "ed_card")} sub={t(lang, "ed_card_sub")} />
+        <span className="label">{t(lang, "name_on_card")}</span>
+        <div className="field"><input value={f.contact_name} onChange={(e) => set("contact_name", e.target.value)} maxLength={60} placeholder={t(lang, "name_on_card_ph")} /></div>
+        <span className="label">{t(lang, "job_title")}</span>
+        <div className="field"><input value={f.job_title} onChange={(e) => set("job_title", e.target.value)} maxLength={60} placeholder={t(lang, "job_title_ph")} /></div>
+        <button type="button" className="ed-link" onClick={() => go(`/my/${b.id}/card`)}><Icon name="palette" size={16} /> {t(lang, "ed_colours_logo")} <Icon name="chevron" size={14} className="flip" /></button>
+      </section>
+
+      <div id="ed-photos" className="ed-sec ed-photos">
+        <Head ic="image" title={t(lang, "photos_title")} sub={t(lang, "photos_hint_short")} />
+        {photos ? <Photos lang={lang} bid={b.id} photos={photos} setPhotos={setPhotos} setToast={setToast} /> : null}
+      </div>
+
+      <section id="ed-about" className="o-sec ed-sec">
+        <Head ic="rows" title={t(lang, "name_desc")} sub={t(lang, "ed_about_sub")} />
         <div className="seg">
           {LANG_IDS.map((l) => (
             <button key={l} type="button" aria-pressed={tab === l} onClick={() => setTab(l)} dir={langDir(l)}>
@@ -537,30 +565,21 @@ export function EditPage({ lang, id, go }) {
         <div className="field area"><textarea dir={langDir(tab)} rows={3} value={f["description_" + tab]} onChange={(e) => set("description_" + tab, e.target.value)} placeholder={t(lang, "desc_ph")} maxLength={300} /></div>
       </section>
 
-      <section className="o-sec">
-        <div className="stack" style={{ gap: 12 }}>
-          <div className="stack" style={{ gap: 6 }}>
-            <span className="label">{t(lang, "category")}</span>
-            <div className="field pick">
-              <select value={f.category_id} onChange={(e) => set("category_id", e.target.value)}>
-                {cats.map((c) => <option key={c.id} value={c.id}>{cityName(c, lang)}</option>)}
-              </select>
-              <Icon name="down" size={16} />
-            </div>
-          </div>
-          <div className="stack" style={{ gap: 6 }}>
-            <span className="label">{t(lang, "biz_phone")}</span>
-            <div className="field ltr"><input type="tel" inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder="0770 123 4567" /></div>
-          </div>
-        </div>
-        <div className="stack" style={{ gap: 6 }}>
-          <span className="label">{t(lang, "name_on_card")}</span>
-          <div className="field"><input value={f.contact_name} onChange={(e) => set("contact_name", e.target.value)} maxLength={60} /></div>
+      <section id="ed-contact" className="o-sec ed-sec">
+        <Head ic="phone" title={t(lang, "ed_contact")} />
+        <span className="label">{t(lang, "biz_phone")}</span>
+        <div className="field ltr"><input type="tel" inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder="0770 123 4567" /></div>
+        <span className="label">{t(lang, "category")}</span>
+        <div className="field pick">
+          <select value={f.category_id} onChange={(e) => set("category_id", e.target.value)}>
+            {cats.map((c) => <option key={c.id} value={c.id}>{cityName(c, lang)}</option>)}
+          </select>
+          <Icon name="down" size={16} />
         </div>
       </section>
 
-      <section id="prices" className="o-sec">
-        <span className="label">{t(lang, "prices")}</span>
+      <section id="ed-prices" className="o-sec ed-sec">
+        <Head ic="box" title={t(lang, "prices")} sub={t(lang, "ed_prices_sub")} />
         {priceRows.map((r, i) => (
           <div key={r.id || "n" + i} className="o-price">
             <div className="field"><input value={r["item_" + lang] || r.item_en || r.item_ku || r.item_ar || ""}
@@ -571,25 +590,25 @@ export function EditPage({ lang, id, go }) {
             <button type="button" className="o-x" aria-label={t(lang, "remove")} onClick={() => setPricesRows((rows) => rows.filter((_, j) => j !== i))}>×</button>
           </div>
         ))}
-        {priceRows.length < 30 ? <button type="button" className="link" onClick={() => setPricesRows((rows) => rows.concat({ item_en: "", item_ku: "", item_ar: "", price_iqd: "" }))}>{t(lang, "add_price")}</button> : null}
+        {priceRows.length < 30 ? <button type="button" className="ed-add" onClick={() => setPricesRows((rows) => rows.concat({ item_en: "", item_ku: "", item_ar: "", price_iqd: "" }))}><Icon name="plus" size={16} /> {t(lang, "add_price")}</button> : null}
       </section>
 
-      <section id="hours" className="o-sec">
-        <span className="label">{t(lang, "working_hours")}</span>
+      <section id="ed-hours" className="o-sec ed-sec">
+        <Head ic="clock" title={t(lang, "working_hours")} />
         <button type="button" className="o-rowbtn" onClick={() => setEditingHours(true)}>
           <span className="grow">{lines.length ? lines.map((l) => <span key={l} className="o-hline">{l}</span>) : <span className="b-muted">{t(lang, "set_hours")}</span>}</span>
           <Icon name="chevron" size={16} className="flip" />
         </button>
       </section>
 
-      <section id="location" className="o-sec">
-        <span className="label">{t(lang, "location")}</span>
+      <section id="ed-location" className="o-sec ed-sec">
+        <Head ic="pin" title={t(lang, "location")} />
         <MapPin lang={lang} lat={b.lat} lng={b.lng} cityId={b.city_id} onChange={(la, ln) => setF((x) => ({ ...x, lat: la, lng: ln }))} />
         <div className="field"><input value={f.address} onChange={(e) => set("address", e.target.value)} placeholder={t(lang, "address_ph")} maxLength={120} /></div>
       </section>
 
-      <section className="o-sec">
-        <span className="label">{t(lang, "links")}</span>
+      <section id="ed-links" className="o-sec ed-sec">
+        <Head ic="globe" title={t(lang, "links")} sub={t(lang, "ed_links_sub")} />
         {LINKS.filter(([k]) => openLinks.includes(k)).map(([k, label, ph]) => (
           <div key={k} className="o-linkrow">
             <span className="o-lname">{t(lang, label)}</span>
@@ -606,10 +625,9 @@ export function EditPage({ lang, id, go }) {
 
       <div className="o-warn"><Icon name="flip" size={16} /> {t(lang, "edit_warning")}</div>
       {msg ? <div className="err" role="alert">{msg}</div> : null}
-      <div className="o-savebar">
+      <div className="o-savebar ed-save">
         <button type="button" className="btn" disabled={busy} onClick={save}>{busy ? t(lang, "loading") : t(lang, "save")}</button>
       </div>
-      </>}
 
       {editingHours ? <HoursEditor lang={lang} hours={hours} onClose={() => setEditingHours(false)} onDone={(h) => { setHours(h); setEditingHours(false); }} /> : null}
       <Toast text={toast} />

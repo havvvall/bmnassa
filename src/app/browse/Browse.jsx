@@ -5,7 +5,8 @@ import { calm, ms, ease, flipCard, haptic } from "../motion.js";
 import { SkelTiles, SkelRows, SkelPage, Skel } from "../Skeleton.jsx";
 import { ReviewsSummary } from "../reviews/Reviews.jsx";
 import { SaveToWallet } from "../wallet/Wallet.jsx";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
@@ -620,6 +621,76 @@ export function Results({ lang, city, setCity, go, back, signedIn, categoryId, s
   );
 }
 
+// ---------- photos: tap one and it zooms to full screen; swipe sideways for the next, swipe down to close ----------
+function PhotoViewer({ photos, start, from, lang, onClose }) {
+  const track = useRef(null);
+  const wrap = useRef(null);
+  const drag = useRef(null);
+  const [i, setI] = useState(start);
+  const [dy, setDy] = useState(0);
+  useLayoutEffect(() => {
+    const tr = track.current;
+    if (!tr) return;
+    tr.scrollLeft = start * tr.clientWidth * (document.documentElement.dir === "rtl" ? -1 : 1);
+    // zoom from the tapped thumbnail
+    const img = tr.children[start] && tr.children[start].querySelector("img");
+    if (img && from && !calm() && img.animate) {
+      const to = img.getBoundingClientRect();
+      if (to.width) {
+        const sx = from.width / to.width, sy = from.height / to.height, sc = Math.max(sx, sy);
+        const x = from.left + from.width / 2 - (to.left + to.width / 2), y = from.top + from.height / 2 - (to.top + to.height / 2);
+        img.animate([{ transform: `translate(${x}px, ${y}px) scale(${sc})`, borderRadius: "14px" }, { transform: "none", borderRadius: "0px" }],
+          { duration: 420, easing: "cubic-bezier(0.2, 0, 0, 1)" });
+      }
+    }
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+  useEffect(() => {
+    const key = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        const tr = track.current; const step = (e.key === "ArrowRight" ? 1 : -1) * (document.documentElement.dir === "rtl" ? -1 : 1);
+        tr && tr.scrollBy({ left: step * tr.clientWidth, behavior: "smooth" });
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, []);
+  const onScroll = () => { const tr = track.current; if (tr) setI(Math.round(Math.abs(tr.scrollLeft) / tr.clientWidth)); };
+  const close = () => {
+    const el = wrap.current;
+    if (el && el.animate && !calm()) el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: "ease-out", fill: "forwards" }).onfinish = onClose;
+    else onClose();
+  };
+  const tStart = (e) => { const q = e.touches[0]; drag.current = { x: q.clientX, y: q.clientY, axis: null }; };
+  const tMove = (e) => {
+    const d = drag.current; if (!d) return;
+    const q = e.touches[0]; const mx = q.clientX - d.x, my = q.clientY - d.y;
+    if (!d.axis && Math.abs(mx) + Math.abs(my) > 10) d.axis = Math.abs(my) > Math.abs(mx) ? "y" : "x";
+    if (d.axis === "y") setDy(Math.max(0, my));
+  };
+  const tEnd = () => { const d = drag.current; drag.current = null; if (d && d.axis === "y" && dy > 110) close(); else setDy(0); };
+  const fade = Math.max(0.25, 1 - dy / 400);
+  return createPortal(
+    <div className="pv" ref={wrap} role="dialog" aria-modal="true" aria-label={t(lang, "photos_title")} style={{ "--pv-bg": fade }}>
+      <div className="pv-top">
+        <span className="pv-count">{i + 1} / {photos.length}</span>
+        <button type="button" className="pv-x" aria-label={t(lang, "close")} onClick={close}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+      </div>
+      <div className="pv-track" ref={track} onScroll={onScroll} onTouchStart={tStart} onTouchMove={tMove} onTouchEnd={tEnd}
+        style={{ transform: dy ? `translateY(${dy}px) scale(${1 - dy / 1600})` : undefined, transition: dy ? "none" : undefined }}>
+        {photos.map((p) => (
+          <div key={p.id} className="pv-slide"><img src={photoUrl(p.path)} alt="" draggable="false" /></div>
+        ))}
+      </div>
+      {photos.length > 1 ? <div className="pv-dots">{photos.map((p, k) => <i key={p.id} className={k === i ? "on" : ""} />)}</div> : null}
+    </div>,
+    document.body
+  );
+}
+
 // ---------- one business: digital card and business page ----------
 
 export function useBusiness(handle) {
@@ -839,6 +910,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const [photos, setPhotos] = useState([]);
   const [prices, setPrices] = useState([]);
   const [tab, setTab] = useState("about");
+  const [viewer, setViewer] = useState(null);
   const refs = useRef({});
   // the card sits on top; scrolling tilts it away and a slim header with the logo takes over
   const coverRef = useRef(null);
@@ -1012,10 +1084,11 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
             {shown.length ? (
               <div className={"bz-photos" + (bigPhotos ? " big" : "")}>
                 {shown.map((p, i) => (
-                  <span key={p.id} className="bz-photo">
+                  <button type="button" key={p.id} className="bz-photo" aria-label={t(lang, "photos_title") + " " + (i + 1)}
+                    onClick={(e) => { haptic(8); setViewer({ start: i, from: e.currentTarget.getBoundingClientRect() }); }}>
                     <img src={photoUrl(p.path)} alt="" loading="lazy" />
                     {i === shown.length - 1 && more > 0 ? <b>+{more}</b> : null}
-                  </span>
+                  </button>
                 ))}
               </div>
             ) : null}
@@ -1073,6 +1146,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
 
       </div>
 
+      {viewer ? <PhotoViewer photos={photos} start={viewer.start} from={viewer.from} lang={lang} onClose={() => setViewer(null)} /> : null}
       <div className="bz-barspace" />
       <div className="bz-bar">
         {b.phone ? <a className="b-act gold" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")}><Icon name="phone" size={19} /> {t(lang, "call")}</a> : null}

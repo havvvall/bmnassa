@@ -27,7 +27,7 @@ export function cardSettings(b) {
     icons: ICON_COLOURS.includes(c.icons) ? c.icons : "app",
     links: null,
     wide: "directions",
-    title: "",
+    title: typeof c.title === "string" ? c.title.slice(0, 60) : "",
   };
 }
 
@@ -61,8 +61,9 @@ function A({ l, b, className, children, ...rest }) {
   );
 }
 
+// The line under the name: the owner's job title; without one, the business name (no category)
 export function cardRole(b, cat, lang, s) {
-  return clean(s.title) || [cityName(cat, lang), b.contact_name ? pick(b, "name", lang) : ""].filter(Boolean).join(" · ");
+  return clean(s.title) || (b.contact_name ? pick(b, "name", lang) : "");
 }
 
 function Avatar({ s, person, className }) {
