@@ -4,9 +4,9 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "re
 import { t, pick } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
 import { useLists, useToast, Toast, ok, BottomNav } from "../browse/Browse.jsx";
-import { NfcCard, cardSettings, surface, surfaceClass } from "../card/CardFaces.jsx";
+import { NfcCard, cardSettings, cardLinks } from "../card/CardFaces.jsx";
 import { getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone, scanImageUrl, removeScanPhotos } from "../api.js";
-import { calm, ms, ease, flipCard } from "../motion.js";
+import { calm, ms, ease, flipCard, haptic } from "../motion.js";
 import "./wallet.css";
 
 const byId = (rows) => Object.fromEntries((rows || []).map((r) => [r.id, r]));
@@ -152,6 +152,207 @@ function WheelFace({ it, lang, cats }) {
   return <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} linksOnly />;
 }
 
+// ---------- details of one card: name, the two big buttons, the other links ----------
+function paperRows(d, lang) {
+  const digits = (p) => String(p || "").replace(/[^\d]/g, "");
+  return [
+    d.phone && { key: "call", icon: "phone", cls: "call", label: t(lang, "call"), text: prettyPhone(d.phone) || d.phone, href: `tel:${d.phone}`, ltr: true },
+    (d.whatsapp || d.phone) && { key: "whatsapp", icon: "whatsapp", cls: "wa", label: t(lang, "whatsapp"), text: t(lang, "send_message"), href: `https://wa.me/${digits(d.whatsapp || d.phone)}` },
+    d.email && { key: "email", icon: "mail", cls: "mail", label: t(lang, "f_email"), text: d.email, href: `mailto:${d.email}`, ltr: true },
+    d.website && { key: "website", icon: "globe", cls: "web", label: t(lang, "f_website"), text: d.website, href: /^https?:/i.test(d.website) ? d.website : `https://${d.website}`, ltr: true },
+    d.instagram && { key: "instagram", icon: "instagram", cls: "ig", label: "Instagram", text: "@" + d.instagram, href: `https://instagram.com/${d.instagram}`, ltr: true },
+  ].filter(Boolean);
+}
+
+function CardInfo({ it, lang, cats, go, onRemove, setToast }) {
+  const b = it.businesses;
+  const d = it.data || {};
+  const scanned = it.kind === "scanned";
+  const demo = it.id < 0;
+  const rows = b ? cardLinks(b, lang, cardSettings(b)) : scanned ? paperRows(d, lang) : [];
+  const call = rows.find((r) => r.key === "call");
+  const wa = rows.find((r) => r.key === "whatsapp");
+  const rest = rows.filter((r) => r !== call && r !== wa);
+  const sub = b ? [pick(b, "name", lang), cats[b.category_id] && pick(cats[b.category_id], "name", lang)].filter(Boolean).join(" · ")
+    : [d.title, d.name ? d.company : ""].filter(Boolean).join(" · ");
+  const openCard = () => (demo ? setToast(t(lang, "w_demo_note")) : go(`/${b.handle}/card`));
+  return (
+    <div className="wi">
+      <div className="wi-head">
+        <span className="grow"><b dir="auto">{itemName(it, lang)}</b>{sub ? <small dir="auto">{sub}</small> : null}</span>
+        {scanned ? <span className="w-badge paper">{t(lang, "scanned_tag")}</span> : null}
+      </div>
+      <div className="wi-quick">
+        {call ? <a className="wi-btn gold" href={call.href} onClick={() => haptic(10)}><Icon name="phone" size={18} /> {t(lang, "call")}</a> : null}
+        {wa ? <a className="wi-btn wa" href={wa.href} target="_blank" rel="noreferrer"><Icon name="whatsapp" size={18} /> {t(lang, "whatsapp")}</a> : null}
+        {b ? <button type="button" className="wi-btn plain" onClick={openCard} aria-label={t(lang, "w_open_card")}><Icon name="flip" size={18} /></button> : null}
+      </div>
+      {rest.length ? (
+        <div className="wi-rows">
+          {rest.map((l) => (
+            <a key={l.key} className="wi-row" href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+              <span className={"w-plic " + l.cls}><Icon name={l.icon} size={16} /></span>
+              <span className="grow"><b>{l.label}</b><small className={l.ltr ? "ltr" : ""}>{l.text}</small></span>
+              <Icon name="chevron" size={16} className="flip" />
+            </a>
+          ))}
+        </div>
+      ) : null}
+      <div className="wi-foot">
+        {scanned && !demo ? <button type="button" className="link" onClick={() => go(`/scan/edit/${it.id}`)}>{t(lang, "edit_details")}</button> : <span />}
+        <button type="button" className="link danger" onClick={onRemove}>{t(lang, "remove_wallet")}</button>
+      </div>
+    </div>
+  );
+}
+
+// ---------- look A · stack: tap a card, it rises to the top, the rest drop into a pile ----------
+const SPRING = "cubic-bezier(0.22, 1.18, 0.36, 1)";
+function StackLook({ items, lang, cats, go, onRemove, setToast, startId }) {
+  const area = useRef(null);
+  const touch = useRef(null);
+  const [box, setBox] = useState({ w: 350, h: 520 });
+  const [open, setOpen] = useState(null);
+  const [scroll0, setScroll0] = useState(0);
+  useLayoutEffect(() => {
+    const m = () => {
+      const el = area.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      setBox({ w: el.clientWidth, h: Math.max(420, window.innerHeight - top - 104) });
+    };
+    m();
+    window.addEventListener("resize", m);
+    return () => window.removeEventListener("resize", m);
+  }, []);
+  useEffect(() => { if (open && !items.find((x) => x.id === open)) setOpen(null); }, [items]);
+  const H = box.w / 1.586;
+  const n = items.length;
+  const STEP = Math.max(58, Math.min(84, (box.h - H - 24) / Math.max(1, n - 1)));
+  const sel = items.find((x) => x.id === open);
+  const others = items.filter((x) => x !== sel);
+  const pileTop = scroll0 + box.h - 96;
+  const fast = calm();
+  const tr = fast ? "opacity 120ms linear" : `transform 620ms ${SPRING}, opacity 260ms ease, filter 300ms ease`;
+  const place = (it, i) => {
+    if (!sel) return { y: i * STEP, s: 1, o: 1, z: i, dim: 0 };
+    if (it === sel) return { y: scroll0, s: 1, o: 1, z: 200, dim: 0 };
+    const k = others.indexOf(it);
+    return { y: pileTop + Math.min(k, 3) * 12, s: 0.9 - Math.min(k, 3) * 0.03, o: k > 3 ? 0 : 1, z: 100 - k, dim: 0.12 + Math.min(k, 3) * 0.06 };
+  };
+  const tap = (it) => {
+    haptic(10);
+    if (sel) { setOpen(null); return; }
+    setScroll0(area.current ? area.current.scrollTop : 0);
+    setOpen(it.id);
+  };
+  const innerH = sel ? scroll0 + box.h : (n - 1) * STEP + H + 30;
+  return (
+    <div className={"ws-area" + (sel ? " is-open" : "")} ref={area} style={{ height: box.h }}>
+      <div className="ws-inner" style={{ height: innerH }}>
+        {items.map((it, i) => {
+          const pl = place(it, i);
+          return (
+            <button key={it.id} type="button" className="ws-card" aria-label={itemName(it, lang)} aria-expanded={it === sel}
+              style={{ zIndex: pl.z, opacity: pl.o, transform: `translateY(${pl.y}px) scale(${pl.s})`, transition: tr, "--dim": pl.dim, height: H }}
+              onClick={() => tap(it)}
+              onTouchStart={(e) => { touch.current = e.touches[0].clientY; }}
+              onTouchEnd={(e) => { if (sel && it === sel && touch.current != null && e.changedTouches[0].clientY - touch.current > 70) setOpen(null); touch.current = null; }}>
+              <WheelFace it={it} lang={lang} cats={cats} />
+              {it.kind !== "scanned" ? <span className="ws-name" dir="auto" style={{ opacity: !sel && i < n - 1 ? 1 : 0 }}>{itemName(it, lang)}</span> : null}
+            </button>
+          );
+        })}
+        {sel ? (
+          <div className="ws-info" key={sel.id} style={{ top: scroll0 + H + 18, height: box.h - H - 18 - 108 }}>
+            <CardInfo it={sel} lang={lang} cats={cats} go={go} onRemove={() => onRemove(sel)} setToast={setToast} />
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+// ---------- look C · swipe deck: one big card in the middle, neighbours tilt away at the sides ----------
+function DeckLook({ items, lang, cats, go, onRemove, setToast, startId }) {
+  const row = useRef(null);
+  const els = useRef({});
+  const [active, setActive] = useState(0);
+  const act = useRef(0);
+  const paint = () => {
+    const r = row.current;
+    if (!r) return;
+    const rr = r.getBoundingClientRect();
+    const mid = rr.left + rr.width / 2;
+    let best = 0, bd = Infinity;
+    items.forEach((it, i) => {
+      const el = els.current[it.id];
+      if (!el) return;
+      const b = el.getBoundingClientRect();
+      const d = (b.left + b.width / 2 - mid) / b.width;
+      const a = Math.min(Math.abs(d), 1.6);
+      const card = el.firstElementChild;
+      if (card) {
+        card.style.transform = calm() ? `scale(${1 - a * 0.08})` : `perspective(1000px) rotateY(${Math.max(-1.4, Math.min(1.4, d)) * -22}deg) scale(${1 - a * 0.1})`;
+        card.style.setProperty("--dim", String(Math.min(0.5, a * 0.3)));
+      }
+      if (Math.abs(d) < bd) { bd = Math.abs(d); best = i; }
+    });
+    if (best !== act.current) { act.current = best; setActive(best); haptic(4); }
+  };
+  const raf = useRef(0);
+  const onScroll = () => { cancelAnimationFrame(raf.current); raf.current = requestAnimationFrame(paint); };
+  const centre = (i, smooth = true) => {
+    const it = items[i];
+    const el = it && els.current[it.id];
+    if (el) el.scrollIntoView({ behavior: smooth && !calm() ? "smooth" : "auto", inline: "center", block: "nearest" });
+  };
+  useLayoutEffect(() => {
+    const i = Math.max(0, items.findIndex((x) => x.id === startId));
+    act.current = i; setActive(i);
+    centre(i, false);
+    requestAnimationFrame(paint);
+  }, [items.length]);
+  const cur = items[Math.min(active, items.length - 1)];
+  return (
+    <div className="wd">
+      <div className="wd-row" ref={row} onScroll={onScroll}>
+        {items.map((it, i) => (
+          <div key={it.id} className="wd-item" ref={(el) => { els.current[it.id] = el; }}>
+            <button type="button" className="wd-card" aria-label={itemName(it, lang)}
+              onClick={() => (i === active ? (it.businesses && it.id > 0 ? go(`/${it.businesses.handle}/card`) : null) : centre(i))}>
+              <WheelFace it={it} lang={lang} cats={cats} />
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="wd-dots" aria-hidden="true">
+        {items.slice(0, 12).map((it, i) => <i key={it.id} className={i === active ? "on" : ""} />)}
+      </div>
+      {cur ? (
+        <div className="wd-info" key={cur.id}>
+          <CardInfo it={cur} lang={lang} cats={cats} go={go} onRemove={() => onRemove(cur)} setToast={setToast} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// Sample cards so the wallet's motion can be tried with only a few saved cards
+const DEMO_CARDS = [
+  ["Karwan Ahmed", "Azad Cooling Services", "hvac", "#1b2a4a"],
+  ["Dana Ali", "Baran Electric", "electrical", "#5a1a26"],
+  ["Hemn Ali", "Hemn Plumbing", "plumbing", "#1f3d2b"],
+  ["Lana Kamal", "Lana Interiors", "interior", "#0f5c5c"],
+  ["Rebwar Aziz", "Aziz Carpentry", "carpentry", "#3f2a5c"],
+  ["Shilan Omar", "Shilan Studio", "photography", "#b5532f"],
+].map(([person, name, cat, color], i) => ({
+  id: -(i + 1), kind: "business", business_id: -(i + 1), created_at: "2026-10-2" + i,
+  businesses: { id: -(i + 1), handle: "demo", contact_name: person, name_en: name, name_ku: name, name_ar: name, category_id: cat,
+    phone: "+96475012345" + (60 + i), whatsapp: "+96475012345" + (60 + i), instagram: i % 2 ? "" : "bmnassa", email: i % 3 ? "" : "hello@bmnassa.com", card: { style: "wallet", color } },
+}));
+DEMO_CARDS.splice(2, 0, { id: -99, kind: "scanned", created_at: "2026-10-20", data: { name: "Sherwan Kamal", title: "Manager", company: "Kamal Printing", phone: "+9647501234599", email: "sherwan@kamalprint.com" } });
+
 function Sheet({ lang, title, onClose, children }) {
   return (
     <div className="b-sheet-wrap" onClick={onClose}>
@@ -177,6 +378,14 @@ export function WalletPage({ lang, go, signedIn }) {
   const els = useRef({});
   const centred = useRef(-1);
   const [detail, setDetail] = useState(null);
+  const [look, setLookState] = useState(() => {
+    const q0 = new URLSearchParams(window.location.search).get("look");
+    return ["stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look", "stack");
+  });
+  const [demo, setDemoState] = useState(() => store.get("bm_wallet_demo", "") === "1" || new URLSearchParams(window.location.search).has("demo"));
+  const setLook = (v) => { setLookState(v); store.set("bm_wallet_look", v); setSheet(""); };
+  const setDemo = (v) => { setDemoState(v); store.set("bm_wallet_demo", v ? "1" : ""); setSheet(""); };
+  const [hidden, setHidden] = useState([]);
 
   const load = () => {
     setErr(false);
@@ -190,6 +399,7 @@ export function WalletPage({ lang, go, signedIn }) {
   const cats = useMemo(() => byId(lists && lists.cats), [lists]);
   const items = useMemo(() => {
     let r = (rows || []).slice();
+    if (demo) r = r.concat(DEMO_CARDS.filter((x) => !hidden.includes(x.id)));
     if (q.trim()) {
       const n = q.trim().toLowerCase();
       r = r.filter((it) => {
@@ -200,7 +410,7 @@ export function WalletPage({ lang, go, signedIn }) {
     }
     if (sort === "az") r.sort((a, z) => itemName(a, lang).localeCompare(itemName(z, lang)));
     return r;
-  }, [rows, q, sort, lang, cats]);
+  }, [rows, q, sort, lang, cats, demo, hidden]);
   // The wheel: the card in the middle is full size and on top; the others shrink, darken and tuck behind it
   const paint = () => {
     const w = wheel.current;
@@ -219,7 +429,8 @@ export function WalletPage({ lang, go, signedIn }) {
       if (card) {
         // cards below slide a little further down so their name and buttons show; cards above show their top
         const ty = d > 0 ? Math.min(a, 1) * 36 + Math.max(0, a - 1) * step * 0.12 : -(Math.min(a, 1) * 6 + Math.max(0, a - 1) * step * 0.18);
-        card.style.transform = `translateY(${ty}px) scale(${1 - a * 0.075})`;
+        const tilt = calm() ? "" : ` perspective(1100px) rotateX(${Math.max(-1.6, Math.min(1.6, d)) * -16}deg)`;
+        card.style.transform = `translateY(${ty}px)${tilt} scale(${1 - a * 0.075})`;
         card.style.setProperty("--dim", String(Math.min(0.55, a * 0.16)));
         card.style.zIndex = String(100 - Math.round(a * 10));
       }
@@ -240,11 +451,11 @@ export function WalletPage({ lang, go, signedIn }) {
   };
   // after loading: start on the card that was just saved, else the first
   useLayoutEffect(() => {
-    if (!items.length) return;
+    if (!items.length || look !== "wheel") return;
     const start = frontId && items.find((x) => x.id === frontId) ? frontId : items[0].id;
     centre(start, false);
     paint();
-  }, [rows, q, sort]);
+  }, [rows, q, sort, look, demo]);
   useEffect(() => {
     const r = () => paint();
     window.addEventListener("resize", r);
@@ -256,6 +467,7 @@ export function WalletPage({ lang, go, signedIn }) {
   };
   const setSort = (v) => { setSortState(v); store.set("bm_wallet_sort", v); setSheet(""); };
   const remove = async (it) => {
+    if (it.id < 0) { setHidden((x) => x.concat(it.id)); setDetail(null); setToast(t(lang, "removed_wallet")); return; }
     try {
       await removeFromWallet(it.id, it.business_id);
       if (it.kind === "scanned") removeScanPhotos([it.image_path, it.data && it.data.back_path]);
@@ -286,12 +498,12 @@ export function WalletPage({ lang, go, signedIn }) {
     );
   }
 
-  const n = (rows || []).length;
+  const n = (rows || []).length + (demo ? DEMO_CARDS.length - hidden.length : 0);
   return (
     <div className="w-page">
       <div className="w-backdrop" aria-hidden="true" />
       <div className="w-head">
-        <h1>{t(lang, "wallet_title")}</h1>
+        <h1>{t(lang, "w_short")}</h1>
         <button type="button" className="w-round" aria-label={t(lang, "add_card")} onClick={() => setSheet("add")}><Icon name="plus" size={20} stroke={2.4} /></button>
         <span className="w-pill">
           <button type="button" aria-label={t(lang, "wallet_search")} onClick={() => setSearching((x) => !x)}><Icon name="search" size={17} /></button>
@@ -311,7 +523,7 @@ export function WalletPage({ lang, go, signedIn }) {
           <div className="w-witem"><div className="w-wcard" style={{ transform: "scale(0.92)" }}><span className="w-skelcard" /></div></div>
         </div>
       ) : null}
-      {rows && !n ? (
+      {rows && !n && !demo ? (
         <div className="w-empty">
           <div className="w-introstack" aria-hidden="true"><i /><i /><i /></div>
           <b>{t(lang, "wallet_empty")}</b>
@@ -320,7 +532,9 @@ export function WalletPage({ lang, go, signedIn }) {
         </div>
       ) : null}
 
-      {items.length ? (
+      {items.length && look === "stack" ? <StackLook items={items} lang={lang} cats={cats} go={go} onRemove={remove} setToast={setToast} startId={frontId} /> : null}
+      {items.length && look === "deck" ? <DeckLook items={items} lang={lang} cats={cats} go={go} onRemove={remove} setToast={setToast} startId={frontId} /> : null}
+      {items.length && look === "wheel" ? (
         <div className="w-wheel" ref={wheel} onScroll={onScroll}>
           <div className="w-wheelpad" />
           {items.map((it, i) => (
@@ -334,7 +548,7 @@ export function WalletPage({ lang, go, signedIn }) {
         </div>
       ) : null}
 
-      {rows && n ? (
+      {rows && n && look === "wheel" ? (
         <div className="w-foot">
           <span className="w-count">{n === 1 ? t(lang, "wallet_one") : t(lang, "wallet_cards", { n })}</span>
           <button type="button" className="w-scan" onClick={() => go("/scan")}><Icon name="scan" size={16} /> {t(lang, "scan_paper")}</button>
@@ -360,6 +574,14 @@ export function WalletPage({ lang, go, signedIn }) {
           {[["newest", "sort_newest"], ["az", "sort_az"]].map(([k, label]) => (
             <button key={k} type="button" className="choice" aria-pressed={sort === k} onClick={() => setSort(k)}><span>{t(lang, label)}</span>{sort === k ? <span className="tick">✓</span> : null}</button>
           ))}
+          <span className="label" style={{ marginTop: 8 }}>{t(lang, "w_style")}</span>
+          <div className="seg" role="group" aria-label={t(lang, "w_style")}>
+            {[["stack", "w_stack"], ["wheel", "w_wheel"], ["deck", "w_deck"]].map(([k, label]) => (
+              <button key={k} type="button" aria-pressed={look === k} onClick={() => setLook(k)}>{t(lang, label)}</button>
+            ))}
+          </div>
+          <label className="ps-toggle"><span>{t(lang, "w_demo")}</span>
+            <input type="checkbox" role="switch" checked={demo} onChange={(e) => setDemo(e.target.checked)} /></label>
         </Sheet>
       ) : null}
 

@@ -347,6 +347,14 @@ const T = {
   ago_months: ["{n} months ago", "{n} مانگ لەمەوبەر", "قبل {n} أشهر"],
   reviews_tile_sub: ["Read and reply", "بخوێنەوە و وەڵام بدەرەوە", "اقرأ ورد"],
 
+  // wallet looks (new, needs a native-speaker check)
+  w_short: ["Wallet", "جزدان", "المحفظة"],
+  w_style: ["Wallet style", "شێوازی جزدان", "شكل المحفظة"],
+  w_stack: ["Stack", "کۆمەڵە", "كومة"],
+  w_wheel: ["Wheel", "چەرخ", "عجلة"],
+  w_deck: ["Swipe", "ڕاکێشان", "سحب"],
+  w_demo: ["Show sample cards", "کارتی نموونە پیشان بدە", "إظهار بطاقات تجريبية"],
+  w_demo_note: ["This is a sample card.", "ئەمە کارتێکی نموونەیە.", "هذه بطاقة تجريبية."],
   // slice 7 · wallet (new, needs a native-speaker check)
   wallet_title: ["Bmnassa Wallet", "جزدانی بمناسە", "محفظة بمناسة"],
   wallet_cards: ["{n} cards", "{n} کارت", "{n} بطاقة"],
