@@ -104,6 +104,18 @@ const T = {
   reason: ["Reason:", "هۆکار:", "السبب:"],
 
   // slice 4 · listing (signed-off screen text, from the language check)
+  // home · bento (new, needs a native-speaker check)
+  hi_morning: ["Good morning", "بەیانیت باش", "صباح الخير"],
+  hi_afternoon: ["Good afternoon", "ڕۆژت باش", "مساء الخير"],
+  hi_evening: ["Good evening", "ئێوارەت باش", "مساء الخير"],
+  home_ask: ["What do you need today?", "ئەمڕۆ پێویستت بە چییە؟", "ماذا تحتاج اليوم؟"],
+  most_listed: ["Most listed in {city}", "زۆرترین لە {city}", "الأكثر في {city}"],
+  n_near: ["{n} near you", "{n} لە نزیکت", "{n} بالقرب منك"],
+  wallet_tile_empty: ["Save cards you like", "کارتەکان پاشەکەوت بکە", "احفظ البطاقات"],
+  scan_tile: ["Scan a card", "سکانی کارت", "مسح بطاقة"],
+  scan_tile_sub: ["Paper → digital", "کاغەز ← دیجیتاڵ", "ورقية ← رقمية"],
+  top_rated_near: ["Top rated near you", "باشترین هەڵسەنگاندن لە نزیکت", "الأعلى تقييماً بالقرب منك"],
+  new_on_bm: ["New on Bmnassa", "نوێ لە بمناسە", "جديد على بمناسة"],
   home_title: ["Find a trusted service", "خزمەتگوزارییەک بدۆزەرەوە", "ابحث عن خدمة"],
   home_sub: ["Plumbers, pharmacies, engineers and more near you", "بۆڕیچی، دەرمانخانە، ئەندازیار و زیاتر لە نزیکت", "سبّاكون، صيدليات، مهندسون والمزيد بالقرب منك"],
   search_ph: ["Search a service, e.g. AC repair", "بگەڕێ، بۆ نموونە چاککردنەوەی سپلیت", "ابحث، مثلاً تصليح سبلت"],

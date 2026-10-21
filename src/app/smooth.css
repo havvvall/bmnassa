@@ -79,3 +79,7 @@ input.field, select.field { width: 100%; box-sizing: border-box; }
 /* status tags and banners stay soft, rows inside panels use lighter dividers */
 .row { border-top-color: var(--line); }
 .o-banner { border-radius: 24px; }
+/* home · bento: tinted category icons */
+.b-ic.h-tint { background: var(--tint); box-shadow: none; color: #15171a; }
+[data-theme="dark"] .b-ic.h-tint { background: var(--surface-2); color: var(--text); }
+.h-tiles.cols3 .h-tile .b-ic.h-tint { border-radius: 16px; }

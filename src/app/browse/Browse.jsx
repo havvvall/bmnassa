@@ -8,7 +8,7 @@ import { SaveToWallet } from "../wallet/Wallet.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
-import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track } from "../api.js";
+import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
 import { CardFront, CardBack, NfcCard, cardSettings } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
@@ -159,10 +159,39 @@ function CitySheet({ lang, lists, city, onPick, onClose }) {
 
 const VIEW_KEY = "bm_home_view";
 
+// Soft icon backgrounds for the category tiles (light theme; dark theme uses the surface colour)
+const TINTS = ["#e8f0ff", "#e6f6ee", "#fff3d6", "#fde8ec", "#efe8fd", "#e3f4f6", "#fff0e3", "#eef1f4", "#f3f9e4"];
+
+function greeting(lang) {
+  const h = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hour12: false, timeZone: "Asia/Baghdad" }).format(new Date()));
+  return t(lang, h < 12 ? "hi_morning" : h < 17 ? "hi_afternoon" : "hi_evening");
+}
+
+// A business card face shrunk to a thumbnail
+function MiniCard({ b, cats, lang, w = 72 }) {
+  return (
+    <span className="h-mini" style={{ width: w, height: w / 1.586 }}>
+      <span style={{ transform: `scale(${w / 320})` }}><NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} linksOnly /></span>
+    </span>
+  );
+}
+
+function useWalletPeek(signedIn) {
+  const [w, setW] = useState(null);
+  useEffect(() => {
+    if (!signedIn) { setW(null); return; }
+    let alive = true;
+    getWallet().then((r) => { if (alive) setW(r || []); }).catch(() => { if (alive) setW([]); });
+    return () => { alive = false; };
+  }, [signedIn]);
+  return w;
+}
+
 export function Home({ lang, city, setCity, go, signedIn }) {
   const [lists, listErr, reloadLists] = useLists();
   const [rows] = useBusinesses(city);
-  const [view, setView] = useState(() => { try { return localStorage.getItem(VIEW_KEY) || "4"; } catch { return "4"; } });
+  const wallet = useWalletPeek(signedIn);
+  const [view, setView] = useState(() => { try { return localStorage.getItem(VIEW_KEY) || "3"; } catch { return "3"; } });
   const [picking, setPicking] = useState(false);
   const setV = (v) => { setView(v); try { localStorage.setItem(VIEW_KEY, v); } catch { /* ignore */ } };
 
@@ -173,9 +202,24 @@ export function Home({ lang, city, setCity, go, signedIn }) {
     return m;
   }, [rows]);
   const cats = lists ? lists.cats : [];
+  const catById = useMemo(() => byId(cats), [cats]);
+  const look = useMemo(() => ({ dist: byId(lists && lists.districts), city: byId(lists && lists.cities), sub: byId(lists && lists.subdistricts) }), [lists]);
+
+  // the big tile: the category with the most businesses in this city
+  const topCat = useMemo(() => {
+    let best = null;
+    cats.forEach((c) => { if ((counts[c.id] || 0) > ((best && counts[best.id]) || 0)) best = c; });
+    return best;
+  }, [cats, counts]);
+  // the list under the categories: best rated, else newest
+  const rated = (rows || []).filter((b) => Number(b.rating) > 0);
+  const topList = (rated.length ? rated.slice().sort((x, y) => Number(y.rating) - Number(x.rating) || (y.reviews || 0) - (x.reviews || 0))
+    : (rows || []).slice().sort((x, y) => String(y.created_at).localeCompare(String(x.created_at)))).slice(0, 3);
+  const walletCards = (wallet || []).filter((x) => x.businesses).slice(0, 2).map((x) => x.businesses);
+  const peek = walletCards.length ? walletCards : (rows || []).slice(0, 2);
 
   return (
-    <div className="b-page">
+    <div className="b-page h-page">
       <div className="b-top">
         <img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" />
         <span className="grow" />
@@ -184,19 +228,40 @@ export function Home({ lang, city, setCity, go, signedIn }) {
         </button>
       </div>
 
-      <div className="stack" style={{ gap: 4 }}>
-        <h1>{t(lang, "home_title")}</h1>
-        <p className="sub">{t(lang, "home_sub")}</p>
+      <div className="h-hello">
+        <small>{greeting(lang)}</small>
+        <h1>{t(lang, "home_ask")}</h1>
       </div>
 
       <button type="button" className="b-search" onClick={() => go("/search")}>
         <Icon name="search" size={19} /> <span>{t(lang, "search_ph")}</span>
       </button>
 
+      <div className="h-bento">
+        {topCat ? (
+          <button type="button" className="h-big bm-arrive" style={{ "--i": 0 }} onClick={() => go("/c/" + topCat.id)}>
+            <small>{t(lang, "most_listed", { city: cityName(cityRow, lang) || "" })}</small>
+            <b>{cityName(topCat, lang)}</b>
+            <span className="h-near">{t(lang, "n_near", { n: counts[topCat.id] || 0 })} <Icon name="chevron" size={14} className="flip" /></span>
+            <i aria-hidden="true"><Icon name={categoryIcon(topCat)} size={84} stroke={1.2} /></i>
+          </button>
+        ) : <span className="h-big h-skel" />}
+        <button type="button" className="h-med bm-arrive" style={{ "--i": 1 }} onClick={() => go("/wallet")}>
+          <span className="h-wst" aria-hidden="true">{peek.map((b, i) => <span key={b.id || i} style={{ "--k": i }}><MiniCard b={b} cats={catById} lang={lang} w={92} /></span>)}</span>
+          <b>{t(lang, "w_short")}</b>
+          <small>{wallet && wallet.length ? (wallet.length === 1 ? t(lang, "wallet_one") : t(lang, "wallet_cards", { n: wallet.length })) : t(lang, "wallet_tile_empty")}</small>
+        </button>
+        <button type="button" className="h-med bm-arrive" style={{ "--i": 2 }} onClick={() => go("/scan")}>
+          <span className="h-sic" aria-hidden="true"><Icon name="scan" size={21} /></span>
+          <b>{t(lang, "scan_tile")}</b>
+          <small>{t(lang, "scan_tile_sub")}</small>
+        </button>
+      </div>
+
       <div className="b-row-head">
-        <span className="label">{t(lang, "categories")}</span>
+        <span className="h-title">{t(lang, "categories")}</span>
         <div className="b-views" role="group" aria-label={t(lang, "categories")}>
-          {[["4", "tiles4", "view_4"], ["3", "tiles9", "view_3"], ["list", "rows", "view_list"]].map(([v, icon, key]) => (
+          {[["3", "tiles9", "view_3"], ["4", "tiles4", "view_4"], ["list", "rows", "view_list"]].map(([v, icon, key]) => (
             <button key={v} type="button" aria-pressed={view === v} title={t(lang, key)} aria-label={t(lang, key)} onClick={() => setV(v)}>
               <Icon name={icon} size={17} />
             </button>
@@ -213,31 +278,57 @@ export function Home({ lang, city, setCity, go, signedIn }) {
         view === "list" ? <SkelRows n={8} /> : <SkelTiles n={view === "3" ? 9 : 12} cols={view === "3" ? 3 : 4} />
       ) : view === "list" ? (
         <div className="panel">
-          {cats.map((c) => (
+          {cats.map((c, i) => (
             <button key={c.id} type="button" className="b-catrow" onClick={() => go("/c/" + c.id)}>
-              <span className="b-ic sm"><Icon name={categoryIcon(c)} size={20} /></span>
+              <span className="b-ic sm h-tint" style={{ "--tint": TINTS[i % TINTS.length] }}><Icon name={categoryIcon(c)} size={20} /></span>
               <span className="grow"><b>{cityName(c, lang)}</b><small>{rows ? bizCount(lang, counts[c.id] || 0) : "…"}</small></span>
               <Icon name="chevron" size={18} className="flip" />
             </button>
           ))}
         </div>
       ) : (
-        <div className={"b-tiles cols" + view}>
+        <div className={"b-tiles h-tiles cols" + view}>
           {cats.map((c, i) => (
-            <button key={c.id} type="button" className="b-tile bm-arrive" style={{ "--i": i }} onClick={() => go("/c/" + c.id)}>
-              <span className="b-ic"><Icon name={categoryIcon(c)} size={view === "3" ? 30 : 24} /></span>
+            <button key={c.id} type="button" className="b-tile h-tile bm-arrive" style={{ "--i": i }} onClick={() => go("/c/" + c.id)}>
+              <span className="b-ic h-tint" style={{ "--tint": TINTS[i % TINTS.length] }}><Icon name={categoryIcon(c)} size={view === "3" ? 24 : 22} /></span>
               <span className="b-tile-name">{cityName(c, lang)}</span>
             </button>
           ))}
         </div>
       )}
 
+      {topList.length ? (
+        <>
+          <span className="h-title">{t(lang, rated.length ? "top_rated_near" : "new_on_bm")}</span>
+          <div className="h-list">
+            {topList.map((b, i) => {
+              const st = openState(b.hours, lang);
+              const dist = areaOf(b, look);
+              return (
+                <div key={b.id} className="h-row bm-arrive" style={{ "--i": i }} role="button" tabIndex={0} onClick={() => go("/" + b.handle)} onKeyDown={(e) => { if (e.key === "Enter") go("/" + b.handle); }}>
+                  <MiniCard b={b} cats={catById} lang={lang} />
+                  <span className="grow">
+                    <b><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
+                    <small>{[catById[b.category_id] && cityName(catById[b.category_id], lang), dist && cityName(dist, lang)].filter(Boolean).join(" · ")}</small>
+                    <em>{Number(b.rating) > 0 ? <><Icon name="star" size={12} className="h-star" /> {Number(b.rating).toFixed(1)}</> : null}
+                      {st ? <span className={st.open ? "b-ok" : "b-muted"}>{Number(b.rating) > 0 ? " · " : ""}{st.text}</span> : null}</em>
+                  </span>
+                  {b.phone ? (
+                    <a className="h-call" href={`tel:${b.phone}`} onClick={(e) => { e.stopPropagation(); track(b.id, "call"); }} aria-label={t(lang, "call")}><Icon name="phone" size={18} /></a>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ) : null}
+
       <div className="b-own">
         <div className="grow">
           <b>{t(lang, "own_biz")}</b>
           <small>{t(lang, "own_biz_sub")}</small>
         </div>
-        <button type="button" className="b-gold" onClick={() => go(signedIn ? "/list" : "/list")}>{t(lang, "list_it_free")}</button>
+        <button type="button" className="b-gold" onClick={() => go("/list")}>{t(lang, "list_it_free")}</button>
       </div>
 
       <div className="b-navspace" />

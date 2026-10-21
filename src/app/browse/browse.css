@@ -271,3 +271,42 @@ a.b-chip { text-decoration: none; }
 .pg .bz-tabs button.on { background: var(--pg-main); color: var(--pg-on-main); }
 .pg .bz-go, .pg .bz-week span.today { background: var(--pg-main); color: var(--pg-on-main); }
 .pg .bz-bar .b-act { border-radius: var(--pg-radius); }
+
+/* ===== Home · bento ===== */
+.h-hello { display: flex; flex-direction: column; gap: 2px; }
+.h-hello small { font-size: 15px; font-weight: 700; color: var(--muted); }
+.h-hello h1 { margin: 0; font-size: 30px; line-height: 36px; letter-spacing: -0.02em; }
+.h-title { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+.h-bento { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: 116px 116px; gap: 10px; }
+.h-big { grid-row: span 2; border: 0; border-radius: 26px; padding: 16px; background: linear-gradient(160deg, #f5c33b, #e0a614); color: #15171a; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; text-align: start; font: inherit; cursor: pointer;
+  transition: transform var(--duration-quick, 120ms) var(--ease-standard, ease); }
+.h-big:active, .h-med:active { transform: scale(0.97); }
+.h-big small { font-size: 12px; font-weight: 700; opacity: 0.72; }
+.h-big b { font-size: 21px; line-height: 25px; margin-top: 4px; position: relative; z-index: 1; }
+.h-near { margin-top: auto; font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.55); padding: 6px 10px; border-radius: 999px; position: relative; z-index: 1; }
+.h-big i { position: absolute; inset-inline-end: -10px; bottom: 30px; opacity: 0.22; }
+.h-skel { background: var(--surface-2); }
+.h-med { border: 0; border-radius: 24px; padding: 14px; background: var(--surface-raised); color: var(--text); box-shadow: var(--shadow-soft, none); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; text-align: start; font: inherit; cursor: pointer;
+  transition: transform var(--duration-quick, 120ms) var(--ease-standard, ease); }
+.h-med b { font-size: 16px; position: relative; }
+.h-med small { font-size: 12px; color: var(--muted); font-weight: 600; position: relative; }
+.h-wst { position: absolute; inset-inline-end: -26px; top: 12px; width: 120px; height: 64px; }
+.h-wst > span { position: absolute; inset-inline-start: calc(var(--k) * 14px); top: calc(var(--k) * 10px); transform: rotate(-8deg); }
+[dir="rtl"] .h-wst > span { transform: rotate(8deg); }
+.h-wst .h-mini { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+.h-sic { position: absolute; top: 14px; inset-inline-start: 14px; width: 40px; height: 40px; border-radius: 13px; background: #15171a; color: #f5c33b; display: grid; place-items: center; }
+.h-mini { display: block; flex: none; overflow: hidden; border-radius: 8px; position: relative; pointer-events: none; }
+.h-mini > span { position: absolute; top: 0; left: 0; width: 320px; transform-origin: 0 0; }
+.h-tint { background: var(--tint, var(--surface-2)); color: #15171a; box-shadow: none; }
+[data-theme="dark"] .h-tint { background: var(--surface-2); color: var(--text); }
+.h-tiles.cols3 .h-tile { background: var(--surface-raised); border-radius: 20px; padding: 14px 6px 12px; box-shadow: var(--shadow-soft-sm, none); gap: 8px; }
+.h-tiles.cols3 .h-tile .b-ic { width: 50px; height: 50px; border-radius: 16px; }
+.h-list { display: flex; flex-direction: column; gap: 10px; margin-top: -4px; }
+.h-row { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 22px; background: var(--surface-raised); box-shadow: var(--shadow-soft-sm, none); cursor: pointer; }
+.h-row .grow { display: flex; flex-direction: column; min-width: 0; }
+.h-row b { font-size: 15px; display: flex; align-items: center; gap: 4px; overflow: hidden; white-space: nowrap; }
+.h-row small { font-size: 12px; color: var(--muted); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.h-row em { font-style: normal; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 3px; white-space: nowrap; overflow: hidden; }
+.h-star { color: #e0a614; fill: #e0a614; }
+.h-call { width: 42px; height: 42px; border-radius: 21px; background: var(--accent); color: #15171a; display: grid; place-items: center; flex: none; }
+[data-theme="dark"] .h-big { background: linear-gradient(160deg, #f5c33b, #c98f0a); }
