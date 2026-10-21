@@ -20,6 +20,7 @@ import OrderNfc from "./owner/OrderNfc.jsx";
 import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
+import { Welcome } from "./welcome/Welcome.jsx";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
@@ -116,42 +117,6 @@ function Splash({ lang }) {
       <div className="dots" aria-hidden="true"><span /><span /><span /></div>
       <div className="foot">{t(lang, "region")}</div>
     </div>
-  );
-}
-
-function Welcome({ lang, setLang, city, setCity, onDone }) {
-  const [cities, setCities] = useState(FALLBACK_CITIES);
-  useEffect(() => {
-    getCities().then((rows) => { if (rows && rows.length) setCities(rows); }).catch(() => {});
-  }, []);
-  return (
-    <>
-      <div className="top"><img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /><span className="grow" /><TestTag lang={lang} /></div>
-      <div className="stack">
-        <h1>{t(lang, "welcome")}</h1>
-        <p className="sub">{t(lang, "welcome_sub")}</p>
-      </div>
-      <div className="stack" role="group" aria-label={t(lang, "choose_lang")}>
-        <span className="label">{t(lang, "choose_lang")}</span>
-        {LANGS.map((l) => (
-          <button key={l.id} type="button" className="choice" aria-pressed={lang === l.id} onClick={() => setLang(l.id)} dir={l.dir}>
-            <span>{l.label}</span>{lang === l.id && <span className="tick">✓</span>}
-          </button>
-        ))}
-      </div>
-      <div className="stack" role="group" aria-label={t(lang, "choose_city")}>
-        <span className="label">{t(lang, "choose_city")}</span>
-        {cities.map((c) => (
-          <button key={c.id} type="button" className="choice" disabled={!c.live} aria-pressed={city === c.id} onClick={() => c.live && setCity(c.id)}>
-            <span>{cityName(c, lang)}</span>
-            {c.live ? (city === c.id && <span className="tick">✓</span>) : <span className="soon">{t(lang, "coming_soon")}</span>}
-          </button>
-        ))}
-      </div>
-      <p className="note">{t(lang, "change_later")}</p>
-      <span className="spacer" />
-      <button type="button" className="btn" disabled={!city} onClick={onDone}>{t(lang, "continue")}</button>
-    </>
   );
 }
 
@@ -741,7 +706,7 @@ export default function App() {
   } else if ((path === "/list" || path === "/account") && !profile) {
     screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
   } else {
-    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/home")} />;
+    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/home")} onSignIn={() => go("/signin")} />;
   }
 
   return <main className="app" dir={dirOf(lang)} lang={lang === "ku" ? "ckb" : lang}>{screen}</main>;
