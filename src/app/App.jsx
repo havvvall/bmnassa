@@ -21,11 +21,14 @@ import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
 import { Welcome } from "./welcome/Welcome.jsx";
+import { Icon } from "./browse/icons.jsx";
+import "./account.css";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
   getSession, getMyProfile, updateMyProfile, getCities,
   normalisePhone, prettyPhone, getCategories, getPlaces, getMyBusinesses, createBusiness, getStats,
+  getDailyViews, getMyReviews, getWallet,
 } from "./api.js";
 
 // ---------- small helpers ----------
@@ -496,65 +499,174 @@ function MyBusinesses({ lang, onList, go }) {
   );
 }
 
-function Account({ lang, setLang, profile, setProfile, cityId, onEditName, onSignedOut, onList, go }) {
+const HELP_WHATSAPP = "9647701218832";
+
+function AccSheet({ title, onClose, children }) {
+  return (
+    <div className="b-sheet-wrap" onClick={onClose}>
+      <div className="b-sheet" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>
+        <div className="b-sheet-head"><b>{title}</b><button type="button" className="link" onClick={onClose}>✕</button></div>
+        <div className="stack">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// Owner bento: a greeting, this week's views and calls for your business, tiles for wallet, reviews and NFC cards, then settings
+function Account({ lang, setLang, profile, setProfile, cityId, setCity, onEditName, onSignedOut, onList, go }) {
   const [cities, setCities] = useState(FALLBACK_CITIES);
   const [saved, setSaved] = useState(false);
+  const [sheet, setSheet] = useState("");
+  const [biz, setBiz] = useState(null);
+  const [days, setDays] = useState(null);
+  const [walletN, setWalletN] = useState(null);
+  const [reviews, setReviews] = useState(null);
   useEffect(() => { getCities().then((r) => r && r.length && setCities(r)).catch(() => {}); }, []);
+  useEffect(() => {
+    getMyBusinesses().then((r) => setBiz(r || [])).catch(() => setBiz([]));
+    getWallet().then((r) => setWalletN((r || []).length)).catch(() => setWalletN(0));
+    getMyReviews().then(setReviews).catch(() => setReviews([]));
+  }, []);
+  const live = (biz || []).filter((b) => b.status === "approved");
+  const main = live[0] || null;
+  useEffect(() => { if (main) getDailyViews(main.id).then(setDays).catch(() => setDays([])); }, [main && main.id]);
+  const others = (biz || []).filter((b) => b !== main);
   const city = cities.find((c) => c.id === ((profile && profile.city_id) || cityId));
   const name = (profile && profile.full_name) || "";
-  const role = (profile && profile.role) || "customer";
+  const first = name.trim().split(/\s+/)[0] || "";
   const [theme, setTheme] = useState(getThemeChoice);
   const pickTheme = (v) => { setTheme(v); setThemeChoice(v); };
-
+  const flash = () => { setSaved(true); setTimeout(() => setSaved(false), 1600); };
   const pickLang = async (l) => {
     setLang(l);
-    try {
-      const row = await updateMyProfile({ language: l });
-      if (row) setProfile(row);
-      setSaved(true); setTimeout(() => setSaved(false), 1600);
-    } catch { /* the choice still applies on this phone */ }
+    try { const row = await updateMyProfile({ language: l }); if (row) setProfile(row); flash(); } catch { /* the choice still applies on this phone */ }
   };
-
+  const pickCity = async (id) => {
+    setCity(id); setSheet("");
+    try { const row = await updateMyProfile({ city_id: id }); if (row) setProfile(row); flash(); } catch { /* still applies on this phone */ }
+  };
+  const views = days ? days.reduce((a, d) => a + d.views, 0) : null;
+  const calls = days ? days.reduce((a, d) => a + d.calls, 0) : null;
+  const peak = days ? Math.max(1, ...days.map((d) => d.views)) : 1;
+  const Row = ({ ic, k, v, onClick, href }) => {
+    const inner = (<><span className="ac-ic"><Icon name={ic} size={17} /></span><span className="grow">{k}</span>{v ? <em>{v}</em> : null}{onClick || href ? <Icon name="chevron" size={16} className="flip ac-cv" /> : null}</>);
+    return href ? <a className="ac-row" href={href} target="_blank" rel="noreferrer">{inner}</a>
+      : onClick ? <button type="button" className="ac-row" onClick={onClick}>{inner}</button> : <div className="ac-row">{inner}</div>;
+  };
   return (
-    <>
-      <div className="top"><h1 className="grow">{t(lang, "account")}</h1><TestTag lang={lang} /></div>
-      <div className="me">
-        <div className="avatar" aria-hidden="true">{name.trim().charAt(0).toUpperCase() || "B"}</div>
-        <div className="stack" style={{ gap: 4, flex: 1, minWidth: 0 }}>
-          <span style={{ fontSize: 20, fontWeight: 800 }}>{name}</span>
-          <span><span className="role">{t(lang, "role_" + role)}</span></span>
-        </div>
-        <button type="button" className="link" onClick={onEditName}>{t(lang, "edit")}</button>
+    <div className="ac">
+      <div className="ac-top">
+        <h1 className="grow">{first ? t(lang, "hi_name", { name: first }) : t(lang, "account")}</h1>
+        <button type="button" className="ac-av" onClick={onEditName} aria-label={t(lang, "edit")}>{name.trim().charAt(0).toUpperCase() || "B"}</button>
       </div>
-      <div className="panel">
-        <div className="row"><span className="k">{t(lang, "email")}</span><span className="v" style={{ overflowWrap: "anywhere" }}><bdi dir="ltr">{(profile && profile.email) || ""}</bdi></span></div>
-        <div className="row"><span className="k">{t(lang, "city")}</span><span className="v">{cityName(city, lang)}</span></div>
-        <div className="row">
-          <span className="k">{t(lang, "language")}</span>
-          <div className="seg" role="group" aria-label={t(lang, "language")}>
-            {LANGS.map((l) => (
-              <button key={l.id} type="button" aria-pressed={lang === l.id} onClick={() => pickLang(l.id)}>{l.label}</button>
-            ))}
-          </div>
+
+      <div className="ac-bento">
+        {main ? (
+          <button type="button" className="ac-hero" onClick={() => go("/my/" + main.id)}>
+            <small><bdi>{bizName(main, lang)}</bdi></small>
+            <b>{views === null ? "…" : t(lang, "n_views", { n: views })}</b>
+            <span>{t(lang, "this_week")}{calls ? " · " + t(lang, "n_calls", { n: calls }) : ""}</span>
+            <span className="ac-bars" aria-hidden="true">{(days || Array.from({ length: 7 }, () => ({ views: 0 }))).map((d, i) => <i key={i} style={{ height: Math.max(8, (d.views / peak) * 100) + "%" }} />)}</span>
+            <span className="ac-hb">
+              <span role="button" tabIndex={0} onClick={(e) => { e.stopPropagation(); go("/my/" + main.id + "/edit"); }}>{t(lang, "edit_page")}</span>
+              <span role="button" tabIndex={0} onClick={(e) => { e.stopPropagation(); go("/my/" + main.id + "/card"); }}>{t(lang, "card_studio")}</span>
+            </span>
+          </button>
+        ) : (
+          <button type="button" className="ac-hero" onClick={onList}>
+            <small>{t(lang, "own_biz")}</small>
+            <b className="sm">{t(lang, "ac_list_title")}</b>
+            <span>{t(lang, "ac_list_sub")}</span>
+            <span className="ac-hb"><span>{t(lang, "list_it_free")}</span></span>
+          </button>
+        )}
+        <button type="button" className="ac-tile" onClick={() => go("/wallet")}>
+          <Icon name="wallet" size={20} /><b>{walletN === null ? "…" : walletN}</b><small>{t(lang, "saved_cards")}</small>
+        </button>
+        <button type="button" className="ac-tile" onClick={() => setSheet("reviews")}>
+          <Icon name="star" size={20} /><b>{reviews === null ? "…" : reviews.length}</b><small>{t(lang, "my_reviews")}</small>
+        </button>
+        {main ? (
+          <button type="button" className="ac-tile wide" onClick={() => go("/my/" + main.id + "/nfc")}>
+            <Icon name="nfc" size={20} /><span className="grow"><b className="sm">{t(lang, "order_nfc_tile")}</b><small>{t(lang, "order_nfc_sub")}</small></span><Icon name="chevron" size={16} className="flip" />
+          </button>
+        ) : (
+          <button type="button" className="ac-tile wide" onClick={() => go("/scan")}>
+            <Icon name="scan" size={20} /><span className="grow"><b className="sm">{t(lang, "scan_tile")}</b><small>{t(lang, "scan_tile_sub")}</small></span><Icon name="chevron" size={16} className="flip" />
+          </button>
+        )}
+      </div>
+
+      {others.length || main ? (
+        <div className="ac-list">
+          {others.map((b) => (
+            <button type="button" key={b.id} className="ac-biz" onClick={() => go("/my/" + b.id)}>
+              <span className="ac-bav">{bizName(b, lang).trim().charAt(0).toUpperCase() || "B"}</span>
+              <span className="grow"><b><bdi>{bizName(b, lang)}</bdi></b>
+                <small className={b.status === "approved" ? "ok" : "wait"}>{b.status === "approved" ? t(lang, "live") : t(lang, "st_" + (b.status || "pending"))}</small></span>
+              <Icon name="chevron" size={16} className="flip ac-cv" />
+            </button>
+          ))}
+          <button type="button" className="ac-add" onClick={onList}><Icon name="plus" size={17} /> {t(lang, biz && biz.length ? "list_another" : "list_free")}</button>
         </div>
-        <div className="row theme-row">
-          <span className="k">{t(lang, "theme")}</span>
-          <div className="seg" role="group" aria-label={t(lang, "theme")}>
-            {THEMES.map((v) => (
-              <button key={v} type="button" aria-pressed={theme === v} onClick={() => pickTheme(v)}>{t(lang, "theme_" + v)}</button>
-            ))}
-          </div>
-        </div>
-        {theme === "auto" ? <p className="note theme-note">{t(lang, "theme_auto_note")}</p> : null}
+      ) : null}
+
+      <span className="ac-lab">{t(lang, "settings")}</span>
+      <div className="ac-grp">
+        <Row ic="pin" k={t(lang, "city")} v={cityName(city, lang)} onClick={() => setSheet("city")} />
+        <Row ic="globe" k={t(lang, "language")} v={(LANGS.find((l) => l.id === lang) || {}).label} onClick={() => setSheet("lang")} />
+        <Row ic="palette" k={t(lang, "theme")} v={t(lang, "theme_" + theme)} onClick={() => setSheet("look")} />
+        <Row ic="mail" k={t(lang, "email")} v={<bdi dir="ltr">{(profile && profile.email) || ""}</bdi>} />
+      </div>
+      <div className="ac-grp">
+        <Row ic="user" k={t(lang, "edit_name")} v={name} onClick={onEditName} />
+        <Row ic="chat" k={t(lang, "help_contact")} href={`https://wa.me/${HELP_WHATSAPP}`} />
       </div>
       <div className="ok" role="status">{saved ? t(lang, "saved") : ""}</div>
-      <MyBusinesses lang={lang} onList={onList} go={go} />
-      <p className="note">{t(lang, "next_slices")}</p>
-      <span className="spacer" />
-      <button type="button" className="btn quiet" onClick={async () => { await signOut(); onSignedOut(); }}>{t(lang, "sign_out")}</button>
+      <button type="button" className="ac-out" onClick={async () => { await signOut(); onSignedOut(); }}>{t(lang, "sign_out")}</button>
+      <div className="ac-foot"><TestTag lang={lang} /></div>
       <div className="b-navspace" />
       <BottomNav lang={lang} active="user" go={go} signedIn />
-    </>
+
+      {sheet === "city" ? (
+        <AccSheet title={t(lang, "city")} onClose={() => setSheet("")}>
+          {cities.map((c) => (
+            <button key={c.id} type="button" className="choice" disabled={!c.live} aria-pressed={city && city.id === c.id} onClick={() => c.live && pickCity(c.id)}>
+              <span>{cityName(c, lang)}</span>{c.live ? (city && city.id === c.id ? <span className="tick">✓</span> : null) : <span className="soon">{t(lang, "coming_soon")}</span>}
+            </button>
+          ))}
+        </AccSheet>
+      ) : null}
+      {sheet === "lang" ? (
+        <AccSheet title={t(lang, "language")} onClose={() => setSheet("")}>
+          {LANGS.map((l) => (
+            <button key={l.id} type="button" className="choice" dir={l.dir} aria-pressed={lang === l.id} onClick={() => { pickLang(l.id); setSheet(""); }}>
+              <span>{l.label}</span>{lang === l.id ? <span className="tick">✓</span> : null}
+            </button>
+          ))}
+        </AccSheet>
+      ) : null}
+      {sheet === "look" ? (
+        <AccSheet title={t(lang, "theme")} onClose={() => setSheet("")}>
+          {THEMES.map((v) => (
+            <button key={v} type="button" className="choice" aria-pressed={theme === v} onClick={() => pickTheme(v)}>
+              <span>{t(lang, "theme_" + v)}</span>{theme === v ? <span className="tick">✓</span> : null}
+            </button>
+          ))}
+          {theme === "auto" ? <p className="note">{t(lang, "theme_auto_note")}</p> : null}
+        </AccSheet>
+      ) : null}
+      {sheet === "reviews" ? (
+        <AccSheet title={t(lang, "my_reviews")} onClose={() => setSheet("")}>
+          {reviews && reviews.length ? reviews.map((r) => (
+            <button key={r.id} type="button" className="choice" onClick={() => r.businesses && go("/" + r.businesses.handle)}>
+              <span><bdi>{r.businesses ? bizName(r.businesses, lang) : "—"}</bdi></span>
+              <span className="ac-stars">{"★".repeat(r.rating)}<i>{"★".repeat(5 - r.rating)}</i></span>
+            </button>
+          )) : <p className="note">{t(lang, "my_no_reviews")}</p>}
+        </AccSheet>
+      ) : null}
+    </div>
   );
 }
 
@@ -699,7 +811,7 @@ export default function App() {
     screen = <Sent lang={lang} business={sentBiz} onDone={() => go("/account", true)} />;
   } else if ((path === "/account" || path.startsWith("/list")) && profile) {
     screen = (
-      <Account lang={lang} setLang={setLang} profile={profile} setProfile={setProfile} cityId={city}
+      <Account lang={lang} setLang={setLang} profile={profile} setProfile={setProfile} cityId={city} setCity={setCity}
         onEditName={() => go("/name")} onSignedOut={() => { setProfile(null); go("/home", true); }}
         onList={() => go("/list")} go={go} />
     );

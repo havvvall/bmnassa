@@ -674,3 +674,25 @@ export async function joinedFromScans(city) {
   } catch { joinedCache[city] = []; }
   return joinedCache[city];
 }
+
+// ---------- account page ----------
+// Views per day for the last N days (oldest first), for the small chart
+export async function getDailyViews(bid, days = 7) {
+  const from = new Date(Date.now() - (days - 1) * 86400000);
+  const rows = await call(`/rest/v1/page_stats?business_id=eq.${Number(bid)}&day=gte.${from.toISOString().slice(0, 10)}&select=day,views,calls,whatsapp`, { auth: true });
+  const by = Object.fromEntries((rows || []).map((r) => [r.day, r]));
+  const out = [];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(from.getTime() + i * 86400000).toISOString().slice(0, 10);
+    const r = by[d] || {};
+    out.push({ day: d, views: r.views || 0, calls: (r.calls || 0) + (r.whatsapp || 0) });
+  }
+  return out;
+}
+// Reviews this person wrote, newest first
+export async function getMyReviews() {
+  const s = getSession();
+  const uid = s && s.user && s.user.id;
+  if (!uid) return [];
+  return (await call(`/rest/v1/reviews?user_id=eq.${uid}&select=id,rating,created_at,businesses(name_en,name_ku,name_ar,handle)&order=created_at.desc&limit=100`, { auth: true })) || [];
+}
