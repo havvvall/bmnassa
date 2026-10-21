@@ -145,11 +145,27 @@ function FrontCard({ it, lang, cats, go, onRemove, refFn }) {
 }
 
 // One card on the wheel: just its face (links are not tappable here; tap opens the details)
-function WheelFace({ it, lang, cats }) {
+function WheelFace({ it, lang, cats, back }) {
   const b = it.businesses;
-  if (it.kind === "scanned") return <PaperCard it={it} lang={lang} />;
+  if (it.kind === "scanned") return <PaperCard it={it} lang={lang} back={back} />;
   if (!b) return <div className="w-papercard w-gonecard"><b>{t(lang, "no_longer_listed")}</b></div>;
-  return <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} linksOnly />;
+  return back ? <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} back url={`${window.location.origin}/${b.handle}/card`} />
+    : <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} linksOnly />;
+}
+const canFlip = (it) => !!it.businesses || (it.kind === "scanned" && !!(it.data && it.data.back_path));
+
+// Turn a card over in place (front ⇄ back), with the same 3D flip as the card screen
+function useFlip(resetKey) {
+  const [back, setBack] = useState(false);
+  const busy = useRef(false);
+  useEffect(() => setBack(false), [resetKey]);
+  const flip = (el, dir = 1) => {
+    if (busy.current || !el) return;
+    busy.current = true;
+    haptic(12);
+    flipCard(el, { dir, swap: () => setBack((x) => !x), done: () => { busy.current = false; } });
+  };
+  return [back, flip];
 }
 
 // ---------- details of one card: name, the two big buttons, the other links ----------
@@ -164,18 +180,17 @@ function paperRows(d, lang) {
   ].filter(Boolean);
 }
 
-function CardInfo({ it, lang, cats, go, onRemove, setToast }) {
+function CardInfo({ it, lang, cats, go, onRemove, setToast, onFlip }) {
   const b = it.businesses;
   const d = it.data || {};
   const scanned = it.kind === "scanned";
-  const demo = it.id < 0;
   const rows = b ? cardLinks(b, lang, cardSettings(b)) : scanned ? paperRows(d, lang) : [];
   const call = rows.find((r) => r.key === "call");
   const wa = rows.find((r) => r.key === "whatsapp");
   const rest = rows.filter((r) => r !== call && r !== wa);
   const sub = b ? [pick(b, "name", lang), cats[b.category_id] && pick(cats[b.category_id], "name", lang)].filter(Boolean).join(" · ")
     : [d.title, d.name ? d.company : ""].filter(Boolean).join(" · ");
-  const openCard = () => (demo ? setToast(t(lang, "w_demo_note")) : go(`/${b.handle}/card`));
+  const openCard = () => go(`/${b.handle}/card`);
   return (
     <div className="wi">
       <div className="wi-head">
@@ -185,7 +200,7 @@ function CardInfo({ it, lang, cats, go, onRemove, setToast }) {
       <div className="wi-quick">
         {call ? <a className="wi-btn gold" href={call.href} onClick={() => haptic(10)}><Icon name="phone" size={18} /> {t(lang, "call")}</a> : null}
         {wa ? <a className="wi-btn wa" href={wa.href} target="_blank" rel="noreferrer"><Icon name="whatsapp" size={18} /> {t(lang, "whatsapp")}</a> : null}
-        {b ? <button type="button" className="wi-btn plain" onClick={openCard} aria-label={t(lang, "w_open_card")}><Icon name="flip" size={18} /></button> : null}
+        {onFlip && canFlip(it) ? <button type="button" className="wi-btn plain" onClick={onFlip} aria-label={t(lang, "w_flip")}><Icon name="flip" size={18} /></button> : null}
       </div>
       {rest.length ? (
         <div className="wi-rows">
@@ -199,7 +214,8 @@ function CardInfo({ it, lang, cats, go, onRemove, setToast }) {
         </div>
       ) : null}
       <div className="wi-foot">
-        {scanned && !demo ? <button type="button" className="link" onClick={() => go(`/scan/edit/${it.id}`)}>{t(lang, "edit_details")}</button> : <span />}
+        {scanned ? <button type="button" className="link" onClick={() => go(`/scan/edit/${it.id}`)}>{t(lang, "edit_details")}</button>
+          : b ? <button type="button" className="link" onClick={openCard}>{t(lang, "w_open_card")}</button> : <span />}
         <button type="button" className="link danger" onClick={onRemove}>{t(lang, "remove_wallet")}</button>
       </div>
     </div>
@@ -214,6 +230,10 @@ function StackLook({ items, lang, cats, go, onRemove, setToast, startId }) {
   const [box, setBox] = useState({ w: 350, h: 520 });
   const [open, setOpen] = useState(null);
   const [scroll0, setScroll0] = useState(0);
+  const [drag, setDrag] = useState(0);
+  const [swapDir, setSwapDir] = useState(0);
+  const [back, flip] = useFlip(open);
+  const faces = useRef({});
   useLayoutEffect(() => {
     const m = () => {
       const el = area.current;
@@ -236,16 +256,55 @@ function StackLook({ items, lang, cats, go, onRemove, setToast, startId }) {
   const tr = fast ? "opacity 120ms linear" : `transform 620ms ${SPRING}, opacity 260ms ease, filter 300ms ease`;
   const place = (it, i) => {
     if (!sel) return { y: i * STEP, s: 1, o: 1, z: i, dim: 0 };
-    if (it === sel) return { y: scroll0, s: 1, o: 1, z: 200, dim: 0 };
+    if (it === sel) return { y: scroll0, s: 1, o: 1, z: 200, dim: 0, x: drag };
     const k = others.indexOf(it);
     return { y: pileTop + Math.min(k, 3) * 12, s: 0.9 - Math.min(k, 3) * 0.03, o: k > 3 ? 0 : 1, z: 100 - k, dim: 0.12 + Math.min(k, 3) * 0.06 };
   };
   const tap = (it) => {
+    if (suppress.current) { suppress.current = false; return; }
+    if (sel && it === sel) { if (canFlip(it)) flip(faces.current[it.id]); return; }
     haptic(10);
+    setSwapDir(0);
     if (sel) { setOpen(null); return; }
     setScroll0(area.current ? area.current.scrollTop : 0);
     setOpen(it.id);
   };
+  // swipe left / right on the open card: it slides away and the next one rises from the pile
+  const swap = (step) => {
+    if (!sel || n < 2) return;
+    const i = items.indexOf(sel);
+    const next = items[(i + step + n) % n];
+    haptic(8);
+    setSwapDir(step);
+    setDrag(0);
+    setOpen(next.id);
+  };
+  const tStart = (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY, axis: null }; };
+  const tMove = (it) => (e) => {
+    const t0 = touch.current;
+    if (!sel || it !== sel || !t0) return;
+    const p = e.touches[0];
+    const dx = p.clientX - t0.x, dy = p.clientY - t0.y;
+    if (!t0.axis && Math.abs(dx) + Math.abs(dy) > 8) t0.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    if (t0.axis === "x") setDrag(dx);
+  };
+  const tEnd = (it) => (e) => {
+    const t0 = touch.current;
+    touch.current = null;
+    if (!sel || it !== sel || !t0) return;
+    const p = e.changedTouches[0];
+    const dx = p.clientX - t0.x, dy = p.clientY - t0.y;
+    if (t0.axis === "x" && Math.abs(dx) > 60) {
+      const rtl = document.documentElement.dir === "rtl";
+      swap((dx < 0) !== rtl ? 1 : -1);
+      e.preventDefault();
+    } else {
+      setDrag(0);
+      if (t0.axis === "y" && dy > 70) { setOpen(null); e.preventDefault(); }
+    }
+    if (t0.axis) suppress.current = true;
+  };
+  const suppress = useRef(false);
   const innerH = sel ? scroll0 + box.h : (n - 1) * STEP + H + 30;
   return (
     <div className={"ws-area" + (sel ? " is-open" : "")} ref={area} style={{ height: box.h }}>
@@ -254,18 +313,23 @@ function StackLook({ items, lang, cats, go, onRemove, setToast, startId }) {
           const pl = place(it, i);
           return (
             <button key={it.id} type="button" className="ws-card" aria-label={itemName(it, lang)} aria-expanded={it === sel}
-              style={{ zIndex: pl.z, opacity: pl.o, transform: `translateY(${pl.y}px) scale(${pl.s})`, transition: tr, "--dim": pl.dim, height: H }}
+              style={{ zIndex: pl.z, opacity: pl.o, transition: it === sel && drag ? "none" : tr, "--dim": pl.dim, height: H,
+                transform: `translate(${pl.x || 0}px, ${pl.y}px) rotate(${(pl.x || 0) / 40}deg) scale(${pl.s})` }}
               onClick={() => tap(it)}
-              onTouchStart={(e) => { touch.current = e.touches[0].clientY; }}
-              onTouchEnd={(e) => { if (sel && it === sel && touch.current != null && e.changedTouches[0].clientY - touch.current > 70) setOpen(null); touch.current = null; }}>
-              <WheelFace it={it} lang={lang} cats={cats} />
+              onTouchStart={tStart} onTouchMove={tMove(it)} onTouchEnd={tEnd(it)}>
+              <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}><WheelFace it={it} lang={lang} cats={cats} back={it === sel && back} /></div>
               {it.kind !== "scanned" ? <span className="ws-name" dir="auto" style={{ opacity: !sel && i < n - 1 ? 1 : 0 }}>{itemName(it, lang)}</span> : null}
             </button>
           );
         })}
+        {sel && n > 1 ? (
+          <div className="ws-swaphint" aria-hidden="true" style={{ top: scroll0 + H + 2 }}>
+            {items.slice(0, 12).map((x) => <i key={x.id} className={x === sel ? "on" : ""} />)}
+          </div>
+        ) : null}
         {sel ? (
-          <div className="ws-info" key={sel.id} style={{ top: scroll0 + H + 18, height: box.h - H - 18 - 108 }}>
-            <CardInfo it={sel} lang={lang} cats={cats} go={go} onRemove={() => onRemove(sel)} setToast={setToast} />
+          <div className={"ws-info" + (swapDir ? " swap" : "")} key={sel.id} style={{ top: scroll0 + H + 18, height: box.h - H - 18 - 108, "--from": swapDir * 40 + "px" }}>
+            <CardInfo it={sel} lang={lang} cats={cats} go={go} onRemove={() => onRemove(sel)} setToast={setToast} onFlip={() => flip(faces.current[sel.id])} />
           </div>
         ) : null}
       </div>
@@ -313,15 +377,18 @@ function DeckLook({ items, lang, cats, go, onRemove, setToast, startId }) {
     centre(i, false);
     requestAnimationFrame(paint);
   }, [items.length]);
+  const swipe = useRef(null);
   const cur = items[Math.min(active, items.length - 1)];
+  const [back, flip] = useFlip(cur && cur.id);
+  const faces = useRef({});
   return (
     <div className="wd">
       <div className="wd-row" ref={row} onScroll={onScroll}>
         {items.map((it, i) => (
           <div key={it.id} className="wd-item" ref={(el) => { els.current[it.id] = el; }}>
             <button type="button" className="wd-card" aria-label={itemName(it, lang)}
-              onClick={() => (i === active ? (it.businesses && it.id > 0 ? go(`/${it.businesses.handle}/card`) : null) : centre(i))}>
-              <WheelFace it={it} lang={lang} cats={cats} />
+              onClick={() => (i === active ? (canFlip(it) ? flip(faces.current[it.id]) : null) : centre(i))}>
+              <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}><WheelFace it={it} lang={lang} cats={cats} back={i === active && back} /></div>
             </button>
           </div>
         ))}
@@ -330,28 +397,25 @@ function DeckLook({ items, lang, cats, go, onRemove, setToast, startId }) {
         {items.slice(0, 12).map((it, i) => <i key={it.id} className={i === active ? "on" : ""} />)}
       </div>
       {cur ? (
-        <div className="wd-info" key={cur.id}>
-          <CardInfo it={cur} lang={lang} cats={cats} go={go} onRemove={() => onRemove(cur)} setToast={setToast} />
+        <div className="wd-info" key={cur.id}
+          onTouchStart={(e) => { const p = e.touches[0]; swipe.current = { x: p.clientX, y: p.clientY }; }}
+          onTouchEnd={(e) => {
+            const t0 = swipe.current; swipe.current = null;
+            if (!t0) return;
+            const p = e.changedTouches[0];
+            const dx = p.clientX - t0.x, dy = p.clientY - t0.y;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+              const rtl = document.documentElement.dir === "rtl";
+              const i = Math.min(active, items.length - 1) + ((dx < 0) !== rtl ? 1 : -1);
+              if (i >= 0 && i < items.length) centre(i);
+            }
+          }}>
+          <CardInfo it={cur} lang={lang} cats={cats} go={go} onRemove={() => onRemove(cur)} setToast={setToast} onFlip={() => flip(faces.current[cur.id])} />
         </div>
       ) : null}
     </div>
   );
 }
-
-// Sample cards so the wallet's motion can be tried with only a few saved cards
-const DEMO_CARDS = [
-  ["Karwan Ahmed", "Azad Cooling Services", "hvac", "#1b2a4a"],
-  ["Dana Ali", "Baran Electric", "electrical", "#5a1a26"],
-  ["Hemn Ali", "Hemn Plumbing", "plumbing", "#1f3d2b"],
-  ["Lana Kamal", "Lana Interiors", "interior", "#0f5c5c"],
-  ["Rebwar Aziz", "Aziz Carpentry", "carpentry", "#3f2a5c"],
-  ["Shilan Omar", "Shilan Studio", "photography", "#b5532f"],
-].map(([person, name, cat, color], i) => ({
-  id: -(i + 1), kind: "business", business_id: -(i + 1), created_at: "2026-10-2" + i,
-  businesses: { id: -(i + 1), handle: "demo", contact_name: person, name_en: name, name_ku: name, name_ar: name, category_id: cat,
-    phone: "+96475012345" + (60 + i), whatsapp: "+96475012345" + (60 + i), instagram: i % 2 ? "" : "bmnassa", email: i % 3 ? "" : "hello@bmnassa.com", card: { style: "wallet", color } },
-}));
-DEMO_CARDS.splice(2, 0, { id: -99, kind: "scanned", created_at: "2026-10-20", data: { name: "Sherwan Kamal", title: "Manager", company: "Kamal Printing", phone: "+9647501234599", email: "sherwan@kamalprint.com" } });
 
 function Sheet({ lang, title, onClose, children }) {
   return (
@@ -382,10 +446,7 @@ export function WalletPage({ lang, go, signedIn }) {
     const q0 = new URLSearchParams(window.location.search).get("look");
     return ["stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look", "stack");
   });
-  const [demo, setDemoState] = useState(() => store.get("bm_wallet_demo", "") === "1" || new URLSearchParams(window.location.search).has("demo"));
   const setLook = (v) => { setLookState(v); store.set("bm_wallet_look", v); setSheet(""); };
-  const setDemo = (v) => { setDemoState(v); store.set("bm_wallet_demo", v ? "1" : ""); setSheet(""); };
-  const [hidden, setHidden] = useState([]);
 
   const load = () => {
     setErr(false);
@@ -399,7 +460,6 @@ export function WalletPage({ lang, go, signedIn }) {
   const cats = useMemo(() => byId(lists && lists.cats), [lists]);
   const items = useMemo(() => {
     let r = (rows || []).slice();
-    if (demo) r = r.concat(DEMO_CARDS.filter((x) => !hidden.includes(x.id)));
     if (q.trim()) {
       const n = q.trim().toLowerCase();
       r = r.filter((it) => {
@@ -410,7 +470,7 @@ export function WalletPage({ lang, go, signedIn }) {
     }
     if (sort === "az") r.sort((a, z) => itemName(a, lang).localeCompare(itemName(z, lang)));
     return r;
-  }, [rows, q, sort, lang, cats, demo, hidden]);
+  }, [rows, q, sort, lang, cats]);
   // The wheel: the card in the middle is full size and on top; the others shrink, darken and tuck behind it
   const paint = () => {
     const w = wheel.current;
@@ -455,7 +515,7 @@ export function WalletPage({ lang, go, signedIn }) {
     const start = frontId && items.find((x) => x.id === frontId) ? frontId : items[0].id;
     centre(start, false);
     paint();
-  }, [rows, q, sort, look, demo]);
+  }, [rows, q, sort, look]);
   useEffect(() => {
     const r = () => paint();
     window.addEventListener("resize", r);
@@ -467,7 +527,6 @@ export function WalletPage({ lang, go, signedIn }) {
   };
   const setSort = (v) => { setSortState(v); store.set("bm_wallet_sort", v); setSheet(""); };
   const remove = async (it) => {
-    if (it.id < 0) { setHidden((x) => x.concat(it.id)); setDetail(null); setToast(t(lang, "removed_wallet")); return; }
     try {
       await removeFromWallet(it.id, it.business_id);
       if (it.kind === "scanned") removeScanPhotos([it.image_path, it.data && it.data.back_path]);
@@ -498,7 +557,7 @@ export function WalletPage({ lang, go, signedIn }) {
     );
   }
 
-  const n = (rows || []).length + (demo ? DEMO_CARDS.length - hidden.length : 0);
+  const n = (rows || []).length;
   return (
     <div className="w-page">
       <div className="w-backdrop" aria-hidden="true" />
@@ -523,7 +582,7 @@ export function WalletPage({ lang, go, signedIn }) {
           <div className="w-witem"><div className="w-wcard" style={{ transform: "scale(0.92)" }}><span className="w-skelcard" /></div></div>
         </div>
       ) : null}
-      {rows && !n && !demo ? (
+      {rows && !n ? (
         <div className="w-empty">
           <div className="w-introstack" aria-hidden="true"><i /><i /><i /></div>
           <b>{t(lang, "wallet_empty")}</b>
@@ -580,8 +639,6 @@ export function WalletPage({ lang, go, signedIn }) {
               <button key={k} type="button" aria-pressed={look === k} onClick={() => setLook(k)}>{t(lang, label)}</button>
             ))}
           </div>
-          <label className="ps-toggle"><span>{t(lang, "w_demo")}</span>
-            <input type="checkbox" role="switch" checked={demo} onChange={(e) => setDemo(e.target.checked)} /></label>
         </Sheet>
       ) : null}
 

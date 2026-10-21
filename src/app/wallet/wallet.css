@@ -183,3 +183,14 @@
 @media (prefers-reduced-motion: reduce) { .ws-info, .wd-info { animation: none; } }
 .w-head h1 { font-size: 26px; line-height: 32px; }
 .ws-name { position: absolute; top: 16px; inset-inline-end: 62px; max-width: 52%; z-index: 2; color: #fff; font-size: 16px; font-weight: 800; text-align: end; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); transition: opacity 220ms ease; pointer-events: none; }
+/* stack: swipe the open card sideways to swap; little dots show where you are */
+.ws-card { touch-action: pan-y; }
+.ws-area.is-open .ws-card { touch-action: none; }
+.ws-swaphint { position: absolute; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 160; height: 12px; align-items: center; }
+.ws-swaphint i { width: 5px; height: 5px; border-radius: 3px; background: var(--line); transition: width 260ms var(--ease-standard, ease), background 260ms; }
+.ws-swaphint i.on { width: 16px; background: var(--text); }
+.ws-info.swap { animation-name: ws-swap; animation-delay: 60ms; }
+@keyframes ws-swap { from { opacity: 0; transform: translateX(var(--from, 0)); } to { opacity: 1; transform: none; } }
+.ws-face { height: 100%; transform-origin: 50% 50%; }
+.wd-card .ws-face { height: auto; }
+.ws-card .ws-face > * { height: 100%; }
