@@ -113,7 +113,7 @@ function FrontCard({ it, lang, cats, go, onRemove, refFn }) {
   const scanned = it.kind === "scanned";
   const canFlip = !!b || (scanned && !!(it.data && it.data.back_path));
   useEffect(() => setBack(false), [it.id]);
-  const flip = (dir = 1) => {
+  const flip = (dir) => {
     if (turning.current || !canFlip) return;
     turning.current = true;
     flipCard(face.current, { dir, swap: () => setBack((x) => !x), done: () => { turning.current = false; } });
@@ -137,7 +137,7 @@ function FrontCard({ it, lang, cats, go, onRemove, refFn }) {
       <div className="w-actions">
         {b ? <button type="button" className="w-act" onClick={() => go(`/${b.handle}/card`)}><Icon name="up" size={15} /> {t(lang, "w_open_card")}</button> : null}
         {scanned ? <button type="button" className="w-act" onClick={() => go(`/scan/edit/${it.id}`)}><Icon name="rows" size={15} /> {t(lang, "edit_details")}</button> : null}
-        {canFlip ? <button type="button" className="w-act icon flipbtn" aria-label={t(lang, "flip")} onClick={() => flip(1)}><Icon name="flip" size={16} /></button> : null}
+        {canFlip ? <button type="button" className="w-act icon flipbtn" aria-label={t(lang, "flip")} onClick={() => flip()}><Icon name="flip" size={16} /></button> : null}
         <span className="grow" />
         <button type="button" className="w-act icon" aria-label={t(lang, "remove_wallet")} onClick={onRemove}><Icon name="trash" size={16} /></button>
       </div>
@@ -168,7 +168,7 @@ function useFlip(resetKey) {
   const [back, setBack] = useState(false);
   const busy = useRef(false);
   useEffect(() => setBack(false), [resetKey]);
-  const flip = (el, dir = 1) => {
+  const flip = (el, dir) => {
     if (busy.current || !el) return;
     busy.current = true;
     haptic(12);
@@ -570,9 +570,8 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
     const p = e.changedTouches[0];
     const dx = p.clientX - t0.x, dy = p.clientY - t0.y;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-      const rtl = document.documentElement.dir === "rtl";
       swiped.current = true;
-      flip(faces.current[it.id], (dx > 0 ? 1 : -1) * (rtl ? -1 : 1));
+      flip(faces.current[it.id], dx > 0 ? 1 : -1);
     }
   };
   const tap = (it, i) => {

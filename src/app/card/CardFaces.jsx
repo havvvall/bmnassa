@@ -28,6 +28,9 @@ export function cardSettings(b) {
     links: null,
     wide: "directions",
     title: typeof c.title === "string" ? c.title.slice(0, 60) : "",
+    // Kurdish and Arabic versions of the job title and the name on the card (optional)
+    title_ku: typeof c.title_ku === "string" ? c.title_ku.slice(0, 60) : "",
+    title_ar: typeof c.title_ar === "string" ? c.title_ar.slice(0, 60) : "",
   };
 }
 
@@ -63,7 +66,15 @@ function A({ l, b, className, children, ...rest }) {
 
 // The line under the name: the owner's job title; without one, the business name (no category)
 export function cardRole(b, cat, lang, s) {
-  return clean(s.title) || (b.contact_name ? pick(b, "name", lang) : "");
+  const local = lang && lang !== "en" ? clean(s["title_" + lang]) : "";
+  return local || clean(s.title) || (cardPerson(b, lang) !== pick(b, "name", lang) ? pick(b, "name", lang) : "");
+}
+
+// The person's name on the card, in the reader's language when the owner wrote one
+export function cardPerson(b, lang) {
+  const c = (b && b.card) || {};
+  const local = lang && lang !== "en" ? clean(c["name_" + lang]) : "";
+  return local || clean(b.contact_name) || pick(b, "name", lang);
 }
 
 function Avatar({ s, person, className }) {
@@ -88,7 +99,7 @@ export function CardLogo({ b, s, lang, className = "" }) {
 
 // The standard Bmnassa card · Monogram: matte colour, a faint Bmnassa mark, logo top-left, name, round icons, wordmark
 export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly, tall }) {
-  const person = b.contact_name || pick(b, "name", lang);
+  const person = cardPerson(b, lang);
   const links = cardLinks(b, lang, s).filter((l) => l.key !== "directions").slice(0, tall ? 7 : 4);
   const shell = (cls, children) => (
     <div className={"cf-nfc mono" + cls + (small ? " small" : "") + (tall ? " tall" : "")} style={{ "--card": s.color }}>
@@ -162,7 +173,7 @@ function LinkRows({ b, links, s, theme }) {
 // ---------- front ----------
 
 export function CardFront({ b, s, lang, cat, city, onSaveContact, preview }) {
-  const person = b.contact_name || pick(b, "name", lang);
+  const person = cardPerson(b, lang);
   const role = cardRole(b, cat, lang, s);
   const links = cardLinks(b, lang, s);
   const saveBtn = (cls) => (
@@ -270,7 +281,7 @@ export function CardFront({ b, s, lang, cat, city, onSaveContact, preview }) {
 // ---------- back ----------
 
 export function CardBack({ b, s, lang, cat, url, onShare, onCopy }) {
-  const person = b.contact_name || pick(b, "name", lang);
+  const person = cardPerson(b, lang);
   const urlBox = (
     <button type="button" className="cf-urlbox" onClick={onCopy || onShare}>
       <span className="ltr">{window.location.host}/<em>{b.handle}</em></span>

@@ -225,6 +225,9 @@ const T = {
   name_on_card_ph: ["Your name, as on your card", "ناوەکەت، وەک لەسەر کارتەکەت", "اسمك كما على بطاقتك"],
   ed_card: ["Your card", "کارتەکەت", "بطاقتك"],
   ed_card_sub: ["Shown on the front of your digital card", "لەسەر ڕووی پێشەوەی کارتە دیجیتاڵەکەت پیشان دەدرێت", "يظهر على وجه بطاقتك الرقمية"],
+  // edit page language switch (new, needs a native-speaker check)
+  ed_lang: ["Editing language", "زمانی دەستکاری", "لغة التعديل"],
+  ed_lang_sub: ["Business name, description, the name and title on your card, and price names are saved for each language.", "ناوی بزنس، وەسف، ناو و پیشە لەسەر کارتەکەت و ناوی نرخەکان بۆ هەر زمانێک جیا پاشەکەوت دەکرێن.", "يُحفظ اسم النشاط والوصف والاسم والمسمى على بطاقتك وأسماء الأسعار لكل لغة على حدة."],
   ed_colours_logo: ["Card colours and logo", "ڕەنگی کارت و لۆگۆ", "ألوان البطاقة والشعار"],
   ed_contact: ["Phone and category", "تەلەفۆن و بوار", "الهاتف والفئة"],
   ed_about_sub: ["In all three languages if you can", "ئەگەر دەتوانیت بە هەر سێ زمانەکە", "بثلاث لغات إن أمكن"],

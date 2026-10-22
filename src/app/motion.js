@@ -13,7 +13,7 @@ export function haptic(ms = 10) {
 
 // Turn an element over like a card: rotate to edge-on, swap the face, rotate back in.
 // swap() changes what is shown; done() runs when the turn ends.
-export function flipCard(el, { dir = 1, shine, swap, done }) {
+export function flipCard(el, { dir, shine, swap, done }) {
   const finish = () => done && done();
   if (!el || !el.animate) { swap(); finish(); return; }
   if (calm()) {
@@ -25,7 +25,9 @@ export function flipCard(el, { dir = 1, shine, swap, done }) {
     return;
   }
   const half = Math.max(200, ms("--duration-slow", 420) / 2 + 30);
-  const sign = (document.documentElement.dir === "rtl" ? -1 : 1) * dir;
+  // a swipe passes the finger's direction (the card follows the finger in every language);
+  // a button passes nothing, and the card turns the way the page reads
+  const sign = dir === 1 || dir === -1 ? dir : (document.documentElement.dir === "rtl" ? -1 : 1);
   const P = "perspective(1000px)";
   const out = el.animate(
     [{ transform: `${P} rotateY(0deg) scale(1)` }, { transform: `${P} rotateY(${90 * sign}deg) scale(0.92)` }],

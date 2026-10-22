@@ -441,7 +441,9 @@ export function EditPage({ lang, id, go }) {
     const o = {};
     FIELDS.forEach((k) => { o[k] = b[k] == null ? "" : b[k]; });
     o.phone = b.phone ? prettyPhone(b.phone).replace("+964 ", "0") : "";
-    o.job_title = cardSettings(b).title;
+    const cs0 = cardSettings(b);
+    o.title_en = cs0.title; o.title_ku = cs0.title_ku; o.title_ar = cs0.title_ar;
+    o.cname_ku = String((b.card || {}).name_ku || ""); o.cname_ar = String((b.card || {}).name_ar || "");
     setF(o);
     setHours(b.hours || null);
     original.current.hours = JSON.stringify(b.hours || null);
@@ -483,8 +485,11 @@ export function EditPage({ lang, id, go }) {
       if (String(v) !== String(old)) body[k] = v;
     });
     if (body.phone && b.whatsapp === b.phone) body.whatsapp = body.phone;
-    const title = String(f.job_title || "").trim().slice(0, 60);
-    if (title !== cardSettings(b).title) body.card = { ...(b.card || {}), title };
+    // the card's job title (and, for Kurdish and Arabic, the name on the card) in each language
+    const cut = (v) => String(v || "").trim().slice(0, 60);
+    const oldCard = b.card || {};
+    const cardText = { title: cut(f.title_en), title_ku: cut(f.title_ku), title_ar: cut(f.title_ar), name_ku: cut(f.cname_ku), name_ar: cut(f.cname_ar) };
+    if (Object.keys(cardText).some((k) => cardText[k] !== cut(oldCard[k]))) body.card = { ...oldCard, ...cardText };
     if (JSON.stringify(hours || null) !== original.current.hours) body.hours = hours || null;
     const cleanPrices = priceRows
       .map((r) => ({ ...r, price_iqd: r.price_iqd === "" || r.price_iqd == null ? null : Number(String(r.price_iqd).replace(/[^\d]/g, "")) }))
@@ -514,7 +519,12 @@ export function EditPage({ lang, id, go }) {
   const lines = hoursLines(hours, lang);
 
   const cat = lists && byId(lists.cats)[f.category_id];
-  const live = { ...b, contact_name: f.contact_name || null, card: { ...(b.card || {}), title: f.job_title } };
+  const live = { ...b, ...Object.fromEntries(LANG_IDS.flatMap((l) => [["name_" + l, f["name_" + l]], ["description_" + l, f["description_" + l]]])),
+    contact_name: f.contact_name || null,
+    card: { ...(b.card || {}), title: f.title_en, title_ku: f.title_ku, title_ar: f.title_ar, name_ku: f.cname_ku, name_ar: f.cname_ar } };
+  // the name and title fields for the language being edited (English is the main one; the others fall back to it)
+  const nameKey = tab === "en" ? "contact_name" : "cname_" + tab;
+  const titleKey = "title_" + tab;
   const jumpTo = (k) => { const el = document.getElementById("ed-" + k); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); };
   const Head = ({ ic, title, sub }) => (
     <div className="ed-h"><span className="ed-ic"><Icon name={ic} size={18} /></span><span className="grow"><b>{title}</b>{sub ? <small>{sub}</small> : null}</span></div>
@@ -530,7 +540,19 @@ export function EditPage({ lang, id, go }) {
         ) : null}
       </div>
 
-      <div className="ed-card"><NfcCard b={live} s={cardSettings(live)} lang={lang} cat={cat} linksOnly /></div>
+      <div className="ed-card" dir={langDir(tab)}><NfcCard b={live} s={cardSettings(live)} lang={tab} cat={cat} linksOnly /></div>
+
+      <div className="ed-langs">
+        <span className="ed-langs-h"><Icon name="globe" size={15} /> {t(lang, "ed_lang")}</span>
+        <div className="seg">
+          {LANG_IDS.map((l) => (
+            <button key={l} type="button" aria-pressed={tab === l} onClick={() => setTab(l)} dir={langDir(l)}>
+              {LANGS.find((x) => x.id === l).label} {miss(l) ? <em className="o-miss">{t(lang, "missing")}</em> : <span className="o-ok"><Icon name="check" size={11} stroke={3} /></span>}
+            </button>
+          ))}
+        </div>
+        <small>{t(lang, "ed_lang_sub")}</small>
+      </div>
 
       <nav className="ed-jump">
         {[["card", "ed_card"], ["photos", "photos_title"], ["about", "name_desc"], ["contact", "ed_contact"], ["prices", "prices"], ["hours", "working_hours"], ["location", "location"], ["links", "links"]].map(([k, label]) => (
@@ -540,10 +562,12 @@ export function EditPage({ lang, id, go }) {
 
       <section id="ed-card" className="o-sec ed-sec">
         <Head ic="contact" title={t(lang, "ed_card")} sub={t(lang, "ed_card_sub")} />
-        <span className="label">{t(lang, "name_on_card")}</span>
-        <div className="field"><input value={f.contact_name} onChange={(e) => set("contact_name", e.target.value)} maxLength={60} placeholder={t(lang, "name_on_card_ph")} /></div>
-        <span className="label">{t(lang, "job_title")}</span>
-        <div className="field"><input value={f.job_title} onChange={(e) => set("job_title", e.target.value)} maxLength={60} placeholder={t(lang, "job_title_ph")} /></div>
+        <span className="label">{t(lang, "name_on_card")} · {LANGS.find((x) => x.id === tab).label}</span>
+        <div className="field"><input dir={langDir(tab)} value={f[nameKey]} onChange={(e) => set(nameKey, e.target.value)} maxLength={60}
+          placeholder={tab === "en" ? t(lang, "name_on_card_ph") : (f.contact_name || t(lang, "name_on_card_ph"))} /></div>
+        <span className="label">{t(lang, "job_title")} · {LANGS.find((x) => x.id === tab).label}</span>
+        <div className="field"><input dir={langDir(tab)} value={f[titleKey]} onChange={(e) => set(titleKey, e.target.value)} maxLength={60}
+          placeholder={tab === "en" ? t(lang, "job_title_ph") : (f.title_en || t(lang, "job_title_ph"))} /></div>
         <button type="button" className="ed-link" onClick={() => go(`/my/${b.id}/card`)}><Icon name="palette" size={16} /> {t(lang, "ed_colours_logo")} <Icon name="chevron" size={14} className="flip" /></button>
       </section>
 
@@ -554,13 +578,7 @@ export function EditPage({ lang, id, go }) {
 
       <section id="ed-about" className="o-sec ed-sec">
         <Head ic="rows" title={t(lang, "name_desc")} sub={t(lang, "ed_about_sub")} />
-        <div className="seg">
-          {LANG_IDS.map((l) => (
-            <button key={l} type="button" aria-pressed={tab === l} onClick={() => setTab(l)} dir={langDir(l)}>
-              {LANGS.find((x) => x.id === l).label} {miss(l) ? <em className="o-miss">{t(lang, "missing")}</em> : <span className="o-ok"><Icon name="check" size={11} stroke={3} /></span>}
-            </button>
-          ))}
-        </div>
+        <span className="label">{t(lang, "biz_name")} · {LANGS.find((x) => x.id === tab).label}</span>
         <div className="field"><input dir={langDir(tab)} value={f["name_" + tab]} onChange={(e) => set("name_" + tab, e.target.value)} placeholder={t(lang, "biz_name_ph")} maxLength={80} /></div>
         <div className="field area"><textarea dir={langDir(tab)} rows={3} value={f["description_" + tab]} onChange={(e) => set("description_" + tab, e.target.value)} placeholder={t(lang, "desc_ph")} maxLength={300} /></div>
       </section>
@@ -582,8 +600,8 @@ export function EditPage({ lang, id, go }) {
         <Head ic="box" title={t(lang, "prices")} sub={t(lang, "ed_prices_sub")} />
         {priceRows.map((r, i) => (
           <div key={r.id || "n" + i} className="o-price">
-            <div className="field"><input value={r["item_" + lang] || r.item_en || r.item_ku || r.item_ar || ""}
-              onChange={(e) => setPrice(i, "item_" + lang, e.target.value)} placeholder={t(lang, "item_ph")} maxLength={60} /></div>
+            <div className="field"><input dir={langDir(tab)} value={r["item_" + tab] || ""}
+              onChange={(e) => setPrice(i, "item_" + tab, e.target.value)} placeholder={r.item_en || r.item_ku || r.item_ar || t(lang, "item_ph")} maxLength={60} /></div>
             <div className="field ltr o-amount"><input inputMode="numeric" value={r.price_iqd == null ? "" : Number(String(r.price_iqd).replace(/[^\d]/g, "") || 0).toLocaleString("en-US")}
               onChange={(e) => setPrice(i, "price_iqd", e.target.value.replace(/[^\d٠-٩۰-۹]/g, "").replace(/[٠-٩]/g, (c) => "٠١٢٣٤٥٦٧٨٩".indexOf(c)).replace(/[۰-۹]/g, (c) => "۰۱۲۳۴۵۶۷۸۹".indexOf(c)))}
               placeholder={t(lang, "price_ph")} /><span className="prefix">{t(lang, "iqd")}</span></div>

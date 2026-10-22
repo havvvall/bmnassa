@@ -11,7 +11,7 @@ import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
-import { CardFront, CardBack, NfcCard, cardSettings, CardLogo } from "../card/CardFaces.jsx";
+import { CardFront, CardBack, NfcCard, cardSettings, CardLogo, cardPerson } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
@@ -718,7 +718,7 @@ function shareOrCopy(url, title, setToast, lang) {
 
 function downloadContact(b, lang) {
   const esc = (s) => String(s || "").replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
-  const name = b.contact_name || pick(b, "name", lang);
+  const name = cardPerson(b, lang);
   const lines = [
     "BEGIN:VCARD", "VERSION:3.0",
     `FN:${esc(name)}`,
@@ -814,7 +814,7 @@ export function Card({ lang, handle, go, back }) {
 
   const cat = lists && byId(lists.cats)[b.category_id];
   const city = lists && byId(lists.cities)[b.city_id];
-  const person = b.contact_name || pick(b, "name", lang);
+  const person = cardPerson(b, lang);
   const url = `${window.location.origin}/${b.handle}/card`;
   const leave = () => (window.history.length > 1 ? back() : go("/home"));
   // and slides back down when it closes
@@ -829,7 +829,7 @@ export function Card({ lang, handle, go, back }) {
     a.onfinish = leave;
   };
   // the card turns over in 3D, with a band of light passing across it
-  const flip = (dir = 1) => {
+  const flip = (dir) => {
     if (turning.current) return;
     turning.current = true;
     flipCard(body.current, { dir, shine: shine.current, swap: () => setFlipped((f) => !f), done: () => { turning.current = false; } });
@@ -856,7 +856,7 @@ export function Card({ lang, handle, go, back }) {
       <div className={"b-card-bar" + (boldBar ? " cf-surface " + (st.background === "solid" ? "solid" : "carbon") : "")}>
         <button type="button" className="b-dbtn" aria-label={t(lang, "back")} onClick={exit}><Icon name="down" size={20} /></button>
         <span className="grow" />
-        <button type="button" className="b-dbtn" aria-label={t(lang, "flip")} onClick={() => flip(1)}><Icon name="flip" size={19} /></button>
+        <button type="button" className="b-dbtn" aria-label={t(lang, "flip")} onClick={() => flip()}><Icon name="flip" size={19} /></button>
         <button type="button" className="b-dbtn" aria-label={t(lang, "share")} onClick={share}><Icon name="share" size={19} /></button>
       </div>
 
@@ -951,7 +951,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
     return () => { window.removeEventListener("scroll", on); window.removeEventListener("resize", on); cancelAnimationFrame(raf); };
   }, [b && b.id]);
   const toProfile = () => window.scrollTo({ top: Math.round((window.innerHeight || 700) * 0.62), behavior: calm() ? "auto" : "smooth" });
-  const flip = (dir = 1) => {
+  const flip = (dir) => {
     if (turning.current || !faceRef.current) return;
     turning.current = true;
     haptic(10);
@@ -1039,7 +1039,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
             <NfcCard b={b} s={cs} lang={lang} cat={cat} back={flipped} url={url} tall />
           </div>
           {/* mouse and keyboard: arrows at the sides flip the card */}
-          <button type="button" className="bz-flipbtn" aria-label={t(lang, "flip")} onClick={() => flip(1)}><Icon name="flip" size={16} /></button>
+          <button type="button" className="bz-flipbtn" aria-label={t(lang, "flip")} onClick={() => flip()}><Icon name="flip" size={16} /></button>
         </div>
       </div>
       <button type="button" className="bz-scrollhint" ref={hintRef} onClick={toProfile}>
