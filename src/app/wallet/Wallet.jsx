@@ -7,6 +7,7 @@ import { Icon } from "../browse/icons.jsx";
 import { useLists, useToast, Toast, ok, BottomNav } from "../browse/Browse.jsx";
 import { cityName } from "../i18n.js";
 import { NfcCard, cardSettings, cardLinks } from "../card/CardFaces.jsx";
+import { Card3D, canUse3D } from "../card/Card3D.jsx";
 import { getMySuggestions, suggestBusiness, getWallet, getSession, walletItemFor, saveToWallet, removeFromWallet, prettyPhone, scanImageUrl, removeScanPhotos } from "../api.js";
 import { calm, ms, ease, flipCard, haptic } from "../motion.js";
 import "./wallet.css";
@@ -174,7 +175,7 @@ function useFlip(resetKey) {
     haptic(12);
     flipCard(el, { dir, swap: () => setBack((x) => !x), done: () => { busy.current = false; } });
   };
-  return [back, flip];
+  return [back, flip, setBack];
 }
 
 // ---------- details of one card: name, the two big buttons, the other links ----------
@@ -504,7 +505,12 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
   const [active, setActive] = useState(0);
   const act = useRef(-1);
   const cur = items[Math.min(active, items.length - 1)];
-  const [back, flip] = useFlip(cur && cur.id);
+  const [back, flip, setBack] = useFlip(cur && cur.id);
+  // the chosen business card is a real 3D card (Card3D) where WebGL works; it turns itself
+  const use3D = useMemo(() => canUse3D(), []);
+  const [dir3, setDir3] = useState(1);
+  const turn3 = (d) => { haptic(12); setDir3(d || 1); setBack((x) => !x); };
+  const is3D = (it) => use3D && !!it.businesses;
   useLayoutEffect(() => {
     const m = () => {
       const el = stage.current;
@@ -571,13 +577,14 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
     const dx = p.clientX - t0.x, dy = p.clientY - t0.y;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
       swiped.current = true;
-      flip(faces.current[it.id], dx > 0 ? 1 : -1);
+      if (is3D(it)) turn3(dx > 0 ? 1 : -1);
+      else flip(faces.current[it.id], dx > 0 ? 1 : -1);
     }
   };
   const tap = (it, i) => {
     if (swiped.current) { swiped.current = false; return; }
     if (i !== active) { haptic(8); centre(i); return; }
-    if (canFlip(it)) flip(faces.current[it.id]);
+    if (canFlip(it)) { if (is3D(it)) turn3(1); else flip(faces.current[it.id]); }
   };
   // the chosen card's quick buttons
   const b = cur && cur.businesses;
@@ -612,7 +619,11 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
           {items.map((it, i) => (
             <div key={it.id} className="wb-item" style={{ height: STEP }} ref={(el) => { els.current[it.id] = el; }}>
               <button type="button" className="wb-card" aria-label={itemName(it, lang)} onClick={() => tap(it, i)} onTouchStart={sStart} onTouchEnd={sEnd(it, i)}>
-                <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}><WheelFace it={it} lang={lang} cats={cats} back={i === active && back} /></div>
+                <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}>
+                  {i === active && is3D(it)
+                    ? <Card3D b={it.businesses} s={cardSettings(it.businesses)} lang={lang} cat={cats[it.businesses.category_id]} url={`${window.location.origin}/${it.businesses.handle}/card`} flipped={back} dir={dir3} />
+                    : <WheelFace it={it} lang={lang} cats={cats} back={i === active && back} />}
+                </div>
                 {it.kind !== "scanned" ? <span className="ws-name wb-name" dir="auto">{itemName(it, lang)}</span> : null}
               </button>
             </div>
