@@ -621,7 +621,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
               <button type="button" className="wb-card" aria-label={itemName(it, lang)} onClick={() => tap(it, i)} onTouchStart={sStart} onTouchEnd={sEnd(it, i)}>
                 <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}>
                   {i === active && is3D(it)
-                    ? <Card3D b={it.businesses} s={cardSettings(it.businesses)} lang={lang} cat={cats[it.businesses.category_id]} url={`${window.location.origin}/${it.businesses.handle}/card`} flipped={back} dir={dir3} />
+                    ? <Card3D b={it.businesses} s={cardSettings(it.businesses)} lang={lang} cat={cats[it.businesses.category_id]} url={`${window.location.origin}/${it.businesses.handle}/card`} flipped={back} dir={dir3} wide />
                     : <WheelFace it={it} lang={lang} cats={cats} back={i === active && back} />}
                 </div>
                 {it.kind !== "scanned" ? <span className="ws-name wb-name" dir="auto">{itemName(it, lang)}</span> : null}

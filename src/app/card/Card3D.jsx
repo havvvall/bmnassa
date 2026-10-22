@@ -124,7 +124,8 @@ function wrap(x, text, width, maxLines) {
 }
 
 // where everything sits on the tall card (CSS px); shared by the drawing and the tappable icons
-function layout(W, H, nIcons, rtl) {
+function layout(W, H, nIcons, rtl, wide) {
+  if (wide) return layoutWide(W, H, nIcons, rtl);
   const pad = 24, top = 26, bottom = 24, ic = 46, gap = 10;
   const perRow = Math.max(1, Math.floor((W - pad * 2 + gap) / (ic + gap)));
   const rows = Math.ceil(nIcons / perRow);
@@ -140,8 +141,26 @@ function layout(W, H, nIcons, rtl) {
   return { pad, top, logo: { x: rtl ? W - pad - 58 : pad, y: top, s: 58 }, sign: { x: rtl ? pad : W - pad - 26, y: top + 16, s: 26 }, icons, nameBottom: iconsTop - 24, wordY, wordH };
 }
 
+// the same card in the wallet's landscape shape: logo and sign on top, name and icons along the bottom
+function layoutWide(W, H, nIcons, rtl) {
+  const pad = 20, top = 18, ic = 30, gap = 8, lg = 44;
+  const perRow = Math.max(1, Math.floor((W - pad * 2 + gap) / (ic + gap)));
+  const rows = Math.ceil(nIcons / perRow);
+  const wordH = 10, wordY = H - 12 - wordH;
+  const iconsBottom = wordY - 12;
+  const iconsTop = iconsBottom - (rows * ic + Math.max(0, rows - 1) * gap);
+  const icons = [];
+  for (let i = 0; i < nIcons; i++) {
+    const row = Math.floor(i / perRow), col = i % perRow;
+    const xl = pad + col * (ic + gap);
+    icons.push({ x: rtl ? W - xl - ic : xl, y: iconsTop + row * (ic + gap), s: ic });
+  }
+  return { pad, top, wide: true, logo: { x: rtl ? W - pad - lg : pad, y: top, s: lg }, sign: { x: rtl ? pad : W - pad - 22, y: top + 4, s: 22 }, icons, nameBottom: iconsTop - 10, wordY, wordH };
+}
+
 async function paintFaces(G, d) {
-  const { W, H, b, s, lang, cat, url, rtl, links } = d;
+  const { W, H, b, s, lang, cat, url, rtl, links, wide } = d;
+  const fs = wide ? 22 : 34, lh = wide ? 26 : 40; // name size and line step
   const k = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
   const font = rtl ? "Vazirmatn, Manrope, sans-serif" : "Manrope, sans-serif";
   // wait for the fonts, but never long: a slow network still gets a card
@@ -152,7 +171,7 @@ async function paintFaces(G, d) {
     s.logo_path ? loadImage(photoUrl(s.logo_path), true) : Promise.resolve(null),
   ])]);
   const base = hexRgb(s.color);
-  const L = layout(W, H, links.length, rtl);
+  const L = layout(W, H, links.length, rtl, wide);
   const canvasOf = () => { const c = document.createElement("canvas"); c.width = Math.round(W * k); c.height = Math.round(H * k); const x = c.getContext("2d"); x.scale(k, k); return [c, x]; };
   const ground = (x) => {
     const dx = Math.sin(160 * Math.PI / 180), dy = -Math.cos(160 * Math.PI / 180), len = Math.abs(W * dx) + Math.abs(H * dy);
@@ -193,12 +212,12 @@ async function paintFaces(G, d) {
   let y = L.nameBottom;
   if (role) { fx.fillStyle = "rgba(255,255,255,0.72)"; fx.fillText(rtl ? role : role.toUpperCase(), tx, y - 3); y -= 18; }
   if ("letterSpacing" in fx) fx.letterSpacing = rtl ? "0px" : "-0.6px";
-  fx.font = `800 34px ${font}`;
-  const lines = wrap(fx, cardPerson(b, lang), W - L.pad * 2, 3);
+  fx.font = `800 ${fs}px ${font}`;
+  const lines = wrap(fx, cardPerson(b, lang), W - L.pad * 2, wide ? 2 : 3);
   for (let i = lines.length - 1; i >= 0; i--) {
     fx.fillStyle = "rgba(0,0,0,0.3)"; fx.fillText(lines[i], tx, y + 1);
     fx.fillStyle = "#fff"; fx.fillText(lines[i], tx, y);
-    y -= 40;
+    y -= lh;
   }
   if ("letterSpacing" in fx) fx.letterSpacing = "0px";
   // round icons
@@ -254,7 +273,7 @@ async function paintFaces(G, d) {
 }
 
 // The tall digital card on the business page
-export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
+export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false }) {
   const box = useRef(null);
   const cv = useRef(null);
   const G = useRef(null);
@@ -294,9 +313,9 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
 
   // shape and faces, whenever the size or what is printed on the card changes (not on every re-render)
   const data = useRef({});
-  data.current = { b, s, lang, cat, url, rtl, links };
+  data.current = { b, s, lang, cat, url, rtl, links, wide };
   const person = cardPerson(b, lang);
-  const sig = JSON.stringify([size, s.color, s.icons, s.logo_path, cardRole(b, cat, lang, s), person, pick(b, "name", lang), lang, url, links.map((l) => l.key + l.href)]);
+  const sig = JSON.stringify([wide, size, s.color, s.icons, s.logo_path, cardRole(b, cat, lang, s), person, pick(b, "name", lang), lang, url, links.map((l) => l.key + l.href)]);
   const gen = useRef(0);
   useEffect(() => {
     const g = G.current;
