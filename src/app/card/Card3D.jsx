@@ -310,7 +310,7 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
       g.gl.bufferData(g.gl.ARRAY_BUFFER, geo, g.gl.STATIC_DRAW);
       g.count = geo.length / 9;
       if (g.faces) { g.gl.deleteTexture(g.faces.front); g.gl.deleteTexture(g.faces.back); }
-      g.faces = f;
+      g.faces = f; g.ver = (g.ver || 0) + 1;
       setLay(f.layout);
     }).catch(() => {});
   }, [sig]);
@@ -328,10 +328,19 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
   useEffect(() => {
     const S = st.current.tilt;
     const el = box.current;
-    const onMove = (e) => { const r = el.getBoundingClientRect(); S.tx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2))); S.ty = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2))); };
+    // only a mouse tilts it: a finger on the card is swiping or scrolling, not pointing
+    const onMove = (e) => { if (e.pointerType !== "mouse") return; const r = el.getBoundingClientRect(); S.tx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2))); S.ty = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2))); };
     const onLeave = () => { S.tx = 0; S.ty = 0; };
     let g0 = null;
-    const onTurn = (e) => { if (e.beta == null) return; if (!g0) g0 = { b: e.beta, g: e.gamma }; S.tx = Math.max(-1, Math.min(1, (e.gamma - g0.g) / 20)); S.ty = Math.max(-1, Math.min(1, (e.beta - g0.b) / 20)); };
+    // the phone's angle: only changes count, and the resting angle slowly follows how the phone is held,
+    // so the card always settles back to face you straight
+    const onTurn = (e) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (!g0) g0 = { b: e.beta, g: e.gamma };
+      g0.b += (e.beta - g0.b) * 0.04; g0.g += (e.gamma - g0.g) * 0.04;
+      S.tx = Math.max(-1, Math.min(1, (e.gamma - g0.g) / 28)) * 0.6;
+      S.ty = Math.max(-1, Math.min(1, (e.beta - g0.b) / 28)) * 0.6;
+    };
     el.addEventListener("pointermove", onMove);
     el.addEventListener("pointerleave", onLeave);
     window.addEventListener("deviceorientation", onTurn);
@@ -344,24 +353,33 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
     const io = new IntersectionObserver((es) => { seen = es[0] ? es[0].isIntersecting : true; });
     if (box.current) io.observe(box.current);
     const calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // while the page scrolls, the card holds still (the page moves it), so scrolling stays smooth
+    let scrolled = 0, last = "";
+    const onScroll = () => { scrolled = performance.now(); };
+    window.addEventListener("scroll", onScroll, { passive: true });
     const frame = (now) => {
       raf = requestAnimationFrame(frame);
       const g = G.current, c = cv.current;
       if (!g || !c || !seen || document.hidden || !g.faces) return;
       const S = st.current, T = S.tilt;
+      const turning = S.t0 && now - S.t0 < 720;
+      if (!turning && now - scrolled < 160) return;
       // the turn: 700ms, eased, lifting slightly towards you halfway
       const p = S.t0 ? Math.min(1, (now - S.t0) / (calm ? 1 : 700)) : 1;
       const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
       S.angle = S.from + (S.to - S.from) * e;
       const lift = Math.sin(Math.PI * p) * 70;
       T.x += (T.tx - T.x) * 0.08; T.y += (T.ty - T.y) * 0.08;
-      const idle = calm ? 0 : (now - S.born) / 1000;
-      const rx = -T.y * 9 + Math.sin(idle * 0.9) * 1.6;
-      const ry = T.x * 12 + Math.sin(idle * 0.6) * 2.2;
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const rx = -T.y * 9;
+      const ry = T.x * 12;
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1);
       const w = c.clientWidth, h = c.clientHeight;
       if (!w || !h) return;
-      if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+      if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); last = ""; }
+      // nothing moved since the last drawing: keep it, and save the phone's battery
+      const key = [rx.toFixed(2), ry.toFixed(2), S.angle.toFixed(2), lift.toFixed(1), g.ver].join();
+      if (key === last) return;
+      last = key;
       const gl = g.gl;
       gl.viewport(0, 0, c.width, c.height);
       gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -383,7 +401,7 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
       gl.drawArrays(gl.TRIANGLES, 0, g.count);
     };
     raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); io.disconnect(); };
+    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener("scroll", onScroll); };
   }, []);
 
   return (
