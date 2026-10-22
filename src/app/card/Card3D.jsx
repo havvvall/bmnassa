@@ -1,5 +1,5 @@
 // The digital card as a real 3D object (WebGL): a thick card with a rounded, bevelled edge, lit by three
-// lights, that tilts with the mouse (on a computer) and turns over in 3D; on a phone it stays straight. Its faces are painted from the same
+// lights, that tilts with the mouse or the phone and turns over in 3D. Its faces are painted from the same
 // data as NfcCard (colour, logo, name, title, icons, QR), and the icons stay real links laid over the drawing.
 // Where WebGL is not available, the caller shows the flat NfcCard instead (see canUse3D).
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -325,16 +325,37 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
     S.from = S.angle; S.to = S.angle + 180 * (dir < 0 ? -1 : 1); S.t0 = now;
   }, [flipped]);
 
-  // tilt with the mouse; on a phone the card stays straight and centred
+  // tilt with the mouse on a computer, and with the phone itself on a phone
   useEffect(() => {
     const S = st.current.tilt;
     const el = box.current;
-    // only a mouse tilts it: a finger on the card is swiping or scrolling, not pointing
+    // only a mouse tilts it by pointing: a finger on the card is swiping or scrolling
     const onMove = (e) => { if (e.pointerType !== "mouse") return; const r = el.getBoundingClientRect(); S.tx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2))); S.ty = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2))); };
     const onLeave = () => { S.tx = 0; S.ty = 0; };
+    // the phone's angle: only changes count, and the resting angle slowly follows how the phone is held,
+    // so the card always drifts back to face you straight
+    let g0 = null;
+    const onTurn = (e) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (!g0) g0 = { b: e.beta, g: e.gamma };
+      g0.b += (e.beta - g0.b) * 0.03; g0.g += (e.gamma - g0.g) * 0.03;
+      S.tx = Math.max(-1, Math.min(1, (e.gamma - g0.g) / 22));
+      S.ty = Math.max(-1, Math.min(1, (e.beta - g0.b) / 22));
+    };
+    window.addEventListener("deviceorientation", onTurn);
+    // iPhones only share the angle after asking once; the first tap on the card asks
+    let asked = false;
+    const ask = () => {
+      const D = window.DeviceOrientationEvent;
+      if (asked || !D || typeof D.requestPermission !== "function") return;
+      asked = true;
+      D.requestPermission().catch(() => {});
+    };
+    el.addEventListener("touchend", ask);
+    el.addEventListener("click", ask);
     el.addEventListener("pointermove", onMove);
     el.addEventListener("pointerleave", onLeave);
-    return () => { el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); };
+    return () => { el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); el.removeEventListener("touchend", ask); el.removeEventListener("click", ask); window.removeEventListener("deviceorientation", onTurn); };
   }, []);
 
   // draw every frame while the card is on screen
