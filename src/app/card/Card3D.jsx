@@ -1,5 +1,5 @@
 // The digital card as a real 3D object (WebGL): a thick card with a rounded, bevelled edge, lit by three
-// lights, that tilts with the mouse or the phone and turns over in 3D. Its faces are painted from the same
+// lights, that tilts with the mouse (on a computer) and turns over in 3D; on a phone it stays straight. Its faces are painted from the same
 // data as NfcCard (colour, logo, name, title, icons, QR), and the icons stay real links laid over the drawing.
 // Where WebGL is not available, the caller shows the flat NfcCard instead (see canUse3D).
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -268,7 +268,8 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
   useEffect(() => {
     const el = box.current;
     if (!el) return undefined;
-    const ro = new ResizeObserver(() => { const r = el.getBoundingClientRect(); setSize((o) => (o && Math.abs(o.w - r.width) < 2 && Math.abs(o.h - r.height) < 2 ? o : { w: r.width, h: r.height })); });
+    // the layout size, not the on-screen size: the page scales the card while it scrolls, and that must not shrink the drawing
+    const ro = new ResizeObserver(() => { const r = { width: el.offsetWidth, height: el.offsetHeight }; setSize((o) => (o && Math.abs(o.w - r.width) < 2 && Math.abs(o.h - r.height) < 2 ? o : { w: r.width, h: r.height })); });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -324,27 +325,16 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1 }) {
     S.from = S.angle; S.to = S.angle + 180 * (dir < 0 ? -1 : 1); S.t0 = now;
   }, [flipped]);
 
-  // tilt with the mouse, or with the phone where it reports its angle
+  // tilt with the mouse; on a phone the card stays straight and centred
   useEffect(() => {
     const S = st.current.tilt;
     const el = box.current;
     // only a mouse tilts it: a finger on the card is swiping or scrolling, not pointing
     const onMove = (e) => { if (e.pointerType !== "mouse") return; const r = el.getBoundingClientRect(); S.tx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2))); S.ty = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2))); };
     const onLeave = () => { S.tx = 0; S.ty = 0; };
-    let g0 = null;
-    // the phone's angle: only changes count, and the resting angle slowly follows how the phone is held,
-    // so the card always settles back to face you straight
-    const onTurn = (e) => {
-      if (e.beta == null || e.gamma == null) return;
-      if (!g0) g0 = { b: e.beta, g: e.gamma };
-      g0.b += (e.beta - g0.b) * 0.04; g0.g += (e.gamma - g0.g) * 0.04;
-      S.tx = Math.max(-1, Math.min(1, (e.gamma - g0.g) / 28)) * 0.6;
-      S.ty = Math.max(-1, Math.min(1, (e.beta - g0.b) / 28)) * 0.6;
-    };
     el.addEventListener("pointermove", onMove);
     el.addEventListener("pointerleave", onLeave);
-    window.addEventListener("deviceorientation", onTurn);
-    return () => { el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); window.removeEventListener("deviceorientation", onTurn); };
+    return () => { el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); };
   }, []);
 
   // draw every frame while the card is on screen
