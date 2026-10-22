@@ -244,7 +244,7 @@ async function paintFaces(G, d) {
   ground(bx);
   if (url) {
     const q = new QRCode(-1, QRErrorCorrectLevel.M); q.addData(url); q.make();
-    const n = q.getModuleCount(), size = Math.min(240, W * 0.62), cell = size / n, qx = (W - size) / 2, qy = (H - size) / 2 - 16;
+    const n = q.getModuleCount(), size = wide ? Math.min(H * 0.5, 120) : Math.min(240, W * 0.62), cell = size / n, qx = (W - size) / 2, qy = (H - size) / 2 - 16;
     bx.fillStyle = "rgba(255,255,255,0.92)";
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) bx.fillRect(qx + c * cell, qy + r * cell, cell + 0.3, cell + 0.3);
     bx.font = `800 17px ${font}`; bx.textAlign = "center"; bx.fillStyle = "rgba(255,255,255,0.9)"; bx.direction = rtl ? "rtl" : "ltr";
