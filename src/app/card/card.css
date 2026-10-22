@@ -220,3 +220,13 @@
 /* Card colours: the preview is the real tall card */
 .st-frame.st-tall { height: auto; background: none; box-shadow: none; padding: 0 12px; overflow: visible; display: flex; justify-content: center; }
 .st-frame.st-tall .cf-nfc.mono.tall { width: min(100%, 330px); height: auto; aspect-ratio: 0.62; box-shadow: 0 22px 44px rgba(0, 0, 0, 0.3); }
+
+/* the 3D card (WebGL): the drawing is a little larger than the card so its edges show when it tilts */
+.c3d { position: relative; width: 100%; min-height: 420px; max-height: 640px; }
+.c3d::before { content: ""; position: absolute; left: 10%; right: 10%; bottom: -16px; height: 46px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent); filter: blur(8px); pointer-events: none; }
+.c3d-gl { position: absolute; left: -12%; top: -8%; width: 124%; height: 116%; display: block; pointer-events: none; }
+.c3d-hits { position: absolute; inset: 0; }
+.c3d-hit { position: absolute; border-radius: 50%; -webkit-tap-highlight-color: transparent; }
+.c3d-hit:focus-visible { outline: 2px solid var(--accent, #f5c33b); outline-offset: 3px; }
+.c3d .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.bz-intro .bz-face > .c3d { flex: 1; }

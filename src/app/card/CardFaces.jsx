@@ -67,7 +67,7 @@ export function cardLinks(b, lang, s) {
 
 export const linkAvailable = (b, key) => !!cardLinks(b, "en", { links: [key] }).length;
 
-function A({ l, b, className, children, ...rest }) {
+export function A({ l, b, className, children, ...rest }) {
   return (
     <a className={className} href={l.href} target={l.key === "call" ? undefined : "_blank"} rel="noreferrer"
       onClick={() => { if (l.kind && b.id) track(b.id, l.kind); }} {...rest}>{children}</a>

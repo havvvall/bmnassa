@@ -92,6 +92,9 @@ export function categoryIcon(cat) {
   return BY_ID[cat.id] || (cat.icon && P[cat.icon] ? cat.icon : "grid");
 }
 
+// the raw shapes, for drawing an icon onto a canvas (the 3D card)
+export const ICON_SHAPES = P;
+
 export function Icon({ name, size = 22, stroke = 1.8, className, style }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke}

@@ -12,6 +12,7 @@ import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
 import { CardFront, CardBack, NfcCard, cardSettings, CardLogo, cardPerson, cardLinks, SOCIAL_KEYS } from "../card/CardFaces.jsx";
+import { Card3D, canUse3D } from "../card/Card3D.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
@@ -909,6 +910,8 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const faceRef = useRef(null);
   const [mini, setMini] = useState(false);
   const [flipped, setFlipped] = useState(false);
+  const [flipDir, setFlipDir] = useState(1);
+  const use3D = useMemo(() => canUse3D(), []);
   const turning = useRef(false);
   const swipe = useRef(null);
   const bodyRef = useRef(null);
@@ -947,6 +950,13 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
     if (turning.current || !faceRef.current) return;
     turning.current = true;
     haptic(10);
+    if (use3D) {
+      // the 3D card turns itself over, following the finger (a button turns it the way the page reads)
+      setFlipDir(dir === 1 || dir === -1 ? dir : document.documentElement.dir === "rtl" ? -1 : 1);
+      setFlipped((f) => !f);
+      setTimeout(() => { turning.current = false; }, 720);
+      return;
+    }
     flipCard(faceRef.current, { dir, swap: () => setFlipped((f) => !f), done: () => { turning.current = false; } });
   };
   useEffect(() => {
@@ -1028,7 +1038,9 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
           onTouchStart={(e) => { const q = e.touches[0]; swipe.current = { x: q.clientX, y: q.clientY }; }}
           onTouchEnd={(e) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const q = e.changedTouches[0]; const dx = q.clientX - s0.x; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(q.clientY - s0.y) * 1.3) { e.preventDefault(); flip(dx > 0 ? 1 : -1); } }}>
           <div ref={faceRef} className="bz-face">
-            <NfcCard b={b} s={cs} lang={lang} cat={cat} back={flipped} url={url} tall />
+            {use3D
+              ? <Card3D b={b} s={cs} lang={lang} cat={cat} url={url} flipped={flipped} dir={flipDir} />
+              : <NfcCard b={b} s={cs} lang={lang} cat={cat} back={flipped} url={url} tall />}
           </div>
           {/* mouse and keyboard: arrows at the sides flip the card */}
           <button type="button" className="bz-flipbtn" aria-label={t(lang, "flip")} onClick={() => flip()}><Icon name="flip" size={16} /></button>
