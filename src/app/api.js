@@ -248,7 +248,10 @@ export async function teamUpdateBusiness(id, fields) {
 // ---------- listing (anyone, no account needed; the database only returns live businesses) ----------
 
 const LIST_FIELDS =
-  "id,handle,owner_id,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,email,website,hours,lat,lng,address,card,page_style";
+  "id,handle,owner_id,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,rating,reviews,verified,created_at,instagram,facebook,tiktok,snapchat,viber,telegram,x,threads,linkedin,email,website,hours,lat,lng,address,card,page_style";
+// The same without the newer social links (database update 016 not run yet)
+const NEW_LINKS = ",snapchat,viber,telegram,x,threads,linkedin";
+const noNewLinks = (f) => f.replace(NEW_LINKS, "");
 
 // The fields every version of the database has; used when a newer column is not there yet
 const BASE_LIST_FIELDS =
@@ -259,8 +262,11 @@ async function withFallback(build) {
   try {
     return await call(build(LIST_FIELDS));
   } catch (e) {
-    if (e.status === 400 || /column/i.test(e.message || "")) return call(build(BASE_LIST_FIELDS));
-    throw e;
+    if (!(e.status === 400 || /column/i.test(e.message || ""))) throw e;
+    try { return await call(build(noNewLinks(LIST_FIELDS))); } catch (e2) {
+      if (e2.status === 400 || /column/i.test(e2.message || "")) return call(build(BASE_LIST_FIELDS));
+      throw e2;
+    }
   }
 }
 
@@ -279,16 +285,21 @@ export async function businessByHandle(handle) {
 // ---------- slice 5: owner pages ----------
 
 const OWN_FIELDS =
-  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,email,website,hours,lat,lng,address,rating,reviews,verified,created_at,card,page_style";
+  "id,handle,status,rejection_reason,name_en,name_ku,name_ar,description_en,description_ku,description_ar,category_id,city_id,district_id,subdistrict_id,phone,whatsapp,contact_name,instagram,facebook,tiktok,snapchat,viber,telegram,x,threads,linkedin,email,website,hours,lat,lng,address,rating,reviews,verified,created_at,card,page_style";
 
 export async function getMyBusiness(id) {
   let rows;
   try {
     rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS}`, { auth: true });
   } catch (e) {
-    // A newer column (card design, page style) may not exist until its database update has run
+    // A newer column (social links, card design, page style) may not exist until its database update has run
     if (e.status !== 400) throw e;
-    rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${OWN_FIELDS.replace(",card,page_style", "")}`, { auth: true });
+    try {
+      rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${noNewLinks(OWN_FIELDS)}`, { auth: true });
+    } catch (e2) {
+      if (e2.status !== 400) throw e2;
+      rows = await call(`/rest/v1/businesses?id=eq.${Number(id)}&select=${noNewLinks(OWN_FIELDS).replace(",card,page_style", "")}`, { auth: true });
+    }
   }
   return rows && rows[0] ? rows[0] : null;
 }
@@ -301,8 +312,11 @@ export async function updateMyBusiness(id, fields) {
   try {
     rows = await send(OWN_FIELDS);
   } catch (e) {
-    if (e.status !== 400 || "card" in fields || "page_style" in fields) throw e;
-    rows = await send(OWN_FIELDS.replace(",card,page_style", ""));
+    if (e.status !== 400) throw e;
+    try { rows = await send(noNewLinks(OWN_FIELDS)); } catch (e2) {
+      if (e2.status !== 400 || "card" in fields || "page_style" in fields) throw e2;
+      rows = await send(noNewLinks(OWN_FIELDS).replace(",card,page_style", ""));
+    }
   }
   if (!rows || !rows.length) throw new ApiError("Not allowed", "not_allowed", 403);
   return rows[0];
@@ -461,7 +475,10 @@ export async function getWallet() {
   const q = (f) => `/rest/v1/wallet_items?select=${WALLET_SELECT(f)}&order=created_at.desc&limit=500`;
   let rows;
   try { rows = await call(q(LIST_FIELDS), { auth: true }); } catch (e) {
-    if (e.status === 400) rows = await call(q(BASE_LIST_FIELDS), { auth: true }); else throw e;
+    if (e.status !== 400) throw e;
+    try { rows = await call(q(noNewLinks(LIST_FIELDS)), { auth: true }); } catch (e2) {
+      if (e2.status === 400) rows = await call(q(BASE_LIST_FIELDS), { auth: true }); else throw e2;
+    }
   }
   walletIds = new Map((rows || []).filter((r) => r.business_id).map((r) => [r.business_id, r.id]));
   return rows || [];

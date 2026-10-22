@@ -11,7 +11,7 @@ import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
-import { CardFront, CardBack, NfcCard, cardSettings, CardLogo, cardPerson } from "../card/CardFaces.jsx";
+import { CardFront, CardBack, NfcCard, cardSettings, CardLogo, cardPerson, cardLinks, SOCIAL_KEYS } from "../card/CardFaces.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
@@ -56,16 +56,8 @@ export const waLink = (phone, text) => `https://wa.me/${digits(phone)}${text ? "
 const pageHost = () => window.location.host.replace(/^www\./, "");
 
 // Turns what an owner typed ("@azad", "instagram.com/azad", "azad.com") into a link and a short label
-function socialLinks(b) {
-  const clean = (v) => String(v || "").trim();
-  const handle = (v) => clean(v).replace(/^https?:\/\/(www\.)?[^/]+\//i, "").replace(/^@/, "").replace(/\/$/, "");
-  const out = [];
-  if (clean(b.instagram)) out.push(["instagram", "ig", "Instagram", "@" + handle(b.instagram), /^https?:/i.test(b.instagram) ? clean(b.instagram) : `https://instagram.com/${handle(b.instagram)}`]);
-  if (clean(b.facebook)) out.push(["facebook", "fb", "Facebook", handle(b.facebook), /^https?:/i.test(b.facebook) ? clean(b.facebook) : `https://facebook.com/${handle(b.facebook)}`]);
-  if (clean(b.tiktok)) out.push(["tiktok", "tt", "TikTok", "@" + handle(b.tiktok), /^https?:/i.test(b.tiktok) ? clean(b.tiktok) : `https://www.tiktok.com/@${handle(b.tiktok)}`]);
-  if (clean(b.email)) out.push(["mail", "em", "Email", clean(b.email), `mailto:${clean(b.email)}`]);
-  if (clean(b.website)) out.push(["globe", "web", "Website", clean(b.website).replace(/^https?:\/\//i, "").replace(/\/$/, ""), /^https?:/i.test(b.website) ? clean(b.website) : `https://${clean(b.website)}`]);
-  return out;
+function socialLinks(b, lang) {
+  return cardLinks(b, lang || "en", { links: SOCIAL_KEYS }).map((l) => [l.icon, l.cls, l.label, l.text, l.href]);
 }
 const directionsUrl = (b) => (b.lat && b.lng ? `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}` : null);
 
@@ -995,7 +987,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const today = todayHours(b.hours, lang);
   const lines = hoursLines(b.hours, lang);
   const day = todayIndex();
-  const links = socialLinks(b);
+  const links = socialLinks(b, lang);
   const dir = directionsUrl(b);
   const n = Number(b.reviews) || 0;
   const cs = cardSettings(b);

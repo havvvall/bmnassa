@@ -58,9 +58,9 @@
 .o-hline { display: block; line-height: 24px; }
 .o-map { height: 220px; border-radius: 18px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); background: var(--surface-2); z-index: 0; }
 .o-maprow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.o-linkrow { display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: center; }
+.o-linkrow { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 8px; align-items: center; }
 .o-lname { font-weight: 800; font-size: 14px; }
-.o-linkrow .field { height: 50px; }
+.o-linkrow .field { height: 50px; min-width: 0; }
 .o-linkrow input { font-size: 16px; }
 .o-warn { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: var(--warn-soft); color: var(--warn-ink); font-size: 13px; font-weight: 700; line-height: 19px; }
 .o-savebar { position: sticky; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 4; }
@@ -92,6 +92,12 @@
 .b-lic.fb { background: #1877f2; }
 .b-lic.tt { background: #111; box-shadow: inset 0 0 0 1px #444; }
 .b-lic.em { background: #1e88e5; }
+.b-lic.sc { background: #fffc00; color: #111; }
+.b-lic.vb { background: #7360f2; }
+.b-lic.tg { background: #229ed9; }
+.b-lic.xx { background: #000; box-shadow: inset 0 0 0 1px #444; }
+.b-lic.th { background: #000; box-shadow: inset 0 0 0 1px #444; }
+.b-lic.li { background: #0a66c2; }
 .b-lic.web { background: #5f6368; }
 
 .o-pin { background: none; border: 0; }

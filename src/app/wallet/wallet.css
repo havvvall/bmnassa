@@ -73,6 +73,12 @@
 .w-plic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: #fff; flex: none; }
 .w-plic.call { background: #34c759; }
 .w-plic.wa { background: #25d366; }
+.w-plic.sc { background: #fffc00; color: #111; }
+.w-plic.vb { background: #7360f2; }
+.w-plic.tg { background: #229ed9; }
+.w-plic.xx { background: #000; box-shadow: inset 0 0 0 1px #444; }
+.w-plic.th { background: #000; box-shadow: inset 0 0 0 1px #444; }
+.w-plic.li { background: #0a66c2; }
 .w-plic.mail { background: #1e88e5; }
 .w-plic.web { background: #5f6368; }
 .w-plic.ig { background: linear-gradient(45deg, #f9a825, #e91e63 55%, #7b1fa2); }

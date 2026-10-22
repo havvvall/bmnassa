@@ -10,7 +10,9 @@ import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
 
 export const CARD_COLOURS = ["#3a3e42", "#121212", "#1b2a4a", "#1f3d2b", "#5a1a26", "#0f5c5c", "#b5532f", "#3f2a5c"];
 export const STYLES = ["classic", "minimal", "bold", "wallet"];
-export const LINK_KEYS = ["call", "whatsapp", "instagram", "facebook", "tiktok", "email", "website", "directions"];
+export const LINK_KEYS = ["call", "whatsapp", "instagram", "facebook", "tiktok", "snapchat", "viber", "telegram", "x", "threads", "linkedin", "email", "website", "directions"];
+// The social networks an owner can add (each is a column on the business)
+export const SOCIAL_KEYS = ["instagram", "facebook", "tiktok", "snapchat", "viber", "telegram", "x", "threads", "linkedin", "email", "website"];
 
 // The owner's choices with sensible defaults, so a business that never opened Card Studio still has a good card
 export const ICON_COLOURS = ["app", "match", "white", "gold"];
@@ -38,6 +40,8 @@ const digits = (s) => String(s || "").replace(/\D/g, "");
 const clean = (v) => String(v || "").trim();
 const handleOf = (v) => clean(v).replace(/^https?:\/\/(www\.)?[^/]+\//i, "").replace(/^@/, "").replace(/\/$/, "");
 const isUrl = (v) => /^https?:/i.test(clean(v));
+// Viber opens a chat by phone number: "0750 123 4567" or "+964 750…" → "9647501234567"
+const viberNumber = (v) => { const d = digits(v); return d.startsWith("00") ? d.slice(2) : d.startsWith("0") ? "964" + d.slice(1) : d.length === 10 && d.startsWith("7") ? "964" + d : d; };
 
 // Every way to reach the business, in the owner's order
 export function cardLinks(b, lang, s) {
@@ -47,6 +51,12 @@ export function cardLinks(b, lang, s) {
     instagram: clean(b.instagram) && { key: "instagram", icon: "instagram", cls: "ig", label: t(lang, "instagram"), text: "@" + handleOf(b.instagram), href: isUrl(b.instagram) ? clean(b.instagram) : `https://instagram.com/${handleOf(b.instagram)}`, ltr: true },
     facebook: clean(b.facebook) && { key: "facebook", icon: "facebook", cls: "fb", label: t(lang, "facebook"), text: handleOf(b.facebook), href: isUrl(b.facebook) ? clean(b.facebook) : `https://facebook.com/${handleOf(b.facebook)}`, ltr: true },
     tiktok: clean(b.tiktok) && { key: "tiktok", icon: "tiktok", cls: "tt", label: t(lang, "tiktok"), text: "@" + handleOf(b.tiktok), href: isUrl(b.tiktok) ? clean(b.tiktok) : `https://www.tiktok.com/@${handleOf(b.tiktok)}`, ltr: true },
+    snapchat: clean(b.snapchat) && { key: "snapchat", icon: "snapchat", cls: "sc", label: t(lang, "snapchat"), text: handleOf(b.snapchat), href: isUrl(b.snapchat) ? clean(b.snapchat) : `https://www.snapchat.com/add/${handleOf(b.snapchat)}`, ltr: true },
+    viber: clean(b.viber) && { key: "viber", icon: "viber", cls: "vb", label: t(lang, "viber"), text: prettyPhone(viberNumber(b.viber)) || clean(b.viber), href: `viber://chat?number=%2B${viberNumber(b.viber)}`, ltr: true },
+    telegram: clean(b.telegram) && { key: "telegram", icon: "telegram", cls: "tg", label: t(lang, "telegram"), text: "@" + handleOf(b.telegram), href: isUrl(b.telegram) ? clean(b.telegram) : `https://t.me/${handleOf(b.telegram)}`, ltr: true },
+    x: clean(b.x) && { key: "x", icon: "x", cls: "xx", label: t(lang, "x_link"), text: "@" + handleOf(b.x), href: isUrl(b.x) ? clean(b.x) : `https://x.com/${handleOf(b.x)}`, ltr: true },
+    threads: clean(b.threads) && { key: "threads", icon: "threads", cls: "th", label: t(lang, "threads"), text: "@" + handleOf(b.threads), href: isUrl(b.threads) ? clean(b.threads) : `https://www.threads.net/@${handleOf(b.threads)}`, ltr: true },
+    linkedin: clean(b.linkedin) && { key: "linkedin", icon: "linkedin", cls: "li", label: t(lang, "linkedin"), text: handleOf(b.linkedin), href: isUrl(b.linkedin) ? clean(b.linkedin) : `https://www.linkedin.com/in/${handleOf(b.linkedin)}`, ltr: true },
     email: clean(b.email) && { key: "email", icon: "mail", cls: "em", label: t(lang, "email_link"), text: clean(b.email), href: `mailto:${clean(b.email)}`, ltr: true },
     website: clean(b.website) && { key: "website", icon: "globe", cls: "web", label: t(lang, "website"), text: clean(b.website).replace(/^https?:\/\//i, "").replace(/\/$/, ""), href: isUrl(b.website) ? clean(b.website) : `https://${clean(b.website)}`, ltr: true },
     directions: b.lat && b.lng && { key: "directions", icon: "pin", cls: "dir", label: t(lang, "directions"), text: clean(b.address) || t(lang, "open_in_maps"), href: `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}` },

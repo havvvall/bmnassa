@@ -128,7 +128,7 @@ export default function Studio({ lang, id, go }) {
   };
 
   const labels = {
-    call: "call", whatsapp: "whatsapp", instagram: "instagram", facebook: "facebook", tiktok: "tiktok",
+    call: "call", whatsapp: "whatsapp", instagram: "instagram", facebook: "facebook", tiktok: "tiktok", snapchat: "snapchat", viber: "viber", telegram: "telegram", x: "x_link", threads: "threads", linkedin: "linkedin",
     email: "email_link", website: "website", directions: "directions",
   };
 

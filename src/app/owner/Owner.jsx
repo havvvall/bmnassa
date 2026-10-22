@@ -72,7 +72,7 @@ export function Dashboard({ lang, id, go }) {
     ["ck_photos", !!(photos && photos.length), "photos"],
     ["ck_location", !!(b.lat && b.lng), "location"],
     ["ck_hours", hasHours(b.hours), "hours"],
-    ["ck_prices", !!((prices && prices.length) || b.instagram || b.facebook || b.tiktok || b.email || b.website), "prices"],
+    ["ck_prices", !!((prices && prices.length) || b.instagram || b.facebook || b.tiktok || b.snapchat || b.viber || b.telegram || b.x || b.threads || b.linkedin || b.email || b.website), "prices"],
     ["ck_card", !!b.card, "card"],
   ];
   const done = steps.filter((s) => s[1]).length;
@@ -413,12 +413,18 @@ const LINKS = [
   ["instagram", "instagram", "@yourshop"],
   ["facebook", "facebook", "facebook.com/yourshop"],
   ["tiktok", "tiktok", "@yourshop"],
+  ["snapchat", "snapchat", "yourshop"],
+  ["viber", "viber", "0750 123 4567"],
+  ["telegram", "telegram", "@yourshop"],
+  ["x", "x_link", "@yourshop"],
+  ["threads", "threads", "@yourshop"],
+  ["linkedin", "linkedin", "linkedin.com/in/yourname"],
   ["email", "email_link", "name@gmail.com"],
   ["website", "website", "yourshop.com"],
 ];
 
 const FIELDS = ["name_en", "name_ku", "name_ar", "description_en", "description_ku", "description_ar", "category_id", "phone",
-  "contact_name", "instagram", "facebook", "tiktok", "email", "website", "lat", "lng", "address"];
+  "contact_name", "instagram", "facebook", "tiktok", "snapchat", "viber", "telegram", "x", "threads", "linkedin", "email", "website", "lat", "lng", "address"];
 
 export function EditPage({ lang, id, go }) {
   const [b, setB, err, reload] = useMine(id);
@@ -631,7 +637,7 @@ export function EditPage({ lang, id, go }) {
           <div key={k} className="o-linkrow">
             <span className="o-lname">{t(lang, label)}</span>
             <div className="field ltr"><input value={f[k]} onChange={(e) => set(k, e.target.value)} placeholder={ph} maxLength={120}
-              type={k === "email" ? "email" : "text"} inputMode={k === "email" ? "email" : "url"} autoCapitalize="none" spellCheck={false} /></div>
+              type={k === "email" ? "email" : k === "viber" ? "tel" : "text"} inputMode={k === "email" ? "email" : k === "viber" ? "tel" : "url"} autoCapitalize="none" spellCheck={false} /></div>
           </div>
         ))}
         <div className="b-chips wrap">
