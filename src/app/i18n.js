@@ -8,12 +8,12 @@ export const LANGS = [
 ];
 
 const T = {
-  tagline: ["Every trusted service, one tap away", "هەموو خزمەتگوزارییەکی متمانەپێکراو، بە یەک لێدان", "كل خدمة موثوقة على بُعد لمسة"],
+  tagline: ["Every trusted service, one tap away", "هەموو خزمەتگوزارییەکی متمانەپێکراو، بە یەک گەڕان", "كل خدمة موثوقة على بُعد لمسة"],
   region: ["Kurdistan · Iraq", "کوردستان · عێراق", "كوردستان · العراق"],
   // first-open welcome (new, needs a native-speaker check)
   wl_title: ["Welcome", "بەخێربێیت", "أهلاً بك"],
   wl_sub1: ["Find trusted services across Kurdistan.", "خزمەتگوزاریی متمانەپێکراو لە سەرانسەری کوردستان بدۆزەرەوە.", "اعثر على خدمات موثوقة في أنحاء كوردستان."],
-  wl_sub2: ["Save their cards. Call in one tap.", "کارتەکانیان هەڵبگرە. بە یەک لێدان پەیوەندی بکە.", "احفظ بطاقاتهم. اتصل بلمسة واحدة."],
+  wl_sub2: ["Save their cards. Call in one tap.", "کارتەکانیان هەڵبگرە. بە یەک گەڕان پەیوەندی بکە.", "احفظ بطاقاتهم. اتصل بلمسة واحدة."],
   wl_start: ["Get started", "دەست پێبکە", "ابدأ"],
   wl_city: ["Where are you?", "لە کوێیت؟", "أين أنت؟"],
   wl_city_sub: ["We'll show services near you. You can change it anytime.", "خزمەتگوزارییەکانی نزیکت پیشان دەدەین. هەر کاتێک دەتوانیت بیگۆڕیت.", "سنعرض الخدمات القريبة منك. يمكنك تغييرها في أي وقت."],
