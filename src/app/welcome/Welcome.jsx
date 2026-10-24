@@ -40,7 +40,7 @@ export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
           const b = { ...c, contact_name: name, name_en: biz, name_ku: biz, name_ar: biz };
           return (
             <div key={b.id} className={"wl-card c" + i}>
-              {i === 1 ? (
+              {i < 2 ? (
                 <div className="wl-float wl-float3d">
                   <Card3D b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} url={`${window.location.origin}/card`} wide logoSize={28} />
                 </div>

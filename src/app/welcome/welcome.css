@@ -112,6 +112,6 @@
 
 /* Keep both intro cards fully on screen: front card centred, blue card behind it on the left */
 .wl-card.c1 { top: 44%; transform: translate(-50%, -50%) translateZ(40px) rotate(-4deg) rotateY(-8deg); }
-.wl-card.c0 { top: 40%; transform: translate(-56%, -50%) translateZ(-60px) rotate(-8deg) rotateY(26deg) scale(0.9); opacity: 0.7; }
+.wl-card.c0 { top: 40%; transform: translate(-56%, -50%) translateZ(-60px) rotate(-8deg) rotateY(26deg); opacity: 0.7; }
 .wl-card.c1 .wl-float3d { transform: scale(0.8); }
-.wl-card.c0 .cf-nfc { transform: scale(0.85); }
+.wl-card.c0 .wl-float3d { transform: scale(0.8); }
