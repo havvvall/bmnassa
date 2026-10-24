@@ -42,7 +42,7 @@ export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
             <div key={b.id} className={"wl-card c" + i}>
               {i === 1 ? (
                 <div className="wl-float wl-float3d">
-                  <Card3D b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} url={`${window.location.origin}/card`} wide />
+                  <Card3D b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} url={`${window.location.origin}/card`} wide logoSize={28} />
                 </div>
               ) : (
                 <div className="wl-float"><NfcCard b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} linksOnly /></div>

@@ -105,3 +105,7 @@
 .wl-float .cf-nfc-name small { font-size: 8px; letter-spacing: 0.1em; }
 .wl-float .cf-nfc-icons { margin-top: 6px; gap: 4px; }
 .wl-float .cf-nfc-icons .cf-ic { width: 22px; height: 22px; border-radius: 7px; }
+
+/* Blue side card: same resize as the front card; smaller gold logo on the side cards */
+.wl-card.c0 .cf-nfc { transform: scale(0.8); transform-origin: 50% 50%; }
+.wl-float .cf-nfc-logo { height: 22px; width: 22px; border-radius: 7px; }

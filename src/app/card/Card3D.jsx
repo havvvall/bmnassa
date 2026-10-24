@@ -124,8 +124,8 @@ function wrap(x, text, width, maxLines) {
 }
 
 // where everything sits on the tall card (CSS px); shared by the drawing and the tappable icons
-function layout(W, H, nIcons, rtl, wide) {
-  if (wide) return layoutWide(W, H, nIcons, rtl);
+function layout(W, H, nIcons, rtl, wide, logoSize) {
+  if (wide) return layoutWide(W, H, nIcons, rtl, logoSize);
   const pad = 24, top = 26, bottom = 24, ic = 46, gap = 10;
   const perRow = Math.max(1, Math.floor((W - pad * 2 + gap) / (ic + gap)));
   const rows = Math.ceil(nIcons / perRow);
@@ -142,8 +142,8 @@ function layout(W, H, nIcons, rtl, wide) {
 }
 
 // the same card in the wallet's landscape shape: logo and sign on top, name and icons along the bottom
-function layoutWide(W, H, nIcons, rtl) {
-  const pad = 20, top = 18, ic = 30, gap = 8, lg = 44;
+function layoutWide(W, H, nIcons, rtl, logoSize = 44) {
+  const pad = 20, top = 18, ic = 30, gap = 8, lg = logoSize;
   const perRow = Math.max(1, Math.floor((W - pad * 2 + gap) / (ic + gap)));
   const rows = Math.ceil(nIcons / perRow);
   const wordH = 10, wordY = H - 12 - wordH;
@@ -171,7 +171,7 @@ async function paintFaces(G, d) {
     s.logo_path ? loadImage(photoUrl(s.logo_path), true) : Promise.resolve(null),
   ])]);
   const base = hexRgb(s.color);
-  const L = layout(W, H, links.length, rtl, wide);
+  const L = layout(W, H, links.length, rtl, wide, logoSize);
   const canvasOf = () => { const c = document.createElement("canvas"); c.width = Math.round(W * k); c.height = Math.round(H * k); const x = c.getContext("2d"); x.scale(k, k); return [c, x]; };
   const ground = (x) => {
     const dx = Math.sin(160 * Math.PI / 180), dy = -Math.cos(160 * Math.PI / 180), len = Math.abs(W * dx) + Math.abs(H * dy);
@@ -273,7 +273,7 @@ async function paintFaces(G, d) {
 }
 
 // The tall digital card on the business page
-export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false }) {
+export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, logoSize = 44 }) {
   const box = useRef(null);
   const cv = useRef(null);
   const G = useRef(null);
@@ -315,7 +315,7 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false })
   const data = useRef({});
   data.current = { b, s, lang, cat, url, rtl, links, wide };
   const person = cardPerson(b, lang);
-  const sig = JSON.stringify([wide, size, s.color, s.icons, s.logo_path, cardRole(b, cat, lang, s), person, pick(b, "name", lang), lang, url, links.map((l) => l.key + l.href)]);
+  const sig = JSON.stringify([wide, logoSize, size, s.color, s.icons, s.logo_path, cardRole(b, cat, lang, s), person, pick(b, "name", lang), lang, url, links.map((l) => l.key + l.href)]);
   const gen = useRef(0);
   useEffect(() => {
     const g = G.current;
