@@ -463,7 +463,6 @@ const T = {
   w_short: ["Wallet", "جزدان", "المحفظة"],
   w_flip: ["Flip card", "کارتەکە هەڵگەڕێنەوە", "اقلب البطاقة"],
   w_bmnassa: ["Bmnassa", "بمناسە", "بمناسة"],
-  w_ledger: ["Ledger", "دەفتەر", "السجل"],
   w_tap_flip: ["Swipe the card to flip it", "کارتەکە ڕابکێشە بۆ هەڵگەڕاندنەوە", "اسحب البطاقة لقلبها"],
   w_details: ["Details", "وردەکاری", "التفاصيل"],
   w_style: ["Wallet style", "شێوازی جزدان", "شكل المحفظة"],
