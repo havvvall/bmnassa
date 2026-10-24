@@ -115,3 +115,14 @@
 .wl-card.c0 { top: 40%; transform: translate(-56%, -50%) translateZ(-60px) rotate(-8deg) rotateY(26deg); opacity: 0.7; }
 .wl-card.c1 .wl-float3d { transform: scale(0.8); }
 .wl-card.c0 .wl-float3d { transform: scale(0.8); }
+
+/* Swipeable card stack: twelve cards in a wallet-style pile; drag or let it advance */
+.wl-deck { position: absolute; inset: 0; z-index: 1; touch-action: pan-y; cursor: grab; }
+.wl-deck-card { position: absolute; left: 50%; top: 29%; width: 214px; transition: transform 520ms var(--ease-emphasized, ease), opacity 400ms ease; will-change: transform; }
+.wl-fit .cf-nfc { padding: 12px 14px; box-shadow: 0 22px 34px -8px rgba(0, 0, 0, 0.85); }
+.wl-fit .cf-nfc-name b { font-size: 15px; line-height: 19px; }
+.wl-fit .cf-nfc-name small { font-size: 8px; letter-spacing: 0.1em; }
+.wl-fit .cf-nfc-icons { margin-top: 6px; gap: 4px; }
+.wl-fit .cf-nfc-icons .cf-ic { width: 22px; height: 22px; border-radius: 7px; }
+.wl-fit .cf-nfc-logo { height: 22px; width: 22px; border-radius: 7px; }
+.wl-count { position: absolute; top: 14px; left: 0; right: 0; text-align: center; z-index: 3; color: #8a8a92; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; pointer-events: none; }
