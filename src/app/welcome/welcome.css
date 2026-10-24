@@ -87,3 +87,17 @@
 .wl-word { height: 44px; margin-top: 0; }
 .wl-brand { transform: translateY(-10%); }
 .step-city .wl-brand { transform: translateY(-40%) scale(0.85); }
+
+/* 3D intro cards: front card faces the viewer, two smaller cards sit angled back into depth, dimmed with dark shadows */
+.wl-stage { perspective: 900px; }
+.wl-card { width: 214px; transform-style: preserve-3d; }
+.wl-float { position: relative; border-radius: 16px; }
+.wl-float::after { content: ""; position: absolute; inset: 0; border-radius: 16px; pointer-events: none; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.22) 46%, transparent 62%); }
+.wl-card.c1 { z-index: 3; transform: translate(-50%, -92%) translateZ(40px) rotateX(9deg) rotateY(-14deg); opacity: 1; filter: none; }
+.wl-card.c1 .wl-float { box-shadow: 1px 1px 0 #0c1a35, 2px 2px 0 #0a1630, 3px 3px 0 #08122a, 0 0 0 1px rgba(245, 195, 59, 0.55); }
+.wl-card.c0 { z-index: 1; transform: translate(-112%, -78%) translateZ(-60px) rotateY(34deg) rotateX(4deg) scale(0.9); opacity: 0.6; filter: none; }
+.wl-card.c2 { display: block; z-index: 1; transform: translate(12%, -78%) translateZ(-60px) rotateY(-34deg) rotateX(4deg) scale(0.9); opacity: 0.6; filter: none; }
+.wl-card.c0 .wl-float, .wl-card.c2 .wl-float { box-shadow: 0 26px 34px -8px rgba(0, 0, 0, 0.95); }
+.wl-card.c1 .wl-float, .wl-card.c0 .wl-float, .wl-card.c2 .wl-float { animation: none; }
+.step-city .wl-card.c1 { opacity: 0.35; }
+.step-city .wl-card.c0, .step-city .wl-card.c2 { opacity: 0; }
