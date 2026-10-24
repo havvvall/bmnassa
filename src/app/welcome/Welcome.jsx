@@ -53,13 +53,13 @@ export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
         <svg className="wl-curve" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 110 0, 290 0, 400 40 Z" /></svg>
         {step === "hello" ? (
           <div className="wl-body" key="hello">
+            <h1 className="wl-head">{t(lang, "wl_head")}</h1>
+            <p className="wl-sub">{t(lang, "wl_sub1")}<br />{t(lang, "wl_sub2")}</p>
             <div className="wl-langs" role="group" aria-label={t(lang, "choose_lang")}>
               {LANGS.map((l) => (
                 <button key={l.id} type="button" dir={l.dir} aria-pressed={lang === l.id} onClick={() => setLang(l.id)}>{l.label}</button>
               ))}
             </div>
-            <h1 className="wl-h1">{t(lang, "wl_title")}</h1>
-            <p className="wl-sub">{t(lang, "wl_sub1")}<br />{t(lang, "wl_sub2")}</p>
             <button type="button" className="wl-btn dark" onClick={start}>{t(lang, "wl_start")}</button>
             <button type="button" className="wl-btn line" onClick={onSignIn}>{t(lang, "signin_title")}</button>
             <span className="wl-foot">{t(lang, "region")}</span>

@@ -101,3 +101,28 @@
 .wl-card.c1 .wl-float, .wl-card.c0 .wl-float, .wl-card.c2 .wl-float { animation: none; }
 .step-city .wl-card.c1 { opacity: 0.35; }
 .step-city .wl-card.c0, .step-city .wl-card.c2 { opacity: 0; }
+
+/* Intro layout, matched to the approved design: dark stage with 3D cards and gold glow, dark panel with left-aligned text and two buttons */
+.wl { background: #050506; }
+.wl-stage { height: 56dvh; }
+.wl-card { top: 42%; }
+.wl-card.c1 { transform: translate(-50%, -50%) translateZ(40px) rotateX(9deg) rotateY(-14deg); }
+.wl-card.c0 { top: 42%; transform: translate(-112%, -50%) translateZ(-60px) rotateY(34deg) rotateX(4deg) scale(0.9); }
+.wl-card.c2 { top: 42%; transform: translate(12%, -50%) translateZ(-60px) rotateY(-34deg) rotateX(4deg) scale(0.9); }
+.wl-card.c1 .wl-float { box-shadow: 1px 1px 0 #0c1a35, 2px 2px 0 #0a1630, 3px 3px 0 #08122a, 0 0 0 1px rgba(245, 195, 59, 0.55), 0 0 40px rgba(245, 195, 59, 0.18); }
+.wl-brand { top: auto; bottom: 18px; transform: none; animation: none; }
+.wl-tag { color: #c4c4ca; font-size: 14px; font-weight: 600; text-shadow: none; }
+.step-hello .wl-panel, .step-hello .wl-curve { background: #111114; fill: #111114; }
+.step-hello .wl-panel { margin-top: -34px; }
+.step-hello .wl-body { align-items: flex-start; text-align: left; gap: 0; padding: 26px 22px max(22px, env(safe-area-inset-bottom)); color: #fff; }
+.wl-head { margin: 0; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; text-transform: none; color: #fff; }
+[dir="rtl"] .wl-head { font-size: 26px; letter-spacing: 0; }
+.step-hello .wl-sub { margin: 8px 0 0; color: #a9a9b0; font-size: 15px; line-height: 1.5; font-weight: 500; }
+.step-hello .wl-langs { margin-top: 18px; background: #1b1b20; padding: 4px; }
+.step-hello .wl-langs button { color: #9a9aa3; height: 34px; padding: 0 14px; }
+.step-hello .wl-langs button[aria-pressed="true"] { background: #f5c33b; color: #15171a; box-shadow: none; }
+.step-hello .wl-btn { width: 100%; height: 54px; border-radius: 16px; font-size: 16px; font-weight: 800; margin-top: 10px; }
+.step-hello .wl-btn.dark { background: #f5c33b; color: #15171a; box-shadow: none; }
+.step-hello .wl-btn.line { background: #1c1c21; color: #fff; border: 0; }
+.step-hello .wl-btn.dark { margin-top: 22px; }
+.step-hello .wl-foot { color: #6f6f78; margin-top: 14px; align-self: center; }
