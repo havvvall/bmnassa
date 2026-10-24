@@ -126,3 +126,19 @@
 .step-hello .wl-btn.line { background: #1c1c21; color: #fff; border: 0; }
 .step-hello .wl-btn.dark { margin-top: 22px; }
 .step-hello .wl-foot { color: #6f6f78; margin-top: 14px; align-self: center; }
+
+/* Cards sit under the logo, with a slow sway and a light sheen that sweeps across them */
+.wl-brand { top: 9%; bottom: auto; transform: none; animation: wl-pop 700ms var(--ease-emphasized, ease) 150ms both; }
+.wl-word { height: 40px; }
+.wl-card { top: 64%; }
+.wl-card.c1 { transform: translate(-50%, -50%) translateZ(40px) rotateX(8deg) rotateY(-12deg); }
+.wl-card.c0 { transform: translate(-108%, -46%) translateZ(-60px) rotateY(34deg) rotateX(4deg) scale(0.9); }
+.wl-card.c2 { transform: translate(8%, -46%) translateZ(-60px) rotateY(-34deg) rotateX(4deg) scale(0.9); }
+.wl-card.c1 .wl-float { animation: wl-sway 6s ease-in-out infinite; }
+.wl-card.c0 .wl-float { animation: wl-sway 7.5s ease-in-out -2s infinite; }
+.wl-card.c2 .wl-float { animation: wl-sway-r 8s ease-in-out -4s infinite; }
+@keyframes wl-sway { 0%, 100% { transform: translateY(0) rotateY(0deg); } 50% { transform: translateY(-9px) rotateY(7deg); } }
+@keyframes wl-sway-r { 0%, 100% { transform: translateY(0) rotateY(0deg); } 50% { transform: translateY(-7px) rotateY(-6deg); } }
+.wl-float::after { background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%); background-size: 250% 100%; background-repeat: no-repeat; animation: wl-sheen 4.8s ease-in-out infinite; }
+@keyframes wl-sheen { 0%, 55% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
+@media (prefers-reduced-motion: reduce) { .wl-card .wl-float, .wl-float::after { animation: none !important; } }
