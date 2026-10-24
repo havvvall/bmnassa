@@ -3,22 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { t, LANGS, FALLBACK_CITIES, cityName } from "../i18n.js";
 import { getCities } from "../api.js";
-import { NfcCard, cardSettings } from "../card/CardFaces.jsx";
-import { Card3D } from "../card/Card3D.jsx";
 import { haptic } from "../motion.js";
 import "./welcome.css";
 
-// Sample cards for the stage (made-up businesses, never real ones)
-const SAMPLE = ["#1b2a4a", "#0f5c5c", "#5a1a26"].map((color, i) => ({
-  id: -(i + 1), handle: "x", phone: "+9647500000000", whatsapp: "+9647500000000", instagram: "x", email: "a@b.c",
-  card: { style: "wallet", color },
-}));
-const PLACEHOLDER = {
-  en: ["Your Name", "Your Business", "Your Profession"],
-  ku: ["ناوی تۆ", "بزنسەکەت", "پیشەکەت"],
-  ar: ["اسمك", "عملك", "مهنتك"],
-};
-const IDX = { en: 0, ku: 1, ar: 2 };
 
 export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
   const [step, setStep] = useState("hello");
@@ -35,21 +22,6 @@ export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
             <img src="/brand/kurdistan-skyline.webp" alt="" draggable="false" />
           </div>
         </div>
-        {SAMPLE.map((c, i) => {
-          const [name, biz, job] = PLACEHOLDER[lang] || PLACEHOLDER.en;
-          const b = { ...c, contact_name: name, name_en: biz, name_ku: biz, name_ar: biz };
-          return (
-            <div key={b.id} className={"wl-card c" + i}>
-              {i < 2 ? (
-                <div className="wl-float wl-float3d">
-                  <Card3D b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} url={`${window.location.origin}/card`} wide logoSize={28} />
-                </div>
-              ) : (
-                <div className="wl-float"><NfcCard b={b} s={cardSettings(b)} lang={lang} cat={{ name_en: job, name_ku: job, name_ar: job }} linksOnly /></div>
-              )}
-            </div>
-          );
-        })}
         <div className="wl-brand">
           <img className="wl-word" src="/brand/logo-silver.svg" alt="" />
           <span className="wl-tag">{t(lang, "tagline")}</span>
