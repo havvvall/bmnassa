@@ -1081,28 +1081,36 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
       ) : null}
 
       <div className="bz-secs">
-        {about || photos.length ? (
+        {about ? (
           <section className="bz-sec" {...sec("about")}>
             <span className="bz-label">{t(lang, "about")}</span>
-            {about ? <p className="bz-about" dir="auto">{about}</p> : null}
-            {shown.length ? (
-              <div className={"bz-photos" + (bigPhotos ? " big" : "")}>
-                {shown.map((p, i) => (
-                  <button type="button" key={p.id} className="bz-photo" aria-label={t(lang, "photos_title") + " " + (i + 1)}
-                    onClick={(e) => { haptic(8); setViewer({ start: i, from: e.currentTarget.getBoundingClientRect() }); }}>
-                    <img src={photoUrl(p.path)} alt="" loading="lazy" />
-                    {i === shown.length - 1 && more > 0 ? <b>+{more}</b> : null}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-            {links.length ? (
-              <div className="bz-links">
-                {links.map(([icon, cls, label, text, href]) => (
-                  <a key={icon} className="bz-link" href={href} target="_blank" rel="noreferrer"><span className={"b-lic " + cls}><Icon name={icon} size={16} /></span>{label}</a>
-                ))}
-              </div>
-            ) : null}
+            <p className="bz-about" dir="auto">{about}</p>
+          </section>
+        ) : null}
+
+        {shown.length ? (
+          <section className="bz-sec" {...(about ? {} : sec("about"))}>
+            <span className="bz-label">{t(lang, "photos_title")}</span>
+            <div className={"bz-photos" + (bigPhotos ? " big" : "")}>
+              {shown.map((p, i) => (
+                <button type="button" key={p.id} className="bz-photo" aria-label={t(lang, "photos_title") + " " + (i + 1)}
+                  onClick={(e) => { haptic(8); setViewer({ start: i, from: e.currentTarget.getBoundingClientRect() }); }}>
+                  <img src={photoUrl(p.path)} alt="" loading="lazy" />
+                  {i === shown.length - 1 && more > 0 ? <b>+{more}</b> : null}
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {links.length ? (
+          <section className="bz-sec">
+            <span className="bz-label">{t(lang, "links")}</span>
+            <div className="bz-links">
+              {links.map(([icon, cls, label, text, href]) => (
+                <a key={icon} className="bz-link" href={href} target="_blank" rel="noreferrer"><span className={"b-lic " + cls}><Icon name={icon} size={16} /></span>{label}</a>
+              ))}
+            </div>
           </section>
         ) : null}
 
