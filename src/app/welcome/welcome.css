@@ -88,62 +88,19 @@
 .wl-brand { transform: translateY(-10%); }
 .step-city .wl-brand { transform: translateY(-40%) scale(0.85); }
 
-/* 3D intro cards: front card faces the viewer, two smaller cards sit angled back into depth, dimmed with dark shadows */
+/* Upgraded card look: 3D tilt, depth, sheen and a gentle sway. Layout stays as it was. */
 .wl-stage { perspective: 900px; }
-.wl-card { width: 214px; transform-style: preserve-3d; }
-.wl-float { position: relative; border-radius: 16px; }
-.wl-float::after { content: ""; position: absolute; inset: 0; border-radius: 16px; pointer-events: none; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.22) 46%, transparent 62%); }
-.wl-card.c1 { z-index: 3; transform: translate(-50%, -92%) translateZ(40px) rotateX(9deg) rotateY(-14deg); opacity: 1; filter: none; }
-.wl-card.c1 .wl-float { box-shadow: 1px 1px 0 #0c1a35, 2px 2px 0 #0a1630, 3px 3px 0 #08122a, 0 0 0 1px rgba(245, 195, 59, 0.55); }
-.wl-card.c0 { z-index: 1; transform: translate(-112%, -78%) translateZ(-60px) rotateY(34deg) rotateX(4deg) scale(0.9); opacity: 0.6; filter: none; }
-.wl-card.c2 { display: block; z-index: 1; transform: translate(12%, -78%) translateZ(-60px) rotateY(-34deg) rotateX(4deg) scale(0.9); opacity: 0.6; filter: none; }
-.wl-card.c0 .wl-float, .wl-card.c2 .wl-float { box-shadow: 0 26px 34px -8px rgba(0, 0, 0, 0.95); }
-.wl-card.c1 .wl-float, .wl-card.c0 .wl-float, .wl-card.c2 .wl-float { animation: none; }
-.step-city .wl-card.c1 { opacity: 0.35; }
-.step-city .wl-card.c0, .step-city .wl-card.c2 { opacity: 0; }
-
-/* Intro layout, matched to the approved design: dark stage with 3D cards and gold glow, dark panel with left-aligned text and two buttons */
-.wl { background: #050506; }
-.wl-stage { height: 56dvh; }
-.wl-card { top: 42%; }
-.wl-card.c1 { transform: translate(-50%, -50%) translateZ(40px) rotateX(9deg) rotateY(-14deg); }
-.wl-card.c0 { top: 42%; transform: translate(-112%, -50%) translateZ(-60px) rotateY(34deg) rotateX(4deg) scale(0.9); }
-.wl-card.c2 { top: 42%; transform: translate(12%, -50%) translateZ(-60px) rotateY(-34deg) rotateX(4deg) scale(0.9); }
+.wl-card { transform-style: preserve-3d; }
+.wl-card.c1 { transform: translate(4%, -112%) translateZ(40px) rotateX(9deg) rotateY(-14deg) rotate(10deg); }
+.wl-card.c0 { transform: translate(-102%, -128%) translateZ(-60px) rotateY(34deg) rotateX(4deg) rotate(-13deg) scale(0.9); }
+.wl-card.c0, .wl-card.c2 { opacity: 0.6; filter: none; }
 .wl-card.c1 .wl-float { box-shadow: 1px 1px 0 #0c1a35, 2px 2px 0 #0a1630, 3px 3px 0 #08122a, 0 0 0 1px rgba(245, 195, 59, 0.55), 0 0 40px rgba(245, 195, 59, 0.18); }
-.wl-brand { top: auto; bottom: 18px; transform: none; animation: none; }
-.wl-tag { color: #c4c4ca; font-size: 14px; font-weight: 600; text-shadow: none; }
-.step-hello .wl-panel, .step-hello .wl-curve { background: #111114; fill: #111114; }
-.step-hello .wl-panel { margin-top: -34px; }
-.step-hello .wl-body { align-items: flex-start; text-align: left; gap: 0; padding: 26px 22px max(22px, env(safe-area-inset-bottom)); color: #fff; }
-.wl-head { margin: 0; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; text-transform: none; color: #fff; }
-[dir="rtl"] .wl-head { font-size: 26px; letter-spacing: 0; }
-.step-hello .wl-sub { margin: 8px 0 0; color: #a9a9b0; font-size: 15px; line-height: 1.5; font-weight: 500; }
-.step-hello .wl-langs { margin-top: 18px; background: #1b1b20; padding: 4px; }
-.step-hello .wl-langs button { color: #9a9aa3; height: 34px; padding: 0 14px; }
-.step-hello .wl-langs button[aria-pressed="true"] { background: #f5c33b; color: #15171a; box-shadow: none; }
-.step-hello .wl-btn { width: 100%; height: 54px; border-radius: 16px; font-size: 16px; font-weight: 800; margin-top: 10px; }
-.step-hello .wl-btn.dark { background: #f5c33b; color: #15171a; box-shadow: none; }
-.step-hello .wl-btn.line { background: #1c1c21; color: #fff; border: 0; }
-.step-hello .wl-btn.dark { margin-top: 22px; }
-.step-hello .wl-foot { color: #6f6f78; margin-top: 14px; align-self: center; }
-
-/* Cards sit under the logo, with a slow sway and a light sheen that sweeps across them */
-.wl-brand { top: 9%; bottom: auto; transform: none; animation: wl-pop 700ms var(--ease-emphasized, ease) 150ms both; }
-.wl-word { height: 40px; }
-.wl-card { top: 64%; }
-.wl-card.c1 { transform: translate(-50%, -50%) translateZ(40px) rotateX(8deg) rotateY(-12deg); }
-.wl-card.c0 { transform: translate(-108%, -46%) translateZ(-60px) rotateY(34deg) rotateX(4deg) scale(0.9); }
-.wl-card.c2 { transform: translate(8%, -46%) translateZ(-60px) rotateY(-34deg) rotateX(4deg) scale(0.9); }
-.wl-card.c1 .wl-float { animation: wl-sway 6s ease-in-out infinite; }
-.wl-card.c0 .wl-float { animation: wl-sway 7.5s ease-in-out -2s infinite; }
-.wl-card.c2 .wl-float { animation: wl-sway-r 8s ease-in-out -4s infinite; }
+.wl-card.c1 .wl-float, .wl-card.c0 .wl-float { position: relative; border-radius: 16px; animation: wl-sway 6s ease-in-out infinite; }
+.wl-card.c0 .wl-float { animation-duration: 7.5s; animation-delay: -2s; }
+.wl-float::after { content: ""; position: absolute; inset: 0; border-radius: 16px; pointer-events: none; background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%); background-size: 250% 100%; background-repeat: no-repeat; animation: wl-sheen 4.8s ease-in-out infinite; }
 @keyframes wl-sway { 0%, 100% { transform: translateY(0) rotateY(0deg); } 50% { transform: translateY(-9px) rotateY(7deg); } }
-@keyframes wl-sway-r { 0%, 100% { transform: translateY(0) rotateY(0deg); } 50% { transform: translateY(-7px) rotateY(-6deg); } }
-.wl-float::after { background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%); background-size: 250% 100%; background-repeat: no-repeat; animation: wl-sheen 4.8s ease-in-out infinite; }
 @keyframes wl-sheen { 0%, 55% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
 @media (prefers-reduced-motion: reduce) { .wl-card .wl-float, .wl-float::after { animation: none !important; } }
-
-/* keep the whole card, including the link icons, inside its frame on the intro */
 .wl-float .cf-nfc { padding: 14px 16px; }
 .wl-float .cf-nfc-icons { margin-top: 6px; gap: 5px; }
 .wl-float .cf-nfc-icons .cf-ic { width: 26px; height: 26px; border-radius: 8px; }

@@ -12,7 +12,6 @@ const T = {
   region: ["Kurdistan · Iraq", "کوردستان · عێراق", "كوردستان · العراق"],
   // first-open welcome (new, needs a native-speaker check)
   wl_title: ["Welcome", "بەخێربێیت", "أهلاً بك"],
-  wl_head: ["Every trusted service, one search away.", "هەموو خزمەتگوزارییەکی متمانەپێکراو، یەک گەڕان دوورە.", "كل خدمة موثوقة على بُعد بحث واحد."],
   wl_sub1: ["Find trusted services across Kurdistan.", "خزمەتگوزاریی متمانەپێکراو لە سەرانسەری کوردستان بدۆزەرەوە.", "اعثر على خدمات موثوقة في أنحاء كوردستان."],
   wl_sub2: ["Save their cards. Call in one tap.", "کارتەکانیان هەڵبگرە. بە یەک گەڕان پەیوەندی بکە.", "احفظ بطاقاتهم. اتصل بلمسة واحدة."],
   wl_start: ["Get started", "دەست پێبکە", "ابدأ"],
