@@ -648,6 +648,43 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
   );
 }
 
+// ---------- look · Ledger: the chosen card in front, its neighbours peek out behind it, its details below ----------
+function LedgerLook({ items, lang, cats, go, startId, onRemove, setToast }) {
+  const n = items.length;
+  const [idx, setIdx] = useState(() => Math.max(0, items.findIndex((x) => x.id === startId)));
+  const i = Math.min(idx, n - 1);
+  const cur = items[i];
+  const [back, setBack] = useState(false);
+  useEffect(() => setBack(false), [cur && cur.id]);
+  const step = (d) => { const j = i + d; if (j >= 0 && j < n) { haptic(6); setIdx(j); } };
+  const sx = useRef(null);
+  const onStart = (e) => { sx.current = e.touches[0].clientX; };
+  const onEnd = (e) => {
+    if (sx.current == null) return;
+    const dx = e.changedTouches[0].clientX - sx.current;
+    sx.current = null;
+    if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+  };
+  const flipCur = () => { if (cur && canFlip(cur)) { haptic(8); setBack((x) => !x); } };
+  return (
+    <div className="lg">
+      <div className="lg-stage" onTouchStart={onStart} onTouchEnd={onEnd}>
+        {i > 0 ? <div className="lg-side l" aria-hidden="true" onClick={() => step(-1)} /> : null}
+        {i < n - 1 ? <div className="lg-side r" aria-hidden="true" onClick={() => step(1)} /> : null}
+        <button type="button" className="lg-main" key={cur.id} aria-label={itemName(cur, lang)} onClick={flipCur}>
+          <WheelFace it={cur} lang={lang} cats={cats} back={back} />
+        </button>
+      </div>
+      {n > 1 ? (
+        <div className="lg-dots" aria-hidden="true">
+          {items.slice(0, 9).map((x, k) => <i key={x.id} className={k === Math.min(i, 8) ? "on" : ""} />)}
+        </div>
+      ) : null}
+      <CardInfo it={cur} lang={lang} cats={cats} go={go} onRemove={() => onRemove(cur)} setToast={setToast} onFlip={flipCur} />
+    </div>
+  );
+}
+
 function Sheet({ lang, title, onClose, children }) {
   // drawn on the page itself, so a card panel's motion never traps it
   return createPortal(
@@ -677,7 +714,8 @@ export function WalletPage({ lang, go, signedIn }) {
   const [detail, setDetail] = useState(null);
   const [look, setLookState] = useState(() => {
     const q0 = new URLSearchParams(window.location.search).get("look");
-    return ["bmnassa", "stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look2", "bmnassa");
+    const saved = store.get("bm_wallet_look2", "bmnassa");
+    return ["bmnassa", "ledger"].includes(q0) ? q0 : ["bmnassa", "ledger"].includes(saved) ? saved : "bmnassa";
   });
   const setLook = (v) => { setLookState(v); store.set("bm_wallet_look2", v); setSheet(""); };
 
@@ -825,35 +863,13 @@ export function WalletPage({ lang, go, signedIn }) {
       ) : null}
 
       {items.length && look === "bmnassa" ? <BmnassaLook items={items} lang={lang} cats={cats} go={go} startId={frontId} onDetails={setDetail} onScan={() => go("/scan")} /> : null}
-      {items.length && look === "stack" ? <StackLook items={items} lang={lang} cats={cats} go={go} onRemove={remove} setToast={setToast} startId={frontId} /> : null}
-      {items.length && look === "deck" ? <DeckLook items={items} lang={lang} cats={cats} go={go} onRemove={remove} setToast={setToast} startId={frontId} /> : null}
-      {items.length && look === "wheel" ? (
-        <div className="w-wheel" ref={wheel} onScroll={onScroll}>
-          <div className="w-wheelpad" />
-          {items.map((it, i) => (
-            <div key={it.id} className="w-witem" ref={(el) => { els.current[it.id] = el; }}>
-              <button type="button" className="w-wcard" onClick={() => tapCard(it, i)} aria-label={itemName(it, lang)}>
-                <WheelFace it={it} lang={lang} cats={cats} />
-              </button>
-            </div>
-          ))}
-          <div className="w-wheelpad" />
-        </div>
-      ) : null}
-
-      {rows && n && look === "wheel" ? (
-        <div className="w-foot">
-          <span className="w-count">{n === 1 ? t(lang, "wallet_one") : t(lang, "wallet_cards", { n })}</span>
-          <button type="button" className="w-scan" onClick={() => go("/scan")}><Icon name="scan" size={16} /> {t(lang, "scan_paper")}</button>
-        </div>
-      ) : null}
+      {items.length && look === "ledger" ? <LedgerLook items={items} lang={lang} cats={cats} go={go} startId={frontId} onRemove={remove} setToast={setToast} /> : null}
 
       {detail ? (
         <div className="b-sheet-wrap w-detailwrap" onClick={() => setDetail(null)}>
           <div className="w-detail" role="dialog" aria-label={itemName(detail, lang)} onClick={(e) => e.stopPropagation()}>
             <div className="w-detailhead"><span className="b-grab" /><button type="button" className="link" onClick={() => setDetail(null)}>{t(lang, "close")}</button></div>
-            {look === "bmnassa" ? <CardInfo it={detail} lang={lang} cats={cats} go={go} onRemove={() => remove(detail)} setToast={setToast} />
-              : <FrontCard it={detail} lang={lang} cats={cats} go={go} onRemove={() => remove(detail)} refFn={() => {}} />}
+            <CardInfo it={detail} lang={lang} cats={cats} go={go} onRemove={() => remove(detail)} setToast={setToast} />
           </div>
         </div>
       ) : null}
@@ -870,7 +886,7 @@ export function WalletPage({ lang, go, signedIn }) {
           ))}
           <span className="label" style={{ marginTop: 8 }}>{t(lang, "w_style")}</span>
           <div className="seg" role="group" aria-label={t(lang, "w_style")}>
-            {[["bmnassa", "w_bmnassa"], ["stack", "w_stack"], ["wheel", "w_wheel"], ["deck", "w_deck"]].map(([k, label]) => (
+            {[["bmnassa", "w_bmnassa"], ["ledger", "w_ledger"]].map(([k, label]) => (
               <button key={k} type="button" aria-pressed={look === k} onClick={() => setLook(k)}>{t(lang, label)}</button>
             ))}
           </div>
