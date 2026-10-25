@@ -126,3 +126,6 @@
 .wl-fit .cf-nfc-icons .cf-ic { width: 22px; height: 22px; border-radius: 7px; }
 .wl-fit .cf-nfc-logo { height: 22px; width: 22px; border-radius: 7px; }
 .wl-count { position: absolute; top: 14px; left: 0; right: 0; text-align: center; z-index: 3; color: #8a8a92; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; pointer-events: none; }
+
+/* Bigger Bmnassa logo on the intro now that the card stack is gone */
+.wl-word { height: 64px; }
