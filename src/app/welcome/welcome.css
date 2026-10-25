@@ -129,3 +129,6 @@
 
 /* Bigger Bmnassa logo on the intro now that the card stack is gone */
 .wl-word { height: 64px; }
+
+/* Logo sits higher on the intro */
+.wl-brand { top: 18%; bottom: auto; transform: none; }
