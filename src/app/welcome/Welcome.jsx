@@ -18,8 +18,8 @@ export function Welcome({ lang, setLang, city, setCity, onDone, onSignIn }) {
         <div className="wl-glow" />
         <div className="wl-sky">
           <div className="wl-pan">
-            <img src="/brand/kurdistan-skyline.webp" alt="" draggable="false" />
-            <img src="/brand/kurdistan-skyline.webp" alt="" draggable="false" />
+            <img src="/brand/kurdistan-skyline-v2.webp" alt="" draggable="false" />
+            <img src="/brand/kurdistan-skyline-v2.webp" alt="" draggable="false" />
           </div>
         </div>
         <div className="wl-brand">
