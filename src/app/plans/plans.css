@@ -1,4 +1,8 @@
-/* Path chooser and plan chooser: built from the app's own choice rows, buttons and labels */
+/* Path chooser: uses the home screen's bento tiles (browse.css); only the login row is added here */
+.pa-bento { grid-template-rows: 116px 116px; }
+.pa-login { width: 100%; }
+
+/* Plan chooser: app choice rows, price and the 1 year / Permanent switch */
 .pl-choice { height: auto; min-height: 64px; padding: 14px 18px; }
 .pl-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .pl-info b { font-size: 16px; font-weight: 800; }
