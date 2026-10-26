@@ -1,12 +1,14 @@
-// The plan chooser for the profile and card path: three tiers shown as a bento, with a 1 year / Permanent switch.
+// The plan chooser for the profile and card path: plans grouped by tier, with a 1 year / Permanent switch.
 import React, { useState } from "react";
-import { PLANS, WIDE, fmtIQD } from "./plans.js";
+import { Back } from "../owner/Owner.jsx";
+import { PLANS, fmtIQD } from "./plans.js";
 import "./plans.css";
 
-export function PlanChooser({ go }) {
+const TIERS = ["Basic", "Card", "Premium"];
+
+export function PlanChooser({ lang, go }) {
   const [dur, setDur] = useState("year");
   const [pick, setPick] = useState("silver");
-  const list = PLANS.filter((p) => dur === "year" || p.perm);
   const chosen = PLANS.find((p) => p.id === pick) || PLANS[2];
   const price = dur === "year" ? chosen.year : chosen.perm;
   const name = chosen.name + (dur === "perm" ? "+" : "");
@@ -19,42 +21,39 @@ export function PlanChooser({ go }) {
   };
 
   return (
-    <div className="pl-page">
-      <div className="pl-top">
-        <small>Bmnassa</small>
+    <>
+      <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /></div>
+      <div className="stack">
         <h1>Choose your plan</h1>
+        <p className="sub">{dur === "year" ? "Listed in Bmnassa categories for one year" : "Listed in Bmnassa categories permanently"}</p>
       </div>
       <div className="pl-seg" role="group" aria-label="Duration">
-        <button type="button" className={dur === "year" ? "on" : ""} aria-pressed={dur === "year"} onClick={() => setDur("year")}>1 year</button>
-        <button type="button" className={dur === "perm" ? "on" : ""} aria-pressed={dur === "perm"} onClick={() => setDur("perm")}>Permanent</button>
+        <button type="button" aria-pressed={dur === "year"} onClick={() => setDur("year")}>1 year</button>
+        <button type="button" aria-pressed={dur === "perm"} onClick={() => setDur("perm")}>Permanent</button>
       </div>
-      <div className="pl-grid">
-        {list.map((p, i) => {
-          const sel = pick === p.id;
-          const shown = dur === "perm" ? p.name + "+" : p.name;
-          return (
-            <button
-              type="button"
-              key={p.id}
-              className={"pl-tile" + (WIDE.includes(i) ? " wide" : "") + (sel ? " sel" : "")}
-              aria-pressed={sel}
-              onClick={() => setPick(p.id)}
-            >
-              <span className="pl-meta">
-                <span className="pl-tag">{p.tier}</span>
-                <b>{shown}</b>
-                <small>{p.desc}</small>
-              </span>
-              <span className="pl-price">{fmtIQD(dur === "year" ? p.year : p.perm)}<i>IQD</i></span>
-            </button>
-          );
-        })}
-      </div>
-      <div className="pl-foot">
-        <p>{dur === "year" ? "Listed in Bmnassa categories for one year" : "Listed in Bmnassa categories permanently"}</p>
-        <button type="button" className="pl-cta" onClick={next}>Continue with {name} · {fmtIQD(price)} IQD</button>
-        <button type="button" className="pl-back" onClick={() => go("/path")}>Back</button>
-      </div>
-    </div>
+      {TIERS.map((tier) => (
+        <div className="stack" key={tier}>
+          <p className="label">{tier}</p>
+          {PLANS.filter((p) => p.tier === tier).map((p) => {
+            const amount = dur === "year" ? p.year : p.perm;
+            const shown = dur === "perm" ? p.name + "+" : p.name;
+            return (
+              <button
+                type="button"
+                key={p.id}
+                className="choice pl-choice"
+                aria-pressed={pick === p.id}
+                onClick={() => setPick(p.id)}
+              >
+                <span className="pl-info"><b>{shown}</b><small>{p.desc}</small></span>
+                <span className="pl-amt">{fmtIQD(amount)}<i>IQD</i></span>
+              </button>
+            );
+          })}
+        </div>
+      ))}
+      <span className="spacer" />
+      <button type="button" className="btn" onClick={next}>Continue with {name} · {fmtIQD(price)} IQD</button>
+    </>
   );
 }

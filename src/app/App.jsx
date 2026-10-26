@@ -819,10 +819,10 @@ export default function App() {
   } else if ((path === "/list" || path === "/account") && !profile) {
     screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
   } else if (path === "/path") {
-    screen = <PathChooser go={go} signedIn={signedIn} />;
+    screen = <PathChooser lang={lang} go={go} signedIn={signedIn} />;
   } else if (path === "/plans") {
     screen = profile
-      ? <PlanChooser go={go} />
+      ? <PlanChooser lang={lang} go={go} />
       : <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/path")} />;
   } else {
     screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/path")} onSignIn={() => go("/signin")} />;
