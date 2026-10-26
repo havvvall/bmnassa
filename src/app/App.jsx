@@ -37,7 +37,7 @@ import {
 
 // Words used by the app itself; any other single word is a business page name (bmnassa.com/azad-cooling)
 const APP_WORDS = new Set(["", "home", "welcome", "signin", "verify", "name", "account", "list", "team", "search", "c",
-  "admin", "register", "stand", "invitation", "brand", "wallet", "scan", "my"]);
+  "admin", "register", "stand", "invitation", "brand", "wallet", "scan", "my", "path", "plans"]);
 
 function businessPath(path) {
   const m = /^\/([a-z0-9][a-z0-9-]{0,60})(\/card|\/reviews|\/rate)?\/?$/i.exec(path || "");
