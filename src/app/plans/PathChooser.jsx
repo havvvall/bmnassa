@@ -7,6 +7,12 @@ import "./plans.css";
 export function PathChooser({ lang, go, signedIn }) {
   const choose = (target) => {
     if (target === "find") { go("/home"); return; }
+    if (target === "login") {
+      if (signedIn) { go("/home"); return; }
+      try { sessionStorage.setItem("bm_after", "/home"); } catch { /* ignore */ }
+      go("/signin");
+      return;
+    }
     const dest = target === "wallet" ? "/wallet" : "/plans";
     if (signedIn) { go(dest); return; }
     try { sessionStorage.setItem("bm_after", dest); } catch { /* ignore */ }
@@ -28,6 +34,9 @@ export function PathChooser({ lang, go, signedIn }) {
         </button>
         <button type="button" className="choice pl-choice" onClick={() => choose("profile")}>
           <span className="pl-info"><b>Create a profile and digital business card</b><small>List your business and order an NFC card.</small></span>
+        </button>
+        <button type="button" className="choice pl-choice" onClick={() => choose("login")}>
+          <span className="pl-info"><b>I already have an account</b><small>Log in with the email you used before.</small></span>
         </button>
       </div>
     </>
