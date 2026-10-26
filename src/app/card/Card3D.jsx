@@ -159,7 +159,7 @@ function layoutWide(W, H, nIcons, rtl, logoSize = 44) {
 }
 
 async function paintFaces(G, d) {
-  const { W, H, b, s, lang, cat, url, rtl, links, wide } = d;
+  const { W, H, b, s, lang, cat, url, rtl, links, wide, logoSize = 44 } = d;
   const fs = wide ? 22 : 34, lh = wide ? 26 : 40; // name size and line step
   const k = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
   const font = rtl ? "Vazirmatn, Manrope, sans-serif" : "Manrope, sans-serif";
@@ -317,7 +317,7 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, l
 
   // shape and faces, whenever the size or what is printed on the card changes (not on every re-render)
   const data = useRef({});
-  data.current = { b, s, lang, cat, url, rtl, links, wide };
+  data.current = { b, s, lang, cat, url, rtl, links, wide, logoSize };
   const person = cardPerson(b, lang);
   const sig = JSON.stringify([wide, logoSize, size, s.color, s.icons, s.logo_path, cardRole(b, cat, lang, s), person, pick(b, "name", lang), lang, url, links.map((l) => l.key + l.href)]);
   const gen = useRef(0);
