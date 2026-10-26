@@ -132,3 +132,17 @@
 
 /* Logo sits higher on the intro */
 .wl-brand { top: 18%; bottom: auto; transform: none; }
+
+/* Sign-in: the welcome look (dark logo stage over the curved panel) with the email field */
+.si .wl-stage { height: 34dvh; }
+.si-top { position: absolute; top: 14px; left: 16px; right: 16px; display: flex; align-items: center; gap: 8px; z-index: 4; }
+.si-top .rbtn { color: #fff; background: rgba(255, 255, 255, 0.14); border-color: transparent; }
+.si-top .tag { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.si-body { padding: 26px 24px 24px; gap: 12px; }
+.si-label { font-size: 13px; font-weight: 700; color: var(--muted, #6c6c70); }
+.si-field { height: 58px; border-radius: 16px; border: 1.5px solid var(--line-strong, rgba(20, 22, 26, 0.22)); background: var(--surface-raised, #fff); display: flex; align-items: center; padding: 0 16px; box-sizing: border-box; transition: border-color 160ms ease; }
+.si-field:focus-within { border-color: #15171a; }
+.si-field.invalid { border-color: #d6453d; }
+.si-field input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 17px; font-weight: 600; color: var(--text, #15171a); }
+.si-note { margin: 0; font-size: 12px; line-height: 1.5; color: var(--muted, #6c6c70); }
+.si-body .wl-btn { margin-top: auto; align-self: center; }

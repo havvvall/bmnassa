@@ -147,25 +147,36 @@ function SignIn({ lang, email, setEmail, onSent, onBack }) {
     }
   };
   return (
-    <form onSubmit={submit} style={{ display: "contents" }} noValidate>
-      <div className="top"><Back lang={lang} onClick={onBack} /><span className="grow" /><TestTag lang={lang} /></div>
-      <div className="stack">
-        <h1>{t(lang, "signin_title")}</h1>
-        <p className="sub">{t(lang, "signin_sub")}</p>
-      </div>
-      <div className="stack">
-        <label className="label" htmlFor="email">{t(lang, "email_label")}</label>
-        <div className={"field ltr" + (err === "email_invalid" ? " invalid" : "")}>
-          <input id="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
-            placeholder="name@gmail.com" dir="ltr"
-            value={value} onChange={(e) => { setValue(e.target.value); setErr(""); }} aria-invalid={err === "email_invalid"} aria-describedby="email-err" />
+    <form onSubmit={submit} className="wl si" noValidate>
+      <div className="wl-stage si-stage" aria-hidden="true">
+        <div className="wl-glow" />
+        <div className="wl-brand">
+          <img className="wl-word" src="/brand/logo-silver.svg" alt="" />
+          <span className="wl-tag">{t(lang, "tagline")}</span>
         </div>
-        <div id="email-err" className="err" role="alert">{err ? t(lang, err) : ""}</div>
-        {detail ? <div className="note ltr" style={{ fontSize: 11 }}>{detail}</div> : null}
       </div>
-      <span className="spacer" />
-      <p className="note">{t(lang, "privacy")}</p>
-      <button type="submit" className="btn" disabled={busy || !value.trim()}>{busy ? t(lang, "loading") : t(lang, "send_code")}</button>
+      <div className="si-top">
+        <Back lang={lang} onClick={onBack} />
+        <span className="grow" />
+        <TestTag lang={lang} />
+      </div>
+      <div className="wl-panel">
+        <svg className="wl-curve" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 110 0, 290 0, 400 40 Z" /></svg>
+        <div className="wl-body si-body">
+          <h1 className="wl-h1">{t(lang, "signin_title")}</h1>
+          <p className="wl-sub">{t(lang, "signin_sub")}</p>
+          <label className="si-label" htmlFor="email">{t(lang, "email_label")}</label>
+          <div className={"si-field ltr" + (err === "email_invalid" ? " invalid" : "")}>
+            <input id="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
+              placeholder="name@gmail.com" dir="ltr"
+              value={value} onChange={(e) => { setValue(e.target.value); setErr(""); }} aria-invalid={err === "email_invalid"} aria-describedby="email-err" />
+          </div>
+          <div id="email-err" className="err" role="alert">{err ? t(lang, err) : ""}</div>
+          {detail ? <div className="si-note ltr">{detail}</div> : null}
+          <p className="si-note">{t(lang, "privacy")}</p>
+          <button type="submit" className="wl-btn dark" disabled={busy || !value.trim()}>{busy ? t(lang, "loading") : t(lang, "send_code")}</button>
+        </div>
+      </div>
     </form>
   );
 }
