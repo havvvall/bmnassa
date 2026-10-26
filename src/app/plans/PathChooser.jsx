@@ -27,13 +27,13 @@ export function PathChooser({ lang, go, signedIn }) {
       </div>
       <div className="stack">
         <button type="button" className="choice pl-choice" onClick={() => choose("find")}>
-          <span className="pl-info"><b>Find a service near me</b><small>Search trusted services in your city. No account needed.</small></span>
+          <span className="pl-info"><b>Search for a service</b><small>Free. Find trusted services in your city. No account needed.</small></span>
         </button>
         <button type="button" className="choice pl-choice" onClick={() => choose("wallet")}>
-          <span className="pl-info"><b>Create a free digital wallet</b><small>Save business cards and call in one tap.</small></span>
+          <span className="pl-info"><b>Create a wallet</b><small>Free. Save business cards and call in one tap.</small></span>
         </button>
         <button type="button" className="choice pl-choice" onClick={() => choose("profile")}>
-          <span className="pl-info"><b>Create a profile and digital business card</b><small>List your business and order an NFC card.</small></span>
+          <span className="pl-info"><b>Create a profile</b><small>List your business and order an NFC card.</small></span>
         </button>
         <button type="button" className="choice pl-choice" onClick={() => choose("login")}>
           <span className="pl-info"><b>I already have an account</b><small>Log in with the email you used before.</small></span>

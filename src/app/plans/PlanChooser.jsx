@@ -4,6 +4,8 @@ import { Back } from "../owner/Owner.jsx";
 import { PLANS, fmtIQD } from "./plans.js";
 import "./plans.css";
 
+// only these plans are open for now (the others stay in plans.js for later)
+const OPEN = ["standard", "silver"];
 const TIERS = ["Basic", "Card", "Premium"];
 
 export function PlanChooser({ lang, go }) {
@@ -31,10 +33,10 @@ export function PlanChooser({ lang, go }) {
         <button type="button" aria-pressed={dur === "year"} onClick={() => setDur("year")}>1 year</button>
         <button type="button" aria-pressed={dur === "perm"} onClick={() => setDur("perm")}>Permanent</button>
       </div>
-      {TIERS.map((tier) => (
+      {TIERS.map((tier) => PLANS.some((p) => p.tier === tier && OPEN.includes(p.id)) && (
         <div className="stack" key={tier}>
           <p className="label">{tier}</p>
-          {PLANS.filter((p) => p.tier === tier).map((p) => {
+          {PLANS.filter((p) => p.tier === tier && OPEN.includes(p.id)).map((p) => {
             const amount = dur === "year" ? p.year : p.perm;
             const shown = dur === "perm" ? p.name + "+" : p.name;
             return (
