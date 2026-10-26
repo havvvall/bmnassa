@@ -6,8 +6,8 @@ import "./plans.css";
 
 // only these plans are open for now (the others stay in plans.js for later)
 const OPEN = ["profile", "standard", "silver"];
-// coming soon: shown without a price and not selectable
-const SOON = ["Gold", "Gold+", "Premium", "Premium+"];
+// coming soon: shown without a price and not selectable; the "+" plans belong to the Permanent tab
+const SOON = { year: ["Gold", "Premium"], perm: ["Gold+", "Premium+"] };
 const TIERS = ["Basic", "Card", "Premium"];
 
 export function PlanChooser({ lang, go }) {
@@ -58,7 +58,7 @@ export function PlanChooser({ lang, go }) {
       ))}
       <div className="stack">
         <p className="label">Premium</p>
-        {SOON.map((n) => (
+        {SOON[dur].map((n) => (
           <div key={n} className="choice pl-choice pl-soon" aria-disabled="true">
             <span className="pl-info"><b>{n}</b><small>Coming soon</small></span>
             <span className="pl-pill">Soon</span>
