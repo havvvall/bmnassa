@@ -1,17 +1,19 @@
-/* Path chooser: four equal tiles that fill the screen under the heading */
+/* Path chooser: four equal tiles that fill the screen under the heading, each with a clear title */
 .pa-page { min-height: 100dvh; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 20px; max-width: 480px; margin: 0 auto; }
-.pa-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
-.pa-tile { border: 0; border-radius: 24px; padding: 16px; background: var(--surface-raised); color: var(--text); box-shadow: var(--shadow-soft, none); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 4px; text-align: start; font: inherit; cursor: pointer; min-height: 0; transition: transform var(--duration-quick, 120ms) var(--ease-standard, ease); }
+.pa-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; }
+.pa-tile { --bg: #f4f5f7; --fg: #15171a; --sub: #3d4248; --chip: rgba(21, 23, 26, 0.08); border: 0; border-radius: 26px; padding: 18px; background: var(--bg); color: var(--fg); box-shadow: 0 8px 22px rgba(20, 22, 26, 0.08); display: flex; flex-direction: column; justify-content: space-between; align-items: stretch; gap: 12px; text-align: start; font: inherit; cursor: pointer; min-height: 0; min-width: 0; transition: transform var(--duration-quick, 120ms) var(--ease-standard, ease); }
 .pa-tile:active { transform: scale(0.97); }
-.pa-tile b { font-size: 17px; line-height: 21px; position: relative; z-index: 1; }
-.pa-tile small { font-size: 12px; color: var(--muted); font-weight: 600; position: relative; z-index: 1; }
-.pa-tile > svg:first-child { position: absolute; top: 16px; inset-inline-start: 16px; }
-.pa-gold { background: linear-gradient(160deg, #f5c33b, #e0a614); color: #15171a; }
-.pa-gold small { color: #15171a; opacity: 0.72; }
-.pa-hint { margin-top: 6px; font-size: 13px; font-weight: 800; background: rgba(255, 255, 255, 0.55); padding: 6px 10px; border-radius: 999px; position: relative; z-index: 1; }
-.pa-tile i { position: absolute; inset-inline-end: -8px; top: 16px; opacity: 0.22; }
-.pa-tile.pa-gold > i { color: #15171a; }
-[data-theme="dark"] .pa-gold { background: linear-gradient(160deg, #f5c33b, #c98f0a); }
+.pa-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.pa-chip { width: 44px; height: 44px; border-radius: 15px; background: var(--chip); display: grid; place-items: center; flex: none; }
+.pa-free { font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 999px; background: #15171a; color: #fff; }
+.pa-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pa-text b { font-size: 19px; line-height: 23px; font-weight: 800; letter-spacing: -0.01em; }
+.pa-text small { font-size: 13px; line-height: 18px; font-weight: 600; color: var(--sub); }
+
+.pa-gold { --bg: #f5c33b; --fg: #15171a; --sub: #3a2f0a; --chip: rgba(255, 255, 255, 0.45); }
+.pa-mint { --bg: #cdeedb; --fg: #0f2e1c; --sub: #2c4a38; --chip: rgba(255, 255, 255, 0.55); }
+.pa-sky { --bg: #d6e4fb; --fg: #13263f; --sub: #34496a; --chip: rgba(255, 255, 255, 0.55); }
+.pa-ink { --bg: #15171a; --fg: #ffffff; --sub: #c9ccd2; --chip: rgba(255, 255, 255, 0.12); }
 
 /* Plan chooser: app choice rows, price and the 1 year / Permanent switch */
 .pl-choice { height: auto; min-height: 64px; padding: 14px 18px; }
