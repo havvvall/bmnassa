@@ -231,6 +231,7 @@ export function Home({ lang, city, setCity, go, signedIn }) {
       <div className="b-top">
         <img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" />
         <span className="grow" />
+        <button type="button" className="b-pill" onClick={() => go("/welcome")}>Intro</button>
         <button type="button" className="b-pill" onClick={() => setPicking(true)}>
           <Icon name="pin" size={15} /> {cityName(cityRow, lang) || t(lang, "choose_city")}
         </button>
