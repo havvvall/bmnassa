@@ -5,7 +5,9 @@ import { PLANS, fmtIQD } from "./plans.js";
 import "./plans.css";
 
 // only these plans are open for now (the others stay in plans.js for later)
-const OPEN = ["standard", "silver"];
+const OPEN = ["profile", "standard", "silver"];
+// coming soon: shown without a price and not selectable
+const SOON = ["Gold", "Gold+", "Premium", "Premium+"];
 const TIERS = ["Basic", "Card", "Premium"];
 
 export function PlanChooser({ lang, go }) {
@@ -47,13 +49,22 @@ export function PlanChooser({ lang, go }) {
                 aria-pressed={pick === p.id}
                 onClick={() => setPick(p.id)}
               >
-                <span className="pl-info"><b>{shown}</b><small>{p.desc}</small></span>
+                <span className="pl-info"><b>{shown}</b><small>{dur === "perm" && p.descPerm ? p.descPerm : p.desc}</small></span>
                 <span className="pl-amt">{fmtIQD(amount)}<i>IQD</i></span>
               </button>
             );
           })}
         </div>
       ))}
+      <div className="stack">
+        <p className="label">Premium</p>
+        {SOON.map((n) => (
+          <div key={n} className="choice pl-choice pl-soon" aria-disabled="true">
+            <span className="pl-info"><b>{n}</b><small>Coming soon</small></span>
+            <span className="pl-pill">Soon</span>
+          </div>
+        ))}
+      </div>
       <span className="spacer" />
       <button type="button" className="btn" onClick={next}>Continue with {name} · {fmtIQD(price)} IQD</button>
     </>
