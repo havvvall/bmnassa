@@ -21,6 +21,8 @@ import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
 import { Welcome } from "./welcome/Welcome.jsx";
+import { PathChooser } from "./plans/PathChooser.jsx";
+import { PlanChooser } from "./plans/PlanChooser.jsx";
 import { Icon } from "./browse/icons.jsx";
 import "./account.css";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
@@ -816,8 +818,14 @@ export default function App() {
     );
   } else if ((path === "/list" || path === "/account") && !profile) {
     screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
+  } else if (path === "/path") {
+    screen = <PathChooser go={go} signedIn={signedIn} />;
+  } else if (path === "/plans") {
+    screen = profile
+      ? <PlanChooser go={go} />
+      : <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/path")} />;
   } else {
-    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/home")} onSignIn={() => go("/signin")} />;
+    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/path")} onSignIn={() => go("/signin")} />;
   }
 
   return <main className="app" dir={dirOf(lang)} lang={lang === "ku" ? "ckb" : lang}>{screen}</main>;
