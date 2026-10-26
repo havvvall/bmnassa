@@ -912,6 +912,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const [flipped, setFlipped] = useState(false);
   const [flipDir, setFlipDir] = useState(1);
   const use3D = useMemo(() => canUse3D(), []);
+  const [card3DOk, setCard3DOk] = useState(true);
   const turning = useRef(false);
   const swipe = useRef(null);
   const bodyRef = useRef(null);
@@ -1038,8 +1039,8 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
           onTouchStart={(e) => { const q = e.touches[0]; swipe.current = { x: q.clientX, y: q.clientY }; }}
           onTouchEnd={(e) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const q = e.changedTouches[0]; const dx = q.clientX - s0.x; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(q.clientY - s0.y) * 1.3) { e.preventDefault(); flip(dx > 0 ? 1 : -1); } }}>
           <div ref={faceRef} className="bz-face">
-            {use3D
-              ? <Card3D b={b} s={cs} lang={lang} cat={cat} url={url} flipped={flipped} dir={flipDir} />
+            {use3D && card3DOk
+              ? <Card3D b={b} s={cs} lang={lang} cat={cat} url={url} flipped={flipped} dir={flipDir} onFail={() => setCard3DOk(false)} />
               : <NfcCard b={b} s={cs} lang={lang} cat={cat} back={flipped} url={url} tall />}
           </div>
           {/* mouse and keyboard: arrows at the sides flip the card */}

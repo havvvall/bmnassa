@@ -273,8 +273,12 @@ async function paintFaces(G, d) {
 }
 
 // The tall digital card on the business page
-export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, logoSize = 44 }) {
+export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, logoSize = 44, onFail }) {
   const box = useRef(null);
+  // tells the parent when the 3D card cannot be drawn, so it can show the flat card instead
+  const fail = useRef(onFail);
+  fail.current = onFail;
+  const failed = () => { if (fail.current) fail.current(); };
   const cv = useRef(null);
   const G = useRef(null);
   const [lay, setLay] = useState(null);
@@ -299,11 +303,11 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, l
     // React may mount this twice in development; the canvas keeps its one WebGL setup
     if (c && c.__g) { G.current = c.__g; return undefined; }
     const gl = c && c.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: true });
-    if (!gl) return undefined;
+    if (!gl) { failed(); return undefined; }
     const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; };
     const pr = gl.createProgram();
     gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return undefined;
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { failed(); return undefined; }
     const g = { gl, pr, buf: gl.createBuffer(), count: 0, faces: null };
     ["aP", "aN", "aUv", "aM"].forEach((k) => { g[k] = gl.getAttribLocation(pr, k); });
     ["uP", "uM", "uD", "tF", "tB", "uEdge"].forEach((k) => { g[k] = gl.getUniformLocation(pr, k); });
@@ -332,7 +336,7 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, l
       if (g.faces) { g.gl.deleteTexture(g.faces.front); g.gl.deleteTexture(g.faces.back); }
       g.faces = f; g.ver = (g.ver || 0) + 1;
       setLay(f.layout);
-    }).catch(() => {});
+    }).catch((e) => { console.error("3D card could not be drawn", e); failed(); });
   }, [sig]);
 
   // turning over: the angle eases to the next half turn, in the direction of the swipe
