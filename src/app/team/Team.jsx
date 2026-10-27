@@ -7,6 +7,7 @@ import {
   getCategories, getCities, getPlaces, prettyPhone,
 } from "../api.js";
 import { FALLBACK_CITIES } from "../i18n.js";
+import { PUBLIC_HOST } from "../site.js";
 
 const LANGS = [
   { id: "en", label: "English", name: "English", dir: "ltr" },
@@ -319,7 +320,7 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
     }
   };
 
-  const approve = () => save({ status: "approved" }, (row) => `${row.name_en || nameOf(row)} is live · bmnassa.com/${row.handle || ""}`, "approve");
+  const approve = () => save({ status: "approved" }, (row) => `${row.name_en || nameOf(row)} is live · ${PUBLIC_HOST}/${row.handle || ""}`, "approve");
   const reject = () => save({ status: "rejected", rejection_reason: reason.trim() }, `${nameOf(b)} was not approved. The owner sees the reason in the app.`, "reject");
 
   const st = STATUS[status] || [status, "grey"];
@@ -342,7 +343,7 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
         {status !== "pending" ? (
           <div className={"bo-state " + st[1]}>
             <b>{st[0]}</b>{b.reviewed_at ? ` · ${when(b.reviewed_at)}` : ""}
-            {status === "approved" && b.handle ? <> · <a href={`/${b.handle}`} target="_blank" rel="noreferrer">bmnassa.com/{b.handle}</a></> : null}
+            {status === "approved" && b.handle ? <> · <a href={`/${b.handle}`} target="_blank" rel="noreferrer">{PUBLIC_HOST}/{b.handle}</a></> : null}
             {status === "rejected" && b.rejection_reason ? <div className="bo-reason">Reason: {b.rejection_reason}</div> : null}
           </div>
         ) : null}
@@ -436,7 +437,7 @@ function Review({ b, owner, look, lists, onClose, onSaved }) {
           <textarea dir={lang.dir} rows={3} value={f["description_" + tab]} onChange={(e) => setF({ ...f, ["description_" + tab]: e.target.value })}
             placeholder={`Add the ${lang.name} description…`} className={anyDesc && !f["description_" + tab].trim() ? "need" : ""} maxLength={300} />
         </label>
-        {tab === "en" ? <p className="bo-hint">The English name also makes the page link, for example bmnassa.com/azad-cooling.</p> : null}
+        {tab === "en" ? <p className="bo-hint">The English name also makes the page link, for example {PUBLIC_HOST}/azad-cooling.</p> : null}
 
         {status === "pending" ? (
           <>
