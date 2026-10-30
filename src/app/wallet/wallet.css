@@ -304,3 +304,9 @@
 .wb-bar { opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity 220ms ease, transform 260ms ease; }
 .wb-bar.on { opacity: 1; transform: none; pointer-events: auto; }
 @media (prefers-reduced-motion: reduce) { .wb-bar { transition: none; } }
+
+/* Wheel look: full screen, only the cards (no title, search, footer or bottom bar) */
+body.wallet-wheel .bm-bottom-nav { display: none; }
+.w-page.look-wheel { min-height: 100dvh; padding: 0; }
+.w-page.look-wheel .w-head, .w-page.look-wheel .w-search, .w-page.look-wheel .w-foot, .w-page.look-wheel .w-intro, .w-page.look-wheel .w-err { display: none; }
+.w-page.look-wheel .w-wheel { height: 100dvh; margin: 0; padding: 0 20px; }

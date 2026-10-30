@@ -683,6 +683,11 @@ export function WalletPage({ lang, go, signedIn }) {
     return ["bmnassa", "stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look2", "bmnassa");
   });
   const setLook = (v) => { setLookState(v); store.set("bm_wallet_look2", v); setSheet(""); };
+  // the wheel look is full screen: the app's bottom bar steps aside while it is on
+  useEffect(() => {
+    document.body.classList.toggle("wallet-wheel", look === "wheel");
+    return () => document.body.classList.remove("wallet-wheel");
+  }, [look]);
 
   const load = () => {
     setErr(false);
