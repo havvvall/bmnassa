@@ -686,6 +686,14 @@ export function WalletPage({ lang, go, signedIn }) {
   // the wheel look hides the app's bottom bar; this switch brings it back
   const [navOn, setNavOnState] = useState(() => store.get("bm_wallet_nav", "0") === "1");
   const setNavOn = (v) => { setNavOnState(v); store.set("bm_wallet_nav", v ? "1" : "0"); };
+  // the header and summary fade while the cards scroll, and come back 3 seconds after scrolling stops
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let t = 0;
+    const onScroll = () => { setBusy(true); clearTimeout(t); t = setTimeout(() => setBusy(false), 3000); };
+    window.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    return () => { clearTimeout(t); window.removeEventListener("scroll", onScroll, { capture: true }); };
+  }, []);
   // the wheel look is full screen: the app's bottom bar steps aside while it is on
   useEffect(() => {
     document.body.classList.toggle("wallet-wheel", look === "wheel" && !navOn);
@@ -803,7 +811,7 @@ export function WalletPage({ lang, go, signedIn }) {
 
   const n = (rows || []).length;
   return (
-    <div className={"w-page look-" + look}>
+    <div className={"w-page look-" + look + (busy ? " w-busy" : "")}>
       <div className="w-backdrop" aria-hidden="true" />
       <div className="w-head">
         <h1>{t(lang, "w_short")}</h1>
