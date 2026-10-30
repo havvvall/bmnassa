@@ -319,3 +319,11 @@ body.wallet-wheel .bm-bottom-nav { display: none; }
 .wb-sum { padding: 10px 16px 9px; }
 .w-page.look-bmnassa .wb { min-height: calc(100dvh - 190px); display: flex; flex-direction: column; }
 .w-page.look-bmnassa .wb-stage { margin-block: auto; }
+
+/* Silver look: the summary box and the card bar use the Bmnassa yellow so their text reads clearly */
+.look-bmnassa .wb-sum { background: linear-gradient(180deg, #f7cf55, #e0a614); box-shadow: inset 0 0 0 1px rgba(122, 86, 0, 0.18), 0 14px 30px rgba(224, 166, 20, 0.28); }
+.look-bmnassa .wb-sum small { color: rgba(21, 23, 26, 0.72); }
+.look-bmnassa .wb-sum b { color: #15171a; }
+.look-bmnassa .wb-bar { background: #f5c33b; box-shadow: inset 0 0 0 1px rgba(122, 86, 0, 0.18), 0 10px 24px rgba(224, 166, 20, 0.25); }
+.look-bmnassa .wb-bar b { color: #15171a; }
+.look-bmnassa .wb-bar small { color: rgba(21, 23, 26, 0.72); }
