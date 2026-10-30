@@ -1,226 +1,827 @@
 <!doctype html>
-<html lang="ku" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bmnassa — هەموو خزمەتگوزارییەکی متمانەپێکراو</title>
+<title>Bmnassa — every trusted service in Kurdistan</title>
 <meta name="description" content="Bmnassa: find trusted services near you in Kurdistan, call or WhatsApp in one tap, and keep every business card in one wallet.">
-<meta name="theme-color" content="#0b0b0c">
+<meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Vazirmatn:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;family=Vazirmatn:wght@500;700;800&amp;display=swap" rel="stylesheet">
 <style>
-:root { --gold:#f5c33b; --ink:#0e0e0f; --muted:#98989f; --panel:#141416; --line:rgba(255,255,255,.08); }
-* { box-sizing: border-box; }
-body { margin:0; background:#000; color:#fff; font-family: Manrope, Vazirmatn, system-ui, sans-serif; overflow-x:hidden; }
-.t-en { display:none; }
-html[lang="en"] .t-en { display:inline; }
-html[lang="en"] .t-ku { display:none; }
-html[dir="ltr"] { direction:ltr; }
-a { color:inherit; text-decoration:none; }
-img { display:block; max-width:100%; }
-.wrap { padding: 0 clamp(20px,5vw,80px); }
-header.nav { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px clamp(20px,5vw,80px); flex-wrap:wrap; }
-.lang-sw { display:flex; gap:4px; padding:4px; border-radius:999px; background:var(--panel); }
-.lang-sw button { border:0; background:none; color:var(--muted); font:inherit; font-weight:800; font-size:13px; padding:7px 12px; border-radius:999px; cursor:pointer; }
-.lang-sw button[aria-pressed="true"] { background:#fff; color:var(--ink); }
-.nav-links { display:flex; gap:18px; font-weight:700; font-size:14px; color:#d6d6db; }
-.pill { background:var(--gold); color:var(--ink); font-weight:800; font-size:14px; padding:10px 18px; border-radius:999px; }
-.hero { position:relative; display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items:center; gap:24px; padding: 40px clamp(20px,5vw,80px) 80px; min-height: 80vh; }
-.kicker { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-weight:800; font-size:12px; letter-spacing:.14em; text-transform:uppercase; }
-.kicker i { width:8px; height:8px; border-radius:50%; background:var(--gold); }
-h1 { font-size: clamp(34px,5vw,60px); line-height:1.08; letter-spacing:-.02em; margin:14px 0; font-weight:800; }
-h1 em, h2 em, h3 em { font-style:normal; color:var(--gold); }
-.lead { color:#c4c4ca; font-size:17px; line-height:1.6; max-width:520px; }
-.stores { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
-.store { display:inline-flex; align-items:center; gap:10px; padding:12px 18px; border-radius:16px; background:#fff; color:var(--ink); font-weight:700; }
-.store.dark { background:var(--panel); color:#fff; box-shadow: inset 0 0 0 1px var(--line); }
-.store small { display:block; font-size:11px; opacity:.7; }
-.store b { font-size:16px; }
-.hero-phone { display:flex; justify-content:center; }
-.hero-phone img { width:min(320px,80vw); border-radius:38px; box-shadow:0 30px 60px rgba(0,0,0,.6); }
-.say { padding: 40px clamp(20px,5vw,80px); display:grid; gap:14px; }
-.say p { font-size: clamp(26px,4vw,40px); font-weight:800; margin:0; letter-spacing:-.01em; }
-.story { padding: 60px clamp(20px,5vw,80px); display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
-.step { background:var(--panel); border-radius:24px; padding:24px; box-shadow: inset 0 0 0 1px var(--line); }
-.num { color:var(--gold); font-size:12px; font-weight:800; letter-spacing:.14em; }
-.step h2 { font-size:22px; margin:10px 0 8px; }
-.step p { color:#c4c4ca; line-height:1.6; margin:0; font-size:15px; }
-.shots { display:flex; gap:14px; overflow-x:auto; padding: 0 clamp(20px,5vw,80px) 40px; scroll-snap-type:x mandatory; }
-.shots img { width: 220px; flex:none; border-radius:30px; scroll-snap-align:start; box-shadow:0 20px 40px rgba(0,0,0,.5); }
-.owners { padding: 60px clamp(20px,5vw,80px); }
-.owners h2 { font-size: clamp(30px,4vw,46px); font-weight:800; margin:14px 0 24px; }
-.bento { display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
-.tile { background:var(--panel); border-radius:28px; padding:24px; box-shadow: inset 0 0 0 1px var(--line); display:flex; flex-direction:column; gap:10px; }
-.tile.big { grid-column: span 2; }
-.tile.gold { background: var(--gold); color: var(--ink); }
-.tile.gold p { color:#3a2f0a; }
-.tile h3 { margin:0; font-size:21px; }
-.tile p { margin:0; color:#c4c4ca; line-height:1.55; font-size:15px; }
-.tile-shot { border-radius:18px; margin-top:6px; }
-.swatches { display:flex; gap:8px; margin-top:auto; }
-.swatches i { width:26px; height:26px; border-radius:50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
-.cta { position:relative; text-align:center; padding: 80px clamp(20px,5vw,80px); overflow:hidden; }
-.cta h2 { font-size: clamp(32px,5vw,56px); font-weight:800; margin:24px 0 8px; }
-.cta .stores { justify-content:center; }
-.sky { margin-top:40px; overflow:hidden; height: 160px; }
-.sky img { height:100%; width:auto; opacity:.6; }
-footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24px clamp(20px,5vw,80px); color:var(--muted); font-size:13px; border-top:1px solid var(--line); flex-wrap:wrap; }
-@media (max-width: 800px) {
-  .hero { grid-template-columns: 1fr; text-align:center; min-height:auto; }
-  .lead { margin: 0 auto; }
-  .stores { justify-content:center; }
-  .hero-phone { order: 2; margin-top: 8px; }
-  .nav-links { display:none; }
-  .tile.big { grid-column: auto; }
-}
+.bm.lang-ku, .bm.lang-ku * { font-family: Vazirmatn, system-ui, sans-serif !important; }
+.cd-front, .cd-front * { text-align: start; }
+.cd-front .nm, .cd-front b { font-family: Vazirmatn, system-ui, sans-serif; line-height: 1.5; }
+.cd-front small, .cd-front .role { line-height: 1.6; }
 
-/* ---- motion and card stack (matches the design) ---- */
-.stage { position:relative; width:min(360px,80vw); height:340px; margin:0 auto; perspective:900px; }
-.stage .glow { position:absolute; inset:-30px; background: radial-gradient(closest-side, rgba(245,195,59,.28), transparent 70%); animation: breathe 6s ease-in-out infinite; }
-.card3 { position:absolute; left:50%; top:50%; width:270px; height:170px; border-radius:22px; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#fff; box-shadow:0 26px 50px rgba(0,0,0,.6); transform-style:preserve-3d; transition: transform .8s cubic-bezier(.2,0,0,1); will-change: transform; }
-.card3 .nm { font-size:20px; font-weight:800; letter-spacing:-.02em; }
-.card3 .rl { font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; opacity:.75; }
-.card3 .mk { width:34px; height:34px; border-radius:10px; background: rgba(255,255,255,.12); display:grid; place-items:center; font-weight:800; }
-.card3.c0 { background: linear-gradient(160deg,#14213d,#0b1120); transform: translate(-62%,-56%) rotate(-12deg) translateZ(-60px); animation: drift 7s ease-in-out infinite; }
-.card3.c1 { background: linear-gradient(160deg,#1e3a2f,#0c1f18); transform: translate(-38%,-46%) rotate(-4deg) translateZ(-20px); animation: drift 8.5s ease-in-out -2s infinite; }
-.card3.c2 { background: linear-gradient(160deg,#f5c33b,#c98f0a); color:#15171a; transform: translate(-50%,-50%) rotate(3deg) translateZ(30px); animation: drift 9s ease-in-out -4s infinite; }
-.card3.c2 .mk { background:#15171a; color:#f5c33b; }
-.stage:hover .card3.c2 { transform: translate(-50%,-50%) rotate(0deg) translateZ(40px); }
-@keyframes drift { 0%,100% { translate: 0 0; } 50% { translate: 0 -10px; } }
-@keyframes breathe { 0%,100% { opacity:.8; } 50% { opacity:1; } }
-.sky-pan { display:flex; width:max-content; height:100%; animation: pan 90s linear infinite; }
-.sky-pan img { height:100%; width:auto; flex:none; }
-@keyframes pan { to { transform: translateX(-50%); } }
-.rv { opacity:0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,0,0,1); }
-.rv.in { opacity:1; transform:none; }
-.step, .tile { transition: transform .4s ease; }
-.step:hover, .tile:hover { transform: translateY(-4px); }
-@media (prefers-reduced-motion: reduce) { .card3, .stage .glow, .sky-pan { animation:none !important; } .rv { opacity:1; transform:none; transition:none; } }
+.t-en{display:none}.lang-en .t-en{display:inline}.lang-en .t-ku{display:none}.lang-ku .t-ku{display:inline}.lang-ku .t-en{display:none}.lang-sw{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,0.08);margin-inline-end:10px}.lang-sw button{border:0;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:800;color:#c4c4ca;background:transparent;cursor:pointer}.lang-sw button.on{background:#f5c33b;color:#15171a}.bm.lang-ku h1, .bm.lang-ku h2, .bm.lang-ku h3, .bm.lang-ku .cta h2 { letter-spacing: 0 !important; line-height: 1.32 !important; }.bm.lang-ku h1 { font-size: clamp(34px, 9vw, 64px) !important; }.bm.lang-ku .step h2, .bm.lang-ku .owners-h h2 { font-size: clamp(30px, 4vw, 60px) !important; }.bm.lang-ku .cta h2 { font-size: clamp(34px, 5vw, 70px) !important; }.bm.lang-ku .step p, .bm.lang-ku .tile p, .bm.lang-ku .lead, .bm.lang-ku .say p { line-height: 1.9 !important; }.bm.lang-ku .tile h3 { font-size: 22px !important; line-height: 1.5 !important; }.bm.lang-ku .lang-sw button, .bm.lang-ku .pill, .bm.lang-ku .store b, .bm.lang-ku .store small { font-family: Vazirmatn, system-ui, sans-serif !important; }.bm.lang-ku .hero-copy h1 em { font-style: normal; }
+
+body { margin: 0; background: #000; }
+a { color: #f5c33b; } a:hover { color: #ffd968; }
+.bm { --gold: #f5c33b; --ink: #0e0e0f; --muted: #98989f; --panel: #141416; --line: rgba(255,255,255,0.08); font-family: Manrope, system-ui, sans-serif; color: #fff; background: #000; overflow-x: clip; }
+.bm *, .bm *::before, .bm *::after { box-sizing: border-box; }
+.ku { font-family: Vazirmatn, Manrope, sans-serif; }
+/* top bar */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; gap: 24px; padding: 18px clamp(20px, 4vw, 56px); background: linear-gradient(#000 0%, rgba(0,0,0,0.6) 70%, transparent); }
+.nav-links { display: flex; gap: 28px; margin-inline-start: auto; }
+.nav-links a { color: #d6d6db; text-decoration: none; font-weight: 700; font-size: 15px; }
+.nav-links a:hover { color: #fff; }
+.pill { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px; background: var(--gold); color: #141414; font-weight: 800; font-size: 15px; text-decoration: none; }
+.pill:hover { color: #141414; background: #ffd25a; }
+/* hero */
+.hero { position: relative; min-height: max(680px, 100vh); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; padding: 96px clamp(20px, 5vw, 80px) 120px; gap: 24px; }
+.hero-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 55% at 72% 46%, rgba(245,195,59,0.16), rgba(245,195,59,0.03) 55%, transparent 75%); }
+.stage { position: relative; height: max(560px, 86vh); perspective: 1350px; display: flex; align-items: center; justify-content: center; }
+.hero { overflow: hidden; }
+.hero > .stage { z-index: 1; }
+.sky { z-index: 0; }
+/* the 3D view is wider and taller than its column so no card is ever cut; it fades out softly at the top and bottom */
+.gl { position: absolute; top: -14vh; left: -40%; width: 180%; height: calc(100% + 28vh); display: block; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 70%, transparent 94%); mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 70%, transparent 94%); }
+.stage.webgl .stage-in { display: none; }
+.stage-in { position: relative; width: min(340px, 72vw); aspect-ratio: 1.5925; transform-style: preserve-3d; }
+.cd { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.cd-l { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; }
+.cd-mid { background: #6b6b70; }
+.cd-front, .cd-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: inset 0 1px 1px rgba(255,255,255,0.16); }
+.cd-front { transform: translateZ(2.6px); padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; color: #fff; }
+.cd-back { transform: translateZ(-2.6px) rotateX(180deg); display: flex; align-items: center; justify-content: center; gap: 18px; }
+.cd-grain { position: absolute; inset: 0; opacity: 0.18; mix-blend-mode: overlay; background-image: radial-gradient(rgba(255,255,255,0.55) 0.45px, transparent 0.55px), radial-gradient(rgba(0,0,0,0.5) 0.45px, transparent 0.55px); background-size: 2px 2px, 3px 3px; background-position: 0 0, 1px 1px; pointer-events: none; }
+/* light on the card: a shade that darkens it as it turns away, and a soft shine that slides across */
+.cd-shade, .cd-sheen { position: absolute; inset: 0; border-radius: 18px; pointer-events: none; }
+.cd-sheen { mix-blend-mode: screen; }
+.cd-front .nm { text-shadow: 0 1px 0 rgba(0,0,0,0.35), 0 -1px 0 rgba(255,255,255,0.10); }
+.cd-mark { position: absolute; right: -6%; top: -18%; width: 62%; opacity: 0.07; pointer-events: none; }
+.cd-tile { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #141414; background: linear-gradient(120deg, #b98208 0%, #f2c445 calc(var(--sh, 40%) - 20%), #fff4cc var(--sh, 40%), #f2c445 calc(var(--sh, 40%) + 16%), #c68f0e 100%); box-shadow: 0 6px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.25); }
+.cd-icons { display: flex; gap: 6px; }
+.cd-ic { width: 24px; height: 24px; border-radius: 12px; display: grid; place-items: center; }
+/* the Bmnassa wallet look: cards stacked like a rolodex, a gold ring around the chosen one */
+.stage.wallet .stage-in { width: min(400px, 84vw); }
+.stage.wallet .cd-front { box-shadow: 0 12px 30px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.16); }
+.cd.on .cd-front { box-shadow: 0 0 0 1px rgba(245,195,59,0.6), 0 26px 64px rgba(0,0,0,0.75), 0 0 46px rgba(245,195,59,0.2), inset 0 1px 1px rgba(255,255,255,0.16); }
+.cd-dim { position: absolute; inset: 0; background: #0b0b0c; opacity: 0; pointer-events: none; border-radius: 18px; }
+.ring { position: absolute; left: -14px; top: -14px; width: calc(100% + 28px); height: calc(100% + 28px); overflow: visible; pointer-events: none; transform: translateZ(-2px); filter: drop-shadow(0 0 4px rgba(245,195,59,0.9)) drop-shadow(0 0 14px rgba(245,195,59,0.45)); }
+.ring rect { fill: none; stroke: #f5c33b; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 30 20; animation: orbit 9s linear infinite; }
+.ring rect.b { stroke-dasharray: 8 42; animation-duration: 6s; animation-direction: reverse; opacity: 0.7; }
+@keyframes orbit { to { stroke-dashoffset: -500; } }
+.wglow { position: absolute; left: 50%; top: 50%; width: 130%; height: 170%; transform: translate(-50%, -50%) translateZ(-300px); border-radius: 50%; background: radial-gradient(closest-side, rgba(245,195,59,0.22), rgba(245,195,59,0.05) 60%, transparent); pointer-events: none; }
+.wdots { position: absolute; right: -40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; }
+.wdots i { width: 6px; height: 6px; border-radius: 3px; background: rgba(244,245,247,0.28); transition: height 260ms ease, background 260ms ease; }
+.wdots i.on { height: 18px; background: #f5c33b; box-shadow: 0 0 8px rgba(245,195,59,0.8); }
+.wbar { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); width: min(400px, 84vw); display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 18px; border-radius: 999px; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 300; }
+.wbar b { font-size: 16px; } .wbar small { display: block; font-size: 12px; font-weight: 600; color: rgba(244,245,247,0.6); }
+.wtag { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; margin-inline-start: 8px; border-radius: 999px; background: rgba(245,195,59,0.16); color: #f5c33b; font-size: 11px; font-weight: 800; vertical-align: 2px; }
+.wbtn { width: 46px; height: 46px; flex: none; border-radius: 23px; display: grid; place-items: center; }
+@media (max-width: 900px) { .wdots { right: -22px; } .wbar { bottom: 2%; } }
+.hero-copy h1 { margin: 18px 0 0; font-size: clamp(42px, 5.6vw, 84px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; }
+.hero-copy h1 em { font-style: normal; color: var(--gold); }
+.lead { margin: 22px 0 0; max-width: 520px; color: #c4c4ca; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.55; font-weight: 500; }
+.kicker { display: inline-flex; align-items: center; gap: 10px; color: var(--gold); font-size: 13px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+.kicker i { width: 28px; height: 2px; border-radius: 2px; background: var(--gold); }
+.stores { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.store { display: inline-flex; align-items: center; gap: 12px; min-height: 60px; padding: 10px 22px 10px 16px; border-radius: 18px; background: #fff; color: #0e0e0f; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+.store:hover { color: #0e0e0f; transform: translateY(-2px); }
+.store.dark { background: #161618; color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14); }
+.store.dark:hover { color: #fff; }
+.store small { display: block; font-size: 11px; font-weight: 700; opacity: 0.7; }
+.store b { display: block; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+.langs { margin-top: 18px; color: var(--muted); font-size: 14px; font-weight: 600; }
+.sky { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(110px, 16vw, 210px); overflow: hidden; pointer-events: none; opacity: 0.9; direction: ltr; }
+.sky::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #000, transparent 10%, transparent 90%, #000), linear-gradient(transparent 55%, #000); }
+.sky-pan { display: flex; height: 100%; width: max-content; animation: skypan 120s linear infinite; }
+.sky-pan img { height: 100%; width: auto; display: block; flex: none; }
+@keyframes skypan { to { transform: translateX(-50%); } }
+.scrollhint { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #bdbdc3; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.scrollhint span { width: 24px; height: 38px; border-radius: 12px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35); position: relative; }
+.scrollhint span::after { content: ""; position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: var(--gold); animation: wheel 1.8s ease-in-out infinite; }
+@keyframes wheel { 60% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
+/* big statement */
+.say { padding: 18vh clamp(20px, 6vw, 96px); display: flex; flex-direction: column; gap: 6vh; }
+.say p { margin: 0; font-size: clamp(38px, 6.4vw, 104px); line-height: 1.02; font-weight: 800; letter-spacing: -0.04em; }
+.say p:nth-child(2) { text-align: end; }
+.say p em { font-style: normal; color: var(--gold); }
+.say .ku { letter-spacing: 0; font-size: clamp(30px, 4.6vw, 72px); line-height: 1.4; color: #8e8e95; text-align: center; }
+/* story: sticky phone + changing words */
+.story { position: relative; height: 560vh; }
+.story-in { position: sticky; top: 0; height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 32px; padding: 72px clamp(20px, 6vw, 96px) 40px; }
+.steps { position: relative; height: 360px; }
+.step { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 18px; opacity: 0; }
+.step h2 { margin: 0; font-size: clamp(38px, 4.8vw, 76px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; }
+.step h2 em { font-style: normal; color: var(--gold); }
+.step p { margin: 0; max-width: 470px; color: #c4c4ca; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.6; font-weight: 500; }
+.num { color: var(--gold); font-weight: 800; font-size: 14px; letter-spacing: 0.18em; }
+.dots { display: flex; gap: 8px; margin-top: 30px; }
+.dots i { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.22); transition: width 300ms ease, background 300ms ease; }
+.dots i.on { width: 28px; background: var(--gold); }
+.phone-wrap { display: flex; justify-content: center; perspective: 1600px; }
+.phone { position: relative; width: min(330px, 70vw); aspect-ratio: 390 / 844; border-radius: 52px; padding: 11px; background: #0b0b0c; box-shadow: 0 0 0 2px #2a2b2e, 0 40px 90px rgba(0,0,0,0.7), 0 0 120px rgba(245,195,59,0.10); will-change: transform; }
+.phone-scr { position: relative; width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #000; }
+.phone-scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; will-change: opacity, transform; }
+.notch { position: absolute; top: 20px; left: 50%; width: 92px; height: 26px; margin-left: -46px; border-radius: 14px; background: #0b0b0c; z-index: 3; }
+/* owners */
+.owners { padding: 16vh clamp(20px, 5vw, 80px) 12vh; }
+.owners-h { max-width: 900px; }
+.owners-h h2 { margin: 16px 0 0; font-size: clamp(36px, 5vw, 80px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; }
+.owners-h h2 em { font-style: normal; color: var(--gold); }
+.bento { margin-top: 56px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.tile { position: relative; border-radius: 32px; background: var(--panel); padding: 30px; overflow: hidden; min-height: 300px; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 0 0 1px var(--line); }
+.tile h3 { margin: 0; font-size: 26px; letter-spacing: -0.02em; font-weight: 800; }
+.tile p { margin: 0; color: #a9a9b0; font-size: 16px; line-height: 1.55; font-weight: 500; max-width: 360px; }
+.tile.big { grid-row: span 2; }
+.tile.gold { background: linear-gradient(160deg, #f8d064, #e0a614); color: #141414; box-shadow: none; }
+.tile.gold p { color: #3d3210; }
+.tile-shot { margin-top: auto; align-self: center; width: 72%; border-radius: 26px 26px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); margin-bottom: -30px; }
+.ic { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: rgba(245,195,59,0.12); color: var(--gold); margin-bottom: 8px; }
+.tile.gold .ic { background: rgba(20,20,20,0.12); color: #141414; }
+.swatches { display: flex; gap: 10px; margin-top: auto; }
+.swatches i { width: 34px; height: 34px; border-radius: 17px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18); }
+/* final call */
+.cta { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 260px; overflow: hidden; }
+.cta-glow { position: absolute; left: 50%; top: 40%; width: 1100px; height: 900px; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(245,195,59,0.22), rgba(245,195,59,0.04) 60%, transparent); pointer-events: none; }
+.cta h2 { position: relative; margin: 34px 0 0; font-size: clamp(40px, 6vw, 96px); line-height: 1; letter-spacing: -0.04em; font-weight: 800; }
+.cta h2 em { font-style: normal; color: var(--gold); }
+.cta .stores { justify-content: center; position: relative; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 28px clamp(20px, 5vw, 80px); color: #7d7d84; font-size: 14px; font-weight: 600; border-top: 1px solid var(--line); }
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .nav .pill { margin-inline-start: auto; }
+  .hero { grid-template-columns: minmax(0, 1fr); padding-top: 84px; gap: 0; }
+  .stage { height: 58vh; min-height: 420px; order: -1; }
+  .hero-copy { text-align: center; }
+  .hero-copy .lead { margin-inline: auto; }
+  .stores { justify-content: center; }
+  .story-in { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; align-content: start; gap: 10px; padding-top: 76px; }
+  .steps { height: 210px; }
+  .step { text-align: center; align-items: center; gap: 10px; }
+  .dots { justify-content: center; margin-top: 4px; }
+  .phone { width: min(250px, 58vw); }
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .tile.big { grid-row: auto; }
+  .say p:nth-child(2) { text-align: start; }
+}
+@media (prefers-reduced-motion: reduce) { .sky-pan, .scrollhint span::after { animation: none; } }
+
 </style>
 </head>
 <body>
+<div id="app"></div>
+<template id="tpl">
 
-<header class="nav">
-  <div class="lang-sw" role="group" aria-label="Language">
-    <button type="button" data-lang="en" aria-pressed="false">English</button>
-    <button type="button" data-lang="ku" aria-pressed="true">کوردی</button>
-  </div>
-  <img src="assets/logo.svg" alt="Bmnassa" style="height:26px;width:auto">
-  <nav class="nav-links" aria-label="Sections">
-    <a href="#how"><span class="t-ku">چۆن کار دەکات</span><span class="t-en">How it works</span></a>
-    <a href="#owners"><span class="t-ku">بۆ بزنسەکان</span><span class="t-en">For businesses</span></a>
-  </nav>
-  <a class="pill" href="https://app.bmnassa.com"><span class="t-ku">ئەپەکە بکەرەوە</span><span class="t-en">Open the app</span></a>
-</header>
+<div class="bm {{langCls}}" dir="{{dir}}" ref="{{setRoot}}">
 
-<section class="hero">
-  <div>
-    <span class="kicker"><i></i>Kurdistan · Iraq</span>
-    <h1><span class="t-ku">هەموو خزمەتگوزارییەکی متمانەپێکراو، <em>بە یەک گەڕان نزیکە.</em></span><span class="t-en">Every trusted service, <em>one tap away.</em></span></h1>
-    <p class="lead"><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر و سەدان کەسی تر لە نزیکتەوە بدۆزەرەوە. بە یەک گەڕان پەیوەندی بکە یان واتساپ بنێرە، و هەموو کارتی بزنسەکان لە یەک جزدان هەڵبگرە.</span><span class="t-en">Find plumbers, electricians, AC repair and hundreds more near you. Call or WhatsApp in one tap, and keep every business card in one wallet.</span></p>
-    <div class="stores">
-      <a class="store" href="https://app.bmnassa.com"><span><small><span class="t-ku">بەخۆڕایی بیکەرەوە</span><span class="t-en">Free, in your browser</span></small><b><span class="t-ku">ئەپەکە بکەرەوە</span><span class="t-en">Open the app</span></b></span></a>
+  <header class="nav">
+    <div class="lang-sw" role="group" aria-label="Language"><button type="button" class="{{enCls}}" aria-pressed="{{enOn}}" onClick="{{setEn}}">English</button><button type="button" class="{{kuCls}}" aria-pressed="{{kuOn}}" onClick="{{setKu}}">کوردی</button></div>
+    <img src="assets/logo.svg" alt="Bmnassa" style="height: 26px; width: auto; display: block">
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#how"><span class="t-ku">چۆن کار دەکات</span><span class="t-en">How it works</span></a>
+      <a href="#owners"><span class="t-ku">بۆ بزنسەکان</span><span class="t-en">For businesses</span></a>
+    </nav>
+    <a class="pill" href="#download"><span class="t-ku">ئەپەکە دابگرە</span><span class="t-en">Get the app</span></a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-copy" data-rv="in" style="position: relative; z-index: 2">
+      <span class="kicker"><i></i>Kurdistan · Iraq</span>
+      <h1><span class="t-ku">هەموو خزمەتگوزارییەکی متمانەپێکراو، <em>بە یەک گەڕان نزیکە.</em></span><span class="t-en">Every trusted service, <em>one tap away.</em></span></h1>
+      <p class="lead"><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر و سەدان کەسی تر لە نزیکتەوە بدۆزەرەوە. بە یەک گەڕان پەیوەندی بکە یان واتساپ بنێرە، و هەموو کارتی بزنسەکان لە یەک جزدان هەڵبگرە.</span><span class="t-en">Find plumbers, electricians, AC repair and hundreds more near you. Call or WhatsApp in one tap, and keep every business card in one wallet.</span></p>
+      <div class="stores">
+        <a class="store" href="#download" aria-label="ئەپ ستۆر، بۆ ئایفۆن دابگرە">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M10.5 18.5h3"></path></svg>
+          <span><span class="t-ku"><small>بۆ ئایفۆن دابگرە</small></span><span class="t-en"><small>Download for iPhone</small></span><b>App Store</b></span>
+        </a>
+        <a class="store dark" href="#download" aria-label="گووگڵ پلەی، بۆ ئەندرۆید وەریبگرە">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5v15l13-7.5z"></path></svg>
+          <span><span class="t-ku"><small>بۆ ئەندرۆید وەریبگرە</small></span><span class="t-en"><small>Get it for Android</small></span><b>Google Play</b></span>
+        </a>
+      </div>
+      <div class="langs">Free to download</div>
     </div>
-  </div>
-  <div class="hero-phone"><div class="stage" aria-hidden="true">
-    <div class="glow"></div>
-    <div class="card3 c0"><div style="display:flex;justify-content:space-between"><span class="mk">A</span><span class="rl">Cooling</span></div><div><div class="nm">Azad Cooling</div><div class="rl">AC &amp; Refrigeration</div></div></div>
-    <div class="card3 c1"><div style="display:flex;justify-content:space-between"><span class="mk">H</span><span class="rl">Plumber</span></div><div><div class="nm">Hemn Ali</div><div class="rl">Plumbing &amp; Water</div></div></div>
-    <div class="card3 c2"><div style="display:flex;justify-content:space-between"><span class="mk">B</span><span class="rl">Bmnassa</span></div><div><div class="nm">Your business</div><div class="rl">Digital card · one tap</div></div></div>
-  </div></div>
-</section>
 
-<section class="say rv" id="how">
-  <p><span class="t-ku">پەیداکردنی <em>دابینکەری خزمەتگوزاری دروست.</em></span><span class="t-en">Find the right <em>service provider.</em></span></p>
-  <p><span class="t-ku">پەیوەندی بە <em>یەک گەڕان.</em></span><span class="t-en">Call in <em>one tap.</em></span></p>
-  <p><span class="t-ku">هەموو <em>کارتێک هەڵبگرە.</em></span><span class="t-en">Keep every <em>card.</em></span></p>
-</section>
+    <div class="stage {{stageCls}}" aria-hidden="true">
+      <sc-if value="{{isGL}}" hint-placeholder-val="{{false}}"><canvas class="gl" ref="{{setCanvas}}"></canvas></sc-if>
+      <div class="stage-in">
+        <sc-if value="{{isWallet}}" hint-placeholder-val="{{true}}">
+          <div class="wglow"></div>
+          <svg class="ring" viewBox="0 0 428 280" preserveAspectRatio="none"><rect x="1" y="1" width="426" height="278" rx="30"></rect><rect class="b" x="1" y="1" width="426" height="278" rx="30"></rect></svg>
+          <div class="wdots"><sc-for list="{{dots}}" as="d" hint-placeholder-count="8"><i data-wdot="1"></i></sc-for></div>
+        </sc-if>
+        <sc-for list="{{cards}}" as="c" hint-placeholder-count="8">
+          <div class="cd" data-card="1">
+            <div class="cd-l cd-back" style="background: {{c.back}}">
+              <svg width="96" height="96" viewBox="0 0 25 25" shape-rendering="crispEdges"><path d="{{c.qr}}" fill="{{c.ink}}"></path></svg>
+              <div style="display: flex; flex-direction: column; gap: 4px; color: {{c.ink}}">
+                <b style="font-size: 15px">Scan to find me</b>
+                <span style="font-size: 12px; font-weight: 700; opacity: 0.7">bmnassa.com/{{c.handle}}</span>
+              </div>
+              <div class="cd-shade"></div>
+              <div class="cd-sheen"></div>
+            </div>
+            <sc-for list="{{c.layers}}" as="ly" hint-placeholder-count="9">
+              <div class="cd-l cd-mid" style="transform: translateZ({{ly.z}}px); background: {{ly.bg}}"></div>
+            </sc-for>
+            <div class="cd-l cd-front" style="background: {{c.front}}">
+              <div class="cd-grain"></div>
+              <svg class="cd-mark" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"><path d="M20 30v40M42 18v64M64 34v34"></path><circle cx="82" cy="40" r="9" fill="#fff" stroke="none"></circle></svg>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; position: relative">
+                <div class="cd-tile">{{c.letter}}</div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" style="opacity: 0.85"><path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17"></path><circle cx="5" cy="12" r="1" fill="#fff"></circle></svg>
+              </div>
+              <div style="position: relative">
+                <div class="nm" style="font-size: 21px; font-weight: 800; letter-spacing: -0.02em">{{c.name}}</div>
+                <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75; margin-top: 2px">{{c.role}}</div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px">
+                  <div class="cd-icons">
+                    <span class="cd-ic" style="background: #2fbf55"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path></svg></span>
+                    <span class="cd-ic" style="background: #25d366"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 8 19z"></path></svg></span>
+                    <span class="cd-ic" style="background: linear-gradient(45deg, #f9a825, #e1306c 55%, #833ab4)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="5"></rect><circle cx="12" cy="12" r="3.6"></circle></svg></span>
+                    <span class="cd-ic" style="background: #1e88e5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3.5 6.5 8.5 6.5 8.5-6.5"></path></svg></span>
+                  </div>
+                  <img src="assets/logo.svg" alt="" style="height: 11px; width: auto; opacity: 0.75">
+                </div>
+              </div>
+              <div class="cd-shade"></div>
+              <div class="cd-sheen"></div>
+              <div class="cd-dim"></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{isWallet}}" hint-placeholder-val="{{true}}">
+        <div class="wbar">
+          <div style="flex: 1; min-width: 0"><b>XXX</b><span class="wtag">NFC</span><small><span class="t-ku">پیشە - پۆست</span><span class="t-en">Your Job - Position</span></small></div>
+          <span class="wbtn" style="background: #f5c33b; color: #15171a"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path></svg></span>
+          <span class="wbtn" style="background: #25d366; color: #fff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 8 19z"></path></svg></span>
+        </div>
+      </sc-if>
+    </div>
 
-<section class="story">
-  <div class="step rv"><span class="num">01 · SEARCH</span><h2><span class="t-ku">هەموو خزمەتگوزاریەک، <em>لە نزیکتەوە.</em></span><span class="t-en">Any service, <em>near you.</em></span></h2><p><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر، نەجار و زیاتر، ڕێکخراو بەپێی ئەوەی ئێستا کراوەیە و لە هەمووان نزیکتریە، لە سلێمانی، هەولێر، دهۆک و شوێنەکانی تر.</span><span class="t-en">Plumbers, electricians, AC repair, carpenters and more, sorted by what is open now and closest to you, in Sulaymaniyah, Erbil, Duhok and beyond.</span></p></div>
-  <div class="step rv"><span class="num">02 · COMPARE</span><h2><span class="t-ku">پەیوەندی یان واتساپ بە <em>یەک گەڕان.</em></span><span class="t-en">Call or WhatsApp in <em>one tap.</em></span></h2><p><span class="t-ku">هەڵسەنگاندن، نرخ و کاتی کارکردن پێکەوە ببینە، پاشان ڕاستەوخۆ لە لیستەکەوە پەیوەندی بە بزنسەکە بکە.</span><span class="t-en">See ratings, prices and opening hours side by side, then reach the business straight from the list.</span></p></div>
-  <div class="step rv"><span class="num">03 · DIGITAL CARD</span><h2><span class="t-ku">هەموو بزنسێک <em>کارتی دیجیتاڵی</em> وەردەگرێت.</span><span class="t-en">Every business gets a <em>digital card.</em></span></h2><p><span class="t-ku">بیسڕەوە بۆ وەرگێڕانی، بۆ وێنە، نرخ و هەڵسەنگاندن خوارەوە بڕۆ. بە بەستەرێک یان بە دەستلێدانی کارتی NFC هاوبەشی بکە.</span><span class="t-en">Swipe it to turn it over, scroll down for photos, prices and reviews. Share it with a link or a tap of an NFC card.</span></p></div>
-  <div class="step rv"><span class="num">04 · WALLET</span><h2><span class="t-ku">هەموو کارتەکانت لە <em>یەک جزدان.</em></span><span class="t-en">All your cards in <em>one wallet.</em></span></h2><p><span class="t-ku">ئەو بزنسانەی متمانەیان پێدەکەیت هەڵبگرە و لە چەند چرکەیەکدا دووبارە بیاندۆزەرەوە، ئیتر کارتی کاغەزی ون مەکە.</span><span class="t-en">Save the businesses you trust and find them again in seconds, no more lost paper cards.</span></p></div>
-  <div class="step rv"><span class="num">05 · SCAN</span><h2><span class="t-ku">کارتی کاغەزی بگۆڕە بۆ <em>دیجیتاڵ.</em></span><span class="t-en">Turn paper cards into <em>digital.</em></span></h2><p><span class="t-ku">کامێراکەت بۆ هەر کارتێکی بزنس ڕابگرە. بمناسە دەیخوێنێتەوە و لە جزدانەکەتدا هەڵیدەگرێت، ئامادەیە بۆ پەیوەندی.</span><span class="t-en">Point your camera at any business card. Bmnassa reads it and keeps it in your wallet, ready to call.</span></p></div>
-</section>
+    <div class="sky"><div class="sky-pan"><img src="assets/skyline.webp" alt=""><img src="assets/skyline.webp" alt=""></div></div>
+    <div class="scrollhint"><span></span>Scroll</div>
+  </section>
 
-<div class="shots" aria-label="App screens">
-  <img src="assets/screen-search.webp" alt="Search and categories">
-  <img src="assets/screen-results.webp" alt="Results shown as business cards">
-  <img src="assets/screen-card.webp" alt="A business's full-screen digital card">
-  <img src="assets/screen-wallet.webp" alt="The card wallet">
-  <img src="assets/screen-scan.webp" alt="A scanned paper card saved in the wallet">
+  <section class="say" id="how">
+    <p data-rv="1"><span class="t-ku">پەیداکردنی <em>دابینکەری خزمەتگوزاری دروست.</em></span><span class="t-en">Find the right <em>service provider.</em></span></p>
+    <p data-rv="1"><span class="t-ku">پەیوەندی بە <em>یەک گەڕان.</em></span><span class="t-en">Call in <em>one tap.</em></span></p>
+    <p data-rv="1"><span class="t-ku">هەموو <em>کارتێک هەڵبگرە.</em></span><span class="t-en">Keep every <em>card.</em></span></p>
+  </section>
+
+  <section class="story" data-story="1">
+    <div class="story-in">
+      <div>
+        <div class="steps">
+          <div class="step" data-step="1">
+            <span class="num">01 · SEARCH</span>
+            <h2><span class="t-ku">هەموو خزمەتگوزاریەک، <em>لە نزیکتەوە.</em></span><span class="t-en">Any service, <em>near you.</em></span></h2>
+            <p><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر، نەجار و زیاتر، ڕێکخراو بەپێی ئەوەی ئێستا کراوەیە و لە هەمووان نزیکتریە، لە سلێمانی، هەولێر، دهۆک و شوێنەکانی تر.</span><span class="t-en">Plumbers, electricians, AC repair, carpenters and more, sorted by what is open now and closest to you, in Sulaymaniyah, Erbil, Duhok and beyond.</span></p>
+          </div>
+          <div class="step" data-step="1">
+            <span class="num">02 · COMPARE</span>
+            <h2><span class="t-ku">پەیوەندی یان واتساپ بە <em>یەک گەڕان.</em></span><span class="t-en">Call or WhatsApp in <em>one tap.</em></span></h2>
+            <p><span class="t-ku">هەڵسەنگاندن، نرخ و کاتی کارکردن پێکەوە ببینە، پاشان ڕاستەوخۆ لە لیستەکەوە پەیوەندی بە بزنسەکە بکە.</span><span class="t-en">See ratings, prices and opening hours side by side, then reach the business straight from the list.</span></p>
+          </div>
+          <div class="step" data-step="1">
+            <span class="num">03 · DIGITAL CARD</span>
+            <h2><span class="t-ku">هەموو بزنسێک <em>کارتی دیجیتاڵی</em> وەردەگرێت.</span><span class="t-en">Every business gets a <em>digital card.</em></span></h2>
+            <p><span class="t-ku">بیسڕەوە بۆ وەرگێڕانی، بۆ وێنە، نرخ و هەڵسەنگاندن خوارەوە بڕۆ. بە بەستەرێک یان بە دەستلێدانی کارتی NFC هاوبەشی بکە.</span><span class="t-en">Swipe it to turn it over, scroll down for photos, prices and reviews. Share it with a link or a tap of an NFC card.</span></p>
+          </div>
+          <div class="step" data-step="1">
+            <span class="num">04 · WALLET</span>
+            <h2><span class="t-ku">هەموو کارتەکانت لە <em>یەک جزدان.</em></span><span class="t-en">All your cards in <em>one wallet.</em></span></h2>
+            <p><span class="t-ku">ئەو بزنسانەی متمانەیان پێدەکەیت هەڵبگرە و لە چەند چرکەیەکدا دووبارە بیاندۆزەرەوە، ئیتر کارتی کاغەزی ون مەکە.</span><span class="t-en">Save the businesses you trust and find them again in seconds, no more lost paper cards.</span></p>
+          </div>
+          <div class="step" data-step="1">
+            <span class="num">05 · SCAN</span>
+            <h2><span class="t-ku">کارتی کاغەزی بگۆڕە بۆ <em>دیجیتاڵ.</em></span><span class="t-en">Turn paper cards into <em>digital.</em></span></h2>
+            <p><span class="t-ku">کامێراکەت بۆ هەر کارتێکی بزنس ڕابگرە. بمناسە دەیخوێنێتەوە و لە جزدانەکەتدا هەڵیدەگرێت، ئامادەیە بۆ پەیوەندی.</span><span class="t-en">Point your camera at any business card. Bmnassa reads it and keeps it in your wallet, ready to call.</span></p>
+          </div>
+        </div>
+        <div class="dots"><i data-dot="1"></i><i data-dot="1"></i><i data-dot="1"></i><i data-dot="1"></i><i data-dot="1"></i></div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone" data-phone="1">
+          <div class="notch"></div>
+          <div class="phone-scr">
+            <img data-screen="1" src="assets/screen-search.webp" alt="Bmnassa home screen with search and categories">
+            <img data-screen="1" src="assets/screen-results.webp" alt="Results shown as business cards">
+            <img data-screen="1" src="assets/screen-card.webp" alt="A business's full-screen digital card">
+            <img data-screen="1" src="assets/screen-wallet.webp" alt="The card wallet">
+            <img data-screen="1" src="assets/screen-scan.webp" alt="A scanned paper card saved in the wallet">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owners" id="owners">
+    <div class="owners-h" data-rv="1">
+      <span class="kicker"><i></i>For business owners</span>
+      <h2><span class="t-ku">بزنسەکەت، <em>دۆزرایەوە.</em> بەخۆڕایی.</span><span class="t-en">Your business, <em>found.</em> Free.</span></h2>
+    </div>
+    <div class="bento">
+      <div class="tile big" data-rv="1">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></div>
+        <h3><span class="t-ku">ببینە کێ دەتدۆزێتەوە</span><span class="t-en">See who finds you</span></h3>
+        <p><span class="t-ku">بینین، پەیوەندی و کلیکی واتساپ ڕۆژانە، و ژمارەی ئەو کەسانەی کارتەکەیان هەڵگرتووە.</span><span class="t-en">Views, calls and WhatsApp taps every day, and how many people saved your card.</span></p>
+        <img class="tile-shot" src="assets/dashboard.webp" alt="The owner dashboard with weekly views">
+      </div>
+      <div class="tile gold" data-rv="1">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+        <h3><span class="t-ku">بەخۆڕایی تۆماری بکە</span><span class="t-en">List it free</span></h3>
+        <p><span class="t-ku">ناو، تەلەفۆن، نرخ، کات، وێنە و بەستەرەکان، بە ئینگلیزی، کوردی و عەرەبی. تیمی بمناسە هەموو تۆمارەکان پشکنین دەکات.</span><span class="t-en">Name, phone, prices, hours, photos and links, in English, Kurdish and Arabic. The Bmnassa team checks every listing.</span></p>
+      </div>
+      <div class="tile" data-rv="1">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.1-1-1.6-1-2.6 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.5 17 3 12 3z"></path></svg></div>
+        <h3><span class="t-ku">ڕەنگەکانت، کارتەکەت</span><span class="t-en">Your colours, your card</span></h3>
+        <p><span class="t-ku">لۆگۆ، پۆست و ڕەنگی کارتەکەت زیاد بکە. هەموو شوێنێک بە یەک کاتدا نوێ دەبێتەوە.</span><span class="t-en">Add your logo, job title and card colour. It updates everywhere at once.</span></p>
+        <div class="swatches"><i style="background: #14213d"></i><i style="background: #5a1a2a"></i><i style="background: #1e3a2f"></i><i style="background: #b94e38"></i><i style="background: #3a2350"></i><i style="background: #121212"></i></div>
+      </div>
+      <div class="tile" data-rv="1">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17"></path><circle cx="5" cy="12" r="1"></circle></svg></div>
+        <h3><span class="t-ku">کارتی NFC، گەیاندراو</span><span class="t-en">NFC cards, delivered</span></h3>
+        <p><span class="t-ku">کارتی چاپکراو داوا بکە کە لەسەر هەر مۆبایلێک بە یەک دەستلێدان پەڕەکەت دەکاتەوە.</span><span class="t-en">Order printed cards that open your page with one tap on any phone.</span></p>
+      </div>
+      <div class="tile" data-rv="1">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M7 12h10"></path></svg></div>
+        <h3><span class="t-ku">لە کاغەزەوە بۆ بمناسە</span><span class="t-en">From paper to Bmnassa</span></h3>
+        <p><span class="t-ku">کاتێک خەڵک کارتی کاغەزی کۆنت سکان دەکەن، دەتوانن بزنسەکەت پێشنیار بکەن، و بانگهێشتت دەکەین بۆ بەشداریکردن.</span><span class="t-en">When people scan your old paper card, they can suggest your business, and we invite you to join.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="download">
+    <div class="cta-glow"></div>
+    <img data-rv="1" src="assets/logo.svg" alt="Bmnassa" style="position: relative; width: min(340px, 70vw); height: auto">
+    <h2 data-rv="1"><span class="t-ku">بمناسە دابگرە. <em>بەخۆڕایی.</em></span><span class="t-en">Get Bmnassa. <em>It's free.</em></span></h2>
+    <div class="stores" data-rv="1">
+      <a class="store" href="#download" aria-label="ئەپ ستۆر، بۆ ئایفۆن دابگرە">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M10.5 18.5h3"></path></svg>
+        <span><span class="t-ku"><small>بۆ ئایفۆن دابگرە</small></span><span class="t-en"><small>Download for iPhone</small></span><b>App Store</b></span>
+      </a>
+      <a class="store dark" href="#download" aria-label="گووگڵ پلەی، بۆ ئەندرۆید وەریبگرە">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5v15l13-7.5z"></path></svg>
+        <span><span class="t-ku"><small>بۆ ئەندرۆید وەریبگرە</small></span><span class="t-en"><small>Get it for Android</small></span><b>Google Play</b></span>
+      </a>
+    </div>
+    <div class="sky"><div class="sky-pan" style="animation-duration: 90s"><img src="assets/skyline.webp" alt=""><img src="assets/skyline.webp" alt=""></div></div>
+  </section>
+
+  <footer class="foot">
+    <span>© Bmnassa · bmnassa.com</span>
+    <span>Kurdistan · Iraq</span>
+  </footer>
 </div>
-
-<section class="owners" id="owners">
-  <span class="kicker"><i></i><span class="t-ku">بۆ خاوەنی بزنس</span><span class="t-en">For business owners</span></span>
-  <h2><span class="t-ku">بزنسەکەت، <em>دۆزرایەوە.</em> بەخۆڕایی.</span><span class="t-en">Your business, <em>found.</em> Free.</span></h2>
-  <div class="bento">
-    <div class="tile big rv">
-      <h3><span class="t-ku">ببینە کێ دەتدۆزێتەوە</span><span class="t-en">See who finds you</span></h3>
-      <p><span class="t-ku">بینین، پەیوەندی و کلیکی واتساپ ڕۆژانە، و ژمارەی ئەو کەسانەی کارتەکەیان هەڵگرتووە.</span><span class="t-en">Views, calls and WhatsApp taps every day, and how many people saved your card.</span></p>
-      <img class="tile-shot" src="assets/dashboard.webp" alt="The owner dashboard with weekly views">
-    </div>
-    <div class="tile gold rv">
-      <h3><span class="t-ku">بەخۆڕایی تۆماری بکە</span><span class="t-en">List it free</span></h3>
-      <p><span class="t-ku">ناو، تەلەفۆن، نرخ، کات، وێنە و بەستەرەکان، بە ئینگلیزی، کوردی و عەرەبی. تیمی بمناسە هەموو تۆمارەکان پشکنین دەکات.</span><span class="t-en">Name, phone, prices, hours, photos and links, in English, Kurdish and Arabic. The Bmnassa team checks every listing.</span></p>
-    </div>
-    <div class="tile rv">
-      <h3><span class="t-ku">ڕەنگەکانت، کارتەکەت</span><span class="t-en">Your colours, your card</span></h3>
-      <p><span class="t-ku">لۆگۆ، پۆست و ڕەنگی کارتەکەت زیاد بکە. هەموو شوێنێک بە یەک کاتدا نوێ دەبێتەوە.</span><span class="t-en">Add your logo, job title and card colour. It updates everywhere at once.</span></p>
-      <div class="swatches"><i style="background:#14213d"></i><i style="background:#5a1a2a"></i><i style="background:#1e3a2f"></i><i style="background:#b94e38"></i><i style="background:#3a2350"></i><i style="background:#121212"></i></div>
-    </div>
-    <div class="tile rv">
-      <h3><span class="t-ku">کارتی NFC، گەیاندراو</span><span class="t-en">NFC cards, delivered</span></h3>
-      <p><span class="t-ku">کارتی چاپکراو داوا بکە کە لەسەر هەر مۆبایلێک بە یەک دەستلێدان پەڕەکەت دەکاتەوە.</span><span class="t-en">Order printed cards that open your page with one tap on any phone.</span></p>
-    </div>
-    <div class="tile rv">
-      <h3><span class="t-ku">لە کاغەزەوە بۆ بمناسە</span><span class="t-en">From paper to Bmnassa</span></h3>
-      <p><span class="t-ku">کاتێک خەڵک کارتی کاغەزی کۆنت سکان دەکەن، دەتوانن بزنسەکەت پێشنیار بکەن، و بانگهێشتت دەکەین بۆ بەشداریکردن.</span><span class="t-en">When people scan your old paper card, they can suggest your business, and we invite you to join.</span></p>
-    </div>
-  </div>
-</section>
-
-<section class="cta" id="download">
-  <img src="assets/logo.svg" alt="Bmnassa" style="margin:0 auto;width:min(340px,70vw);height:auto">
-  <h2><span class="t-ku">بمناسە بکەرەوە. <em>بەخۆڕایی.</em></span><span class="t-en">Open Bmnassa. <em>It's free.</em></span></h2>
-  <div class="stores">
-    <a class="store" href="https://app.bmnassa.com"><span><small><span class="t-ku">لە وێبگەڕ</span><span class="t-en">In your browser</span></small><b><span class="t-ku">app.bmnassa.com</span><span class="t-en">app.bmnassa.com</span></b></span></a>
-  </div>
-  <div class="sky"><div class="sky-pan"><img src="assets/skyline.webp" alt=""><img src="assets/skyline.webp" alt=""></div></div>
-</section>
-
-<footer class="foot">
-  <span>© Bmnassa · bmnassa.com</span>
-  <span>Kurdistan · Iraq</span>
-</footer>
-
+</template>
 <script>
-(function () {
-  function setLang(l) {
-    document.documentElement.lang = l;
-    document.documentElement.dir = l === "ku" ? "rtl" : "ltr";
-    document.querySelectorAll(".lang-sw button").forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.dataset.lang === l));
-    });
-    try { localStorage.setItem("bm_site_lang", l); } catch (e) {}
-  }
-  document.querySelectorAll(".lang-sw button").forEach(function (b) {
-    b.addEventListener("click", function () { setLang(b.dataset.lang); });
-  });
-  var saved = null;
-  try { saved = localStorage.getItem("bm_site_lang"); } catch (e) {}
-  if (saved === "en" || saved === "ku") setLang(saved);
-})();
-
-(function () {
-  var els = document.querySelectorAll(".rv");
-  if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
-  }, { threshold: 0.15 });
-  els.forEach(function (e) { io.observe(e); });
-})();
+window.DCLogic = class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(s) { Object.assign(this.state, s); if (this.onState) this.onState(); }
+};
 </script>
+<script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.root = null;
+    this.raf = 0;
+    this.t = 0;
+    this.mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  }
+  qr(seed) {
+    // a decorative QR-like pattern: three finder squares and seeded dots
+    let d = "";
+    const n = 25;
+    let s = seed;
+    const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+    const finder = (x, y) => {
+      d += "M" + x + " " + y + "h7v7h-7zM" + (x + 1) + " " + (y + 1) + "v5h5v-5zM" + (x + 2) + " " + (y + 2) + "h3v3h-3z";
+    };
+    finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const inF = (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
+      if (!inF && rnd() > 0.52) d += "M" + x + " " + y + "h1v1h-1z";
+    }
+    return d;
+  }
+  renderVals() {
+    const lang = (this.state && this.state.lang) || "ku";
+    const RL = lang === "en" ? "Your Job - Position" : "پیشە - پۆست";
+    const C = [
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#14213d", hi: "#2b3f6b", back: "#dfe4ee", ink: "#14213d" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#5a1a2a", hi: "#8a2c41", back: "#efe1e4", ink: "#4a1523" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#1e3a2f", hi: "#2f5a49", back: "#dde8e2", ink: "#1e3a2f" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#3a2350", hi: "#5a3a7a", back: "#e7e0ef", ink: "#3a2350" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#b94e38", hi: "#d9745c", back: "#f6e3dc", ink: "#6e2a1c" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#2c4a63", hi: "#44698a", back: "#dde6ee", ink: "#22394d" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#121212", hi: "#2e2a22", back: "#efe8d8", ink: "#3a2f1a" },
+      { name: "XXX", role: RL, letter: "X", handle: "yourname", base: "#4a3a2e", hi: "#6e5644", back: "#ece4dc", ink: "#3d2f25" },
+    ];
+    if (!this._cards) {
+      // the card's edge: its own colour, a little darker, stacked in thin slices so it has real thickness
+      const darker = (hex, k) => { const v = parseInt(hex.slice(1), 16); const f = (x) => Math.round(x * (1 - k)); return "rgb(" + f(v >> 16) + "," + f((v >> 8) & 255) + "," + f(v & 255) + ")"; };
+      const Z = [-2.2, -1.65, -1.1, -0.55, 0, 0.55, 1.1, 1.65, 2.2];
+      this._cards = C.map((c, i) => ({ ...c, front: "linear-gradient(150deg, " + c.hi + " 0%, " + c.base + " 62%)", qr: this.qr(17 + i * 31), layers: Z.map((z) => ({ z: z, bg: darker(c.base, 0.3) })) }));
+      this._cards.forEach((c) => { const v = parseInt(c.base.slice(1), 16); c.edgeV = [((v >> 16) & 255) / 255 * 0.72, ((v >> 8) & 255) / 255 * 0.72, (v & 255) / 255 * 0.72]; });
+    }
+    const want = this.props.heroCards;
+    let mode = want === "wallet" ? "wallet" : want === "carousel" ? "carousel" : "webgl";
+    if (mode === "webgl" && this.glFail) mode = "carousel";
+    this.mode = mode;
+    return {
+      lang: lang,
+      langCls: "lang-" + lang,
+      dir: lang === "en" ? "ltr" : "rtl",
+      enCls: lang === "en" ? "on" : "",
+      kuCls: lang === "ku" ? "on" : "",
+      enOn: lang === "en" ? "true" : "false",
+      kuOn: lang === "ku" ? "true" : "false",
+      setEn: () => this.setState({ lang: "en" }),
+      setKu: () => this.setState({ lang: "ku" }),
+      isWallet: mode === "wallet",
+      isGL: mode === "webgl",
+      setCanvas: (el) => { this.canvas = el; },
+      stageCls: mode,
+      dots: this._cards.map((c, i) => ({ i })),
+      cards: this._cards,
+      setRoot: (el) => { this.root = el; },
+    };
+  }
+  componentDidMount() {
+    this.calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.onMove = (e) => {
+      this.mouse.tx = Math.max(-1, Math.min(1, (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2)));
+      this.mouse.ty = Math.max(-1, Math.min(1, (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2)));
+    };
+    this.onLeave = () => { this.mouse.tx = 0; this.mouse.ty = 0; };
+    window.addEventListener("mousemove", this.onMove);
+    document.addEventListener("mouseleave", this.onLeave);
+    const tick = () => { this.frame(); this.raf = requestAnimationFrame(tick); };
+    this.raf = requestAnimationFrame(tick);
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener("mousemove", this.onMove);
+    document.removeEventListener("mouseleave", this.onLeave);
+  }
+  // ---------- real 3D cards (WebGL): thick rounded cards with a bevelled edge, lit by three lights ----------
+  m4(a, b) {
+    const o = new Array(16);
+    for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; }
+    return o;
+  }
+  rotX(d) { const t = d * Math.PI / 180, c = Math.cos(t), s = Math.sin(t); return [1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]; }
+  rotY(d) { const t = d * Math.PI / 180, c = Math.cos(t), s = Math.sin(t); return [c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]; }
+  rotZ(d) { const t = d * Math.PI / 180, c = Math.cos(t), s = Math.sin(t); return [c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]; }
+  move(x, y, z) { return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1]; }
+  glGeom(W, H) {
+    // front and back faces fan out from the centre; the rim is a half-round edge 2.4px deep around the outline
+    const R = 16, r = 2.4, seg = 10, K = 8, out = [], pts = [];
+    [[W / 2 - R, H / 2 - R, 0], [-(W / 2 - R), H / 2 - R, 90], [-(W / 2 - R), -(H / 2 - R), 180], [W / 2 - R, -(H / 2 - R), 270]].forEach((q) => {
+      for (let s = 0; s <= seg; s++) { const a = (q[2] + 90 * s / seg) * Math.PI / 180; pts.push([q[0] + R * Math.cos(a), q[1] + R * Math.sin(a), Math.cos(a), Math.sin(a)]); }
+    });
+    const v = (x, y, z, nx, ny, nz, u, w, m) => { out.push(x, y, z, nx, ny, nz, u, w, m); };
+    const N = pts.length;
+    for (let i = 0; i < N; i++) {
+      const a = pts[i], b = pts[(i + 1) % N];
+      v(0, 0, r, 0, 0, 1, 0.5, 0.5, 0); v(a[0], a[1], r, 0, 0, 1, (a[0] + W / 2) / W, (H / 2 - a[1]) / H, 0); v(b[0], b[1], r, 0, 0, 1, (b[0] + W / 2) / W, (H / 2 - b[1]) / H, 0);
+      v(0, 0, -r, 0, 0, -1, 0.5, 0.5, 1); v(b[0], b[1], -r, 0, 0, -1, (b[0] + W / 2) / W, (b[1] + H / 2) / H, 1); v(a[0], a[1], -r, 0, 0, -1, (a[0] + W / 2) / W, (a[1] + H / 2) / H, 1);
+      const P = (p, t) => [p[0] + p[2] * r * 0.5 * Math.sin(t), p[1] + p[3] * r * 0.5 * Math.sin(t), r * Math.cos(t), p[2] * Math.sin(t), p[3] * Math.sin(t), Math.cos(t)];
+      for (let k = 0; k < K; k++) {
+        const t0 = Math.PI * k / K, t1 = Math.PI * (k + 1) / K;
+        const A0 = P(a, t0), A1 = P(a, t1), B0 = P(b, t0), B1 = P(b, t1);
+        [A0, B1, B0, A0, A1, B1].forEach((q) => v(q[0], q[1], q[2], q[3], q[4], q[5], 0, 0, 2));
+      }
+    }
+    return new Float32Array(out);
+  }
+  glSetup() {
+    const cv = this.canvas;
+    const gl = cv.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: true });
+    if (!gl) throw new Error("no webgl");
+    const vs = "attribute vec3 aP;attribute vec3 aN;attribute vec2 aUv;attribute float aM;uniform mat4 uP;uniform mat4 uM;uniform float uD;varying vec3 vN;varying vec3 vW;varying vec2 vUv;varying float vM;" +
+      "void main(){vec4 w=uM*vec4(aP,1.0);vW=w.xyz;vN=(uM*vec4(aN,0.0)).xyz;vUv=aUv;vM=aM;gl_Position=uP*vec4(w.x,w.y,w.z-uD,1.0);}";
+    const fs = "precision highp float;uniform sampler2D tF;uniform sampler2D tB;uniform vec3 uEdge;uniform float uD;varying vec3 vN;varying vec3 vW;varying vec2 vUv;varying float vM;" +
+      "vec3 lin(vec3 c){return pow(c,vec3(2.2));}" +
+      "void main(){vec3 base=vM<0.5?lin(texture2D(tF,vUv).rgb):(vM<1.5?lin(texture2D(tB,vUv).rgb):lin(uEdge));" +
+      "vec3 N=normalize(vN);vec3 V=normalize(vec3(0.0,0.0,uD)-vW);" +
+      "vec3 Lk=normalize(vec3(-0.45,0.7,0.75));vec3 Lf=normalize(vec3(0.7,-0.25,0.6));vec3 Lr=normalize(vec3(0.35,-0.45,-0.8));" +
+      "float dk=max(dot(N,Lk),0.0);float df=max(dot(N,Lf),0.0);float dr=max(dot(N,Lr),0.0);" +
+      "vec3 amb=mix(vec3(0.05,0.045,0.04),vec3(0.30,0.29,0.28),N.y*0.5+0.5);" +
+      "vec3 lit=amb+dk*vec3(1.05,1.0,0.92)+df*vec3(0.20,0.22,0.28)+dr*vec3(0.95,0.68,0.22);" +
+      "vec3 Hk=normalize(Lk+V);float nh=max(dot(N,Hk),0.0);float sp=pow(nh,90.0)*0.6+pow(nh,14.0)*0.07;" +
+      "vec3 Hr=normalize(Lr+V);float spr=pow(max(dot(N,Hr),0.0),40.0)*0.5;" +
+      "float fr=pow(1.0-max(dot(N,V),0.0),5.0);vec3 R=reflect(-V,N);" +
+      "vec3 env=mix(vec3(0.01),vec3(0.45,0.38,0.24),smoothstep(-0.1,0.9,R.y));" +
+      "vec3 c=base*lit+sp*vec3(1.0,0.96,0.88)+spr*vec3(0.96,0.76,0.3)+fr*env*0.9;" +
+      "float depth=smoothstep(-300.0,420.0,vW.z);c*=mix(0.42,1.0,depth);" +
+      "c=c/(1.0+c*0.22)*1.12;gl_FragColor=vec4(pow(c,vec3(1.0/2.2)),1.0);}";
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+    const pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr);
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pr));
+    const G = { gl: gl, pr: pr, cv: cv, buf: gl.createBuffer(), count: 0, W: 0, H: 0, tex: [], ready: false };
+    ["aP", "aN", "aUv", "aM"].forEach((k) => { G[k] = gl.getAttribLocation(pr, k); });
+    ["uP", "uM", "uD", "tF", "tB", "uEdge"].forEach((k) => { G[k] = gl.getUniformLocation(pr, k); });
+    return G;
+  }
+  glBuild(G, W) {
+    const gl = G.gl, H = W / 1.5925, data = this.glGeom(W, H);
+    gl.bindBuffer(gl.ARRAY_BUFFER, G.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    G.count = data.length / 9; G.W = W; G.H = H; G.ready = false;
+    const gen = (this.glGen = (this.glGen || 0) + 1);
+    this.glTextures(G, W, H).then((tex) => { if (gen !== this.glGen) return; G.tex.forEach((t) => { gl.deleteTexture(t[0]); gl.deleteTexture(t[1]); }); G.tex = tex; G.ready = true; }).catch(() => {});
+  }
+  async glTextures(G, W, H) {
+    const gl = G.gl, s = 3;
+    try { await Promise.all([document.fonts.load("800 21px Manrope"), document.fonts.load("700 10px Manrope"), document.fonts.load("800 15px Manrope")]); } catch (e) {}
+    // the Bmnassa wordmark, drawn from its own lines (an image would block the texture in a sandboxed page)
+    const LOGO = new Path2D("M106 295V563M289 295V513M470 267V556M646 240V609M739 120V659M917 300V610M1437 303V560M106 318.5L289 501.5M289 322L470 503M470 349L646 525M739 605.5L917 427.5M917 586.5L1093.5 410M1263.5 390.5L1448 575M1093.5 290V515Q1093.5 531.5 1110 531.5H1247Q1263.5 531.5 1263.5 515V337Q1263.5 320 1247 320H1093.5");
+    const icons = [
+      ["#2fbf55", "M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"],
+      ["#25d366", "M4 20l1.3-4A8 8 0 1 1 8 19z"],
+      ["ig", "M9 4h6a5 5 0 0 1 5 5v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9a5 5 0 0 1 5-5zM15.6 12a3.6 3.6 0 1 1-7.2 0a3.6 3.6 0 1 1 7.2 0"],
+      ["#1e88e5", "M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3.5 6.5l8.5 6.5 8.5-6.5"],
+    ];
+    const mk = (draw) => {
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(W * s); cv.height = Math.round(H * s);
+      const x = cv.getContext("2d"); x.scale(s, s); draw(x);
+      const t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      return t;
+    };
+    const grain = (x) => { let q = 7; const rnd = () => { q = (q * 9301 + 49297) % 233280; return q / 233280; }; for (let i = 0; i < 2600; i++) { x.fillStyle = rnd() > 0.5 ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)"; x.fillRect(rnd() * W, rnd() * H, 0.6, 0.6); } };
+    const rr = (x, px, py, w, h, r) => { x.beginPath(); x.moveTo(px + r, py); x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r); x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath(); };
+    const out = [];
+    for (const c of this._cards) {
+      const front = mk((x) => {
+        const dx = 0.5, dy = 0.866, len = W * dx + H * dy, cx = W / 2, cy = H / 2;
+        const g = x.createLinearGradient(cx - dx * len / 2, cy - dy * len / 2, cx + dx * len / 2, cy + dy * len / 2);
+        g.addColorStop(0, c.hi); g.addColorStop(0.62, c.base); g.addColorStop(1, c.base);
+        x.fillStyle = g; x.fillRect(0, 0, W, H);
+        grain(x);
+        x.save(); x.translate(W * 0.44, -H * 0.18); x.scale(W * 0.62 / 100, W * 0.62 / 100);
+        x.strokeStyle = "rgba(255,255,255,0.07)"; x.lineWidth = 12; x.lineCap = "round"; x.stroke(new Path2D("M20 30v40M42 18v64M64 34v34"));
+        x.fillStyle = "rgba(255,255,255,0.07)"; x.beginPath(); x.arc(82, 40, 9, 0, Math.PI * 2); x.fill(); x.restore();
+        const tg = x.createLinearGradient(20, 18, 60, 58); tg.addColorStop(0, "#ffe9a0"); tg.addColorStop(0.45, "#f2c445"); tg.addColorStop(1, "#c68f0e");
+        x.save(); x.shadowColor = "rgba(0,0,0,0.3)"; x.shadowBlur = 10; x.shadowOffsetY = 4; rr(x, 20, 18, 40, 40, 12); x.fillStyle = tg; x.fill(); x.restore();
+        x.fillStyle = "#141414"; x.font = "800 20px Manrope, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText(c.letter, 40, 39);
+        x.save(); x.translate(W - 42, 18); x.scale(22 / 24, 22 / 24); x.strokeStyle = "rgba(255,255,255,0.85)"; x.lineWidth = 1.9; x.lineCap = "round"; x.stroke(new Path2D("M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17")); x.fillStyle = "#fff"; x.beginPath(); x.arc(5, 12, 1, 0, Math.PI * 2); x.fill(); x.restore();
+        x.textAlign = "left"; x.textBaseline = "alphabetic";
+        x.fillStyle = "rgba(0,0,0,0.35)"; x.font = "800 21px Manrope, sans-serif"; x.fillText(c.name, 20, H - 75);
+        x.fillStyle = "#fff"; x.fillText(c.name, 20, H - 76);
+        x.fillStyle = "rgba(255,255,255,0.75)"; x.font = "700 10px Manrope, sans-serif"; if ("letterSpacing" in x) x.letterSpacing = "1.4px"; x.fillText(c.role.toUpperCase(), 20, H - 58); if ("letterSpacing" in x) x.letterSpacing = "0px";
+        icons.forEach((ic, i) => {
+          const ox = 20 + i * 30, oy = H - 42;
+          if (ic[0] === "ig") { const ig = x.createLinearGradient(ox, oy + 24, ox + 24, oy); ig.addColorStop(0, "#f9a825"); ig.addColorStop(0.55, "#e1306c"); ig.addColorStop(1, "#833ab4"); x.fillStyle = ig; } else x.fillStyle = ic[0];
+          x.beginPath(); x.arc(ox + 12, oy + 12, 12, 0, Math.PI * 2); x.fill();
+          x.save(); x.translate(ox + 5.5, oy + 5.5); x.scale(13 / 24, 13 / 24); x.strokeStyle = "#fff"; x.lineWidth = 2.2; x.lineCap = "round"; x.lineJoin = "round"; x.stroke(new Path2D(ic[1])); x.restore();
+        });
+        { const k = 11 / 640, lw = 1520 * k; x.save(); x.globalAlpha = 0.75; x.translate(W - 20 - lw, H - 18 - 11 - 6); x.scale(k, k); x.translate(-30, -70); x.strokeStyle = "#c8c9cc"; x.lineWidth = 66; x.lineCap = "round"; x.lineJoin = "round"; x.stroke(LOGO); x.fillStyle = "#f5c33b"; x.beginPath(); x.arc(917, 267, 68, 0, Math.PI * 2); x.arc(1448, 570, 68, 0, Math.PI * 2); x.fill(); x.restore(); }
+      });
+      const back = mk((x) => {
+        x.fillStyle = c.back; x.fillRect(0, 0, W, H);
+        grain(x);
+        const total = 96 + 18 + 150, sx = (W - total) / 2, qy = (H - 96) / 2;
+        x.save(); x.translate(sx, qy); x.scale(96 / 25, 96 / 25); x.fillStyle = c.ink; x.fill(new Path2D(c.qr)); x.restore();
+        x.fillStyle = c.ink; x.textAlign = "left"; x.font = "800 15px Manrope, sans-serif"; x.fillText("Scan to find me", sx + 114, H / 2 - 2);
+        x.globalAlpha = 0.7; x.font = "700 12px Manrope, sans-serif"; x.fillText("bmnassa.com/" + c.handle, sx + 114, H / 2 + 16); x.globalAlpha = 1;
+      });
+      out.push([front, back]);
+    }
+    return out;
+  }
+  glFrame() {
+    const cv = this.canvas;
+    if (!cv) return;
+    if (!this.G || this.G.cv !== cv) {
+      try { this.G = this.glSetup(); } catch (e) { this.G = null; this.glFail = true; this.forceUpdate(); return; }
+    }
+    const G = this.G, gl = G.gl;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, hc = cv.clientHeight;
+    // the cards are laid out for the column's height; the larger view only gives them room to show whole
+    const h = (cv.parentElement && cv.parentElement.clientHeight) || hc;
+    if (!w || !hc) return;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(hc * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(hc * dpr); }
+    const W = Math.round(Math.min(340, window.innerWidth * 0.6));
+    if (Math.abs(W - G.W) > 6) this.glBuild(G, W);
+    if (!this.calm) this.t += 0.0016;
+    const m = this.mouse;
+    m.x += (m.tx - m.x) * 0.08; m.y += (m.ty - m.y) * 0.08;
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    if (!G.ready) return;
+    gl.useProgram(G.pr);
+    gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
+    gl.bindBuffer(gl.ARRAY_BUFFER, G.buf);
+    const st = 36;
+    gl.enableVertexAttribArray(G.aP); gl.vertexAttribPointer(G.aP, 3, gl.FLOAT, false, st, 0);
+    gl.enableVertexAttribArray(G.aN); gl.vertexAttribPointer(G.aN, 3, gl.FLOAT, false, st, 12);
+    gl.enableVertexAttribArray(G.aUv); gl.vertexAttribPointer(G.aUv, 2, gl.FLOAT, false, st, 24);
+    gl.enableVertexAttribArray(G.aM); gl.vertexAttribPointer(G.aM, 1, gl.FLOAT, false, st, 32);
+    const D = 1350, near = 100, far = 4000, f = D / (hc / 2), asp = w / hc;
+    gl.uniformMatrix4fv(G.uP, false, new Float32Array([f / asp, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) / (near - far), -1, 0, 0, 2 * far * near / (near - far), 0]));
+    gl.uniform1f(G.uD, D); gl.uniform1i(G.tF, 0); gl.uniform1i(G.tB, 1);
+    const n = this._cards.length, cardH = G.H, peek = -40;
+    const r = Math.round(this.t), df = this.t - r;
+    const u = Math.min(1, Math.max(0, (df + 0.18) / 0.62));
+    const settle = df > -0.18 && !this.calm ? 0.05 * Math.exp(-u * 4) * Math.sin(u * Math.PI * 3) : 0;
+    const active = r + Math.sign(df) * Math.pow(Math.abs(df) * 2, 4.2) / 2 + settle;
+    const yEdge = (h / 2 - peek) / (D / (D + 60)) - cardH / 2;
+    const yOff = (h / 2 + 100) / (D / (D + 250)) + cardH / 2;
+    for (let i = 0; i < n; i++) {
+      let off = i - active;
+      while (off > n / 2) off -= n;
+      while (off < -n / 2) off += n;
+      const a = Math.abs(off), sg = Math.sign(off);
+      if (a > 3) continue;
+      let y = 0, z = 0, rot = 0;
+      if (a <= 1) { const e = a * a * (3 - 2 * a); y = -sg * e * (cardH + 34); z = 400 - e * 180; rot = e * 132; }
+      else if (a <= 2) { const t = a - 1, e = t * t * (3 - 2 * t); y = -sg * ((cardH + 34) + e * (yEdge - (cardH + 34))); z = 220 - e * 280; rot = 132 + e * 43; }
+      else { const t = Math.min(a - 2, 1), e = t * t * (3 - 2 * t); y = -sg * (yEdge + e * (yOff - yEdge)); z = -60 - e * 190; rot = 175 + e * 20; }
+      const cf = Math.max(0, 1 - a);
+      const rx = -sg * rot - m.y * 12 * cf, ry = m.x * 15 * cf;
+      const M = this.m4(this.move(0, -y, z), this.m4(this.rotX(-rx), this.m4(this.rotY(ry), this.rotZ(3))));
+      gl.uniformMatrix4fv(G.uM, false, new Float32Array(M));
+      gl.uniform3fv(G.uEdge, this._cards[i].edgeV);
+      const tx = G.tex[i];
+      if (!tx) continue;
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tx[0]);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, tx[1]);
+      gl.drawArrays(gl.TRIANGLES, 0, G.count);
+    }
+  }
+  light(el, rx, ry, z, a) {
+    // where the card faces decides how much light it catches (a lamp up and to the left, in front)
+    if (!el._fx) el._fx = {
+      f: el.querySelector(".cd-front"), b: el.querySelector(".cd-back"),
+      fs: el.querySelector(".cd-front .cd-shade"), fh: el.querySelector(".cd-front .cd-sheen"),
+      bs: el.querySelector(".cd-back .cd-shade"), bh: el.querySelector(".cd-back .cd-sheen"),
+    };
+    const fx = el._fx, R = Math.PI / 180, X = rx * R, Y = ry * R;
+    const n = [Math.sin(Y), -Math.cos(Y) * Math.sin(X), Math.cos(Y) * Math.cos(X)];
+    const L = [-0.32, -0.56, 0.76], Hh = [-0.171, -0.299, 0.939];
+    const side = (s, shade, sheen) => {
+      if (!shade || !sheen) return;
+      const nx = n[0] * s, ny = n[1] * s, nz = n[2] * s;
+      const lit = nx * L[0] + ny * L[1] + nz * L[2];
+      const spec = Math.pow(Math.max(0, nx * Hh[0] + ny * Hh[1] + nz * Hh[2]), 24);
+      const dark = Math.max(0, Math.min(1, (0.76 - lit) / 0.9)) * 0.72;
+      const glow = Math.max(0, Math.min(1, (lit - 0.76) / 0.24)) * 0.14;
+      shade.style.background = glow > 0 ? "rgba(255,255,255," + glow.toFixed(3) + ")" : "rgba(0,0,0," + dark.toFixed(3) + ")";
+      const pos = 50 - nx * 160 - ny * 120;
+      const op = 0.04 + spec * 0.38;
+      sheen.style.background = "linear-gradient(115deg, transparent " + (pos - 24).toFixed(1) + "%, rgba(255,255,255," + op.toFixed(3) + ") " + pos.toFixed(1) + "%, transparent " + (pos + 24).toFixed(1) + "%)";
+    };
+    side(1, fx.fs, fx.fh);
+    side(-1, fx.bs, fx.bh);
+    // nearer cards cast bigger, softer shadows; cards further back go slightly out of focus
+    const near = Math.max(0, Math.min(1, (z + 250) / 650));
+    const sh = "0 " + (8 + near * 26).toFixed(0) + "px " + (20 + near * 46).toFixed(0) + "px rgba(0,0,0," + (0.3 + near * 0.35).toFixed(2) + "), inset 0 1px 1px rgba(255,255,255,0.16)";
+    const bl = this.calm ? 0 : Math.min(3.2, Math.max(0, a - 0.3) * 1.9);
+    [fx.f, fx.b].forEach((face) => { if (!face) return; face.style.boxShadow = sh; face.style.filter = bl > 0.05 ? "blur(" + bl.toFixed(2) + "px)" : "none"; });
+    el.style.setProperty("--sh", (40 - n[0] * 90 - n[1] * 70).toFixed(1) + "%");
+  }
+  frame() {
+    const root = this.root;
+    if (!root) return;
+    const vh = window.innerHeight || 800;
+    const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+    // 1) the hero: a vertical 3D carousel of Bmnassa cards
+    const cards = root.querySelectorAll("[data-card]");
+    const stage = root.querySelector(".stage");
+    if (this.mode === "webgl") {
+      this.glFrame();
+    } else if (cards.length && stage && this.mode === "wallet") {
+      // the Bmnassa wallet: the cards roll past like a rolodex, the chosen one under a gold ring; every other card turns over to show its QR
+      if (!this.calm) this.t += 0.0026;
+      const m = this.mouse;
+      m.x += (m.tx - m.x) * 0.08; m.y += (m.ty - m.y) * 0.08;
+      const n = cards.length, H = cards[0].offsetHeight || 250, GAP = 58;
+      const r = Math.round(this.t), df = this.t - r;
+      const active = r + Math.sign(df) * Math.pow(Math.abs(df) * 2, 3.2) / 2;
+      const front = ((r % n) + n) % n;
+      for (let i = 0; i < n; i++) {
+        const el = cards[i];
+        let d = i - active;
+        while (d > n / 2) d -= n;
+        while (d < -n / 2) d += n;
+        const a = Math.abs(d), near = Math.min(a, 1), cf = Math.max(0, 1 - a);
+        if (a > 3.6) { el.style.visibility = "hidden"; continue; }
+        el.style.visibility = "visible";
+        const ty = d * GAP + (d < 0 ? -near * 14 - Math.max(0, a - 1) * 8 : near * (H * 0.5 + 46) + Math.max(0, a - 1) * 6);
+        const rx = (d < 0 ? Math.min(a, 2) * 20 : -Math.min(a, 1.5) * 9) - m.y * 10 * cf;
+        const spin = (i === front && r % 2 === 0 && !this.calm) ? 360 * ss(-0.16, 0.16, df) : 0;
+        const ry = m.x * 14 * cf + spin;
+        const sc = 1 + (1 - near) * 0.04 - a * 0.055;
+        el.style.opacity = (1 - ss(2.7, 3.6, a)).toFixed(3);
+        el.style.zIndex = a < 0.5 ? "200" : String(d < 0 ? 100 - Math.round(a * 10) : 60 + Math.round(a * 10));
+        el.style.transform = "translateY(" + ty.toFixed(1) + "px) translateZ(" + (-a * 50).toFixed(1) + "px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg) scale(" + sc.toFixed(4) + ")";
+        el.classList.toggle("on", a < 0.5);
+        const dim = el.querySelector(".cd-dim");
+        if (dim) dim.style.opacity = String(d < 0 ? Math.min(0.62, a * 0.24) : Math.min(0.4, a * 0.1));
+        const bk = el.querySelector(".cd-back");
+        if (bk) bk.style.transform = "translateZ(-2.6px) rotateY(180deg)";
+        this.light(el, rx, ry, 400 - a * 200, a * 0.6);
+      }
+      root.querySelectorAll("[data-wdot]").forEach((dt, i) => { dt.className = i === front ? "on" : ""; });
+    } else if (cards.length && stage) {
+      cards.forEach((el) => { el.classList.remove("on"); el.style.opacity = "1"; const bk = el.querySelector(".cd-back"); if (bk) bk.style.transform = "translateZ(-2.6px) rotateX(180deg)"; const dim = el.querySelector(".cd-dim"); if (dim) dim.style.opacity = "0"; });
+      if (!this.calm) this.t += 0.0016;
+      const m = this.mouse;
+      m.x += (m.tx - m.x) * 0.08; m.y += (m.ty - m.y) * 0.08;
+      const n = cards.length, cardH = cards[0].offsetHeight || 210, h = stage.clientHeight || vh;
+      const r = Math.round(this.t), df = this.t - r;
+      // the wheel slows into place, overshoots a touch and settles, like something with weight
+      const u = Math.min(1, Math.max(0, (df + 0.18) / 0.62));
+      const settle = df > -0.18 && !this.calm ? 0.05 * Math.exp(-u * 4) * Math.sin(u * Math.PI * 3) : 0;
+      const active = r + Math.sign(df) * Math.pow(Math.abs(df) * 2, 4.2) / 2 + settle;
+      const D = 1350, peek = -40;
+      for (let i = 0; i < n; i++) {
+        const el = cards[i];
+        let off = i - active;
+        while (off > n / 2) off -= n;
+        while (off < -n / 2) off += n;
+        const a = Math.abs(off), sg = Math.sign(off);
+        if (a > 3) { el.style.visibility = "hidden"; continue; }
+        el.style.visibility = "visible";
+        let y = 0, z = 0, rot = 0;
+        if (a <= 1) {
+          const e = a * a * (3 - 2 * a);
+          y = -sg * e * (cardH + 34); z = 400 + e * (220 - 400); rot = e * 132;
+        } else if (a <= 2) {
+          const t = a - 1, e = t * t * (3 - 2 * t);
+          const yEnd = (h / 2 - peek) / (D / (D + 60)) - cardH / 2;
+          y = -sg * ((cardH + 34) + e * (yEnd - (cardH + 34))); z = 220 + e * (-60 - 220); rot = 132 + e * 43;
+        } else {
+          const t = Math.min(a - 2, 1), e = t * t * (3 - 2 * t);
+          const y2 = (h / 2 - peek) / (D / (D + 60)) - cardH / 2;
+          const y3 = (h / 2 + 100) / (D / (D + 250)) + cardH / 2;
+          y = -sg * (y2 + e * (y3 - y2)); z = -60 + e * (-250 + 60); rot = 175 + e * 20;
+        }
+        const cf = Math.max(0, 1 - a);
+        const rx = -sg * rot - m.y * 12 * cf;
+        const ry = m.x * 15 * cf;
+        el.style.zIndex = String(Math.round(z));
+        el.style.transform = "translateY(" + y.toFixed(1) + "px) translateZ(" + z.toFixed(1) + "px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg) rotateZ(-3deg)";
+        this.light(el, rx, ry, z, a);
+      }
+    }
+
+    // 2) blocks fade and rise in as they arrive, and fade out as they leave the top
+    root.querySelectorAll("[data-rv]").forEach((el) => {
+      if (this.calm) { el.style.opacity = "1"; el.style.transform = "none"; return; }
+      const b = el.getBoundingClientRect();
+      const c = (b.top + b.height / 2 - vh / 2) / (vh / 2 + Math.min(b.height, vh) / 2);
+      const comeIn = 1 - ss(0.35, 0.95, c);
+      const goOut = el.getAttribute("data-rv") === "in" ? 1 : 1 - ss(-0.55, -1.0, c);
+      const o = Math.min(comeIn, goOut);
+      const ty = c > 0 ? (1 - comeIn) * 60 : -(1 - goOut) * 40;
+      el.style.opacity = o.toFixed(3);
+      el.style.transform = "translateY(" + ty.toFixed(1) + "px) scale(" + (0.96 + 0.04 * o).toFixed(4) + ")";
+      el.style.filter = o < 0.99 ? "blur(" + ((1 - o) * 8).toFixed(1) + "px)" : "none";
+    });
+
+    // 3) the story: the phone stays in place while the words and screens change with the scroll
+    const story = root.querySelector("[data-story]");
+    if (story) {
+      const b = story.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, -b.top / Math.max(1, b.height - vh)));
+      const steps = story.querySelectorAll("[data-step]");
+      const shots = story.querySelectorAll("[data-screen]");
+      const dots = story.querySelectorAll("[data-dot]");
+      const N = steps.length, f = p * N;
+      for (let i = 0; i < N; i++) {
+        const k = f - i - 0.5;
+        const o = this.calm ? (Math.floor(Math.min(f, N - 0.001)) === i ? 1 : 0) : 1 - ss(0.3, 0.5, Math.abs(k));
+        const st = steps[i];
+        st.style.opacity = o.toFixed(3);
+        st.style.transform = "translateY(" + (-k * 70).toFixed(1) + "px)";
+        st.style.filter = o < 0.99 ? "blur(" + ((1 - o) * 10).toFixed(1) + "px)" : "none";
+        st.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        const sh = shots[i];
+        if (sh) { sh.style.opacity = o.toFixed(3); sh.style.transform = "scale(" + (1.06 - 0.06 * o).toFixed(4) + ")"; }
+        if (dots[i]) dots[i].className = o > 0.5 ? "on" : "";
+      }
+      const ph = story.querySelector("[data-phone]");
+      if (ph && !this.calm) {
+        const tilt = Math.sin(p * Math.PI * 4);
+        ph.style.transform = "rotateY(" + (tilt * -9).toFixed(2) + "deg) rotateX(" + (4 + this.mouse.y * -3).toFixed(2) + "deg) translateY(" + (Math.cos(p * Math.PI * 4) * 10).toFixed(1) + "px)";
+      }
+    }
+  }
+}
+
+</script>
+<script src="design-runtime.js"></script>
 </body>
 </html>
