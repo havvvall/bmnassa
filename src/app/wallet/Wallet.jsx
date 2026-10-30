@@ -683,11 +683,14 @@ export function WalletPage({ lang, go, signedIn }) {
     return ["bmnassa", "stack", "wheel", "deck"].includes(q0) ? q0 : store.get("bm_wallet_look2", "bmnassa");
   });
   const setLook = (v) => { setLookState(v); store.set("bm_wallet_look2", v); setSheet(""); };
+  // the wheel look hides the app's bottom bar; this switch brings it back
+  const [navOn, setNavOnState] = useState(() => store.get("bm_wallet_nav", "0") === "1");
+  const setNavOn = (v) => { setNavOnState(v); store.set("bm_wallet_nav", v ? "1" : "0"); };
   // the wheel look is full screen: the app's bottom bar steps aside while it is on
   useEffect(() => {
-    document.body.classList.toggle("wallet-wheel", look === "wheel");
+    document.body.classList.toggle("wallet-wheel", look === "wheel" && !navOn);
     return () => document.body.classList.remove("wallet-wheel");
-  }, [look]);
+  }, [look, navOn]);
 
   const load = () => {
     setErr(false);
@@ -882,6 +885,8 @@ export function WalletPage({ lang, go, signedIn }) {
               <button key={k} type="button" aria-pressed={look === k} onClick={() => setLook(k)}>{t(lang, label)}</button>
             ))}
           </div>
+          <span className="label" style={{ marginTop: 8 }}>Wheel</span>
+          <button type="button" className="choice" aria-pressed={navOn} onClick={() => setNavOn(!navOn)}><span>Show the app bottom bar</span>{navOn ? <span className="tick">✓</span> : null}</button>
         </Sheet>
       ) : null}
 
