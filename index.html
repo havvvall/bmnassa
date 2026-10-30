@@ -73,6 +73,29 @@ footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24p
   .nav-links { display:none; }
   .tile.big { grid-column: auto; }
 }
+
+/* ---- motion and card stack (matches the design) ---- */
+.stage { position:relative; width:min(360px,80vw); height:340px; margin:0 auto; perspective:900px; }
+.stage .glow { position:absolute; inset:-30px; background: radial-gradient(closest-side, rgba(245,195,59,.28), transparent 70%); animation: breathe 6s ease-in-out infinite; }
+.card3 { position:absolute; left:50%; top:50%; width:270px; height:170px; border-radius:22px; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#fff; box-shadow:0 26px 50px rgba(0,0,0,.6); transform-style:preserve-3d; transition: transform .8s cubic-bezier(.2,0,0,1); will-change: transform; }
+.card3 .nm { font-size:20px; font-weight:800; letter-spacing:-.02em; }
+.card3 .rl { font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; opacity:.75; }
+.card3 .mk { width:34px; height:34px; border-radius:10px; background: rgba(255,255,255,.12); display:grid; place-items:center; font-weight:800; }
+.card3.c0 { background: linear-gradient(160deg,#14213d,#0b1120); transform: translate(-62%,-56%) rotate(-12deg) translateZ(-60px); animation: drift 7s ease-in-out infinite; }
+.card3.c1 { background: linear-gradient(160deg,#1e3a2f,#0c1f18); transform: translate(-38%,-46%) rotate(-4deg) translateZ(-20px); animation: drift 8.5s ease-in-out -2s infinite; }
+.card3.c2 { background: linear-gradient(160deg,#f5c33b,#c98f0a); color:#15171a; transform: translate(-50%,-50%) rotate(3deg) translateZ(30px); animation: drift 9s ease-in-out -4s infinite; }
+.card3.c2 .mk { background:#15171a; color:#f5c33b; }
+.stage:hover .card3.c2 { transform: translate(-50%,-50%) rotate(0deg) translateZ(40px); }
+@keyframes drift { 0%,100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+@keyframes breathe { 0%,100% { opacity:.8; } 50% { opacity:1; } }
+.sky-pan { display:flex; width:max-content; height:100%; animation: pan 90s linear infinite; }
+.sky-pan img { height:100%; width:auto; flex:none; }
+@keyframes pan { to { transform: translateX(-50%); } }
+.rv { opacity:0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,0,0,1); }
+.rv.in { opacity:1; transform:none; }
+.step, .tile { transition: transform .4s ease; }
+.step:hover, .tile:hover { transform: translateY(-4px); }
+@media (prefers-reduced-motion: reduce) { .card3, .stage .glow, .sky-pan { animation:none !important; } .rv { opacity:1; transform:none; transition:none; } }
 </style>
 </head>
 <body>
@@ -99,21 +122,26 @@ footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24p
       <a class="store" href="https://app.bmnassa.com"><span><small><span class="t-ku">بەخۆڕایی بیکەرەوە</span><span class="t-en">Free, in your browser</span></small><b><span class="t-ku">ئەپەکە بکەرەوە</span><span class="t-en">Open the app</span></b></span></a>
     </div>
   </div>
-  <div class="hero-phone"><img src="assets/screen-search.webp" alt="Bmnassa home screen with search and categories"></div>
+  <div class="hero-phone"><div class="stage" aria-hidden="true">
+    <div class="glow"></div>
+    <div class="card3 c0"><div style="display:flex;justify-content:space-between"><span class="mk">A</span><span class="rl">Cooling</span></div><div><div class="nm">Azad Cooling</div><div class="rl">AC &amp; Refrigeration</div></div></div>
+    <div class="card3 c1"><div style="display:flex;justify-content:space-between"><span class="mk">H</span><span class="rl">Plumber</span></div><div><div class="nm">Hemn Ali</div><div class="rl">Plumbing &amp; Water</div></div></div>
+    <div class="card3 c2"><div style="display:flex;justify-content:space-between"><span class="mk">B</span><span class="rl">Bmnassa</span></div><div><div class="nm">Your business</div><div class="rl">Digital card · one tap</div></div></div>
+  </div></div>
 </section>
 
-<section class="say" id="how">
+<section class="say rv" id="how">
   <p><span class="t-ku">پەیداکردنی <em>دابینکەری خزمەتگوزاری دروست.</em></span><span class="t-en">Find the right <em>service provider.</em></span></p>
   <p><span class="t-ku">پەیوەندی بە <em>یەک گەڕان.</em></span><span class="t-en">Call in <em>one tap.</em></span></p>
   <p><span class="t-ku">هەموو <em>کارتێک هەڵبگرە.</em></span><span class="t-en">Keep every <em>card.</em></span></p>
 </section>
 
 <section class="story">
-  <div class="step"><span class="num">01 · SEARCH</span><h2><span class="t-ku">هەموو خزمەتگوزاریەک، <em>لە نزیکتەوە.</em></span><span class="t-en">Any service, <em>near you.</em></span></h2><p><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر، نەجار و زیاتر، ڕێکخراو بەپێی ئەوەی ئێستا کراوەیە و لە هەمووان نزیکتریە، لە سلێمانی، هەولێر، دهۆک و شوێنەکانی تر.</span><span class="t-en">Plumbers, electricians, AC repair, carpenters and more, sorted by what is open now and closest to you, in Sulaymaniyah, Erbil, Duhok and beyond.</span></p></div>
-  <div class="step"><span class="num">02 · COMPARE</span><h2><span class="t-ku">پەیوەندی یان واتساپ بە <em>یەک گەڕان.</em></span><span class="t-en">Call or WhatsApp in <em>one tap.</em></span></h2><p><span class="t-ku">هەڵسەنگاندن، نرخ و کاتی کارکردن پێکەوە ببینە، پاشان ڕاستەوخۆ لە لیستەکەوە پەیوەندی بە بزنسەکە بکە.</span><span class="t-en">See ratings, prices and opening hours side by side, then reach the business straight from the list.</span></p></div>
-  <div class="step"><span class="num">03 · DIGITAL CARD</span><h2><span class="t-ku">هەموو بزنسێک <em>کارتی دیجیتاڵی</em> وەردەگرێت.</span><span class="t-en">Every business gets a <em>digital card.</em></span></h2><p><span class="t-ku">بیسڕەوە بۆ وەرگێڕانی، بۆ وێنە، نرخ و هەڵسەنگاندن خوارەوە بڕۆ. بە بەستەرێک یان بە دەستلێدانی کارتی NFC هاوبەشی بکە.</span><span class="t-en">Swipe it to turn it over, scroll down for photos, prices and reviews. Share it with a link or a tap of an NFC card.</span></p></div>
-  <div class="step"><span class="num">04 · WALLET</span><h2><span class="t-ku">هەموو کارتەکانت لە <em>یەک جزدان.</em></span><span class="t-en">All your cards in <em>one wallet.</em></span></h2><p><span class="t-ku">ئەو بزنسانەی متمانەیان پێدەکەیت هەڵبگرە و لە چەند چرکەیەکدا دووبارە بیاندۆزەرەوە، ئیتر کارتی کاغەزی ون مەکە.</span><span class="t-en">Save the businesses you trust and find them again in seconds, no more lost paper cards.</span></p></div>
-  <div class="step"><span class="num">05 · SCAN</span><h2><span class="t-ku">کارتی کاغەزی بگۆڕە بۆ <em>دیجیتاڵ.</em></span><span class="t-en">Turn paper cards into <em>digital.</em></span></h2><p><span class="t-ku">کامێراکەت بۆ هەر کارتێکی بزنس ڕابگرە. بمناسە دەیخوێنێتەوە و لە جزدانەکەتدا هەڵیدەگرێت، ئامادەیە بۆ پەیوەندی.</span><span class="t-en">Point your camera at any business card. Bmnassa reads it and keeps it in your wallet, ready to call.</span></p></div>
+  <div class="step rv"><span class="num">01 · SEARCH</span><h2><span class="t-ku">هەموو خزمەتگوزاریەک، <em>لە نزیکتەوە.</em></span><span class="t-en">Any service, <em>near you.</em></span></h2><p><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر، نەجار و زیاتر، ڕێکخراو بەپێی ئەوەی ئێستا کراوەیە و لە هەمووان نزیکتریە، لە سلێمانی، هەولێر، دهۆک و شوێنەکانی تر.</span><span class="t-en">Plumbers, electricians, AC repair, carpenters and more, sorted by what is open now and closest to you, in Sulaymaniyah, Erbil, Duhok and beyond.</span></p></div>
+  <div class="step rv"><span class="num">02 · COMPARE</span><h2><span class="t-ku">پەیوەندی یان واتساپ بە <em>یەک گەڕان.</em></span><span class="t-en">Call or WhatsApp in <em>one tap.</em></span></h2><p><span class="t-ku">هەڵسەنگاندن، نرخ و کاتی کارکردن پێکەوە ببینە، پاشان ڕاستەوخۆ لە لیستەکەوە پەیوەندی بە بزنسەکە بکە.</span><span class="t-en">See ratings, prices and opening hours side by side, then reach the business straight from the list.</span></p></div>
+  <div class="step rv"><span class="num">03 · DIGITAL CARD</span><h2><span class="t-ku">هەموو بزنسێک <em>کارتی دیجیتاڵی</em> وەردەگرێت.</span><span class="t-en">Every business gets a <em>digital card.</em></span></h2><p><span class="t-ku">بیسڕەوە بۆ وەرگێڕانی، بۆ وێنە، نرخ و هەڵسەنگاندن خوارەوە بڕۆ. بە بەستەرێک یان بە دەستلێدانی کارتی NFC هاوبەشی بکە.</span><span class="t-en">Swipe it to turn it over, scroll down for photos, prices and reviews. Share it with a link or a tap of an NFC card.</span></p></div>
+  <div class="step rv"><span class="num">04 · WALLET</span><h2><span class="t-ku">هەموو کارتەکانت لە <em>یەک جزدان.</em></span><span class="t-en">All your cards in <em>one wallet.</em></span></h2><p><span class="t-ku">ئەو بزنسانەی متمانەیان پێدەکەیت هەڵبگرە و لە چەند چرکەیەکدا دووبارە بیاندۆزەرەوە، ئیتر کارتی کاغەزی ون مەکە.</span><span class="t-en">Save the businesses you trust and find them again in seconds, no more lost paper cards.</span></p></div>
+  <div class="step rv"><span class="num">05 · SCAN</span><h2><span class="t-ku">کارتی کاغەزی بگۆڕە بۆ <em>دیجیتاڵ.</em></span><span class="t-en">Turn paper cards into <em>digital.</em></span></h2><p><span class="t-ku">کامێراکەت بۆ هەر کارتێکی بزنس ڕابگرە. بمناسە دەیخوێنێتەوە و لە جزدانەکەتدا هەڵیدەگرێت، ئامادەیە بۆ پەیوەندی.</span><span class="t-en">Point your camera at any business card. Bmnassa reads it and keeps it in your wallet, ready to call.</span></p></div>
 </section>
 
 <div class="shots" aria-label="App screens">
@@ -128,25 +156,25 @@ footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24p
   <span class="kicker"><i></i><span class="t-ku">بۆ خاوەنی بزنس</span><span class="t-en">For business owners</span></span>
   <h2><span class="t-ku">بزنسەکەت، <em>دۆزرایەوە.</em> بەخۆڕایی.</span><span class="t-en">Your business, <em>found.</em> Free.</span></h2>
   <div class="bento">
-    <div class="tile big">
+    <div class="tile big rv">
       <h3><span class="t-ku">ببینە کێ دەتدۆزێتەوە</span><span class="t-en">See who finds you</span></h3>
       <p><span class="t-ku">بینین، پەیوەندی و کلیکی واتساپ ڕۆژانە، و ژمارەی ئەو کەسانەی کارتەکەیان هەڵگرتووە.</span><span class="t-en">Views, calls and WhatsApp taps every day, and how many people saved your card.</span></p>
       <img class="tile-shot" src="assets/dashboard.webp" alt="The owner dashboard with weekly views">
     </div>
-    <div class="tile gold">
+    <div class="tile gold rv">
       <h3><span class="t-ku">بەخۆڕایی تۆماری بکە</span><span class="t-en">List it free</span></h3>
       <p><span class="t-ku">ناو، تەلەفۆن، نرخ، کات، وێنە و بەستەرەکان، بە ئینگلیزی، کوردی و عەرەبی. تیمی بمناسە هەموو تۆمارەکان پشکنین دەکات.</span><span class="t-en">Name, phone, prices, hours, photos and links, in English, Kurdish and Arabic. The Bmnassa team checks every listing.</span></p>
     </div>
-    <div class="tile">
+    <div class="tile rv">
       <h3><span class="t-ku">ڕەنگەکانت، کارتەکەت</span><span class="t-en">Your colours, your card</span></h3>
       <p><span class="t-ku">لۆگۆ، پۆست و ڕەنگی کارتەکەت زیاد بکە. هەموو شوێنێک بە یەک کاتدا نوێ دەبێتەوە.</span><span class="t-en">Add your logo, job title and card colour. It updates everywhere at once.</span></p>
       <div class="swatches"><i style="background:#14213d"></i><i style="background:#5a1a2a"></i><i style="background:#1e3a2f"></i><i style="background:#b94e38"></i><i style="background:#3a2350"></i><i style="background:#121212"></i></div>
     </div>
-    <div class="tile">
+    <div class="tile rv">
       <h3><span class="t-ku">کارتی NFC، گەیاندراو</span><span class="t-en">NFC cards, delivered</span></h3>
       <p><span class="t-ku">کارتی چاپکراو داوا بکە کە لەسەر هەر مۆبایلێک بە یەک دەستلێدان پەڕەکەت دەکاتەوە.</span><span class="t-en">Order printed cards that open your page with one tap on any phone.</span></p>
     </div>
-    <div class="tile">
+    <div class="tile rv">
       <h3><span class="t-ku">لە کاغەزەوە بۆ بمناسە</span><span class="t-en">From paper to Bmnassa</span></h3>
       <p><span class="t-ku">کاتێک خەڵک کارتی کاغەزی کۆنت سکان دەکەن، دەتوانن بزنسەکەت پێشنیار بکەن، و بانگهێشتت دەکەین بۆ بەشداریکردن.</span><span class="t-en">When people scan your old paper card, they can suggest your business, and we invite you to join.</span></p>
     </div>
@@ -159,7 +187,7 @@ footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24p
   <div class="stores">
     <a class="store" href="https://app.bmnassa.com"><span><small><span class="t-ku">لە وێبگەڕ</span><span class="t-en">In your browser</span></small><b><span class="t-ku">app.bmnassa.com</span><span class="t-en">app.bmnassa.com</span></b></span></a>
   </div>
-  <div class="sky"><img src="assets/skyline.webp" alt=""></div>
+  <div class="sky"><div class="sky-pan"><img src="assets/skyline.webp" alt=""><img src="assets/skyline.webp" alt=""></div></div>
 </section>
 
 <footer class="foot">
@@ -183,6 +211,15 @@ footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24p
   var saved = null;
   try { saved = localStorage.getItem("bm_site_lang"); } catch (e) {}
   if (saved === "en" || saved === "ku") setLang(saved);
+})();
+
+(function () {
+  var els = document.querySelectorAll(".rv");
+  if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, { threshold: 0.15 });
+  els.forEach(function (e) { io.observe(e); });
 })();
 </script>
 </body>
