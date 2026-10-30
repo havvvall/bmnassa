@@ -503,6 +503,8 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
   const faces = useRef({});
   const [box, setBox] = useState({ w: 350, h: 470 });
   const [active, setActive] = useState(0);
+  // the quick buttons show only after a tap on a card, and hide again while the stack moves
+  const [barOn, setBarOn] = useState(false);
   const act = useRef(-1);
   const cur = items[Math.min(active, items.length - 1)];
   const [back, flip, setBack] = useFlip(cur && cur.id);
@@ -555,7 +557,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
     if (best !== act.current) { if (act.current !== -1) haptic(4); act.current = best; setActive(best); }
   };
   const raf = useRef(0);
-  const onScroll = () => { cancelAnimationFrame(raf.current); raf.current = requestAnimationFrame(paint); };
+  const onScroll = () => { setBarOn(false); cancelAnimationFrame(raf.current); raf.current = requestAnimationFrame(paint); };
   const centre = (i, smooth = true) => {
     const sc = scroller.current, el = items[i] && els.current[items[i].id];
     if (!sc || !el) return;
@@ -584,6 +586,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
   const tap = (it, i) => {
     if (swiped.current) { swiped.current = false; return; }
     if (i !== active) { haptic(8); centre(i); return; }
+    setBarOn(true);
     if (canFlip(it)) { if (is3D(it)) turn3(1); else flip(faces.current[it.id]); }
   };
   // the chosen card's quick buttons
@@ -620,8 +623,8 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
             <div key={it.id} className="wb-item" style={{ height: STEP }} ref={(el) => { els.current[it.id] = el; }}>
               <button type="button" className="wb-card" aria-label={itemName(it, lang)} onClick={() => tap(it, i)} onTouchStart={sStart} onTouchEnd={sEnd(it, i)}>
                 <div className="ws-face" ref={(el) => { faces.current[it.id] = el; }}>
-                  {i === active && is3D(it)
-                    ? <Card3D b={it.businesses} s={cardSettings(it.businesses)} lang={lang} cat={cats[it.businesses.category_id]} url={`${window.location.origin}/${it.businesses.handle}/card`} flipped={back} dir={dir3} wide />
+                  {Math.abs(i - active) <= 1 && is3D(it)
+                    ? <Card3D b={it.businesses} s={cardSettings(it.businesses)} lang={lang} cat={cats[it.businesses.category_id]} url={`${window.location.origin}/${it.businesses.handle}/card`} flipped={i === active && back} dir={dir3} wide />
                     : <WheelFace it={it} lang={lang} cats={cats} back={i === active && back} />}
                 </div>
                 {it.kind !== "scanned" ? <span className="ws-name wb-name" dir="auto">{itemName(it, lang)}</span> : null}
@@ -637,7 +640,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
         ) : null}
       </div>
       {cur ? (
-        <div className="wb-bar" key={cur.id}>
+        <div className={"wb-bar" + (barOn ? " on" : "")} key={cur.id}>
           <span className="grow"><span className="wb-namerow"><b dir="auto">{itemName(cur, lang)}</b><TypeTag it={cur} lang={lang} /></span><small>{canFlip(cur) ? t(lang, "w_tap_flip") : b ? pick(b, "name", lang) : d0.company || ""}</small></span>
           {phone ? <a className="wb-btn gold" href={`tel:${phone}`} aria-label={t(lang, "call")} onClick={() => haptic(10)}><Icon name="phone" size={19} /></a> : null}
           {wa ? <a className="wb-btn wa" href={`https://wa.me/${digits(wa)}`} target="_blank" rel="noreferrer" aria-label={t(lang, "whatsapp")}><Icon name="whatsapp" size={19} /></a> : null}

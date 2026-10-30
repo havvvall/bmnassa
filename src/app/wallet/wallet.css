@@ -299,3 +299,8 @@
 
 /* the chosen business card on the wallet stage is the 3D card: it fills the slot */
 .wb-card .c3d { min-height: 0; max-height: none; height: 100%; }
+
+/* Quick buttons: hidden while the stack moves, shown after a tap on a card */
+.wb-bar { opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity 220ms ease, transform 260ms ease; }
+.wb-bar.on { opacity: 1; transform: none; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .wb-bar { transition: none; } }
