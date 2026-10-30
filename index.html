@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bmnassa — هەموو خزمەتگوزارییەکی متمانەپێکراو</title>
+<meta name="description" content="Bmnassa: find trusted services near you in Kurdistan, call or WhatsApp in one tap, and keep every business card in one wallet.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Vazirmatn:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --gold:#f5c33b; --ink:#0e0e0f; --muted:#98989f; --panel:#141416; --line:rgba(255,255,255,.08); }
+* { box-sizing: border-box; }
+body { margin:0; background:#000; color:#fff; font-family: Manrope, Vazirmatn, system-ui, sans-serif; overflow-x:hidden; }
+.t-en { display:none; }
+html[lang="en"] .t-en { display:inline; }
+html[lang="en"] .t-ku { display:none; }
+html[dir="ltr"] { direction:ltr; }
+a { color:inherit; text-decoration:none; }
+img { display:block; max-width:100%; }
+.wrap { padding: 0 clamp(20px,5vw,80px); }
+header.nav { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px clamp(20px,5vw,80px); flex-wrap:wrap; }
+.lang-sw { display:flex; gap:4px; padding:4px; border-radius:999px; background:var(--panel); }
+.lang-sw button { border:0; background:none; color:var(--muted); font:inherit; font-weight:800; font-size:13px; padding:7px 12px; border-radius:999px; cursor:pointer; }
+.lang-sw button[aria-pressed="true"] { background:#fff; color:var(--ink); }
+.nav-links { display:flex; gap:18px; font-weight:700; font-size:14px; color:#d6d6db; }
+.pill { background:var(--gold); color:var(--ink); font-weight:800; font-size:14px; padding:10px 18px; border-radius:999px; }
+.hero { position:relative; display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items:center; gap:24px; padding: 40px clamp(20px,5vw,80px) 80px; min-height: 80vh; }
+.kicker { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-weight:800; font-size:12px; letter-spacing:.14em; text-transform:uppercase; }
+.kicker i { width:8px; height:8px; border-radius:50%; background:var(--gold); }
+h1 { font-size: clamp(34px,5vw,60px); line-height:1.08; letter-spacing:-.02em; margin:14px 0; font-weight:800; }
+h1 em, h2 em, h3 em { font-style:normal; color:var(--gold); }
+.lead { color:#c4c4ca; font-size:17px; line-height:1.6; max-width:520px; }
+.stores { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
+.store { display:inline-flex; align-items:center; gap:10px; padding:12px 18px; border-radius:16px; background:#fff; color:var(--ink); font-weight:700; }
+.store.dark { background:var(--panel); color:#fff; box-shadow: inset 0 0 0 1px var(--line); }
+.store small { display:block; font-size:11px; opacity:.7; }
+.store b { font-size:16px; }
+.hero-phone { display:flex; justify-content:center; }
+.hero-phone img { width:min(320px,80vw); border-radius:38px; box-shadow:0 30px 60px rgba(0,0,0,.6); }
+.say { padding: 40px clamp(20px,5vw,80px); display:grid; gap:14px; }
+.say p { font-size: clamp(26px,4vw,40px); font-weight:800; margin:0; letter-spacing:-.01em; }
+.story { padding: 60px clamp(20px,5vw,80px); display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+.step { background:var(--panel); border-radius:24px; padding:24px; box-shadow: inset 0 0 0 1px var(--line); }
+.num { color:var(--gold); font-size:12px; font-weight:800; letter-spacing:.14em; }
+.step h2 { font-size:22px; margin:10px 0 8px; }
+.step p { color:#c4c4ca; line-height:1.6; margin:0; font-size:15px; }
+.shots { display:flex; gap:14px; overflow-x:auto; padding: 0 clamp(20px,5vw,80px) 40px; scroll-snap-type:x mandatory; }
+.shots img { width: 220px; flex:none; border-radius:30px; scroll-snap-align:start; box-shadow:0 20px 40px rgba(0,0,0,.5); }
+.owners { padding: 60px clamp(20px,5vw,80px); }
+.owners h2 { font-size: clamp(30px,4vw,46px); font-weight:800; margin:14px 0 24px; }
+.bento { display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+.tile { background:var(--panel); border-radius:28px; padding:24px; box-shadow: inset 0 0 0 1px var(--line); display:flex; flex-direction:column; gap:10px; }
+.tile.big { grid-column: span 2; }
+.tile.gold { background: var(--gold); color: var(--ink); }
+.tile.gold p { color:#3a2f0a; }
+.tile h3 { margin:0; font-size:21px; }
+.tile p { margin:0; color:#c4c4ca; line-height:1.55; font-size:15px; }
+.tile-shot { border-radius:18px; margin-top:6px; }
+.swatches { display:flex; gap:8px; margin-top:auto; }
+.swatches i { width:26px; height:26px; border-radius:50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+.cta { position:relative; text-align:center; padding: 80px clamp(20px,5vw,80px); overflow:hidden; }
+.cta h2 { font-size: clamp(32px,5vw,56px); font-weight:800; margin:24px 0 8px; }
+.cta .stores { justify-content:center; }
+.sky { margin-top:40px; overflow:hidden; height: 160px; }
+.sky img { height:100%; width:auto; opacity:.6; }
+footer.foot { display:flex; justify-content:space-between; gap:12px; padding:24px clamp(20px,5vw,80px); color:var(--muted); font-size:13px; border-top:1px solid var(--line); flex-wrap:wrap; }
+@media (max-width: 800px) {
+  .hero { grid-template-columns: 1fr; text-align:center; min-height:auto; }
+  .lead { margin: 0 auto; }
+  .stores { justify-content:center; }
+  .hero-phone { order: 2; margin-top: 8px; }
+  .nav-links { display:none; }
+  .tile.big { grid-column: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="lang-sw" role="group" aria-label="Language">
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+    <button type="button" data-lang="ku" aria-pressed="true">کوردی</button>
+  </div>
+  <img src="assets/logo.svg" alt="Bmnassa" style="height:26px;width:auto">
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#how"><span class="t-ku">چۆن کار دەکات</span><span class="t-en">How it works</span></a>
+    <a href="#owners"><span class="t-ku">بۆ بزنسەکان</span><span class="t-en">For businesses</span></a>
+  </nav>
+  <a class="pill" href="https://app.bmnassa.com"><span class="t-ku">ئەپەکە بکەرەوە</span><span class="t-en">Open the app</span></a>
+</header>
+
+<section class="hero">
+  <div>
+    <span class="kicker"><i></i>Kurdistan · Iraq</span>
+    <h1><span class="t-ku">هەموو خزمەتگوزارییەکی متمانەپێکراو، <em>بە یەک گەڕان نزیکە.</em></span><span class="t-en">Every trusted service, <em>one tap away.</em></span></h1>
+    <p class="lead"><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر و سەدان کەسی تر لە نزیکتەوە بدۆزەرەوە. بە یەک گەڕان پەیوەندی بکە یان واتساپ بنێرە، و هەموو کارتی بزنسەکان لە یەک جزدان هەڵبگرە.</span><span class="t-en">Find plumbers, electricians, AC repair and hundreds more near you. Call or WhatsApp in one tap, and keep every business card in one wallet.</span></p>
+    <div class="stores">
+      <a class="store" href="https://app.bmnassa.com"><span><small><span class="t-ku">بەخۆڕایی بیکەرەوە</span><span class="t-en">Free, in your browser</span></small><b><span class="t-ku">ئەپەکە بکەرەوە</span><span class="t-en">Open the app</span></b></span></a>
+    </div>
+  </div>
+  <div class="hero-phone"><img src="assets/screen-search.webp" alt="Bmnassa home screen with search and categories"></div>
+</section>
+
+<section class="say" id="how">
+  <p><span class="t-ku">پەیداکردنی <em>دابینکەری خزمەتگوزاری دروست.</em></span><span class="t-en">Find the right <em>service provider.</em></span></p>
+  <p><span class="t-ku">پەیوەندی بە <em>یەک گەڕان.</em></span><span class="t-en">Call in <em>one tap.</em></span></p>
+  <p><span class="t-ku">هەموو <em>کارتێک هەڵبگرە.</em></span><span class="t-en">Keep every <em>card.</em></span></p>
+</section>
+
+<section class="story">
+  <div class="step"><span class="num">01 · SEARCH</span><h2><span class="t-ku">هەموو خزمەتگوزاریەک، <em>لە نزیکتەوە.</em></span><span class="t-en">Any service, <em>near you.</em></span></h2><p><span class="t-ku">پلۆمبەر، کارەبایی، چاککردنەوەی کۆڵەر، نەجار و زیاتر، ڕێکخراو بەپێی ئەوەی ئێستا کراوەیە و لە هەمووان نزیکتریە، لە سلێمانی، هەولێر، دهۆک و شوێنەکانی تر.</span><span class="t-en">Plumbers, electricians, AC repair, carpenters and more, sorted by what is open now and closest to you, in Sulaymaniyah, Erbil, Duhok and beyond.</span></p></div>
+  <div class="step"><span class="num">02 · COMPARE</span><h2><span class="t-ku">پەیوەندی یان واتساپ بە <em>یەک گەڕان.</em></span><span class="t-en">Call or WhatsApp in <em>one tap.</em></span></h2><p><span class="t-ku">هەڵسەنگاندن، نرخ و کاتی کارکردن پێکەوە ببینە، پاشان ڕاستەوخۆ لە لیستەکەوە پەیوەندی بە بزنسەکە بکە.</span><span class="t-en">See ratings, prices and opening hours side by side, then reach the business straight from the list.</span></p></div>
+  <div class="step"><span class="num">03 · DIGITAL CARD</span><h2><span class="t-ku">هەموو بزنسێک <em>کارتی دیجیتاڵی</em> وەردەگرێت.</span><span class="t-en">Every business gets a <em>digital card.</em></span></h2><p><span class="t-ku">بیسڕەوە بۆ وەرگێڕانی، بۆ وێنە، نرخ و هەڵسەنگاندن خوارەوە بڕۆ. بە بەستەرێک یان بە دەستلێدانی کارتی NFC هاوبەشی بکە.</span><span class="t-en">Swipe it to turn it over, scroll down for photos, prices and reviews. Share it with a link or a tap of an NFC card.</span></p></div>
+  <div class="step"><span class="num">04 · WALLET</span><h2><span class="t-ku">هەموو کارتەکانت لە <em>یەک جزدان.</em></span><span class="t-en">All your cards in <em>one wallet.</em></span></h2><p><span class="t-ku">ئەو بزنسانەی متمانەیان پێدەکەیت هەڵبگرە و لە چەند چرکەیەکدا دووبارە بیاندۆزەرەوە، ئیتر کارتی کاغەزی ون مەکە.</span><span class="t-en">Save the businesses you trust and find them again in seconds, no more lost paper cards.</span></p></div>
+  <div class="step"><span class="num">05 · SCAN</span><h2><span class="t-ku">کارتی کاغەزی بگۆڕە بۆ <em>دیجیتاڵ.</em></span><span class="t-en">Turn paper cards into <em>digital.</em></span></h2><p><span class="t-ku">کامێراکەت بۆ هەر کارتێکی بزنس ڕابگرە. بمناسە دەیخوێنێتەوە و لە جزدانەکەتدا هەڵیدەگرێت، ئامادەیە بۆ پەیوەندی.</span><span class="t-en">Point your camera at any business card. Bmnassa reads it and keeps it in your wallet, ready to call.</span></p></div>
+</section>
+
+<div class="shots" aria-label="App screens">
+  <img src="assets/screen-search.webp" alt="Search and categories">
+  <img src="assets/screen-results.webp" alt="Results shown as business cards">
+  <img src="assets/screen-card.webp" alt="A business's full-screen digital card">
+  <img src="assets/screen-wallet.webp" alt="The card wallet">
+  <img src="assets/screen-scan.webp" alt="A scanned paper card saved in the wallet">
+</div>
+
+<section class="owners" id="owners">
+  <span class="kicker"><i></i><span class="t-ku">بۆ خاوەنی بزنس</span><span class="t-en">For business owners</span></span>
+  <h2><span class="t-ku">بزنسەکەت، <em>دۆزرایەوە.</em> بەخۆڕایی.</span><span class="t-en">Your business, <em>found.</em> Free.</span></h2>
+  <div class="bento">
+    <div class="tile big">
+      <h3><span class="t-ku">ببینە کێ دەتدۆزێتەوە</span><span class="t-en">See who finds you</span></h3>
+      <p><span class="t-ku">بینین، پەیوەندی و کلیکی واتساپ ڕۆژانە، و ژمارەی ئەو کەسانەی کارتەکەیان هەڵگرتووە.</span><span class="t-en">Views, calls and WhatsApp taps every day, and how many people saved your card.</span></p>
+      <img class="tile-shot" src="assets/dashboard.webp" alt="The owner dashboard with weekly views">
+    </div>
+    <div class="tile gold">
+      <h3><span class="t-ku">بەخۆڕایی تۆماری بکە</span><span class="t-en">List it free</span></h3>
+      <p><span class="t-ku">ناو، تەلەفۆن، نرخ، کات، وێنە و بەستەرەکان، بە ئینگلیزی، کوردی و عەرەبی. تیمی بمناسە هەموو تۆمارەکان پشکنین دەکات.</span><span class="t-en">Name, phone, prices, hours, photos and links, in English, Kurdish and Arabic. The Bmnassa team checks every listing.</span></p>
+    </div>
+    <div class="tile">
+      <h3><span class="t-ku">ڕەنگەکانت، کارتەکەت</span><span class="t-en">Your colours, your card</span></h3>
+      <p><span class="t-ku">لۆگۆ، پۆست و ڕەنگی کارتەکەت زیاد بکە. هەموو شوێنێک بە یەک کاتدا نوێ دەبێتەوە.</span><span class="t-en">Add your logo, job title and card colour. It updates everywhere at once.</span></p>
+      <div class="swatches"><i style="background:#14213d"></i><i style="background:#5a1a2a"></i><i style="background:#1e3a2f"></i><i style="background:#b94e38"></i><i style="background:#3a2350"></i><i style="background:#121212"></i></div>
+    </div>
+    <div class="tile">
+      <h3><span class="t-ku">کارتی NFC، گەیاندراو</span><span class="t-en">NFC cards, delivered</span></h3>
+      <p><span class="t-ku">کارتی چاپکراو داوا بکە کە لەسەر هەر مۆبایلێک بە یەک دەستلێدان پەڕەکەت دەکاتەوە.</span><span class="t-en">Order printed cards that open your page with one tap on any phone.</span></p>
+    </div>
+    <div class="tile">
+      <h3><span class="t-ku">لە کاغەزەوە بۆ بمناسە</span><span class="t-en">From paper to Bmnassa</span></h3>
+      <p><span class="t-ku">کاتێک خەڵک کارتی کاغەزی کۆنت سکان دەکەن، دەتوانن بزنسەکەت پێشنیار بکەن، و بانگهێشتت دەکەین بۆ بەشداریکردن.</span><span class="t-en">When people scan your old paper card, they can suggest your business, and we invite you to join.</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="download">
+  <img src="assets/logo.svg" alt="Bmnassa" style="margin:0 auto;width:min(340px,70vw);height:auto">
+  <h2><span class="t-ku">بمناسە بکەرەوە. <em>بەخۆڕایی.</em></span><span class="t-en">Open Bmnassa. <em>It's free.</em></span></h2>
+  <div class="stores">
+    <a class="store" href="https://app.bmnassa.com"><span><small><span class="t-ku">لە وێبگەڕ</span><span class="t-en">In your browser</span></small><b><span class="t-ku">app.bmnassa.com</span><span class="t-en">app.bmnassa.com</span></b></span></a>
+  </div>
+  <div class="sky"><img src="assets/skyline.webp" alt=""></div>
+</section>
+
+<footer class="foot">
+  <span>© Bmnassa · bmnassa.com</span>
+  <span>Kurdistan · Iraq</span>
+</footer>
+
+<script>
+(function () {
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === "ku" ? "rtl" : "ltr";
+    document.querySelectorAll(".lang-sw button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.lang === l));
+    });
+    try { localStorage.setItem("bm_site_lang", l); } catch (e) {}
+  }
+  document.querySelectorAll(".lang-sw button").forEach(function (b) {
+    b.addEventListener("click", function () { setLang(b.dataset.lang); });
+  });
+  var saved = null;
+  try { saved = localStorage.getItem("bm_site_lang"); } catch (e) {}
+  if (saved === "en" || saved === "ku") setLang(saved);
+})();
+</script>
+</body>
+</html>
