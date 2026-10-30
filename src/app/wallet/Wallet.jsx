@@ -601,10 +601,6 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
       <div className="wb-sum">
         <small>{t(lang, "wallet_title")}</small>
         <b>{n === 1 ? t(lang, "wallet_one") : t(lang, "wallet_cards", { n })}</b>
-        <div className="wb-sumbtns">
-          <button type="button" onClick={onScan}><Icon name="scan" size={15} /> {t(lang, "scan_paper")}</button>
-          <button type="button" onClick={() => go("/home")}><Icon name="search" size={15} /> {t(lang, "find_business")}</button>
-        </div>
       </div>
       <div className="wb-stage" ref={stage} style={{ height: box.h, "--cw": CW + "px", "--ch": H + "px" }}>
         <div className="wb-glow" aria-hidden="true" />

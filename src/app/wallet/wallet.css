@@ -314,3 +314,8 @@ body.wallet-wheel .bm-bottom-nav { display: none; }
 .w-page .w-head, .w-page .w-foot, .w-page .wb-sum { transition: opacity 400ms ease, transform 400ms ease; }
 .w-page.w-busy .w-head, .w-page.w-busy .w-foot, .w-page.w-busy .wb-sum { opacity: 0 !important; transform: translateY(-8px) !important; pointer-events: none; animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .w-page .w-head, .w-page .w-foot, .w-page .wb-sum { transition: none; } }
+
+/* Bmnassa look: compact summary at the top, the card stack centred in the space below it */
+.wb-sum { padding: 10px 16px 9px; }
+.w-page.look-bmnassa .wb { min-height: calc(100dvh - 190px); display: flex; flex-direction: column; }
+.w-page.look-bmnassa .wb-stage { margin-block: auto; }
