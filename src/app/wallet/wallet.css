@@ -310,7 +310,7 @@ body.wallet-wheel .bm-bottom-nav { display: none; }
 .w-page.look-wheel { min-height: 100dvh; }
 .w-page.look-wheel .w-wheel { height: 100dvh; margin: 0; padding: 0 20px; }
 
-/* Header and summary fade while the cards scroll, and come back 3 seconds after scrolling stops */
+/* Header and summary fade while the cards scroll, and come back 2 seconds after scrolling stops */
 .w-page .w-head, .w-page .w-foot, .w-page .wb-sum { transition: opacity 400ms ease, transform 400ms ease; }
-.w-page.w-busy .w-head, .w-page.w-busy .w-foot, .w-page.w-busy .wb-sum { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+.w-page.w-busy .w-head, .w-page.w-busy .w-foot, .w-page.w-busy .wb-sum { opacity: 0 !important; transform: translateY(-8px) !important; pointer-events: none; animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .w-page .w-head, .w-page .w-foot, .w-page .wb-sum { transition: none; } }

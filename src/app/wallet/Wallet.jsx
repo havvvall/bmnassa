@@ -686,11 +686,11 @@ export function WalletPage({ lang, go, signedIn }) {
   // the wheel look hides the app's bottom bar; this switch brings it back
   const [navOn, setNavOnState] = useState(() => store.get("bm_wallet_nav", "0") === "1");
   const setNavOn = (v) => { setNavOnState(v); store.set("bm_wallet_nav", v ? "1" : "0"); };
-  // the header and summary fade while the cards scroll, and come back 3 seconds after scrolling stops
+  // the header and summary fade while the cards scroll, and come back 2 seconds after scrolling stops
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     let t = 0;
-    const onScroll = () => { setBusy(true); clearTimeout(t); t = setTimeout(() => setBusy(false), 3000); };
+    const onScroll = () => { setBusy(true); clearTimeout(t); t = setTimeout(() => setBusy(false), 2000); };
     window.addEventListener("scroll", onScroll, { capture: true, passive: true });
     return () => { clearTimeout(t); window.removeEventListener("scroll", onScroll, { capture: true }); };
   }, []);
