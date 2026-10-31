@@ -11,7 +11,7 @@ import "./browse.css";
 import { t, cityName, bizCount, pick, FALLBACK_CITIES } from "../i18n.js";
 import { getCategories, getCities, getPlaces, listBusinesses, businessByHandle, prettyPhone, getPhotos, getPrices, photoUrl, track, getWallet, topCalled, scanStats, joinedFromScans } from "../api.js";
 import { hoursLines, openState, todayHours, todayIndex, dayName, DAYS } from "../hours.js";
-import { CardFront, CardBack, NfcCard, cardSettings, CardLogo, cardPerson, cardLinks, SOCIAL_KEYS } from "../card/CardFaces.jsx";
+import { CardFront, CardBack, NfcCard, cardSettings, CardLogo, cardPerson, cardLinks, SOCIAL_KEYS, resultStyle } from "../card/CardFaces.jsx";
 import { Card3D, canUse3D } from "../card/Card3D.jsx";
 import { pageSettings, pageLook } from "../pageStyle.js";
 import { Icon, categoryIcon } from "./icons.jsx";
@@ -165,7 +165,7 @@ function greeting(lang) {
 function MiniCard({ b, cats, lang, w = 72 }) {
   return (
     <span className="h-mini" style={{ width: w, height: w / 1.586 }}>
-      <span style={{ transform: `scale(${w / 320})` }}><NfcCard b={b} s={cardSettings(b)} lang={lang} cat={cats[b.category_id]} linksOnly /></span>
+      <span style={{ transform: `scale(${w / 320})` }}><NfcCard b={b} s={resultStyle(cardSettings(b))} lang={lang} cat={cats[b.category_id]} linksOnly /></span>
     </span>
   );
 }
@@ -397,7 +397,7 @@ function ResultRow({ b, lang, look, onOpen }) {
       <span className="b-av">{initial(pick(b, "name", lang))}</span>
       <span className="grow">
         <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
-        <small><Rating b={b} lang={lang} compact /> {dist ? <span className="b-muted">· {cityName(dist, lang)}</span> : null}</small>
+        <small><Rating b={b} lang={lang} /> {dist ? <span className="b-muted">· {cityName(dist, lang)}</span> : null}</small>
         {openState(b.hours, lang) ? <small className={openState(b.hours, lang).open ? "b-ok" : "b-muted"}>{openState(b.hours, lang).text}</small> : null}
       </span>
       {b.phone ? (
@@ -415,7 +415,7 @@ function ResultTile({ b, lang, look, onOpen }) {
     <button type="button" className="b-rtile" onClick={onOpen}>
       <span className="b-av big">{initial(pick(b, "name", lang))}</span>
       <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
-      <small><Rating b={b} lang={lang} compact />{dist ? <span className="b-muted"> · {cityName(dist, lang)}</span> : null}</small>
+      <small><Rating b={b} lang={lang} />{dist ? <span className="b-muted"> · {cityName(dist, lang)}</span> : null}</small>
     </button>
   );
 }
@@ -446,7 +446,7 @@ function ResultCardRow({ b, lang, look, onOpen }) {
       <span className="grow">
         <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
         <small>{[dist && cityName(dist, lang), c && cityName(c, lang)].filter(Boolean).join(" · ")}</small>
-        <span className="r-line"><Rating b={b} lang={lang} compact /><OpenPill b={b} lang={lang} /></span>
+        <span className="r-line"><Rating b={b} lang={lang} /><OpenPill b={b} lang={lang} /></span>
       </span>
       <CallBtns b={b} lang={lang} column />
     </div>
@@ -459,12 +459,12 @@ function ResultCardBig({ b, lang, look, onOpen, go, setToast }) {
   return (
     <div className="r-big">
       <button type="button" className="r-bigcard" onClick={onOpen} aria-label={pick(b, "name", lang)}>
-        <NfcCard b={b} s={cardSettings(b)} lang={lang} cat={look.cat[b.category_id]} linksOnly />
+        <NfcCard b={b} s={resultStyle(cardSettings(b))} lang={lang} cat={look.cat[b.category_id]} linksOnly />
       </button>
       <div className="r-bigrow">
         <span className="grow">
           <b className="b-name"><bdi>{pick(b, "name", lang)}</bdi>{b.verified ? <Tick /> : null}</b>
-          <span className="r-line"><Rating b={b} lang={lang} compact />{dist ? <small>{cityName(dist, lang)}</small> : null}<OpenPill b={b} lang={lang} /></span>
+          <span className="r-line"><Rating b={b} lang={lang} />{dist ? <small>{cityName(dist, lang)}</small> : null}<OpenPill b={b} lang={lang} /></span>
         </span>
         <SaveToWallet b={b} lang={lang} go={go} setToast={setToast} className="r-save" iconOnly />
         {b.phone ? <a className="r-cb call" href={`tel:${b.phone}`} onClick={() => track(b.id, "call")} aria-label={t(lang, "call")}><Icon name="phone" size={17} /></a> : null}
@@ -473,7 +473,7 @@ function ResultCardBig({ b, lang, look, onOpen, go, setToast }) {
   );
 }
 
-const RES_VIEW_KEY = "bm_results_view";
+const RES_VIEW_KEY = "bm_results_view_v2";
 
 export function Results({ lang, city, setCity, go, back, signedIn, categoryId, search }) {
   const [lists] = useLists();
@@ -1002,7 +1002,7 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
   const links = socialLinks(b, lang);
   const dir = directionsUrl(b);
   const n = Number(b.reviews) || 0;
-  const cs = cardSettings(b);
+  const cs = resultStyle(cardSettings(b));
   const ps = pageSettings(b);
   const pgLook = pageLook(ps, cs.color);
   const bigPhotos = ps.layout === "grid";
@@ -1050,7 +1050,6 @@ export function BizPage({ lang, handle, go, back, signedIn }) {
       </div>
       <button type="button" className="bz-scrollhint" ref={hintRef} onClick={toProfile}>
         <small>{t(lang, "tap_card_flip")}</small>
-        <b>{t(lang, "scroll_profile")}</b>
         <span className="bz-chev"><Icon name="down" size={20} /></span>
       </button>
       </section>

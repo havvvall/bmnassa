@@ -279,7 +279,9 @@
 .wb-namerow { gap: 6px; }
 .wb-namerow .w-type { height: 18px; padding: 0 6px; font-size: 10px; }
 /* suggest a scanned card to the team */
-.w-sg { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 20px; background: var(--surface-raised); box-shadow: inset 0 0 0 1.5px var(--accent), var(--shadow-soft-sm, none); }
+.w-sg { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 12px; border-radius: 16px; background: var(--surface-raised); box-shadow: inset 0 0 0 1px rgba(127, 127, 135, 0.22), var(--shadow-soft-sm, none); }
+.w-sg:not(.done) small { display: none; }
+.w-sg:not(.done) .w-sg-ic { width: 28px; height: 28px; }
 .w-sg.done { box-shadow: var(--shadow-soft-sm, none); }
 .w-sg .grow { display: flex; flex-direction: column; min-width: 0; }
 .w-sg b { font-size: 14px; } .w-sg small { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 16px; }
@@ -307,6 +309,7 @@
 
 /* Wheel look: full screen, only the cards (no title, search, footer or bottom bar) */
 body.wallet-wheel .bm-bottom-nav { display: none; }
+body.wallet-bar-on .bm-bottom-nav { display: none; }
 .w-page.look-wheel { min-height: 100dvh; }
 .w-page.look-wheel .w-wheel { height: 100dvh; margin: 0; padding: 0 20px; }
 
@@ -344,3 +347,5 @@ body.wallet-wheel .bm-bottom-nav { display: none; }
 :root[data-theme="bmnassa"] .look-bmnassa .wb-bar { background: #f5c33b; box-shadow: inset 0 0 0 1px rgba(122, 86, 0, 0.18), 0 10px 24px rgba(224, 166, 20, 0.25); }
 :root[data-theme="bmnassa"] .look-bmnassa .wb-bar b { color: #15171a; }
 :root[data-theme="bmnassa"] .look-bmnassa .wb-bar small { color: rgba(21, 23, 26, 0.72); }
+
+.w-sg:not(.done) .w-sg-btn { height: 30px; padding: 0 12px; font-size: 12px; background: rgba(127, 127, 135, 0.18); color: inherit; }

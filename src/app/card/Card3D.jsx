@@ -7,7 +7,7 @@ import { pick } from "../i18n.js";
 import { photoUrl } from "../api.js";
 import { ICON_SHAPES } from "../browse/icons.jsx";
 import { QRCode, QRErrorCorrectLevel } from "../vendor/qrcode.js";
-import { A, cardLinks, cardPerson, cardRole } from "./CardFaces.jsx";
+import { A, cardLinks, cardPerson, cardRole, cardTitle } from "./CardFaces.jsx";
 import { t } from "../i18n.js";
 
 let support = null;
@@ -213,7 +213,7 @@ async function paintFaces(G, d) {
   if (role) { fx.fillStyle = "rgba(255,255,255,0.72)"; fx.fillText(rtl ? role : role.toUpperCase(), tx, y - 3); y -= 18; }
   if ("letterSpacing" in fx) fx.letterSpacing = rtl ? "0px" : "-0.6px";
   fx.font = `800 ${fs}px ${font}`;
-  const lines = wrap(fx, cardPerson(b, lang), W - L.pad * 2, wide ? 2 : 3);
+  const lines = wrap(fx, cardTitle(b, lang, d.s), W - L.pad * 2, wide ? 2 : 3);
   for (let i = lines.length - 1; i >= 0; i--) {
     fx.fillStyle = "rgba(0,0,0,0.3)"; fx.fillText(lines[i], tx, y + 1);
     fx.fillStyle = "#fff"; fx.fillText(lines[i], tx, y);
@@ -318,7 +318,7 @@ export function Card3D({ b, s, lang, cat, url, flipped, dir = 1, wide = false, l
   // shape and faces, whenever the size or what is printed on the card changes (not on every re-render)
   const data = useRef({});
   data.current = { b, s, lang, cat, url, rtl, links, wide, logoSize };
-  const person = cardPerson(b, lang);
+  const person = cardTitle(b, lang, s);
   const sig = JSON.stringify([wide, logoSize, size, s.color, s.icons, s.logo_path, cardRole(b, cat, lang, s), person, pick(b, "name", lang), lang, url, links.map((l) => l.key + l.href)]);
   const gen = useRef(0);
   useEffect(() => {

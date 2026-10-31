@@ -505,6 +505,8 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
   const [active, setActive] = useState(0);
   // the quick buttons show only after a tap on a card, and hide again while the stack moves
   const [barOn, setBarOn] = useState(false);
+  // while the quick-action bar is up, the app bottom bar steps aside so only one bar shows
+  useEffect(() => { document.body.classList.toggle("wallet-bar-on", barOn); return () => document.body.classList.remove("wallet-bar-on"); }, [barOn]);
   const act = useRef(-1);
   const cur = items[Math.min(active, items.length - 1)];
   const [back, flip, setBack] = useFlip(cur && cur.id);

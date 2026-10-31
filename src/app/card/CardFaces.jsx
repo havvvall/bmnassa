@@ -81,6 +81,11 @@ export function cardRole(b, cat, lang, s) {
 }
 
 // The person's name on the card, in the reader's language when the owner wrote one
+// Results and business pages: the business name leads, every card shows the same link set in the same order
+export const RESULT_LINKS = ["call", "whatsapp", "instagram", "email", "website"];
+export function resultStyle(s) { return { ...s, links: RESULT_LINKS, bizFirst: true }; }
+export function cardTitle(b, lang, s) { return s && s.bizFirst ? pick(b, "name", lang) : cardPerson(b, lang); }
+
 export function cardPerson(b, lang) {
   const c = (b && b.card) || {};
   const local = lang && lang !== "en" ? clean(c["name_" + lang]) : "";
@@ -110,6 +115,7 @@ export function CardLogo({ b, s, lang, className = "" }) {
 // The standard Bmnassa card · Monogram: matte colour, a faint Bmnassa mark, logo top-left, name, round icons, wordmark
 export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly, tall }) {
   const person = cardPerson(b, lang);
+  const title = cardTitle(b, lang, s);
   const links = cardLinks(b, lang, s).filter((l) => l.key !== "directions").slice(0, tall ? 7 : 4);
   const shell = (cls, children) => (
     <div className={"cf-nfc mono" + cls + (small ? " small" : "") + (tall ? " tall" : "")} style={{ "--card": s.color }}>
@@ -133,8 +139,8 @@ export function NfcCard({ b, s, lang, cat, small, back, url, linksOnly, tall }) 
         <span className="cf-nfc-sign"><Icon name="nfc" size={small ? 16 : 19} /></span>
       </div>
       <div className="cf-nfc-name">
-        <b><bdi>{person}</bdi></b>
-        <small>{cardRole(b, cat, lang, s)}</small>
+        <b><bdi>{title}</bdi></b>
+        <small>{s.bizFirst ? (person !== title ? person : cardRole(b, cat, lang, s)) : cardRole(b, cat, lang, s)}</small>
       </div>
       <div className="cf-mono-foot">
         <img className="cf-mono-word" src="/brand/logo-silver.svg" alt="Bmnassa" />
