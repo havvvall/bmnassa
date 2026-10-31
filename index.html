@@ -161,10 +161,22 @@ a { color: #f5c33b; } a:hover { color: #ffd968; }
 }
 @media (prefers-reduced-motion: reduce) { .sky-pan, .scrollhint span::after { animation: none; } }
 
+
+/* scroll video section */
+.vs{height:300vh;position:relative;background:#000}
+.vs-sticky{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;justify-content:center;gap:48px;padding:0 16px;overflow:hidden;flex-wrap:wrap}
+.vs-video{height:min(78vh,760px);width:auto;max-width:86vw;border-radius:36px;box-shadow:0 30px 80px rgba(0,0,0,.55);background:#000;display:block}
+.vs-copy{max-width:380px;color:#fff;font-family:Manrope,system-ui,sans-serif}
+.vs-copy .k{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#f5c33b;font-weight:800;margin:0 0 14px}
+.vs-copy h2{font-size:clamp(30px,4.5vw,56px);line-height:1.08;margin:0 0 16px;font-weight:800}
+.vs-copy p{color:#b9b9c1;font-size:16px;line-height:1.6;margin:0}
+.lang-ku .vs-copy, .lang-ku .vs-copy *{font-family:Vazirmatn,system-ui,sans-serif !important}
+@media (max-width:700px){.vs{height:260vh}.vs-sticky{flex-direction:column;gap:22px}.vs-video{height:auto;width:min(72vw,300px);max-height:70vh}.vs-copy{text-align:center}.vs-copy h2{font-size:30px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
+<template id="vscroll"><section class="vs" id="video"><div class="vs-sticky"><video class="vs-video" muted playsinline preload="auto" aria-label="Bmnassa wallet preview"><source src="assets/wallet-preview.mp4" type="video/mp4"></video><div class="vs-copy"><p class="k"><span class="t-en">See it in your pocket</span><span class="t-ku">جزدانی بمناسە</span></p><h2><span class="t-en">One scroll, every card you need</span><span class="t-ku">یەک سکرۆڵ، هەموو کارتەکانت</span></h2><p><span class="t-en">Scroll down and watch your Bmnassa wallet come to life.</span><span class="t-ku">بۆ خوارەوە بڕۆ و بزانە جزدانی بمناسە چۆن کار دەکات.</span></p></div></div></section></template>
 <template id="tpl">
 
 <div class="bm {{langCls}}" dir="{{dir}}" ref="{{setRoot}}">

@@ -92,6 +92,45 @@
   // language toggle and forced updates: repaint from the template; glFrame re-creates GL when the canvas is new
   comp.onState = paint;
   comp.forceUpdate = paint;
+
+  // scroll-scrubbed video: the clip moves with the scroll position (static poster-free on reduced motion)
+  function wireVideo() {
+    var sec = app.querySelector(".vs");
+    if (!sec) return;
+    var v = sec.querySelector("video");
+    if (window.__vsOff) { window.removeEventListener("scroll", window.__vsOff); window.__vsOff = null; }
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (calm) { v.loop = true; v.play().catch(function () {}); return; }
+    v.pause();
+    var raf = 0;
+    function upd() {
+      raf = 0;
+      if (!v.duration || isNaN(v.duration)) return;
+      var r = sec.getBoundingClientRect();
+      var total = sec.offsetHeight - window.innerHeight;
+      var p = Math.min(1, Math.max(0, -r.top / total));
+      v.currentTime = p * v.duration;
+    }
+    var onScroll = function () { if (!raf) raf = requestAnimationFrame(upd); };
+    window.__vsOff = onScroll;
+    window.addEventListener("scroll", onScroll, { passive: true });
+    v.addEventListener("loadedmetadata", upd);
+    v.load();
+    upd();
+  }
+  var _paint = paint;
+  paint = function () {
+    _paint();
+    var tpl2 = document.getElementById("vscroll");
+    if (tpl2) {
+      var foot = app.querySelector("footer.foot");
+      var frag = tpl2.content.cloneNode(true);
+      if (foot) foot.parentNode.insertBefore(frag, foot); else app.appendChild(frag);
+      wireVideo();
+    }
+  };
+  comp.onState = paint;
+  comp.forceUpdate = paint;
   paint();
   comp.componentDidMount && comp.componentDidMount();
   // the template's ref callbacks have set root and canvas; the loop started in componentDidMount draws the stage
