@@ -103,11 +103,15 @@ export function PlanChooser({ lang, go }) {
 
   return (
     <div className={"pl-screen" + (soon ? " soonp" : "")} style={vars}>
-      <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /></div>
+      <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /><img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /></div>
+      <div className="stack pl-title">
+        <h1>{soon ? "Coming soon" : "Choose your plan"}</h1>
+        <p className="sub">{complete ? "Check your plan, then tap Get." : "Pick a card, a profile and a duration."}</p>
+      </div>
 
       <div className={"pl-head" + (open ? " open" : "")}>
         <div className="pl-top">
-          <span className="pl-kicker">{soon ? "Coming soon" : "Digital card"}</span>
+          <span className="label">{soon ? "Coming soon" : plan ? "Your plan" : "No plan yet"}</span>
           {complete ? (
             <button type="button" className="pl-info" aria-label="What is included" onClick={(e) => { e.stopPropagation(); setOpen(!open); }}>
               <svg className="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.5v.5" /></svg>
@@ -115,8 +119,11 @@ export function PlanChooser({ lang, go }) {
             </button>
           ) : null}
         </div>
-        <span className="pl-name">{plan ? name : "Choose below"}</span>
-        <span className="pl-total"><small>Total</small>{price ? <b>{fmtIQD(price)} IQD</b> : <b>—</b>}</span>
+        <div className="pl-row">
+          <span className="pl-name">{plan ? name : "—"}</span>
+          <span className="pl-total"><small>Total</small>{price ? <b>{fmtIQD(price)} <i>IQD</i></b> : <b>—</b>}</span>
+        </div>
+        <div className="pl-steps" aria-hidden="true"><i className={nfc ? "on" : ""} /><i className={prof ? "on" : ""} /><i className={dur ? "on" : ""} /></div>
         {complete ? (
           <div className="pl-more"><div className="pl-moreIn">
             <p className="pl-more-t">{name} includes</p>
