@@ -603,7 +603,7 @@ export async function getWalletItem(id) {
 
 // ---------- NFC card orders (slice 7) ----------
 export const NFC_PRICE_USD = 15;
-export const PAYMENTS = ["cash", "fib", "fastpay", "asiapay", "zaincash"];
+export const PAYMENTS = ["cash", "fib"];
 const ORDER_FIELDS = "id,business_id,name_on_card,title_on_card,quantity,unit_price_usd,delivery_address,phone,payment,status,created_at";
 
 export async function getMyOrders(bid) {

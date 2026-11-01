@@ -146,6 +146,12 @@ export default function OrderNfc({ lang, id, go }) {
             </button>
           ))}
         </div>
+        {form.payment === "fib" ? (
+          <div className="nf-fib">
+            <img src="/fib-qr.png" alt="FIB" className="nf-fib-img" />
+            <p className="note" style={{ margin: 0, textAlign: "center" }}>{t(lang, "nfc_fib_qr")}</p>
+          </div>
+        ) : null}
         <p className="note" style={{ margin: 0 }}>{t(lang, "nfc_pay_note")}</p>
       </section>
 

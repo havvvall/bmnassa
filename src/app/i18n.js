@@ -509,6 +509,7 @@ const T = {
   nfc_payment: ["Payment", "پارەدان", "الدفع"],
   pay_cash: ["Cash on delivery", "پارەدان لە کاتی گەیاندن", "الدفع عند الاستلام"],
   pay_fib: ["FIB", "FIB", "FIB"],
+  nfc_fib_qr: ["Scan this code in the FIB app and pay. Then send us the receipt on WhatsApp.", "ئەم کۆدە لە ئەپی FIB سکان بکە و پارە بدە. پاشان وەسڵەکە بۆ واتسئاپ بنێرە.", "امسح هذا الرمز في تطبيق FIB وادفع، ثم أرسل الإيصال عبر واتساب."],
   pay_fastpay: ["FastPay", "FastPay", "FastPay"],
   pay_asiapay: ["AsiaPay", "AsiaPay", "AsiaPay"],
   pay_zaincash: ["ZainCash", "ZainCash", "زين كاش"],
