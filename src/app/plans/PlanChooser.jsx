@@ -1,6 +1,6 @@
 // The plan chooser: one screen with three groups (NFC card, profile, duration).
 // The header shows the plan name and total as the choices are made; "Get <plan>" saves the choice.
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Back } from "../owner/Owner.jsx";
 import { fmtIQD } from "./plans.js";
 import "./plans.css";
@@ -28,6 +28,15 @@ const COLORS = {
   Gold: { main: "#f5c33b", soft: "#fff6d6", deep: "#8a6a10" },
   Silver: { main: "#b9c1cc", soft: "#f0f2f5", deep: "#4b5563" },
   Premium: { main: "#c05fb0", soft: "#fbeaf6", deep: "#7a2a6c" },
+};
+// what each plan includes (shown when the info icon is tapped)
+const INCLUDES = {
+  Basic: ["Listed in Bmnassa categories", "Business profile page", "Call and WhatsApp buttons", "Customer reviews", "Digital swipeable card on your phone", "No NFC card"],
+  Smart: ["Listed in Bmnassa categories", "Custom profile page design", "Call and WhatsApp buttons", "Customer reviews", "Digital swipeable card on your phone", "No NFC card"],
+  Standard: ["Bmnassa NFC card, ready to order", "Business profile page", "Call and WhatsApp buttons", "Listed in Bmnassa categories", "Digital swipeable card on your phone"],
+  Gold: ["Bmnassa NFC card, ready to order", "Custom profile with portfolio", "Designed with our team", "Call and WhatsApp buttons", "Listed in Bmnassa categories", "Digital swipeable card on your phone"],
+  Silver: ["Custom NFC card, your own design", "Business profile page", "Call and WhatsApp buttons", "Listed in Bmnassa categories", "Digital swipeable card on your phone"],
+  Premium: ["Custom NFC card, your own design", "Custom profile with portfolio", "Designed with our team", "Call and WhatsApp buttons", "Listed in Bmnassa categories", "Digital swipeable card on your phone"],
 };
 const DEFAULT_COLOR = { main: "#f5c33b", soft: "#fffaec", deep: "#15171a" };
 
@@ -66,6 +75,7 @@ export function PlanChooser({ lang, go }) {
   const [nfc, setNfc] = useState(null);
   const [prof, setProf] = useState(null);
   const [dur, setDur] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const plan = nfc && prof ? PLANS[nfc + "|" + prof] : null;
   const price = plan && dur ? (dur === "year" ? plan.year : plan.perm) : null;
@@ -82,6 +92,11 @@ export function PlanChooser({ lang, go }) {
     go("/list");
   };
 
+  const complete = !!(plan && dur);
+  // the info panel only exists once all three choices are made, and closes when a choice changes
+  useEffect(() => { if (!complete) setOpen(false); }, [complete]);
+  const items = plan ? [...INCLUDES[plan.name], dur === "year" ? "Listed for one year" : "Listed permanently"] : [];
+
   const c = plan ? COLORS[plan.name] : DEFAULT_COLOR;
   const soon = prof === "custom";
   const vars = { "--main": c.main, "--soft": c.soft, "--deep": c.deep };
@@ -90,10 +105,24 @@ export function PlanChooser({ lang, go }) {
     <div className={"pl-screen" + (soon ? " soonp" : "")} style={vars}>
       <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /></div>
 
-      <div className="pl-head">
-        <span className="pl-kicker">{soon ? "Coming soon" : "Digital card"}</span>
+      <div className={"pl-head" + (open ? " open" : "")}>
+        <div className="pl-top">
+          <span className="pl-kicker">{soon ? "Coming soon" : "Digital card"}</span>
+          {complete ? (
+            <button type="button" className="pl-info" aria-label="What is included" onClick={(e) => { e.stopPropagation(); setOpen(!open); }}>
+              <svg className="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.5v.5" /></svg>
+              <svg className="i-close" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" /></svg>
+            </button>
+          ) : null}
+        </div>
         <span className="pl-name">{plan ? name : "Choose below"}</span>
         <span className="pl-total"><small>Total</small>{price ? <b>{fmtIQD(price)} IQD</b> : <b>—</b>}</span>
+        {complete ? (
+          <div className="pl-more"><div className="pl-moreIn">
+            <p className="pl-more-t">{name} includes</p>
+            <ul className="pl-list">{items.map((t) => <li key={t}>{t}</li>)}</ul>
+          </div></div>
+        ) : null}
       </div>
 
       <Group group="nfc" label="NFC card" value={nfcLabel} items={NFC} selected={nfc} onPick={setNfc} />
