@@ -76,3 +76,15 @@
 .pl-get { position: fixed; left: 16px; right: 16px; bottom: 22px; height: 58px; border: 0; border-radius: 999px; background: var(--deep); color: #fff; font: inherit; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.5); }
 .pl-get:disabled { cursor: default; }
 .pl-get.soon { background: #e6e8ec; color: #5c6069; box-shadow: none; }
+
+/* Plan setup screens: the plan's own colour on the buttons, and the colour and design steps */
+.pl-screen .btn { background: var(--deep); color: #fff; border-radius: 999px; height: 58px; box-shadow: 0 18px 30px -14px var(--deep); }
+.pl-screen .btn:disabled { opacity: 0.45; }
+.pl-screen .btn.ghost { background: transparent; color: var(--deep); border: 2px solid var(--deep); box-shadow: none; }
+.pl-screen .field:focus-within { border-color: var(--main); }
+.pl-colours .st-swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 10px 4px 4px; }
+.pl-colours .st-sw { width: 100%; aspect-ratio: 1; height: auto; border-radius: 50%; }
+.pl-colours .st-sw.on { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--deep); }
+.pl-design { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 24px; background: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
+.pl-design-drop { display: grid; place-items: center; min-height: 170px; border-radius: 18px; border: 2px dashed var(--main); background: var(--soft); color: var(--deep); font-weight: 800; text-align: center; padding: 16px; }
+.pl-design .nf-design { width: 100%; max-width: none; margin: 0; border-radius: 18px; }

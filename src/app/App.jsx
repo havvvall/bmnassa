@@ -326,7 +326,7 @@ function Pick({ id, label, value, onChange, placeholder, options, lang, disabled
   );
 }
 
-function ListBusiness({ lang, profile, onSent, onBack, nextLabel }) {
+function ListBusiness({ lang, profile, onSent, onBack, nextLabel, head }) {
   const [d, setD] = useState(() => {
     try { return { ...emptyDraft, city_id: (profile && profile.city_id) || "", ...JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}") }; }
     catch { return { ...emptyDraft, city_id: (profile && profile.city_id) || "" }; }
@@ -396,6 +396,7 @@ function ListBusiness({ lang, profile, onSent, onBack, nextLabel }) {
   return (
     <form onSubmit={submit} style={{ display: "contents" }} noValidate>
       <div className="top"><Back lang={lang} onClick={onBack} /><span className="grow" /><TestTag lang={lang} /></div>
+      {head || null}
       <div className="stack">
         <h1>{t(lang, "list_title")}</h1>
         <p className="sub">{t(lang, "list_sub")}</p>
@@ -518,16 +519,16 @@ function PlanSetup({ lang, profile, go }) {
 
   return (
     <div className="pl-screen" style={vars}>
-      <div className="top"><Back lang={lang} onClick={() => (stage === "profile" ? go("/plans") : setStage(stage === "pay" && extra ? "extra" : "profile"))} /><span className="grow" /></div>
-      {header}
+      {stage !== "profile" ? <div className="top"><Back lang={lang} onClick={() => setStage(stage === "pay" && extra ? "extra" : "profile")} /><span className="grow" /></div> : null}
+      {stage !== "profile" ? header : null}
 
       {stage === "profile" ? (
-        <ListBusiness lang={lang} profile={profile} nextLabel={t(lang, "plan_next")} onBack={() => go("/plans")}
+        <ListBusiness lang={lang} profile={profile} nextLabel={t(lang, "plan_next")} onBack={() => go("/plans")} head={header}
           onSent={(row) => { setBiz(row || { id: null }); setStage(extra ? "extra" : "pay"); }} />
       ) : null}
 
       {stage === "extra" && extra === "colour" ? (
-        <div className="pl-group">
+        <div className="pl-group pl-colours">
           <div className="pl-glabel"><span>{t(lang, "plan_colour")}</span></div>
           <div className="st-swatches">
             {CARD_COLOURS.map((k) => (
@@ -538,11 +539,13 @@ function PlanSetup({ lang, profile, go }) {
       ) : null}
 
       {stage === "extra" && extra === "design" ? (
-        <label className="pl-group">
-          <span className="pl-glabel"><span>{t(lang, "nfc_design")}</span></span>
-          <input className="field" type="file" accept="image/*" onChange={(e) => pickDesign(e.target.files && e.target.files[0])} />
-          {design ? <img className="nf-design" src={photoUrl(design)} alt="" /> : <small className="note">{t(lang, "nfc_design_pick")}</small>}
-        </label>
+        <div className="pl-group">
+          <div className="pl-glabel"><span>{t(lang, "nfc_design")}</span></div>
+          <label className="pl-design">
+            <input type="file" accept="image/*" hidden onChange={(e) => pickDesign(e.target.files && e.target.files[0])} />
+            {design ? <img className="nf-design" src={photoUrl(design)} alt="" /> : <span className="pl-design-drop">{t(lang, "nfc_design_pick")}</span>}
+          </label>
+        </div>
       ) : null}
 
       {stage === "extra" ? (
