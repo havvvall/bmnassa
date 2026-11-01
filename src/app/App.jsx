@@ -456,7 +456,7 @@ function ListBusiness({ lang, profile, onSent, onBack, nextLabel }) {
 
 // Plan setup: profile info, then the plan's own step (Standard: card colour, Silver: card design), then payment
 const readSavedPlan = () => { try { return JSON.parse(sessionStorage.getItem("bm_plan") || "null"); } catch { return null; } };
-const FIB_QR = "/fib-qr.png";
+const FIB_QR = "/fib-qr.jpg";
 function PlanSetup({ lang, profile, go }) {
   const [plan] = useState(readSavedPlan);
   const [stage, setStage] = useState("profile");
