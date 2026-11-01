@@ -1,72 +1,103 @@
-// The plan chooser for the profile and card path: plans grouped by tier, with a 1 year / Permanent switch.
+// The plan chooser: three steps, each one a tap. Tapping an option goes straight to the next step.
+// 1) NFC card  2) profile  3) duration. The plan name is shown as the choices are made.
 import React, { useState } from "react";
 import { Back } from "../owner/Owner.jsx";
-import { PLANS, fmtIQD } from "./plans.js";
+import { fmtIQD } from "./plans.js";
 import "./plans.css";
 
-// only these plans are open for now (the others stay in plans.js for later)
-const OPEN = ["profile", "standard", "silver"];
-// coming soon: shown without a price and not selectable; the "+" plans belong to the Permanent tab
-const SOON = { year: ["Gold", "Premium"], perm: ["Gold+", "Premium+"] };
-const TIERS = ["Basic", "Card", "Premium"];
+// the plan each NFC choice leads to (prices in IQD, same as the plans it replaces)
+const NFC = {
+  none: { label: "No NFC card", plan: "Bmnassa Profile", id: "profile", card: false, year: 15000, perm: 30000 },
+  bmnassa: { label: "Bmnassa NFC", plan: "Standard", id: "standard", card: true, year: 20000, perm: 40000 },
+  custom: { label: "Custom NFC card", plan: "Silver", id: "silver", card: true, year: 35000, perm: 70000 },
+};
 
 export function PlanChooser({ lang, go }) {
-  const [dur, setDur] = useState("year");
-  const [pick, setPick] = useState("silver");
-  const chosen = PLANS.find((p) => p.id === pick) || PLANS[2];
-  const price = dur === "year" ? chosen.year : chosen.perm;
-  const name = chosen.name + (dur === "perm" ? "+" : "");
+  const [step, setStep] = useState(1);
+  const [nfc, setNfc] = useState(null);
+  const [prof, setProf] = useState(null);
 
-  const next = () => {
+  const plan = nfc ? NFC[nfc] : null;
+
+  // what has been picked so far, shown on each step
+  const picked = [nfc && NFC[nfc].label, prof && "Bmnassa profile"].filter(Boolean);
+
+  const back = () => {
+    if (step === 1) { go("/path"); return; }
+    if (step === 2) { setNfc(null); setStep(1); return; }
+    setProf(null); setStep(2);
+  };
+
+  const chooseNfc = (k) => { setNfc(k); setStep(2); };
+  const chooseProf = (k) => { setProf(k); setStep(3); };
+
+  const chooseDur = (d) => {
+    const price = d === "year" ? plan.year : plan.perm;
     try {
-      sessionStorage.setItem("bm_plan", JSON.stringify({ id: chosen.id, name, dur, price, card: chosen.card }));
+      sessionStorage.setItem("bm_plan", JSON.stringify({ id: plan.id, name: plan.plan, dur: d, price, card: plan.card }));
     } catch { /* ignore */ }
     go("/list");
   };
 
   return (
     <>
-      <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /></div>
-      <div className="stack">
-        <h1>Choose your plan</h1>
-        <p className="sub">{dur === "year" ? "Listed in Bmnassa categories for one year" : "Listed in Bmnassa categories permanently"}</p>
-      </div>
-      <div className="pl-seg" role="group" aria-label="Duration">
-        <button type="button" aria-pressed={dur === "year"} onClick={() => setDur("year")}>1 year</button>
-        <button type="button" aria-pressed={dur === "perm"} onClick={() => setDur("perm")}>Permanent</button>
-      </div>
-      {TIERS.map((tier) => PLANS.some((p) => p.tier === tier && OPEN.includes(p.id)) && (
-        <div className="stack" key={tier}>
-          <p className="label">{tier}</p>
-          {PLANS.filter((p) => p.tier === tier && OPEN.includes(p.id)).map((p) => {
-            const amount = dur === "year" ? p.year : p.perm;
-            const shown = dur === "perm" ? p.name + "+" : p.name;
-            return (
-              <button
-                type="button"
-                key={p.id}
-                className="choice pl-choice"
-                aria-pressed={pick === p.id}
-                onClick={() => setPick(p.id)}
-              >
-                <span className="pl-info"><b>{shown}</b><small>{dur === "perm" && p.descPerm ? p.descPerm : p.desc}</small></span>
-                <span className="pl-amt">{fmtIQD(amount)}<i>IQD</i></span>
-              </button>
-            );
-          })}
-        </div>
-      ))}
-      <div className="stack">
-        <p className="label">Premium</p>
-        {SOON[dur].map((n) => (
-          <div key={n} className="choice pl-choice pl-soon" aria-disabled="true">
-            <span className="pl-info"><b>{n}</b><small>Coming soon</small></span>
-            <span className="pl-pill">Soon</span>
+      <div className="top"><Back lang={lang} onClick={back} /><span className="grow" /></div>
+
+      {step === 1 ? (
+        <>
+          <div className="stack">
+            <h1>Do you want an NFC card?</h1>
+            <p className="sub">A card you can tap on a phone to share your business.</p>
           </div>
-        ))}
-      </div>
-      <span className="spacer" />
-      <button type="button" className="btn" onClick={next}>Continue with {name} · {fmtIQD(price)} IQD</button>
+          <div className="stack">
+            {Object.keys(NFC).map((k) => (
+              <button key={k} type="button" className="choice pl-choice" onClick={() => chooseNfc(k)}>
+                <span className="pl-info"><b>{NFC[k].label}</b><small>{k === "none" ? "Digital profile only" : k === "bmnassa" ? "Our standard card, ready to order" : "Your own design and colours"}</small></span>
+                <span className="pl-amt">{fmtIQD(NFC[k].year)}<i>IQD / year</i></span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      {step === 2 ? (
+        <>
+          <div className="stack">
+            <p className="label">{picked.join(" · ")}</p>
+            <h1>Choose your profile</h1>
+            <p className="sub">Both include a digital swipeable card on your phone.</p>
+          </div>
+          <div className="stack">
+            <button type="button" className="choice pl-choice" onClick={() => chooseProf("bmnassa")}>
+              <span className="pl-info"><b>Bmnassa profile</b><small>Includes a digital swipeable card</small></span>
+            </button>
+            <div className="choice pl-choice pl-soon" aria-disabled="true">
+              <span className="pl-info"><b>Custom profile</b><small>Includes a digital swipeable card</small></span>
+              <span className="pl-pill">Soon</span>
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      {step === 3 ? (
+        <>
+          <div className="stack">
+            <p className="label">{picked.join(" · ")}</p>
+            <h1>How long do you want it?</h1>
+            <p className="sub">Plan: <b>{plan.plan}</b></p>
+          </div>
+          <div className="stack">
+            <button type="button" className="choice pl-choice" onClick={() => chooseDur("year")}>
+              <span className="pl-info"><b>1 year</b><small>Listed for one year</small></span>
+              <span className="pl-amt">{fmtIQD(plan.year)}<i>IQD</i></span>
+            </button>
+            <button type="button" className="choice pl-choice" onClick={() => chooseDur("perm")}>
+              <span className="pl-info"><b>Permanent</b><small>Pay once, listed permanently</small></span>
+              <span className="pl-amt">{fmtIQD(plan.perm)}<i>IQD</i></span>
+            </button>
+          </div>
+        </>
+      ) : null}
     </>
   );
 }
