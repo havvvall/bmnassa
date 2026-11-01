@@ -121,3 +121,14 @@
 .pl-qr p { margin: 0; font-size: 12px; line-height: 1.35; color: #fff; opacity: 0.9; }
 .pl-qr { animation: plQr 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
 @keyframes plQr { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* Real card size (ID-1: 85.6 x 54 mm, ratio 1.586), stacked: front, then back */
+.pl-faces { display: flex; flex-direction: column; gap: 14px; }
+.pl-face { width: 100%; aspect-ratio: 1.586; border-radius: 14px; }
+.pl-face img { border-radius: 12px; }
+.pl-face-ico { width: 56px; height: 56px; }
+.pl-face-ico svg { width: 24px; height: 24px; }
+.pl-face-empty b { font-size: 16px; }
+.pl-face-tag { left: 12px; bottom: 12px; font-size: 11px; }
+/* FIB QR: white code on the dark tile, no white background */
+.pl-qr img { background: transparent; border-radius: 0; width: 220px; max-width: 75%; }
