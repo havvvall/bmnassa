@@ -85,8 +85,8 @@ export function PlanChooser({ lang, go }) {
       <Group label="Profile" value={profLabel} items={PROFILE} selected={prof} onPick={setProf} />
       <Group label="Duration" value={durLabel} items={DURATION} selected={dur} onPick={setDur} />
 
-      <button type="button" className="pl-get" disabled={!plan || !dur} onClick={get}>
-        {plan && dur ? <>Get {name}</> : "Choose your options"}
+      <button type="button" className="pl-get" disabled={!plan || !dur || prof === "custom"} onClick={get}>
+        {prof === "custom" ? "Soon" : plan && dur ? <>Get {name}</> : "Choose your options"}
       </button>
     </>
   );
