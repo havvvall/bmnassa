@@ -11,6 +11,7 @@ create table if not exists public.plan_orders (
   payment text not null check (payment in ('cash', 'fib')),
   card_color text check (card_color is null or card_color ~ '^#[0-9a-fA-F]{6}$'),
   design_url text,
+  design_back_url text,
   status text not null default 'new' check (status in ('new', 'confirmed', 'done', 'cancelled')),
   created_at timestamptz not null default now()
 );

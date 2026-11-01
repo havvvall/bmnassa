@@ -464,9 +464,12 @@ function PlanSetup({ lang, profile, go }) {
   const [biz, setBiz] = useState(null);
   const [colour, setColour] = useState(CARD_COLOURS[0]);
   const [design, setDesign] = useState(null);
+  const [designBack, setDesignBack] = useState(null);
   const [payment, setPayment] = useState("cash");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const frontInput = useRef(null);
+  const backInput = useRef(null);
 
   if (!plan || !PLAN_COLORS[plan.name]) {
     return (
@@ -489,12 +492,13 @@ function PlanSetup({ lang, profile, go }) {
     </div>
   );
 
-  const pickDesign = async (file) => {
+  const pickDesign = async (file, side) => {
     if (!file || !biz) return;
     setBusy(true); setErr("");
     try {
       const blob = await shrink(file);
-      setDesign(await uploadImage(biz.id, blob, "plan-"));
+      const path = await uploadImage(biz.id, blob, "plan-" + side + "-");
+      if (side === "back") setDesignBack(path); else setDesign(path);
     } catch (e) {
       setErr(`${t(lang, "save_failed")} (${e.message || e.status})`);
     } finally { setBusy(false); }
@@ -506,7 +510,7 @@ function PlanSetup({ lang, profile, go }) {
     try {
       await createPlanOrder(biz.id, {
         plan_name: title, duration: plan.dur, price_iqd: plan.price, payment,
-        card_color: extra === "colour" ? colour : null, design_url: extra === "design" ? design : null,
+        card_color: extra === "colour" ? colour : null, design_url: extra === "design" ? design : null, design_back_url: extra === "design" ? designBack : null,
       });
       try { sessionStorage.removeItem("bm_plan"); } catch { /* ignore */ }
       setStage("done");
@@ -541,10 +545,19 @@ function PlanSetup({ lang, profile, go }) {
       {stage === "extra" && extra === "design" ? (
         <div className="pl-group">
           <div className="pl-glabel"><span>{t(lang, "nfc_design")}</span></div>
-          <label className="pl-design">
-            <input type="file" accept="image/*" hidden onChange={(e) => pickDesign(e.target.files && e.target.files[0])} />
-            {design ? <img className="nf-design" src={photoUrl(design)} alt="" /> : <span className="pl-design-drop">{t(lang, "nfc_design_pick")}</span>}
-          </label>
+          <div className="pl-faces">
+            <input ref={frontInput} type="file" accept="image/*" hidden onChange={(e) => { pickDesign(e.target.files && e.target.files[0], "front"); e.target.value = ""; }} />
+            <input ref={backInput} type="file" accept="image/*" hidden onChange={(e) => { pickDesign(e.target.files && e.target.files[0], "back"); e.target.value = ""; }} />
+            <button type="button" className={"pl-face" + (design ? " done" : "")} onClick={() => frontInput.current && frontInput.current.click()} aria-label={t(lang, "plan_face_front")}>
+              {design ? <img src={photoUrl(design)} alt="" /> : <span className="pl-face-empty"><span className="pl-face-ico"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg></span><b>{t(lang, "plan_face_front")}</b><small>{t(lang, "plan_face_req")}</small></span>}
+              <span className="pl-face-tag">{t(lang, "plan_face_front")}</span>
+            </button>
+            <button type="button" className={"pl-face" + (designBack ? " done" : "")} onClick={() => backInput.current && backInput.current.click()} aria-label={t(lang, "plan_face_back")}>
+              {designBack ? <img src={photoUrl(designBack)} alt="" /> : <span className="pl-face-empty"><span className="pl-face-ico"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg></span><b>{t(lang, "plan_face_back")}</b><small>{t(lang, "plan_face_opt")}</small></span>}
+              <span className="pl-face-tag">{t(lang, "plan_face_back")}</span>
+            </button>
+          </div>
+          <div className="pl-flip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16" /><path d="M3 21v-5h5" /></svg>{t(lang, "plan_flip_hint")}</div>
         </div>
       ) : null}
 
@@ -556,19 +569,22 @@ function PlanSetup({ lang, profile, go }) {
         <>
           <div className="pl-group">
             <div className="pl-glabel"><span>{t(lang, "plan_pay")}</span></div>
-            <div className="nf-pay" role="radiogroup" aria-label={t(lang, "plan_pay")}>
-              {["cash", "fib"].map((p) => (
-                <button key={p} type="button" role="radio" aria-checked={payment === p} className={"nf-payopt" + (p === "cash" ? " wide" : "") + (payment === p ? " on" : "")} onClick={() => setPayment(p)}>
-                  <span className="nf-radio" />{t(lang, "pay_" + p)}
-                </button>
-              ))}
+            <div className="pl-bento" role="radiogroup" aria-label={t(lang, "plan_pay")}>
+              <button type="button" role="radio" aria-checked={payment === "cash"} className={"pl-tile pl-cash" + (payment === "cash" ? " on" : "")} onClick={() => setPayment("cash")}>
+                <span className="pl-tile-ico"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2" /><circle cx="12" cy="12" r="2.6" /><path d="M6.5 9.5v5M17.5 9.5v5" /></svg></span>
+                <b>{t(lang, "pay_cash")}</b><small>{t(lang, "plan_pay_cash_sub")}</small>
+              </button>
+              <button type="button" role="radio" aria-checked={payment === "fib"} className={"pl-tile pl-fib" + (payment === "fib" ? " on" : "")} onClick={() => setPayment("fib")}>
+                <span className="pl-tile-ico"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5" /><path d="M10 17.5h4" /></svg></span>
+                <b>{t(lang, "pay_fib")}</b><small>{t(lang, "plan_pay_fib_sub")}</small>
+              </button>
+              {payment === "fib" ? (
+                <div className="pl-tile pl-qr">
+                  <img src={FIB_QR} alt="FIB" />
+                  <p>{t(lang, "nfc_fib_qr")}</p>
+                </div>
+              ) : null}
             </div>
-            {payment === "fib" ? (
-              <div className="nf-fib">
-                <img src={FIB_QR} alt="FIB" className="nf-fib-img" />
-                <p className="note" style={{ margin: 0, textAlign: "center" }}>{t(lang, "nfc_fib_qr")}</p>
-              </div>
-            ) : null}
             <p className="note" style={{ margin: 0 }}>{t(lang, "plan_pay_note")}</p>
           </div>
           <button type="button" className="btn" disabled={busy || !biz || !biz.id} onClick={finish}>{busy ? t(lang, "loading") : t(lang, "plan_send")}</button>
