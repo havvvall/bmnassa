@@ -22,7 +22,7 @@ function readPlan() {
 const CUSTOM_CARD_PLANS = ["silver", "premium"];
 
 // makes a phone photo a JPEG no wider than 1600 px (same as the photo uploads)
-function shrink(file) {
+export function shrink(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();

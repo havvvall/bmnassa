@@ -21,7 +21,7 @@ const DURATION = [
 
 // plan for each NFC + profile combination; prices in IQD (same as the prototype)
 // one colour per plan (same as the prototype); the unchosen state uses the default gold
-const COLORS = {
+export const COLORS = {
   Basic: { main: "#4cc3a0", soft: "#e6f8f3", deep: "#0f6b57" },
   Smart: { main: "#5b9cf0", soft: "#e8f1fe", deep: "#1d4f9e" },
   Standard: { main: "#8b8fe8", soft: "#eeeefd", deep: "#3d40a8" },
@@ -89,7 +89,7 @@ export function PlanChooser({ lang, go }) {
     try {
       sessionStorage.setItem("bm_plan", JSON.stringify({ id: plan.id, name: plan.name, dur, price, card: plan.card }));
     } catch { /* ignore */ }
-    go("/list");
+    go("/plan/setup");
   };
 
   const complete = !!(plan && dur);

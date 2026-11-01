@@ -713,3 +713,9 @@ export async function getMyReviews() {
   if (!uid) return [];
   return (await call(`/rest/v1/reviews?user_id=eq.${uid}&select=id,rating,created_at,businesses(name_en,name_ku,name_ar,handle)&order=created_at.desc&limit=100`, { auth: true })) || [];
 }
+
+// A plan order: the business, the plan and the payment (the team confirms it by WhatsApp)
+export async function createPlanOrder(bid, o) {
+  const rows = await call("/rest/v1/plan_orders", { method: "POST", auth: true, body: { business_id: Number(bid), ...o }, headers: { Prefer: "return=representation" } });
+  return rows && rows[0];
+}

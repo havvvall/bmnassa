@@ -22,14 +22,16 @@ import { WalletPage } from "./wallet/Wallet.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
 import { Welcome } from "./welcome/Welcome.jsx";
 import { PathChooser } from "./plans/PathChooser.jsx";
-import { PlanChooser } from "./plans/PlanChooser.jsx";
+import { PlanChooser, COLORS as PLAN_COLORS } from "./plans/PlanChooser.jsx";
+import { shrink } from "./owner/OrderNfc.jsx";
+import { CARD_COLOURS } from "./card/CardFaces.jsx";
 import { Icon } from "./browse/icons.jsx";
 import "./account.css";
 import { t, dirOf, LANGS, FALLBACK_CITIES, cityName } from "./i18n.js";
 import {
   normaliseEmail, sendCode, verifyCode, signOut,
   getSession, getMyProfile, updateMyProfile, getCities,
-  normalisePhone, prettyPhone, getCategories, getPlaces, getMyBusinesses, createBusiness, getStats,
+  normalisePhone, prettyPhone, getCategories, getPlaces, getMyBusinesses, createBusiness, getStats, uploadImage, photoUrl, createPlanOrder,
   getDailyViews, getMyReviews, getWallet,
 } from "./api.js";
 
@@ -324,7 +326,7 @@ function Pick({ id, label, value, onChange, placeholder, options, lang, disabled
   );
 }
 
-function ListBusiness({ lang, profile, onSent, onBack }) {
+function ListBusiness({ lang, profile, onSent, onBack, nextLabel }) {
   const [d, setD] = useState(() => {
     try { return { ...emptyDraft, city_id: (profile && profile.city_id) || "", ...JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}") }; }
     catch { return { ...emptyDraft, city_id: (profile && profile.city_id) || "" }; }
@@ -445,10 +447,133 @@ function ListBusiness({ lang, profile, onSent, onBack }) {
           {detail ? <div className="note ltr" style={{ fontSize: 11 }}>{detail}</div> : null}
           <span className="spacer" />
           <p className="note">{t(lang, "review_note")}</p>
-          <button type="submit" className="btn" disabled={busy}>{busy ? t(lang, "loading") : t(lang, "send_review")}</button>
+          <button type="submit" className="btn" disabled={busy}>{busy ? t(lang, "loading") : (nextLabel || t(lang, "send_review"))}</button>
         </>
       )}
     </form>
+  );
+}
+
+// Plan setup: profile info, then the plan's own step (Standard: card colour, Silver: card design), then payment
+const readSavedPlan = () => { try { return JSON.parse(sessionStorage.getItem("bm_plan") || "null"); } catch { return null; } };
+const FIB_QR = "/fib-qr.png";
+function PlanSetup({ lang, profile, go }) {
+  const [plan] = useState(readSavedPlan);
+  const [stage, setStage] = useState("profile");
+  const [biz, setBiz] = useState(null);
+  const [colour, setColour] = useState(CARD_COLOURS[0]);
+  const [design, setDesign] = useState(null);
+  const [payment, setPayment] = useState("cash");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  if (!plan || !PLAN_COLORS[plan.name]) {
+    return (
+      <>
+        <div className="top"><Back lang={lang} onClick={() => go("/plans")} /><span className="grow" /></div>
+        <div className="stack"><p className="sub">{t(lang, "nfc_fill")}</p></div>
+      </>
+    );
+  }
+  const c = PLAN_COLORS[plan.name];
+  const vars = { "--main": c.main, "--soft": c.soft, "--deep": c.deep };
+  const title = plan.name + (plan.dur === "perm" ? "+" : "");
+  const extra = plan.id === "standard" ? "colour" : plan.id === "silver" ? "design" : null;
+
+  const header = (
+    <div className="pl-head">
+      <div className="pl-top"><span className="pl-kicker">{stage === "pay" ? t(lang, "plan_pay") : t(lang, "plan_step_profile")}</span></div>
+      <span className="pl-name">{title}</span>
+      <span className="pl-total"><small>{t(lang, "plan_total")}</small><b>{String(plan.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} IQD</b></span>
+    </div>
+  );
+
+  const pickDesign = async (file) => {
+    if (!file || !biz) return;
+    setBusy(true); setErr("");
+    try {
+      const blob = await shrink(file);
+      setDesign(await uploadImage(biz.id, blob, "plan-"));
+    } catch (e) {
+      setErr(`${t(lang, "save_failed")} (${e.message || e.status})`);
+    } finally { setBusy(false); }
+  };
+
+  const finish = async () => {
+    if (extra === "design" && !design) { setErr(t(lang, "plan_design_req")); return; }
+    setBusy(true); setErr("");
+    try {
+      await createPlanOrder(biz.id, {
+        plan_name: title, duration: plan.dur, price_iqd: plan.price, payment,
+        card_color: extra === "colour" ? colour : null, design_url: extra === "design" ? design : null,
+      });
+      try { sessionStorage.removeItem("bm_plan"); } catch { /* ignore */ }
+      setStage("done");
+    } catch (e) {
+      setErr(`${t(lang, "save_failed")} (${e.message || e.status})`);
+    } finally { setBusy(false); }
+  };
+
+  if (stage === "done") return <Sent lang={lang} business={biz} onDone={() => go("/account", true)} />;
+
+  return (
+    <div className="pl-screen" style={vars}>
+      <div className="top"><Back lang={lang} onClick={() => (stage === "profile" ? go("/plans") : setStage(stage === "pay" && extra ? "extra" : "profile"))} /><span className="grow" /></div>
+      {header}
+
+      {stage === "profile" ? (
+        <ListBusiness lang={lang} profile={profile} nextLabel={t(lang, "plan_next")} onBack={() => go("/plans")}
+          onSent={(row) => { setBiz(row || { id: null }); setStage(extra ? "extra" : "pay"); }} />
+      ) : null}
+
+      {stage === "extra" && extra === "colour" ? (
+        <div className="pl-group">
+          <div className="pl-glabel"><span>{t(lang, "plan_colour")}</span></div>
+          <div className="st-swatches">
+            {CARD_COLOURS.map((k) => (
+              <button key={k} type="button" className={"st-sw" + (colour === k ? " on" : "")} style={{ background: k }} aria-label={k} aria-pressed={colour === k} onClick={() => setColour(k)} />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {stage === "extra" && extra === "design" ? (
+        <label className="pl-group">
+          <span className="pl-glabel"><span>{t(lang, "nfc_design")}</span></span>
+          <input className="field" type="file" accept="image/*" onChange={(e) => pickDesign(e.target.files && e.target.files[0])} />
+          {design ? <img className="nf-design" src={photoUrl(design)} alt="" /> : <small className="note">{t(lang, "nfc_design_pick")}</small>}
+        </label>
+      ) : null}
+
+      {stage === "extra" ? (
+        <button type="button" className="btn" disabled={busy} onClick={() => { setErr(""); setStage("pay"); }}>{t(lang, "plan_next")}</button>
+      ) : null}
+
+      {stage === "pay" ? (
+        <>
+          <div className="pl-group">
+            <div className="pl-glabel"><span>{t(lang, "plan_pay")}</span></div>
+            <div className="nf-pay" role="radiogroup" aria-label={t(lang, "plan_pay")}>
+              {["cash", "fib"].map((p) => (
+                <button key={p} type="button" role="radio" aria-checked={payment === p} className={"nf-payopt" + (p === "cash" ? " wide" : "") + (payment === p ? " on" : "")} onClick={() => setPayment(p)}>
+                  <span className="nf-radio" />{t(lang, "pay_" + p)}
+                </button>
+              ))}
+            </div>
+            {payment === "fib" ? (
+              <div className="nf-fib">
+                <img src={FIB_QR} alt="FIB" className="nf-fib-img" />
+                <p className="note" style={{ margin: 0, textAlign: "center" }}>{t(lang, "nfc_fib_qr")}</p>
+              </div>
+            ) : null}
+            <p className="note" style={{ margin: 0 }}>{t(lang, "plan_pay_note")}</p>
+          </div>
+          <button type="button" className="btn" disabled={busy || !biz || !biz.id} onClick={finish}>{busy ? t(lang, "loading") : t(lang, "plan_send")}</button>
+        </>
+      ) : null}
+
+      {err ? <p className="note" style={{ color: "#b3261e" }}>{err}</p> : null}
+    </div>
   );
 }
 
@@ -745,7 +870,7 @@ export default function App() {
           else if (["/", "/welcome", "/signin", "/verify"].includes(here)) go("/home", true);
         } else if (["/list", "/team", "/account", "/name", "/list/sent"].includes(here) || here.startsWith("/my/")) {
           // Pages that need an account: sign in first, then come back
-          if (here === "/list" || here === "/team" || here.startsWith("/my/")) { try { sessionStorage.setItem("bm_after", here); } catch { /* ignore */ } }
+          if (here === "/list" || here === "/plan/setup" || here === "/team" || here.startsWith("/my/")) { try { sessionStorage.setItem("bm_after", here); } catch { /* ignore */ } }
           go(hasCity ? "/signin" : "/welcome", true);
         } else if (here === "/verify" && !email) {
           go("/signin", true);
@@ -823,6 +948,8 @@ export default function App() {
       try { after = sessionStorage.getItem("bm_after") || "/account"; sessionStorage.removeItem("bm_after"); } catch { /* ignore */ }
       go(after, true);
     }} />;
+  } else if (path === "/plan/setup" && profile) {
+    screen = <PlanSetup lang={lang} profile={profile} go={go} />;
   } else if (path === "/list" && profile) {
     screen = <ListBusiness lang={lang} profile={profile} onBack={() => (window.history.length > 1 ? back() : go("/account"))} onSent={(b) => { setSentBiz(b); go("/list/sent", true); }} />;
   } else if (path === "/list/sent" && profile && sentBiz) {
@@ -833,7 +960,7 @@ export default function App() {
         onEditName={() => go("/name")} onSignedOut={() => { setProfile(null); go("/home", true); }}
         onList={() => go("/list")} go={go} />
     );
-  } else if ((path === "/list" || path === "/account") && !profile) {
+  } else if ((path === "/list" || path === "/account" || path === "/plan/setup") && !profile) {
     screen = <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/home")} />;
   } else if (path === "/path") {
     screen = <PathChooser lang={lang} go={go} signedIn={signedIn} />;
