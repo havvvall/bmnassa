@@ -20,6 +20,17 @@ const DURATION = [
 ];
 
 // plan for each NFC + profile combination; prices in IQD (same as the prototype)
+// one colour per plan (same as the prototype); the unchosen state uses the default gold
+const COLORS = {
+  Basic: { main: "#4cc3a0", soft: "#e6f8f3", deep: "#0f6b57" },
+  Smart: { main: "#5b9cf0", soft: "#e8f1fe", deep: "#1d4f9e" },
+  Standard: { main: "#8b8fe8", soft: "#eeeefd", deep: "#3d40a8" },
+  Gold: { main: "#f5c33b", soft: "#fff6d6", deep: "#8a6a10" },
+  Silver: { main: "#b9c1cc", soft: "#f0f2f5", deep: "#4b5563" },
+  Premium: { main: "#c05fb0", soft: "#fbeaf6", deep: "#7a2a6c" },
+};
+const DEFAULT_COLOR = { main: "#f5c33b", soft: "#fffaec", deep: "#15171a" };
+
 const PLANS = {
   "none|bmnassa": { name: "Basic", id: "profile", card: false, year: 15000, perm: 30000 },
   "none|custom": { name: "Smart", id: "smart", card: false, year: 25000, perm: 50000 },
@@ -33,13 +44,13 @@ const Tick = () => (
   <span className="pl-tick"><svg viewBox="0 0 12 12"><path d="M2 6.5l2.5 2.5L10 3.5" /></svg></span>
 );
 
-function Group({ label, value, items, selected, onPick }) {
+function Group({ label, value, items, selected, onPick, group }) {
   return (
     <div className="pl-group">
       <div className="pl-glabel"><span>{label}</span><em>{value || ""}</em></div>
-      <div className="pl-opts">
+      <div className={"pl-opts " + (items.length === 3 ? "three" : "two")}>
         {items.map((o) => (
-          <button key={o.v} type="button" className={"pl-opt" + (selected === o.v ? " sel" : "")} onClick={() => onPick(o.v)}>
+          <button key={o.v} type="button" data-custom={group === "prof" && o.v === "custom" ? "1" : undefined} className={"pl-opt" + (selected === o.v ? " sel" : "")} onClick={() => onPick(o.v)}>
             {selected === o.v ? <Tick /> : null}
             <span className="pl-circ">{o.icon}</span>
             <span className="pl-t">{o.t}</span>
@@ -71,23 +82,27 @@ export function PlanChooser({ lang, go }) {
     go("/list");
   };
 
+  const c = plan ? COLORS[plan.name] : DEFAULT_COLOR;
+  const soon = prof === "custom";
+  const vars = { "--main": c.main, "--soft": c.soft, "--deep": c.deep };
+
   return (
-    <>
+    <div className={"pl-screen" + (soon ? " soonp" : "")} style={vars}>
       <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /></div>
 
-      <div className={"pl-head" + (plan && dur ? " full" : "")}>
-        <span className="pl-kicker">{plan ? "Your plan" : "Choose a plan"}</span>
-        <span className="pl-name">{plan ? name : "—"}</span>
-        <span className="pl-total">{price ? <>{fmtIQD(price)}<i>IQD</i></> : <i>Total</i>}</span>
+      <div className="pl-head">
+        <span className="pl-kicker">{soon ? "Coming soon" : "Digital card"}</span>
+        <span className="pl-name">{plan ? name : "Choose below"}</span>
+        <span className="pl-total"><small>Total</small>{price ? <b>{fmtIQD(price)} IQD</b> : <b>—</b>}</span>
       </div>
 
-      <Group label="NFC card" value={nfcLabel} items={NFC} selected={nfc} onPick={setNfc} />
-      <Group label="Profile" value={profLabel} items={PROFILE} selected={prof} onPick={setProf} />
-      <Group label="Duration" value={durLabel} items={DURATION} selected={dur} onPick={setDur} />
+      <Group group="nfc" label="NFC card" value={nfcLabel} items={NFC} selected={nfc} onPick={setNfc} />
+      <Group group="prof" label="Profile" value={profLabel} items={PROFILE} selected={prof} onPick={setProf} />
+      <Group group="dur" label="Duration" value={durLabel} items={DURATION} selected={dur} onPick={setDur} />
 
-      <button type="button" className="pl-get" disabled={!plan || !dur || prof === "custom"} onClick={get}>
-        {prof === "custom" ? "Soon" : plan && dur ? <>Get {name}</> : "Choose your options"}
+      <button type="button" className={"pl-get" + (soon ? " soon" : "")} disabled={!plan || !dur || soon} onClick={get}>
+        {soon ? "Coming soon" : plan && dur ? <>Get {name}</> : "Choose your options"}
       </button>
-    </>
+    </div>
   );
 }
