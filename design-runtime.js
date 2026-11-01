@@ -1,4 +1,5 @@
 (function () {
+  var SHOW_VIDEO = false;
   var tpl = document.getElementById("tpl").content;
   var app = document.getElementById("app");
   var comp = new Component({});
@@ -121,7 +122,8 @@
   var _paint = paint;
   paint = function () {
     _paint();
-    var tpl2 = document.getElementById("vscroll");
+    // wallet video section hidden for now: set SHOW_VIDEO to true to bring it back
+    var tpl2 = SHOW_VIDEO ? document.getElementById("vscroll") : null;
     if (tpl2) {
       var foot = app.querySelector("footer.foot");
       var frag = tpl2.content.cloneNode(true);
