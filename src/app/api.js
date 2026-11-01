@@ -604,7 +604,7 @@ export async function getWalletItem(id) {
 // ---------- NFC card orders (slice 7) ----------
 export const NFC_PRICE_USD = 15;
 export const PAYMENTS = ["cash", "fib"];
-const ORDER_FIELDS = "id,business_id,name_on_card,title_on_card,quantity,unit_price_usd,delivery_address,phone,payment,status,created_at";
+const ORDER_FIELDS = "id,business_id,name_on_card,title_on_card,quantity,unit_price_usd,delivery_address,phone,payment,status,created_at,plan_name,price_iqd,design_url";
 
 export async function getMyOrders(bid) {
   return call(`/rest/v1/nfc_orders?business_id=eq.${Number(bid)}&select=${ORDER_FIELDS}&order=created_at.desc&limit=20`, { auth: true });

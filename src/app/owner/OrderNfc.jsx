@@ -4,11 +4,41 @@ import { t, pick } from "../i18n.js";
 import { Icon } from "../browse/icons.jsx";
 import { useLists, useToast, Toast } from "../browse/Browse.jsx";
 import { NfcCard, cardSettings, cardRole } from "../card/CardFaces.jsx";
-import { getMyOrders, placeOrder, cancelOrder, normalisePhone, prettyPhone, NFC_PRICE_USD, PAYMENTS } from "../api.js";
+import { getMyOrders, placeOrder, cancelOrder, normalisePhone, prettyPhone, NFC_PRICE_USD, PAYMENTS, uploadImage, photoUrl } from "../api.js";
 import { useMine, Loading, Missing, Back } from "./Owner.jsx";
 import { calm } from "../motion.js";
 
 const usd = (n) => "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 });
+const iqd = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " IQD";
+
+// the plan chosen on the plan screen (saved in this browser tab); only card plans order a card
+function readPlan() {
+  try {
+    const p = JSON.parse(sessionStorage.getItem("bm_plan") || "null");
+    return p && p.card && p.price ? p : null;
+  } catch { return null; }
+}
+// Plans with a custom NFC card need the customer's own design
+const CUSTOM_CARD_PLANS = ["silver", "premium"];
+
+// makes a phone photo a JPEG no wider than 1600 px (same as the photo uploads)
+function shrink(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.naturalWidth * k);
+      c.height = Math.round(img.naturalHeight * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob((b) => (b ? resolve(b) : reject(new Error("no image"))), "image/jpeg", 0.82);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("not an image")); };
+    img.src = url;
+  });
+}
 
 export default function OrderNfc({ lang, id, go }) {
   const [b, , err, reload] = useMine(id);
@@ -18,6 +48,9 @@ export default function OrderNfc({ lang, id, go }) {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(null);
   const [toast, setToast] = useToast();
+  const [plan] = useState(readPlan);
+  const [design, setDesign] = useState(null);
+  const customCard = !!plan && CUSTOM_CARD_PLANS.includes(plan.id);
 
   useEffect(() => { getMyOrders(id).then((r) => setOrders(r || [])).catch(() => setOrders([])); }, [id]);
   useEffect(() => {
@@ -42,12 +75,31 @@ export default function OrderNfc({ lang, id, go }) {
   const preview = { ...b, contact_name: form.name_on_card || " " };
   const cat = lists && lists.cats.find((c) => c.id === b.category_id);
 
+  const pickDesign = async (file) => {
+    if (!file) return;
+    setBusy(true);
+    try {
+      const blob = await shrink(file);
+      const path = await uploadImage(b.id, blob, "nfc-");
+      setDesign(path);
+      setToast(t(lang, "nfc_design_ok"));
+    } catch (e) {
+      setToast(`${t(lang, "save_failed")} (${e.message || e.status})`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const submit = async () => {
     const phone = normalisePhone(form.phone);
     if (!form.name_on_card.trim() || form.delivery_address.trim().length < 3 || !phone) { setToast(t(lang, "nfc_fill")); return; }
+    if (customCard && !design) { setToast(t(lang, "nfc_design_pick")); return; }
     setBusy(true);
     try {
-      const row = await placeOrder(b.id, { ...form, name_on_card: form.name_on_card.trim(), title_on_card: form.title_on_card.trim(), delivery_address: form.delivery_address.trim(), phone });
+      const planFields = plan
+        ? { quantity: 1, plan_name: plan.name, price_iqd: plan.price, design_url: design || null }
+        : {};
+      const row = await placeOrder(b.id, { ...form, ...planFields, name_on_card: form.name_on_card.trim(), title_on_card: form.title_on_card.trim(), delivery_address: form.delivery_address.trim(), phone });
       setOrders((o) => [row, ...(o || [])]);
       setSent(row);
       if (navigator.vibrate && !calm()) navigator.vibrate(20);
@@ -112,6 +164,20 @@ export default function OrderNfc({ lang, id, go }) {
 
       {!live ? <div className="o-banner wait">{t(lang, "nfc_need_live")}</div> : null}
 
+      {plan ? (
+        <div className="nf-plan">
+          <span className="grow"><b>{plan.name}</b><small>{iqd(plan.price)}</small></span>
+        </div>
+      ) : null}
+
+      {customCard ? (
+        <label className="o-sec">
+          <span className="label">{t(lang, "nfc_design")}</span>
+          <input className="field" type="file" accept="image/*" onChange={(e) => pickDesign(e.target.files && e.target.files[0])} />
+          {design ? <img className="nf-design" src={photoUrl(design)} alt="" /> : <small className="note">{t(lang, "nfc_design_pick")}</small>}
+        </label>
+      ) : null}
+
       <label className="o-sec">
         <span className="label">{t(lang, "nfc_name")}</span>
         <input className="field" dir="auto" maxLength={60} value={form.name_on_card} onChange={(e) => set("name_on_card", e.target.value)} />
@@ -121,12 +187,12 @@ export default function OrderNfc({ lang, id, go }) {
         <input className="field" dir="auto" maxLength={80} value={form.title_on_card} onChange={(e) => set("title_on_card", e.target.value)} />
       </label>
 
-      <div className="nf-qty">
+      {!plan ? <div className="nf-qty">
         <span className="grow"><b>{t(lang, "nfc_qty")}</b><small>{t(lang, "nfc_each", { p: NFC_PRICE_USD })}</small></span>
         <button type="button" className="nf-step" aria-label="−" disabled={form.quantity <= 1} onClick={() => set("quantity", Math.max(1, form.quantity - 1))}>−</button>
         <b className="nf-n ltr" aria-live="polite">{form.quantity}</b>
         <button type="button" className="nf-step" aria-label="+" disabled={form.quantity >= 50} onClick={() => set("quantity", Math.min(50, form.quantity + 1))}>+</button>
-      </div>
+      </div> : null}
 
       <label className="o-sec">
         <span className="label">{t(lang, "nfc_address")}</span>
@@ -158,7 +224,7 @@ export default function OrderNfc({ lang, id, go }) {
       {list}
 
       <div className="o-savebar nf-bar">
-        <div className="nf-total"><span>{t(lang, "nfc_total")}</span><b className="ltr">{usd(form.quantity * NFC_PRICE_USD)}</b></div>
+        <div className="nf-total"><span>{t(lang, "nfc_total")}</span><b className="ltr">{plan ? iqd(plan.price) : usd(form.quantity * NFC_PRICE_USD)}</b></div>
         <button type="button" className="btn" disabled={busy || !live} onClick={submit}>{busy ? t(lang, "loading") : t(lang, "nfc_place")}</button>
         <p className="note" style={{ textAlign: "center", margin: "6px 0 0" }}>{t(lang, "nfc_confirm_note")}</p>
       </div>

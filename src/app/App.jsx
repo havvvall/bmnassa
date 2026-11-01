@@ -452,7 +452,7 @@ function ListBusiness({ lang, profile, onSent, onBack }) {
   );
 }
 
-function Sent({ lang, business, onDone }) {
+function Sent({ lang, business, onDone, onOrder }) {
   return (
     <>
       <div className="top"><img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /><span className="grow" /><TestTag lang={lang} /></div>
@@ -468,9 +468,15 @@ function Sent({ lang, business, onDone }) {
       </div>
       <p className="note">{t(lang, "sent_next")}</p>
       <span className="spacer" />
+      {cardPlan() ? <button type="button" className="btn ghost" onClick={() => onOrder && onOrder(business)}>{t(lang, "order_card_btn")}</button> : null}
       <button type="button" className="btn" onClick={onDone}>{t(lang, "to_account")}</button>
     </>
   );
+}
+
+// true when the plan chosen on the plan screen includes an NFC card
+function cardPlan() {
+  try { const p = JSON.parse(sessionStorage.getItem("bm_plan") || "null"); return !!(p && p.card); } catch { return false; }
 }
 
 function MyBusinesses({ lang, onList, go }) {
@@ -820,7 +826,7 @@ export default function App() {
   } else if (path === "/list" && profile) {
     screen = <ListBusiness lang={lang} profile={profile} onBack={() => (window.history.length > 1 ? back() : go("/account"))} onSent={(b) => { setSentBiz(b); go("/list/sent", true); }} />;
   } else if (path === "/list/sent" && profile && sentBiz) {
-    screen = <Sent lang={lang} business={sentBiz} onDone={() => go("/account", true)} />;
+    screen = <Sent lang={lang} business={sentBiz} onDone={() => go("/account", true)} onOrder={(b) => go(`/my/${b.id}/nfc`)} />;
   } else if ((path === "/account" || path.startsWith("/list")) && profile) {
     screen = (
       <Account lang={lang} setLang={setLang} profile={profile} setProfile={setProfile} cityId={city} setCity={setCity}
