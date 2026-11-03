@@ -547,7 +547,7 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
         // above: lean back and tuck behind; below: drop under the chosen card so each top edge shows
         const pull = -d * (STEP - GAP); // draw the cards closer together than the scroll distance
         // cards below start under the chosen card and peek out one under another, nearest on top
-        const ty = d > 0 ? H * 0.19 + Math.max(0, a - 1) * 18 : pull - near * 14 - Math.max(0, a - 1) * 8;
+        const ty = d > 0 ? near * H * 0.19 + Math.max(0, a - 1) * 18 : pull - near * 14 - Math.max(0, a - 1) * 8;
         const rx = calm() ? 0 : d < 0 ? Math.min(a, 2) * 20 : -Math.min(a, 1.5) * 9;
         const sc0 = 1 + (1 - near) * 0.04 - a * 0.055;
         card.style.transform = `translateY(${ty}px) perspective(900px) translateZ(${-a * 50}px) rotateX(${rx}deg) scale(${sc0})`;
