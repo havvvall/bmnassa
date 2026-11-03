@@ -546,12 +546,13 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
       if (card) {
         // above: lean back and tuck behind; below: drop under the chosen card so each top edge shows
         const pull = -d * (STEP - GAP); // draw the cards closer together than the scroll distance
-        const ty = pull + (d < 0 ? -near * 14 - Math.max(0, a - 1) * 8 : near * (H * 0.5 + 46) + Math.max(0, a - 1) * 6);
+        // cards below start under the chosen card and peek out one under another, nearest on top
+        const ty = d > 0 ? H * 0.19 + Math.max(0, a - 1) * 18 : pull - near * 14 - Math.max(0, a - 1) * 8;
         const rx = calm() ? 0 : d < 0 ? Math.min(a, 2) * 20 : -Math.min(a, 1.5) * 9;
         const sc0 = 1 + (1 - near) * 0.04 - a * 0.055;
         card.style.transform = `translateY(${ty}px) perspective(900px) translateZ(${-a * 50}px) rotateX(${rx}deg) scale(${sc0})`;
         card.style.setProperty("--dim", String(d < 0 ? Math.min(0.62, a * 0.24) : Math.min(0.4, a * 0.1)));
-        el.style.zIndex = a < 0.5 ? "200" : String(d < 0 ? 100 - Math.round(a * 10) : 60 + Math.round(a * 10));
+        el.style.zIndex = a < 0.5 ? "200" : String(d < 0 ? 100 - Math.round(a * 10) : 150 - Math.round(a * 10));
         card.classList.toggle("on", a < 0.5);
       }
       if (Math.abs(d) < bd) { bd = Math.abs(d); best = i; }
@@ -585,11 +586,12 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
       else flip(faces.current[it.id], dx > 0 ? 1 : -1);
     }
   };
+  // tap: a side card scrolls to the front; the front card opens its profile or card info. Flip is only by swipe.
   const tap = (it, i) => {
     if (swiped.current) { swiped.current = false; return; }
     if (i !== active) { haptic(8); centre(i); return; }
-    setBarOn(true);
-    if (canFlip(it)) { if (is3D(it)) turn3(1); else flip(faces.current[it.id]); }
+    haptic(8);
+    onDetails(it);
   };
   // the chosen card's quick buttons
   const b = cur && cur.businesses;
@@ -637,14 +639,6 @@ function BmnassaLook({ items, lang, cats, go, startId, onDetails, onScan }) {
           </div>
         ) : null}
       </div>
-      {cur ? (
-        <div className={"wb-bar" + (barOn ? " on" : "")} key={cur.id}>
-          <span className="grow"><span className="wb-namerow"><b dir="auto">{itemName(cur, lang)}</b><TypeTag it={cur} lang={lang} /></span><small>{canFlip(cur) ? t(lang, "w_tap_flip") : b ? pick(b, "name", lang) : d0.company || ""}</small></span>
-          {phone ? <a className="wb-btn gold" href={`tel:${phone}`} aria-label={t(lang, "call")} onClick={() => haptic(10)}><Icon name="phone" size={19} /></a> : null}
-          {wa ? <a className="wb-btn wa" href={`https://wa.me/${digits(wa)}`} target="_blank" rel="noreferrer" aria-label={t(lang, "whatsapp")}><Icon name="whatsapp" size={19} /></a> : null}
-          <button type="button" className="wb-btn" aria-label={t(lang, "w_details")} onClick={() => onDetails(cur)}><Icon name="more" size={19} /></button>
-        </div>
-      ) : null}
     </div>
   );
 }
