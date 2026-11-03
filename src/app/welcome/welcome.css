@@ -146,3 +146,8 @@
 .si-field input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 17px; font-weight: 600; color: var(--text, #15171a); }
 .si-note { margin: 0; font-size: 12px; line-height: 1.5; color: var(--muted, #6c6c70); }
 .si-body .wl-btn { margin-top: auto; align-self: center; }
+
+/* intro type: English in Oxanium; Kurdish and Arabic in Noto Sans Arabic (no logo-style Kufic lettering) */
+.wl-tag, .wl-h1, .wl-h2, .wl-sub, .wl-btn, .wl-foot, .wl-langs button { font-family: "Oxanium", system-ui, sans-serif; }
+[dir="rtl"] .wl-tag, [dir="rtl"] .wl-h1, [dir="rtl"] .wl-h2, [dir="rtl"] .wl-sub, [dir="rtl"] .wl-btn, [dir="rtl"] .wl-foot, [dir="rtl"] .wl-langs button { font-family: "Noto Sans Arabic", system-ui, sans-serif; }
+.wl-h1 { font-weight: 700; }
