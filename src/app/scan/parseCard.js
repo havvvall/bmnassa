@@ -13,8 +13,13 @@ export function normaliseDigits(s) {
 }
 
 // Iraqi numbers: 07xx xxx xxxx (mobile, 11 digits), +964 7xx xxx xxxx, 0xx landlines.
+// OCR often reads 0 as O, 1 as l or I, 5 as S, 8 as B inside numbers. Fix only inside digit-heavy runs.
+function fixOcrDigits(t) {
+  return t.replace(/[0-9OoIlSB][0-9OoIlSB ]{6,}[0-9OoIlSB]/g, (run) => (/\d/.test(run) ? run.replace(/[Oo]/g, "0").replace(/[Il]/g, "1").replace(/S/g, "5").replace(/B/g, "8") : run));
+}
+
 export function findPhones(text) {
-  const t = normaliseDigits(text);
+  const t = fixOcrDigits(normaliseDigits(text));
   const out = [];
   const re = /(\+|00)?\d(?:[ \t\-.()/]*\d){6,14}/g;
   let m;
@@ -28,6 +33,8 @@ export function findPhones(text) {
       norm = "+964" + digits.slice(1);
     } else if (/^0\d{7,9}$/.test(digits) && !plus) {
       norm = digits;
+    } else if (/^7\d{9}$/.test(digits)) {
+      norm = "+964" + digits;
     }
     if (norm && !out.includes(norm)) out.push(norm);
   }
@@ -80,7 +87,11 @@ export function parseCardText(text) {
   const language = detectLanguage(text);
 
   const plain = lines.filter((l) => !isContact(l));
-  const company = plain.find((l) => COMPANY_WORDS.test(l)) || "";
+  const siteLabel = website.replace(/^https?:\/\//i, "").replace(/^www\./i, "").split(".")[0].toLowerCase();
+  let company = plain.find((l) => COMPANY_WORDS.test(l)) || "";
+  if (!company && siteLabel.length >= 3) {
+    company = plain.find((l) => !TITLE_WORDS.test(l) && l.replace(/[^a-z0-9\u0600-\u06FF]/gi, "").toLowerCase().includes(siteLabel)) || "";
+  }
   const addrLine = plain.find((l) => ADDRESS_WORDS.test(l) && l !== company) || "";
   const address = addrLine;
 
