@@ -8,6 +8,7 @@ import {
   scanCard, uploadScan, addScannedCard, updateScannedCard, getWalletItem, scanImageUrl, normalisePhone, forgetWallet,
 } from "../api.js";
 import { toCanvas, fileToCanvas, toBlob, toBase64, cleanCard, detectCorners, FULL } from "./image.js";
+import { readCardLocal } from "./readCardLocal.js";
 import { calm } from "../motion.js";
 import "./scan.css";
 import { SkelPage } from "../Skeleton.jsx";
@@ -181,6 +182,14 @@ function Enhance({ lang, shots, onDone, onBack }) {
         front: (aiRes && aiRes.front_corners) || detectCorners(shots.front),
         back: shots.back ? (aiRes && aiRes.back_corners) || detectCorners(shots.back) : null,
       };
+      // No AI: read the card on the phone (OCR + rules). Falls back to typing if it fails.
+      if (!READ_WITH_AI) {
+        try {
+          aiRes = await readCardLocal(cleanCard(shots.front, c.front).canvas, c.back ? cleanCard(shots.back, c.back).canvas : null);
+        } catch {
+          err = "scan_read_failed";
+        }
+      }
       ai.current = { aiRes, err };
       clearInterval(tick);
       setStep(steps);
