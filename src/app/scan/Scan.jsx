@@ -254,7 +254,7 @@ function fromAi(ai) {
   };
 }
 
-function Check({ lang, title, sub, front, back, initial, aiFilled, warn, onBack, onSave, busy }) {
+function Check({ lang, title, sub, front, back, initial, aiFilled, warn, rawText, onBack, onSave, busy }) {
   const [d, setD] = useState(initial);
   const [toast, setToast] = useToast();
   const set = (k, v) => setD((x) => ({ ...x, [k]: v }));
@@ -285,13 +285,15 @@ function Check({ lang, title, sub, front, back, initial, aiFilled, warn, onBack,
       <div className="sc-fields">
         {FIELDS.map(([k, label, type]) => (
           <label key={k} className="sc-field">
-            <span className="sc-label">{t(lang, label)}{aiFilled && aiFilled[k] ? <em className="sc-ai"><Icon name="spark" size={10} /> {t(lang, "ai_badge")}</em> : null}</span>
+            <span className="sc-label">{t(lang, label)}{READ_WITH_AI && aiFilled && aiFilled[k] ? <em className="sc-ai"><Icon name="spark" size={10} /> {t(lang, "ai_badge")}</em> : null}</span>
             <input className="field" type={type} dir={type === "text" ? "auto" : "ltr"} value={d[k] || ""} onChange={(e) => set(k, e.target.value)}
               inputMode={type === "tel" ? "tel" : type === "email" ? "email" : undefined} autoComplete="off" />
           </label>
         ))}
       </div>
-      {aiFilled && Object.keys(aiFilled).length ? <div className="sc-warn soft">{t(lang, "ai_warn")}</div> : null}
+      {READ_WITH_AI && aiFilled && Object.keys(aiFilled).length ? <div className="sc-warn soft">{t(lang, "ai_warn")}</div> : null}
+      {!READ_WITH_AI && rawText !== undefined ? <div className="sc-warn soft">{t(lang, "local_warn")}</div> : null}
+      {!READ_WITH_AI && rawText !== undefined ? <details className="sc-raw"><summary>{t(lang, "local_raw")}</summary><pre>{rawText || "—"}</pre></details> : null}
       <div className="o-savebar">
         <button type="button" className="btn" disabled={busy} onClick={save}><Icon name="wallet" size={18} /> {busy ? t(lang, "saving") : t(lang, "save_my_wallet")}</button>
       </div>
@@ -344,9 +346,9 @@ export function ScanPage({ lang, go, back, signedIn }) {
   };
   return (
     <>
-      <Check lang={lang} title={t(lang, "check_title")} sub={res && res.ai ? t(lang, "check_sub") : t(lang, "check_sub_manual")}
+      <Check lang={lang} title={t(lang, "check_title")} sub={res && res.ai ? t(lang, READ_WITH_AI ? "check_sub" : "check_sub_local") : t(lang, "check_sub_manual")}
         front={res && res.front.toDataURL("image/jpeg", 0.7)} back={res && res.back && res.back.toDataURL("image/jpeg", 0.7)}
-        initial={initial} aiFilled={aiFilled} warn={READ_WITH_AI ? res && res.err : ""} busy={busy}
+        initial={initial} aiFilled={aiFilled} warn={READ_WITH_AI ? res && res.err : ""} rawText={res && res.ai ? res.ai._raw || "" : undefined} busy={busy}
         onBack={() => setStep("enhance")} onSave={save} />
       <Toast text={toast} />
     </>
