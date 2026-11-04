@@ -49,13 +49,9 @@ function prepare(canvas) {
   return out;
 }
 
-// Tries Sorani data first. If it is not available, falls back to English and Arabic.
-async function makeWorker(Tesseract) {
-  try {
-    return await Tesseract.createWorker("eng+ara+ckb");
-  } catch {
-    return Tesseract.createWorker("eng+ara");
-  }
+// English and Arabic only. Sorani data is not loaded: a failed download delays every scan.
+function makeWorker(Tesseract) {
+  return Tesseract.createWorker("eng+ara");
 }
 
 // front / back: cleaned card canvases (back may be null). Returns the fields the check form uses,

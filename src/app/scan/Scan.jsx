@@ -183,9 +183,13 @@ function Enhance({ lang, shots, onDone, onBack }) {
         back: shots.back ? (aiRes && aiRes.back_corners) || detectCorners(shots.back) : null,
       };
       // No AI: read the card on the phone (OCR + rules). Falls back to typing if it fails.
+      // Capped at 15 s, so a slow connection can never hold up the cleaned photo.
       if (!READ_WITH_AI) {
         try {
-          aiRes = await readCardLocal(cleanCard(shots.front, c.front).canvas, c.back ? cleanCard(shots.back, c.back).canvas : null);
+          aiRes = await Promise.race([
+            readCardLocal(cleanCard(shots.front, c.front).canvas, c.back ? cleanCard(shots.back, c.back).canvas : null),
+            new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15000)),
+          ]);
         } catch {
           err = "scan_read_failed";
         }
