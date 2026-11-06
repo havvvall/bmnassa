@@ -21,6 +21,7 @@ import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
 import { Welcome } from "./welcome/Welcome.jsx";
+import { IntroSlides } from "./intro/IntroSlides.jsx";
 import { PathChooser } from "./plans/PathChooser.jsx";
 import { PlanChooser, COLORS as PLAN_COLORS } from "./plans/PlanChooser.jsx";
 import { shrink } from "./owner/OrderNfc.jsx";
@@ -987,8 +988,10 @@ export default function App() {
     screen = profile
       ? <PlanChooser lang={lang} go={go} />
       : <SignIn lang={lang} email={email} setEmail={rememberEmail} onSent={() => go("/verify")} onBack={() => go("/path")} />;
+  } else if (path === "/intro") {
+    screen = <IntroSlides lang={lang} onDone={() => go("/path")} />;
   } else {
-    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/path")} onSignIn={() => go("/signin")} />;
+    screen = <Welcome lang={lang} setLang={setLang} city={city} setCity={setCity} onDone={() => go("/intro")} onSignIn={() => go("/signin")} />;
   }
 
   return <main className="app" dir={dirOf(lang)} lang={lang === "ku" ? "ckb" : lang}>{screen}</main>;

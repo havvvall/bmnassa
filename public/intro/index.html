@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>App Feature Slides</title>
+<style>
+:root{--night:#0f0e0b;--gold:#f5c33b;--paper:#f6f6f4;--ink:#111214;--mute:#5a5d64;--line:#d6d8dc;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#0f0e0b;--ink:#f4f4f2;--mute:#a9a9a4;--line:#34322c;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0f0e0b;--ink:#f4f4f2;--mute:#a9a9a4;--line:#34322c;color-scheme:dark}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+[dir="rtl"] body,[dir="rtl"]{font-family:"Vazirmatn",system-ui,sans-serif}
+.phone{max-width:390px;margin:0 auto;height:calc(100dvh - 40px);min-height:600px;display:flex;flex-direction:column;position:relative;overflow:hidden;border-radius:28px;background:var(--night)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;position:relative;z-index:2}
+.langs{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.08)}
+.langs button{height:30px;padding:0 12px;border:0;border-radius:999px;background:none;color:#a9a9a4;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--gold);color:#15171a}
+.skip{background:none;border:0;color:#a9a9a4;font:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:8px}
+.track{flex:1;display:flex;position:relative;touch-action:pan-y;overflow:hidden}
+.slide{flex:0 0 100%;width:100%;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 26px;box-sizing:border-box;transition:transform .5s cubic-bezier(.2,.8,.2,1);transform:translateX(0)}
+.art-wrap{width:100%;display:flex;justify-content:center;margin-bottom:26px}
+.art{width:320px;max-width:100%;height:260px;position:relative}
+.copy{text-align:center;color:#f4f4f2}
+.copy h2{margin:0;font-size:28px;line-height:1.15;font-weight:700;letter-spacing:.01em}
+.copy p{margin:12px auto 0;max-width:300px;font-size:16px;line-height:1.5;color:#a9a9a4}
+[dir="rtl"] .copy h2{font-weight:700;letter-spacing:0}
+
+/* illustration 1: business rows */
+.a1 .row{position:absolute;left:0;right:0;height:64px;box-sizing:border-box;border-radius:18px;background:#1b1a16;border:1px solid #34322c;display:flex;align-items:center;gap:12px;padding:0 14px;color:#f4f4f2}
+.a1 .row i{display:grid;flex:none;width:38px;height:38px;border-radius:12px;background:#2a2823;display:grid;place-items:center;font:700 13px "Manrope",sans-serif;font-style:normal;color:var(--gold)}
+.a1 .row b{font-size:15px}
+.a1 .row small{display:block;font-size:12px;color:#a9a9a4;margin-top:2px}
+.a1 .row:nth-child(1){top:14px;transform:rotate(-2deg)}
+.a1 .row:nth-child(2){top:98px}
+.a1 .row:nth-child(3){top:182px;transform:rotate(2deg)}
+[dir="rtl"] .a1 .row b{font-family:"Vazirmatn",sans-serif}
+
+/* illustration 2: stacked wallet cards */
+.a2 .card{position:absolute;width:280px;height:170px;border-radius:20px;padding:16px 18px;box-sizing:border-box;color:#fff;box-shadow:0 18px 30px rgba(0,0,0,.45)}
+.a2 .c1{background:#1b2a4a;top:10px;left:10px;transform:rotate(-5deg)}
+.a2 .c2{background:#f1efe9;color:#15171a;top:40px;left:20px;transform:rotate(2deg)}
+.a2 .c3{background:#7a2e2e;top:70px;left:14px;transform:rotate(-1deg)}
+.a2 .card b{display:block;font-size:17px;margin-top:auto}
+.a2 .card small{font-size:12px;opacity:.7}
+
+/* illustration 3: one-tap contact chips */
+.a3 .phone-card{position:absolute;width:250px;height:150px;border-radius:20px;background:#1b2a4a;color:#fff;padding:16px 18px;box-sizing:border-box;top:30px}
+.a3 .phone-card b{font-size:17px}
+.a3 .chips{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.a3 .chip{width:64px;height:64px;border-radius:22px;display:grid;place-items:center;font:700 15px "Manrope",sans-serif;background:var(--gold);color:#15171a;box-shadow:0 10px 24px rgba(245,195,59,.25)}
+.a3 .chip.wa{background:#1f2a24;color:#7fd39b;box-shadow:inset 0 0 0 2px #7fd39b}
+.a3 .chip.dot{background:#1b1a16;color:#f4f4f2;box-shadow:inset 0 0 0 2px #34322c}
+
+/* illustration 4: scan a paper card */
+.a4 .paper{position:absolute;width:230px;height:140px;border-radius:14px;background:#f1efe9;color:#15171a;padding:16px;box-sizing:border-box;top:60px;left:50%;transform:translateX(-50%) rotate(-3deg)}
+.a4 .paper b{display:block;font-size:16px;margin-top:20px}
+.a4 .paper small{font-size:12px;color:#5a5d64}
+.a4 .frame{position:absolute;width:260px;height:170px;top:40px;left:50%;transform:translateX(-50%)}
+.a4 .frame i{position:absolute;width:30px;height:30px;border-color:var(--gold);border-style:solid;border-width:0}
+.a4 .frame .tl{top:0;left:0;border-top-width:3px;border-left-width:3px;border-top-left-radius:10px}
+.a4 .frame .tr{top:0;right:0;border-top-width:3px;border-right-width:3px;border-top-right-radius:10px}
+.a4 .frame .bl{bottom:0;left:0;border-bottom-width:3px;border-left-width:3px;border-bottom-left-radius:10px}
+.a4 .frame .br{bottom:0;right:0;border-bottom-width:3px;border-right-width:3px;border-bottom-right-radius:10px}
+.a4 .bar{position:absolute;left:14px;right:14px;height:2px;background:var(--gold);top:50%;box-shadow:0 0 12px var(--gold);animation:scan 2.4s ease-in-out infinite alternate}
+@keyframes scan{from{transform:translateY(-70px)}to{transform:translateY(70px)}}
+@media (prefers-reduced-motion:reduce){.a4 .bar{animation:none}}
+
+.foot{padding:14px 22px 24px;position:relative;z-index:2}
+.dots{display:flex;justify-content:center;gap:8px;margin-bottom:22px}
+.dots i{width:7px;height:7px;border-radius:50%;background:#3a3832;transition:all .3s}
+.dots i.on{width:26px;border-radius:4px;background:var(--gold)}
+.cta{width:100%;height:56px;border:0;background:var(--gold);color:#15171a;font:700 16px/1 "Manrope",sans-serif;letter-spacing:0;cursor:pointer;border-radius:18px:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+[dir="rtl"] .cta{font-family:"Vazirmatn",sans-serif;font-size:17px}
+.cta:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* depth: a warm glow behind each slide */
+.phone::before{content:"";position:absolute;left:50%;top:38%;width:420px;height:420px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(245,195,59,.22),rgba(245,195,59,0) 65%);pointer-events:none;transition:transform .8s cubic-bezier(.2,.8,.2,1);z-index:0}
+.track{z-index:1}
+/* illustrations float gently */
+.art-wrap{animation:float 5s ease-in-out infinite}
+.slide:nth-child(2) .art-wrap{animation-delay:-1.2s}
+.slide:nth-child(3) .art-wrap{animation-delay:-2.4s}
+.slide:nth-child(4) .art-wrap{animation-delay:-3.6s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+/* text rises in when its slide is active */
+.copy{opacity:0;transform:translateY(16px);transition:opacity .5s ease .12s,transform .6s cubic-bezier(.2,.8,.2,1) .12s}
+.slide.on .copy{opacity:1;transform:none}
+.slide.on .art-wrap{animation-play-state:running}
+/* progress bar above the button */
+.prog{height:3px;border-radius:3px;background:#2a2823;margin:0 0 18px;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,#f5c33b,#ffe9a8);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+/* the call chips pulse like a live tap */
+.a3 .chip{animation:pulse 2.6s ease-out infinite}
+.a3 .chip.wa{animation-delay:.4s}
+.a3 .chip.dot{animation-delay:.8s}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,195,59,.45)}70%,100%{box-shadow:0 0 0 14px rgba(245,195,59,0)}}
+@media (prefers-reduced-motion:reduce){.art-wrap,.a3 .chip,.a4 .bar{animation:none!important}.copy{transition:none;opacity:1;transform:none}}
+
+/* slide 3: a wheel of cards that turns from one card to the next */
+.wheel{position:relative}
+.wc{position:absolute;left:50%;top:0;width:250px;height:150px;margin-left:-125px;border-radius:20px;padding:16px 18px;box-sizing:border-box;color:#fff;box-shadow:0 18px 30px rgba(0,0,0,.45);transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .8s ease,filter .8s ease;display:flex;flex-direction:column}
+.wc b{font-size:17px;margin-top:auto}
+.wc small{font-size:12px;opacity:.75;margin-top:3px}
+.wc.w0{background:#1b2a4a}.wc.w1{background:#7a2e2e}.wc.w2{background:#f1efe9;color:#15171a}.wc.w3{background:#2f6b5e}
+.wheel .chips{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.wheel .chips span{width:56px;height:56px;border-radius:20px;display:grid;place-items:center;font:700 14px "Manrope",sans-serif;background:var(--gold);color:#15171a}
+.wheel .chips span.wa{background:#1f2a24;color:#7fd39b;box-shadow:inset 0 0 0 2px #7fd39b}
+.wheel .chips span.dot{background:#1b1a16;color:#f4f4f2;box-shadow:inset 0 0 0 2px #34322c}
+/* slide 4: scan result */
+.a4 .saved{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:999px;background:rgba(245,195,59,.14);color:var(--gold);font-weight:700;font-size:14px;white-space:nowrap;border:1px solid rgba(245,195,59,.4)}
+/* slide 5: plans */
+.plans{display:flex;gap:10px;width:100%;height:100%;align-items:center}
+.plan{flex:1;min-width:0;border-radius:18px;padding:16px 10px 14px;background:#1b1a16;border:1px solid #34322c;text-align:center;color:#f4f4f2;box-sizing:border-box}
+.plan i{display:block;height:44px;border-radius:12px;margin-bottom:12px}
+.plan b{display:block;font-size:15px}
+.plan small{display:block;font-size:12px;line-height:1.4;color:#a9a9a4;margin-top:6px}
+.plan.hot{border-color:var(--gold);box-shadow:0 0 0 1px rgba(245,195,59,.5),0 14px 30px rgba(245,195,59,.12)}
+
+/* slide 2: services near you on a map */
+.map{width:300px;height:240px;border-radius:22px;background:#171613;border:1px solid #34322c;overflow:hidden;position:relative}
+.map .grid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 38px,#24221d 38px 40px),repeating-linear-gradient(90deg,transparent 0 58px,#24221d 58px 60px)}
+.map .road{position:absolute;left:-20%;width:140%;height:10px;background:#2e2c25;transform:rotate(-18deg);top:46%}
+.map .road.b{top:auto;bottom:34%;transform:rotate(12deg)}
+.map .pin{position:absolute;width:34px;height:34px;margin:-34px 0 0 -17px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--gold);box-shadow:0 8px 16px rgba(245,195,59,.25)}
+.map .pin span{position:absolute;inset:0;display:grid;place-items:center;transform:rotate(45deg);font:800 11px "Manrope",sans-serif;color:#15171a}
+.map .me{position:absolute;left:50%;top:44%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#4f8cff;border:2px solid #fff;animation:ping 2s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(79,140,255,.55)}100%{box-shadow:0 0 0 22px rgba(79,140,255,0)}}
+.map .near{position:absolute;left:12px;right:12px;bottom:12px;background:#f4f4f2;color:#15171a;border-radius:16px;padding:11px 14px;box-shadow:0 10px 20px rgba(0,0,0,.4)}
+.map .near b{display:block;font-size:14px}
+.map .near small{font-size:12px;color:#5a5d64}
+@media (prefers-reduced-motion:reduce){.map .me{animation:none}}
+/* smoother motion: slides glide on a soft curve and the art scales in as its slide arrives */
+.slide{transition:transform .8s cubic-bezier(.7,0,.2,1)!important}
+.art-wrap{transition:scale .8s cubic-bezier(.2,.8,.2,1),opacity .6s ease!important;scale:1}
+.slide:not(.on) .art-wrap{scale:.86;opacity:.25}
+/* inside the app's frame: full screen, no phone mock-up */
+.embedded body{padding:0!important;background:#0f0e0b!important;margin:0}
+.embedded .phone{max-width:none!important;width:100%!important;height:100dvh!important;min-height:0!important;border-radius:0!important;margin:0!important}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap">
+
+<div class="phone" id="phone">
+  <div class="top">
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="ku" aria-pressed="false">کوردی</button>
+      <button type="button" data-lang="ar" aria-pressed="false">عربي</button>
+    </div>
+    <button type="button" class="skip" id="skip">Skip</button>
+  </div>
+  <div class="track" id="track"></div>
+  <div class="foot">
+    <div class="prog"><i id="bar"></i></div>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <button type="button" class="cta" id="cta">Next</button>
+  </div>
+</div>
+
+<script>
+if(window.self!==window.top) document.documentElement.classList.add("embedded");
+const T = {
+  en: { dir:"ltr", next:"Next", start:"Get started", skip:"Skip", slides:[
+    { h:"Find trusted services", p:"Browse trusted services across Kurdistan, by city and category." },
+    { h:"Services near you", p:"See trusted services close to where you are, on the map." },
+    { h:"Scan paper cards", p:"Scan a paper card and it joins your wallet with its details." },
+    { h:"Save and call in one tap", p:"Keep every business card in your wallet, and call or WhatsApp from it in one tap." },
+    { h:"Choose your plan", p:"Basic, Standard or Silver. Pick the card that fits your business." } ] },
+  ku: { dir:"rtl", next:"دواتر", start:"دەستپێبکە", skip:"باز بدە", slides:[
+    { h:"خزمەتگوزاری متمانەپێکراو بدۆزەرەوە", p:"لە هەموو کوردستان بە شار و جۆر بگەڕێ." },
+    { h:"خزمەتگوزاری لە نزیکت", p:"خزمەتگوزارییە متمانەپێکراوەکان لەسەر نەخشە لە نزیک خۆتەوە ببینە." },
+    { h:"کارتی کاغەزی سکان بکە", p:"کارتێکی کاغەزی سکان بکە و زانیارییەکانی دەچێتە جزدانەکەتەوە." },
+    { h:"پاشەکەوت بکە و بە یەک کرتە پەیوەندی بکە", p:"هەموو کارتێک لە جزدانەکەتدا هەڵبگرە، بە یەک کرتە پەیوەندی پێوە بکە." },
+    { h:"پلانەکەت هەڵبژێرە", p:"بنکەیی، ستاندارد یان سیڵڤەر. ئەو کارتە هەڵبژێرە کە گونجاوە." } ] },
+  ar: { dir:"rtl", next:"التالي", start:"ابدأ", skip:"تخطي", slides:[
+    { h:"اعثر على خدمات موثوقة", p:"تصفّح الخدمات الموثوقة في كوردستان حسب المدينة والفئة." },
+    { h:"خدمات قريبة منك", p:"شاهد الخدمات الموثوقة القريبة منك على الخريطة." },
+    { h:"امسح البطاقات الورقية", p:"امسح بطاقة ورقية فتنضم إلى محفظتك مع تفاصيلها." },
+    { h:"احفظ واتصل بنقرة واحدة", p:"احتفظ بكل بطاقة في محفظتك، واتصل بها أو راسلها بنقرة واحدة." },
+    { h:"اختر خطتك", p:"أساسية أو ستاندرد أو سيلفر. اختر البطاقة التي تناسب نشاطك." } ] }
+};
+const PLANS = {
+  en: [["Basic","Digital card","#7f8a99"],["Standard","Card colour","#3f6fb6"],["Silver","Front and back design","#d7dadf"]],
+  ku: [["بنکەیی","کارتی دیجیتاڵ","#7f8a99"],["ستاندارد","ڕەنگی کارت","#3f6fb6"],["سیڵڤەر","دیزاینی پێش و پشت","#d7dadf"]],
+  ar: [["أساسية","بطاقة رقمية","#7f8a99"],["ستاندرد","لون البطاقة","#3f6fb6"],["سيلفر","تصميم أمامي وخلفي","#d7dadf"]]
+};
+const CARDS = [
+  { n:"Azad Cooling", r:"AC repair", c:"w0" },
+  { n:"Rebin Dental", r:"Dentist", c:"w1" },
+  { n:"Dana Bakery", r:"Bakery", c:"w2" },
+  { n:"Hawre Lawyer", r:"Lawyer", c:"w3" }
+];
+function art(k){
+  if(k===0) return `<div class="art a1"><div class="row"><i>AZ</i><div><b>Azad Cooling</b><small>AC repair · Sulaymaniyah</small></div></div><div class="row"><i>RD</i><div><b>Rebin Dental</b><small>Dentist · Bakrajo</small></div></div><div class="row"><i>DN</i><div><b>DotNet IT</b><small>IT solutions · Suli</small></div></div></div>`;
+  if(k===1) return `<div class="art"><div class="map"><div class="grid"></div><span class="road"></span><span class="road b"></span><i class="pin" style="left:24%;top:30%"><span>AZ</span></i><i class="pin" style="left:70%;top:24%"><span>RD</span></i><i class="pin" style="left:66%;top:66%"><span>DN</span></i><span class="me"></span><div class="near"><b>Azad Cooling</b><small>AC repair · 800 m away</small></div></div></div>`;
+  if(k===2) return `<div class="art a4"><div class="paper"><span style="font-size:11px;letter-spacing:.1em;opacity:.6">SCANNED</span><b>Dana Kurdish Bakery</b><small>Bakery · Bakrajo</small></div><div class="frame"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="bar"></span></div><div class="saved">✓ Saved to your wallet</div></div>`;
+  if(k===3) return `<div class="art wheel" id="wheel">${CARDS.map((c,j)=>`<div class="wc ${c.c}" data-j="${j}"><b>${c.n}</b><small>${c.r}</small></div>`).join("")}<div class="chips"><span>✆</span><span class="wa">WA</span><span class="dot">@</span></div></div>`;
+  return `<div class="art"><div class="plans">${PLANS[lang].map((p,j)=>`<div class="plan${j===1?" hot":""}"><i style="background:${p[2]}"></i><b>${p[0]}</b><small>${p[1]}</small></div>`).join("")}</div></div>`;
+}
+let lang=(new URLSearchParams(location.search).get("lang")||"en"), i=0, rot=0, wtimer=null;
+if(!["en","ku","ar"].includes(lang)) lang="en";
+const track=document.getElementById("track"), dots=document.getElementById("dots"), cta=document.getElementById("cta");
+function build(){
+  const t=T[lang];
+  document.documentElement.lang=lang; document.documentElement.dir=t.dir;
+  track.innerHTML=t.slides.map((s,k)=>`<div class="slide${k===i?" on":""}" aria-hidden="${k!==i}"><div class="art-wrap">${art(k)}</div><div class="copy"><h2>${s.h}</h2><p>${s.p}</p></div></div>`).join("");
+  dots.innerHTML=t.slides.map(()=>"<i></i>").join("");
+  document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===lang)));
+  document.getElementById("skip").textContent=t.skip;
+  go(i,false);
+}
+// the wheel: the front card turns to the back and the next card comes forward
+function paintWheel(){
+  const w=document.getElementById("wheel"); if(!w) return;
+  const pos=[[0,1,4],[24,.95,3],[48,.9,2],[72,.85,1]];
+  [...w.querySelectorAll(".wc")].forEach(el=>{
+    const j=+el.dataset.j, p=((j-rot)%4+4)%4, [y,s,z]=pos[p];
+    el.style.transform=`translateY(${y}px) scale(${s})`;
+    el.style.opacity= p===3 ? 0 : (p===0 ? 1 : (p===1 ? .85 : .55));
+    el.style.zIndex=z;
+    el.style.filter= p===0 ? "none" : "brightness(.8)";
+  });
+}
+function startWheel(){
+  clearInterval(wtimer);
+  wtimer=setInterval(()=>{ if(!document.getElementById("wheel")) return; rot=(rot+1)%4; paintWheel(); },2200);
+  paintWheel();
+}
+function go(k,anim=true){
+  const n=T[lang].slides.length; i=Math.max(0,Math.min(n-1,k));
+  const sh=(T[lang].dir==="rtl"?1:-1)*i*100; [...track.children].forEach(el=>{el.style.transition=anim?"":"none";el.style.transform=`translateX(${sh}%)`;});
+  [...dots.children].forEach((d,j)=>d.classList.toggle("on",j===i));
+  [...track.children].forEach((el,j)=>el.classList.toggle("on",j===i));
+  document.getElementById("bar").style.width=((i+1)/n*100)+"%";
+  cta.textContent = i===n-1 ? T[lang].start : T[lang].next;
+  if(document.getElementById("wheel")) startWheel();
+}
+const done=()=>{ try{ window.parent.postMessage({bmIntro:"done"},"*"); }catch(e){} };
+cta.onclick=()=>{ if(i===T[lang].slides.length-1){ done(); } else go(i+1); };
+document.getElementById("skip").onclick=done;
+document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;build();});
+// swipe left/right moves between slides
+let sx=null;
+track.addEventListener("pointerdown",e=>{sx=e.clientX;});
+track.addEventListener("pointerup",e=>{ if(sx===null)return; const dx=e.clientX-sx; sx=null; if(Math.abs(dx)>40){ const fwd=dx<0; const step=(T[lang].dir==="rtl")?!fwd:fwd; go(i+(step?1:-1)); } });
+build();
+</script>
