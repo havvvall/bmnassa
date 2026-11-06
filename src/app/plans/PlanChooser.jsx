@@ -105,46 +105,34 @@ export function PlanChooser({ lang, go }) {
 
   return (
     <div className={"pl-screen" + (soon ? " soonp" : "")} style={vars}>
+      <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" />{pristine ? <img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /> : null}</div>
       {pristine ? (
-        <>
-          <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /><img className="logo" src="/brand/logo-ink.svg" alt="Bmnassa" /></div>
-          <div className="stack pl-title">
-            <h1>{soon ? "Coming soon" : "Choose your plan"}</h1>
-            <p className="sub">Pick a card, a profile and a duration.</p>
-          </div>
-          <div className="pl-head pl-app">
-            <div className="pl-top"><span className="label">{soon ? "Coming soon" : "No plan yet"}</span></div>
-            <div className="pl-row">
-              <span className="pl-name">—</span>
-              <span className="pl-total"><small>Total</small><b>—</b></span>
-            </div>
-            <div className="pl-steps" aria-hidden="true"><i /><i /><i /></div>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="top"><Back lang={lang} onClick={() => go("/path")} /><span className="grow" /></div>
-          <div className={"pl-head" + (open ? " open" : "")}>
-            <div className="pl-top">
-              <span className="pl-kicker">{soon ? "Coming soon" : "Digital card"}</span>
-              {complete ? (
-                <button type="button" className="pl-info" aria-label="What is included" onClick={(e) => { e.stopPropagation(); setOpen(!open); }}>
-                  <svg className="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.5v.5" /></svg>
-                  <svg className="i-close" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" /></svg>
-                </button>
-              ) : null}
-            </div>
-            <span className="pl-name">{plan ? name : "Choose below"}</span>
-            <span className="pl-total"><small>Total</small>{price ? <b>{fmtIQD(price)} IQD</b> : <b>—</b>}</span>
+        <div className="stack pl-title">
+          <h1>Choose your plan</h1>
+          <p className="sub">Pick a card, a profile and a duration.</p>
+        </div>
+      ) : null}
+      {complete || soon ? (
+        <div className={"pl-head" + (open ? " open" : "")}>
+          <div className="pl-top">
+            <span className="pl-kicker">{soon ? "Coming soon" : "Digital card"}</span>
             {complete ? (
-              <div className="pl-more"><div className="pl-moreIn">
-                <p className="pl-more-t">{name} includes</p>
-                <ul className="pl-list">{items.map((t) => <li key={t}>{t}</li>)}</ul>
-              </div></div>
+              <button type="button" className="pl-info" aria-label="What is included" onClick={(e) => { e.stopPropagation(); setOpen(!open); }}>
+                <svg className="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.5v.5" /></svg>
+                <svg className="i-close" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" /></svg>
+              </button>
             ) : null}
           </div>
-        </>
-      )}
+          {complete ? <span className="pl-name">{name}</span> : null}
+          <span className="pl-total"><small>Total</small>{price ? <b>{fmtIQD(price)} IQD</b> : <b>—</b>}</span>
+          {complete ? (
+            <div className="pl-more"><div className="pl-moreIn">
+              <p className="pl-more-t">{name} includes</p>
+              <ul className="pl-list">{items.map((t) => <li key={t}>{t}</li>)}</ul>
+            </div></div>
+          ) : null}
+        </div>
+      ) : null}
 
       <Group group="nfc" label="NFC card" value={nfcLabel} items={NFC} selected={nfc} onPick={setNfc} />
       <Group group="prof" label="Profile" value={profLabel} items={PROFILE} selected={prof} onPick={setProf} />
