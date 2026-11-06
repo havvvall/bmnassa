@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>App Feature Slides</title>
+<title>Bmnassa · Find trusted services</title>
+<meta name="description" content="Bmnassa: find trusted services across Kurdistan, scan paper cards into your wallet, and see our plans.">
+<meta property="og:title" content="Bmnassa · Find trusted services in Kurdistan">
+<meta property="og:description" content="Find trusted services near you, scan paper cards into your wallet, and see our plans.">
+<meta property="og:image" content="/brand/kurdistan-skyline-v2.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 :root{--night:#0f0e0b;--gold:#f5c33b;--paper:#f6f6f4;--ink:#111214;--mute:#5a5d64;--line:#d6d8dc;color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#0f0e0b;--ink:#f4f4f2;--mute:#a9a9a4;--line:#34322c;color-scheme:dark}}
@@ -231,7 +237,7 @@ function go(k,anim=true){
   cta.textContent = i===n-1 ? T[lang].start : T[lang].next;
   if(document.getElementById("wheel")) startWheel();
 }
-const done=()=>{ try{ window.parent.postMessage({bmIntro:"done"},"*"); }catch(e){} };
+const done=()=>{ if(window.self!==window.top){ try{ window.parent.postMessage({bmIntro:"done"},"*"); }catch(e){} } else { location.href="/"; } };
 cta.onclick=()=>{ if(i===T[lang].slides.length-1){ done(); } else go(i+1); };
 document.getElementById("skip").onclick=done;
 document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;build();});
