@@ -1,0 +1,13 @@
+/* Live map screen */
+.map-page { gap: 12px; }
+.map-chips { margin: 0 -16px; padding: 2px 16px; }
+.map-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); flex: none; }
+.map-dot.big { width: 14px; height: 14px; }
+.map-box { position: relative; border-radius: 18px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+.map-canvas { width: 100%; height: 56vh; min-height: 300px; background: var(--surface-2); }
+.map-note { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; font-size: 14px; color: var(--muted); background: var(--surface-2); }
+.map-msg { font-size: 13px; margin: 0; }
+.map-list { display: flex; flex-direction: column; }
+.map-row { width: 100%; border: 0; background: none; cursor: pointer; }
+.map-row .grow small { display: block; }
+.leaflet-container { font-family: inherit; }

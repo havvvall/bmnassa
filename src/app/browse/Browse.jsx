@@ -110,6 +110,7 @@ export function BottomNav({ lang, active, go, signedIn }) {
   const [toast, setToast] = useToast();
   const items = [
     ["home", "nav_home", () => go("/home")],
+    ["map", "nav_map", () => go("/map")],
     ["wallet", "nav_wallet", () => go("/wallet")],
     ["scan", "nav_scan", () => go("/scan")],
     ["user", "nav_account", () => go(signedIn ? "/account" : "/signin")],

@@ -19,6 +19,7 @@ import Studio from "./card/Studio.jsx";
 import OrderNfc from "./owner/OrderNfc.jsx";
 import { ReviewsPage, RatePage } from "./reviews/Reviews.jsx";
 import { WalletPage } from "./wallet/Wallet.jsx";
+import { MapScreen } from "./map/MapScreen.jsx";
 import { ScanPage, EditScanPage } from "./scan/Scan.jsx";
 import { Welcome } from "./welcome/Welcome.jsx";
 import { IntroSlides } from "./intro/IntroSlides.jsx";
@@ -39,7 +40,7 @@ import {
 // ---------- small helpers ----------
 
 // Words used by the app itself; any other single word is a business page name (bmnassa.com/azad-cooling)
-const APP_WORDS = new Set(["", "home", "welcome", "signin", "verify", "name", "account", "list", "team", "search", "c",
+const APP_WORDS = new Set(["", "home", "map", "welcome", "signin", "verify", "name", "account", "list", "team", "search", "c",
   "admin", "register", "stand", "invitation", "brand", "wallet", "scan", "my", "path", "plans", "intro"]);
 
 function businessPath(path) {
@@ -941,6 +942,8 @@ export default function App() {
     screen = <ScanPage key="scan" lang={lang} go={go} back={back} signedIn={signedIn} />;
   } else if (/^\/scan\/edit\/\d+$/.test(path) && profile) {
     screen = <EditScanPage key={path} lang={lang} id={path.split("/")[3]} go={go} back={back} />;
+  } else if (path === "/map") {
+    screen = <MapScreen key="map" lang={lang} city={city || "sulaymaniyah"} go={go} />;
   } else if (path === "/wallet") {
     screen = <WalletPage key="wallet" lang={lang} go={go} signedIn={signedIn} />;
   } else if (path === "/search") {
