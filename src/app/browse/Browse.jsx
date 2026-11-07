@@ -111,18 +111,25 @@ export function BottomNav({ lang, active, go, signedIn }) {
   const items = [
     ["home", "nav_home", () => go("/home")],
     ["map", "nav_map", () => go("/map")],
-    ["wallet", "nav_wallet", () => go("/wallet")],
     ["scan", "nav_scan", () => go("/scan")],
+    ["wallet", "nav_wallet", () => go("/wallet")],
     ["user", "nav_account", () => go(signedIn ? "/account" : "/signin")],
   ];
   return (
     <>
       <nav className="b-nav" aria-label="Bmnassa">
         {items.map(([icon, key, onClick]) => (
+          icon === "scan" ? (
+            // The centre action: a bigger filled button above the bar
+            <button key={key} type="button" className={"main" + (active === icon ? " on" : "")} onClick={onClick} aria-label={t(lang, key)} aria-current={active === icon ? "page" : undefined}>
+              <Icon name={icon} size={28} stroke={2} />
+            </button>
+          ) : (
           <button key={key} type="button" className={active === icon ? "on" : ""} onClick={onClick} aria-current={active === icon ? "page" : undefined}>
             <Icon name={icon} size={21} />
             <span>{t(lang, key)}</span>
           </button>
+          )
         ))}
       </nav>
       <Toast text={toast} />
