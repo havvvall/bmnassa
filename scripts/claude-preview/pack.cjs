@@ -20,29 +20,13 @@ if (js.length === b2) throw new Error('tile img not found');
 const css = inline(fs.readFileSync(distDir + '/assets/' + cssFile, 'utf8'));
 const shim = `
 (function(){
-  var SB = "https://hfcqvcduuhzfxijsniav.supabase.co";
   window.__BM_INTRO = ${JSON.stringify(intro).split('</').join('<\\/')};
   window.__BM_TILES = ${JSON.stringify(tiles)};
   window.__BM_BLANK = "data:image/svg+xml;base64," + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e8e6e1"/></svg>');
-  var REC = ${JSON.stringify(rec)};
-  var IMGS = ${JSON.stringify(imgs)};
-  try { if (location.pathname !== "/") history.replaceState(null, "", "/"); } catch (e) {}
-  var realFetch = window.fetch ? window.fetch.bind(window) : null;
-  function json(body, status) { return Promise.resolve(new Response(body, { status: status || 200, headers: { "Content-Type": "application/json" } })); }
-  window.fetch = function (input, init) {
-    var url = typeof input === "string" ? input : (input && input.url) || String(input);
-    var method = ((init && init.method) || (input && input.method) || "GET").toUpperCase();
-    if (url.indexOf(SB) === 0) {
-      if (method === "GET" && REC[url] != null) return json(REC[url]);
-      if (method === "GET" && url.indexOf("/rest/") > 0) return json("[]");
-      if (method === "HEAD") return json("", 200);
-      return json(JSON.stringify({ message: "Preview: sign-in and saving are turned off in this Claude preview.", code: "preview" }), 503);
-    }
-    return realFetch ? realFetch(input, init) : Promise.reject(new Error("offline"));
-  };
   function fixImg(el) {
     var s = el.getAttribute && el.getAttribute("src");
     if (!s) return;
+    var IMGS = window.__BM_IMGS || {};
     if (IMGS[s]) return el.setAttribute("src", IMGS[s]);
     var at = s.indexOf("tile.openstreetmap.org/");
     if (at >= 0) { var key = s.slice(at + 23).split(".png")[0]; el.setAttribute("src", window.__BM_TILES[key] || window.__BM_BLANK); }
@@ -58,11 +42,16 @@ const shim = `
     });
   }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ["src"] });
 })();`;
+const SB_URL = (fs.readFileSync(path.join(__dirname, '../../src/app/api.js'), 'utf8').match(/"(https:\/\/[a-z0-9]+\.supabase\.co)"/) || [])[1];
+if (!SB_URL) throw new Error('Supabase URL not found in src/app/api.js');
+const demo = fs.readFileSync(path.join(__dirname, 'demo.js'), 'utf8')
+  .replace('var SB = __SB__;', () => 'var SB = ' + JSON.stringify(SB_URL) + ';')
+  .replace('var REC = __REC__;', () => 'var REC = ' + JSON.stringify(rec) + ';')
+  .replace('var IMGS = __IMGS__;', () => 'var IMGS = ' + JSON.stringify(imgs) + ';');
 const tileShim = `
 (function(){
   var TILES = window.__BM_TILES;
   var BLANK = window.__BM_BLANK;
-  var _unused = "data:image/svg+xml;base64," + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e8e6e1"/></svg>');
   if (window.L && L.TileLayer) {
     L.TileLayer.prototype.getTileUrl = function (c) { return TILES[c.z + "/" + c.x + "/" + c.y] || BLANK; };
   }
@@ -77,6 +66,7 @@ html = html
   .replace('</head>', () =>
     '<style>' + fs.readFileSync(path.join(leafletDir, 'leaflet.css'), 'utf8') + '</style>\n' +
     '<style>' + css + '</style>\n' +
+    '<script>' + demo.split('</').join('<\\/') + '</script>\n' +
     '<script>' + shim + '</script>\n' +
     '<script>' + fs.readFileSync(path.join(leafletDir, 'leaflet.js'), 'utf8') + '</script>\n' +
     '<script>' + tileShim + '</script>\n' +

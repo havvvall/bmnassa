@@ -13,4 +13,6 @@ After app changes, rebuild and republish it to that same slug:
 1. `bash scripts/claude-preview/build.sh` → `dist/claude-preview/index.html`
 2. Republish with the artifacts `publish_files` tool: slug above, `base_version` from `get_artifact`, file `as: index.html`.
 
+The preview runs in demo mode (`scripts/claude-preview/demo.js`): signed in as a demo owner who is also on the team, with an in-memory fake database and a PAGES tab that jumps to every screen. Add new routes to the PAGES list in `demo.js` and new tables or RPCs to its fake database when the app grows.
+
 Details and limits: `scripts/claude-preview/README.md`.
